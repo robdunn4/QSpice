@@ -1,0 +1,59 @@
+ÿØÿÛ«schematic
+  «component (400,1000) 0 0
+    «symbol
+      «type: Ø(.DLL)»
+      «description: Log To A WAV File»
+      «shorted pins: false»
+      «rect (-500,300) (1500,-1100) 0 0 0 0x4000000 0x4000000 -1 1 -1»
+      «text (500,-50) 1 12 0 0x1000000 -1 -1 "X1"»
+      «text (500,-150) 0.681 13 0 0x1000000 -1 -1 "WavOut"»
+      «text (476,-512) 0.681 13 0 0x1000000 -1 -1 "int frequency=Frequency"»
+      «text (450,-800) 0.681 13 0 0x1000000 -1 -1 "char* filename=FilePath"»
+      «text (500,-650) 0.681 13 0 0x1000000 -1 -1 "int maxSamples=MaxSamples"»
+      «pin (1500,-900) (0,0) 1 11 145 0x0 -1 "CLK"»
+      «pin (-500,100) (0,0) 1 7 145 0x0 -1 "IN1"»
+      «pin (-500,-300) (0,0) 1 7 145 0x0 -1 "IN2"»
+      «pin (1500,100) (0,0) 1 11 146 0x0 -1 "OUT1"»
+      «pin (1500,-200) (0,0) 1 11 146 0x0 -1 "OUT2"»
+      «pin (1500,-500) (0,0) 1 11 146 0x0 -1 "CLIP"»
+    »
+  »
+  «component (2700,-100) 0 0
+    «symbol Vpulse
+      «type: V»
+      «description: Independent Voltage Source»
+      «shorted pins: false»
+      «line (0,-130) (0,-200) 0 0 0x1000000 -1 -1»
+      «line (0,200) (0,130) 0 0 0x1000000 -1 -1»
+      «line (-70,-30) (-50,-30) 0 0 0x1000000 -1 -1»
+      «line (-50,-30) (-40,30) 0 0 0x1000000 -1 -1»
+      «line (-40,30) (0,30) 0 0 0x1000000 -1 -1»
+      «line (0,30) (10,-30) 0 0 0x1000000 -1 -1»
+      «line (10,-30) (70,-30) 0 0 0x1000000 -1 -1»
+      «rect (-25,77) (25,73) 0 0 0 0x1000000 0x3000000 -1 0 -1»
+      «rect (-2,50) (2,100) 0 0 0 0x1000000 0x3000000 -1 0 -1»
+      «rect (-25,-73) (25,-77) 0 0 0 0x1000000 0x3000000 -1 0 -1»
+      «ellipse (-130,130) (130,-130) 0 0 0 0x1000000 0x1000000 -1 -1»
+      «text (100,150) 1 7 0 0x1000000 -1 -1 "V1"»
+      «text (-2300,-500) 1 7 0 0x1000000 -1 -1 "PULSE 0V 1V 0 1n 1n Period/2 Period"»
+      «pin (0,200) (0,0) 1 0 0 0x0 -1 "+"»
+      «pin (0,-200) (0,0) 1 0 0 0x0 -1 "-"»
+    »
+  »
+  «net (2700,-300) 1 13 0 "GND"»
+  «net (-700,1100) 1 11 1 "IN1"»
+  «net (-700,700) 1 11 1 "IN2"»
+  «net (2400,1100) 1 7 1 "OUT1"»
+  «net (2400,800) 1 7 1 "OUT2"»
+  «net (2400,500) 1 7 1 "CLIP"»
+  «wire (2700,100) (1900,100) "N01"»
+  «wire (-700,1100) (-100,1100) "IN1"»
+  «wire (1900,1100) (2400,1100) "OUT1"»
+  «wire (1900,800) (2400,800) "OUT2"»
+  «wire (1900,500) (2400,500) "CLIP"»
+  «wire (-700,700) (-100,700) "IN2"»
+  «text (-1550,-400) 1 7 0 0x1000000 -1 -1 ".param Hz=Frequency"»
+  «text (-1550,-600) 1 7 0 0x1000000 -1 -1 ".param Period = 1/Hz"»
+  «text (-2170,3810) 1 7 1 0x1000000 -1 -1 "This is the WavOut subcircuit. See WavOut_Demo.qsch for a usage example.\n \nInput signals are ground-referenced (no DC offset) and should approach +/-1V for\nmaximum sample resolution. Values exceeding +/-1V are clipped. CLIP is set to 1V\nduring clipping and a warning message is displayed in the QSpice Output window. \n \nThe sample frequency is set with the frequency attribute. This sets the sample clock\nand the sample rate written to the WAV file (to be used by playback applications). \n[Note: The WavSrc component is hardcoded for 44.1KHz sample rates.]\n \nAttributes passed to the DLL:\n * frequency = sample frequency in Hz (yes, technically, samples/second not Hz)\n * filename = output WAV file path (relative or absolute but folder must exist; \n overwrites any existing file)\n * maxSamples = maximum # of samples to write to file\n \nThe output WAV format is 16-bit PCM stereo.\n \nThe output ports need not be used but are available to monitor or further process the\ndigitized input signals."»
+»
+

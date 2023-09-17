@@ -1,0 +1,44 @@
+ÿØÿÛ«schematic
+  «component (-1300,900) 0 0
+    «symbol
+      «shorted pins: false»
+      «rect (-800,-900) (1100,200) 0 0 0 0xff0000 0xc8c8c8 -1 1 -1»
+      «text (100,0) 1 12 0 0x1000000 -1 -1 "X1"»
+      «text (100,-100) 0.681 13 0 0x1000000 -1 -1 "WavSrc"»
+      «text (50,-550) 0.681 13 0 0x1000000 -1 -1 "Loops=1"»
+      «text (50,-700) 0.681 13 0 0x1000000 -1 -1 "Gain=1.0"»
+      «text (150,-400) 0.681 13 0 0x1000000 -1 -1 "FilePath="./wav_samples/Stereo.wav""»
+      «pin (-800,-100) (50,0) 1 7 0 0x0 -1 "REF"»
+      «pin (1100,0) (-50,0) 1 11 0 0x0 -1 "CH1"»
+      «pin (1100,-300) (-50,0) 1 11 0 0x0 -1 "CH2"»
+    »
+  »
+  «component (-2800,500) 0 0
+    «symbol V
+      «type: V»
+      «description: Independent Voltage Source»
+      «shorted pins: false»
+      «line (0,-130) (0,-200) 0 0 0x1000000 -1 -1»
+      «line (0,200) (0,130) 0 0 0x1000000 -1 -1»
+      «rect (-25,77) (25,73) 0 0 0 0x1000000 0x3000000 -1 0 -1»
+      «rect (-2,50) (2,100) 0 0 0 0x1000000 0x3000000 -1 0 -1»
+      «rect (-25,-73) (25,-77) 0 0 0 0x1000000 0x3000000 -1 0 -1»
+      «ellipse (-130,130) (130,-130) 0 0 0 0x1000000 0x1000000 -1 -1»
+      «text (100,150) 1 7 0 0x1000000 -1 -1 "V1"»
+      «text (100,-150) 1 7 0 0x1000000 -1 -1 "DC 5V"»
+      «pin (0,200) (0,0) 1 0 0 0x0 -1 "+"»
+      «pin (0,-200) (0,0) 1 0 0 0x0 -1 "-"»
+    »
+  »
+  «net (-2800,200) 1 13 0 "GND"»
+  «net (100,900) 1 7 0 "Vch1"»
+  «net (100,600) 1 7 0 "Vch2"»
+  «wire (-2800,700) (-2800,800) "N01"»
+  «wire (-2800,200) (-2800,300) "GND"»
+  «wire (-2800,800) (-2100,800) "N01"»
+  «wire (-200,900) (100,900) "Vch1"»
+  «wire (100,600) (-200,600) "Vch2"»
+  «text (-2800,-150) 1 7 0 0x1000000 -1 -1 ".tran 150ms"»
+  «text (-3120,2060) 1 7 1 0x1000000 -1 -1 "This is a demonstration using the WavSrc subcircuit.\nSee WavSrc.qsch for details.\n \nAttributes passed to WavSrc.qsch: \n * FilePath = input WAV file path (relative or absolute)\n * Loops = # of times to read the input file (0=infinite)\n * Gain = gain factor to apply to input samples"»
+»
+
