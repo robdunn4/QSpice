@@ -64,7 +64,7 @@
   «net (-1300,-900) 1 13 0 "GND"»
   «net (-1300,-100) 1 13 0 "GND"»
   «net (-200,-800) 1 13 0 "GND"»
-  «net (500,-300) 1 7 0 "Wiper"»
+  «net (500,-300) 1 7 0 "VWiper"»
   «net (-900,-300) 1 14 0 "Vctrl"»
   «wire (-1300,400) (-1300,500) "N01"»
   «wire (-1300,-100) (-1300,0) "GND"»
@@ -75,9 +75,10 @@
   «wire (-900,-300) (-500,-300) "Vctrl"»
   «wire (-200,-100) (-200,500) "N01"»
   «wire (-1300,-300) (-900,-300) "Vctrl"»
-  «wire (0,-300) (500,-300) "Wiper"»
+  «wire (0,-300) (500,-300) "VWiper"»
   «text (400,450) 1 7 0 0x1000000 -1 -1 ".tran 10ms"»
-  «text (400,250) 1 7 0 0x1000000 -1 -1 ".plot V(Vctrl)"»
-  «text (400,50) 1 7 0 0x1000000 -1 -1 ".plot V(Wiper)"»
+  «text (400,250) 1 7 0 0x1000000 -1 -1 ".plot V(Vctrl),V(VWiper)"»
+  «text (-1500,900) 1 7 1 0x1000000 -1 -1 "Set control voltage from 0V to 1V for wiper at 0.1 to 99.9%.\nSet total pot value with RTOT attribute."»
+  «text (-1500,1400) 1.6 7 1 0x1000000 -1 -1 "Voltage-Controlled Potentiometer"»
 »
 
