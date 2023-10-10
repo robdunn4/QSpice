@@ -14,5 +14,8 @@ Proof of concept serial buffer.  See SpiIO components for improved serial buffer
 ## SpiIO Components
 QSpice C-Block code and schematics to implement custom SPI master & slave components.
 
+## PID Controller Component
+QSpice C-Block implementation of a discrete PID controller courtesy of KSKelvin.
+
 ## Miscellany
 Small bits, odds and ends.
