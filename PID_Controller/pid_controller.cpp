@@ -1,8 +1,15 @@
-// Automatically generated C++ file on Fri Oct  6 14:10:25 2023
-//
-// To build with Digital Mars C++ Compiler:
-//
-//    dmc -mn -WD pid_controller_fb.cpp kernel32.lib
+/*==============================================================================
+ * pid_controller.cpp -- A QSpice component implementation of a discrete PID
+ * controller.
+ *
+ * Developed by QSpice forum members @KSKelvin and @RDunn.
+ *
+ * Revision History:
+ * 2023.10.10 -- Initial release.
+ *
+ * To build with Digital Mars C++ Compiler:
+ *    dmc -mn -WD pid_controller.cpp kernel32.lib
+ *============================================================================*/
 
 #include <stdio.h>
 #include <stdarg.h>
@@ -92,7 +99,6 @@ extern "C" __declspec(dllexport) void pid_controller(
 
   InstData *inst = *opaque;
 
-  // Implement module evluation code here:
   if (clk && !inst->clk_n1)   // rising edge
   {
     // time between samples : calculate Tsampling
@@ -141,3 +147,6 @@ extern "C" __declspec(dllexport) void Destroy(InstData *inst) {
   // free instance memory
   delete inst;
 }
+/*==============================================================================
+ * End of pid_controller.cpp
+ *============================================================================*/
