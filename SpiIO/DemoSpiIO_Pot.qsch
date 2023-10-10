@@ -1,0 +1,176 @@
+ÿØÿÛ«schematic
+  «component (-2200,1500) 8 0
+    «symbol Vpulse
+      «type: V»
+      «description: Independent Voltage Source»
+      «shorted pins: false»
+      «line (0,-130) (0,-200) 0 0 0x1000000 -1 -1»
+      «line (0,200) (0,130) 0 0 0x1000000 -1 -1»
+      «line (-70,-30) (-50,-30) 0 0 0x1000000 -1 -1»
+      «line (-50,-30) (-40,30) 0 0 0x1000000 -1 -1»
+      «line (-40,30) (0,30) 0 0 0x1000000 -1 -1»
+      «line (0,30) (10,-30) 0 0 0x1000000 -1 -1»
+      «line (10,-30) (70,-30) 0 0 0x1000000 -1 -1»
+      «rect (-25,77) (25,73) 0 0 0 0x1000000 0x3000000 -1 0 -1»
+      «rect (-2,50) (2,100) 0 0 0 0x1000000 0x3000000 -1 0 -1»
+      «rect (-25,-73) (25,-77) 0 0 0 0x1000000 0x3000000 -1 0 -1»
+      «ellipse (-130,130) (130,-130) 0 0 0 0x1000000 0x1000000 -1 -1»
+      «text (180,150) 1 7 0 0x1000000 -1 -1 "V2"»
+      «text (-670,-550) 1 7 0 0x1000000 -1 -1 "PULSE 5V 0V 0s 1n 1n SpiClkPeriod*9 SpiClkPeriod*10"»
+      «pin (0,200) (0,0) 1 0 0 0x0 -1 "+"»
+      «pin (0,-200) (0,0) 1 0 0 0x0 -1 "-"»
+    »
+  »
+  «component (-2200,2700) 8 0
+    «symbol V
+      «type: V»
+      «description: Independent Voltage Source»
+      «shorted pins: false»
+      «line (0,-130) (0,-200) 0 0 0x1000000 -1 -1»
+      «line (0,200) (0,130) 0 0 0x1000000 -1 -1»
+      «rect (-25,77) (25,73) 0 0 0 0x1000000 0x3000000 -1 0 -1»
+      «rect (-2,50) (2,100) 0 0 0 0x1000000 0x3000000 -1 0 -1»
+      «rect (-25,-73) (25,-77) 0 0 0 0x1000000 0x3000000 -1 0 -1»
+      «ellipse (-130,130) (130,-130) 0 0 0 0x1000000 0x1000000 -1 -1»
+      «text (180,150) 1 7 0 0x1000000 -1 -1 "V3"»
+      «text (180,-150) 1 7 0 0x1000000 -1 -1 "5V"»
+      «pin (0,200) (0,0) 1 0 0 0x0 -1 "+"»
+      «pin (0,-200) (0,0) 1 0 0 0x0 -1 "-"»
+    »
+  »
+  «component (1600,1500) 0 0
+    «symbol
+      «shorted pins: false»
+      «rect (-1400,1300) (1400,-800) 0 0 0 0x4000000 0x4000000 -1 1 -1»
+      «text (50,600) 1 12 0 0x1000000 -1 -1 "X1"»
+      «text (50,500) 1 13 0 0x1000000 -1 -1 "SpiMaster"»
+      «text (50,-50) 0.681 13 0 0x1000000 -1 -1 "SpiFreq=SpiFreqParm"»
+      «text (50,-250) 0.681 13 0 0x1000000 -1 -1 "SpiMode=SpiModeParm"»
+      «pin (-1400,-600) (0,0) 1 7 145 0x0 -1 "¬E¬N"»
+      «pin (1400,300) (0,0) 1 11 146 0x0 -1 "SCLK"»
+      «pin (1400,900) (0,0) 1 11 146 0x0 -1 "MOSI"»
+      «pin (1400,600) (0,0) 1 11 145 0x0 -1 "MISO"»
+      «pin (1400,-300) (0,0) 1 11 146 0x0 -1 "¬S¬S¬1"»
+      «pin (1400,-600) (0,0) 1 11 146 0x0 -1 "¬S¬S¬2"»
+      «pin (0,1300) (0,0) 1 13 145 0x0 -1 "VCC"»
+    »
+  »
+  «component (6400,2000) 0 0
+    «symbol
+      «shorted pins: false»
+      «rect (-800,-700) (1300,700) 0 0 0 0xff0000 0xc8c8c8 -1 1 -1»
+      «text (300,150) 1 12 0 0x1000000 -1 -1 "X2"»
+      «text (300,50) 1 13 0 0x1000000 -1 -1 "SpiADC"»
+      «text (300,-500) 0.681 13 0 0x1000000 -1 -1 "SpiMode=SpiModeParm"»
+      «pin (300,700) (0,0) 1 13 0 0x0 -1 "VCC"»
+      «pin (-800,-500) (0,0) 1 7 0 0x0 -1 "¬C¬S"»
+      «pin (-800,-200) (0,0) 1 7 0 0x0 -1 "SCLK"»
+      «pin (-800,400) (0,0) 1 7 0 0x0 -1 "MOSI"»
+      «pin (-800,100) (0,0) 1 7 0 0x0 -1 "MISO"»
+      «pin (1300,400) (0,0) 1 11 0 0x0 -1 "VIN"»
+    »
+  »
+  «component (6400,-800) 0 0
+    «symbol
+      «shorted pins: false»
+      «rect (-800,-700) (1300,700) 0 0 0 0xff0000 0xc8c8c8 -1 1 -1»
+      «text (300,300) 1 12 0 0x1000000 -1 -1 "X3"»
+      «text (300,200) 1 13 0 0x1000000 -1 -1 "SpiPot"»
+      «text (300,-200) 0.681 13 0 0x1000000 -1 -1 "SpiMode=SpiModeParm"»
+      «text (300,-400) 0.681 13 0 0x1000000 -1 -1 "RPOT=1K"»
+      «pin (300,700) (0,0) 1 13 0 0x0 -1 "VCC"»
+      «pin (-800,-500) (0,0) 1 7 0 0x0 -1 "¬C¬S"»
+      «pin (-800,-200) (0,0) 1 7 0 0x0 -1 "SCLK"»
+      «pin (-800,400) (0,0) 1 7 0 0x0 -1 "MOSI"»
+      «pin (-800,100) (0,0) 1 7 0 0x0 -1 "MISO"»
+      «pin (1300,400) (0,0) 1 11 0 0x0 -1 "VOUT"»
+    »
+  »
+  «component (8400,1800) 0 0
+    «symbol Vsin
+      «type: V»
+      «description: Independent Voltage Source»
+      «shorted pins: false»
+      «line (0,-130) (0,-200) 0 0 0x1000000 -1 -1»
+      «line (0,200) (0,130) 0 0 0x1000000 -1 -1»
+      «rect (-25,77) (25,73) 0 0 0 0x1000000 0x3000000 -1 0 -1»
+      «rect (-2,50) (2,100) 0 0 0 0x1000000 0x3000000 -1 0 -1»
+      «rect (-25,-73) (25,-77) 0 0 0 0x1000000 0x3000000 -1 0 -1»
+      «ellipse (-130,130) (130,-130) 0 0 0 0x1000000 0x1000000 -1 -1»
+      «arc3p (0,0) (60,0) (30,0) 0 0 0x1000000 -1 -1»
+      «arc3p (0,0) (-60,0) (-30,0) 0 0 0x1000000 -1 -1»
+      «text (100,150) 1 7 0 0x1000000 -1 -1 "V4"»
+      «text (100,-150) 1 7 0 0x1000000 -1 -1 "SIN 2.5V 1V 1KHz"»
+      «pin (0,200) (0,0) 1 0 0 0x0 -1 "+"»
+      «pin (0,-200) (0,0) 1 0 0 0x0 -1 "-"»
+    »
+  »
+  «net (-2200,1200) 1 13 0 "GND"»
+  «net (-2200,2400) 1 13 0 "GND"»
+  «net (-2200,3000) 1 14 0 "VCC"»
+  «net (-2200,1800) 1 14 0 "Venable"»
+  «net (1600,3000) 1 14 0 "VCC"»
+  «net (-100,900) 1 11 0 "Venable"»
+  «net (3400,1800) 1 14 0 "Vsclk"»
+  «net (3400,2400) 1 14 0 "Vmosi"»
+  «net (3400,2100) 1 14 0 "Vmiso"»
+  «net (3400,1200) 1 14 0 "Vss1"»
+  «net (3400,900) 1 14 0 "Vss2"»
+  «net (6700,3000) 1 14 0 "VCC"»
+  «net (8400,1400) 1 13 0 "GND"»
+  «net (6700,200) 1 14 0 "VCC"»
+  «net (8400,-400) 1 7 0 "VOUT"»
+  «net (8400,2400) 1 14 0 "VIN"»
+  «junction (5000,1800)»
+  «junction (4700,2100)»
+  «junction (4400,2400)»
+  «wire (-2200,1700) (-2200,1800) "Venable"»
+  «wire (-2200,1200) (-2200,1300) "GND"»
+  «wire (-2200,2900) (-2200,3000) "VCC"»
+  «wire (-2200,2400) (-2200,2500) "GND"»
+  «wire (1600,3000) (1600,2800) "VCC"»
+  «wire (200,900) (-100,900) "Venable"»
+  «wire (3400,2400) (3000,2400) "Vmosi"»
+  «wire (3400,2100) (3000,2100) "Vmiso"»
+  «wire (4000,1500) (5600,1500) "Vss1"»
+  «wire (5600,2400) (4400,2400) "Vmosi"»
+  «wire (4400,2400) (3400,2400) "Vmosi"»
+  «wire (4700,2100) (5600,2100) "Vmiso"»
+  «wire (5600,1800) (5000,1800) "Vsclk"»
+  «wire (3400,1800) (3000,1800) "Vsclk"»
+  «wire (6700,3000) (6700,2700) "VCC"»
+  «wire (8400,2000) (8400,2400) "VIN"»
+  «wire (8400,1400) (8400,1600) "GND"»
+  «wire (8400,2400) (7700,2400) "VIN"»
+  «wire (6700,200) (6700,-100) "VCC"»
+  «wire (4000,-1300) (5600,-1300) "Vss2"»
+  «wire (5000,1800) (5000,-1000) "Vsclk"»
+  «wire (5000,-1000) (5600,-1000) "Vsclk"»
+  «wire (4700,2100) (4700,-700) "Vmiso"»
+  «wire (4700,-700) (5600,-700) "Vmiso"»
+  «wire (4400,2400) (4400,-400) "Vmosi"»
+  «wire (4400,-400) (5600,-400) "Vmosi"»
+  «wire (8400,-400) (7700,-400) "VOUT"»
+  «wire (3400,2100) (4700,2100) "Vmiso"»
+  «wire (5000,1800) (3400,1800) "Vsclk"»
+  «wire (3400,900) (3000,900) "Vss2"»
+  «wire (4000,-1300) (4000,900) "Vss2"»
+  «wire (4000,900) (3400,900) "Vss2"»
+  «wire (3400,1200) (4000,1200) "Vss1"»
+  «wire (4000,1200) (4000,1500) "Vss1"»
+  «wire (3000,1200) (3400,1200) "Vss1"»
+  «text (600,-150) 1 7 1 0x1000000 -1 -1 ".param SpiFreqParm=44.1KHz"»
+  «text (-4600,50) 1 7 0 0x1000000 -1 -1 ".param SpiClkPeriod=1/SpiFreqParm"»
+  «text (-4600,-300) 1 7 0 0x1000000 -1 -1 ".plot V(Vsclk)"»
+  «text (-4600,-500) 1 7 0 0x1000000 -1 -1 ".plot V(Vmiso) V(Vmosi)"»
+  «text (-4600,-700) 1 7 0 0x1000000 -1 -1 ".plot V(Vin) V(Vout)"»
+  «text (-4600,-900) 1 7 0 0x1000000 -1 -1 ".plot V(Venable)"»
+  «text (600,-950) 1 7 0 0x1000000 -1 -1 ".tran 2mS"»
+  «text (600,-350) 1 7 0 0x1000000 -1 -1 ".param SpiModeParm=0"»
+  «text (-5900,5650) 1.6 7 1 0x1000000 -1 -1 "This is a demonstration of how easy it is to use the SpiIO framework to implement new SPI slave devices.\n \nThis started with a copy of the DemoSpiIO.qsch (this DemoSpi_Pot.qsch) and copied the original SpiDAC.qsch to SpiPot.qsch.\n \nThen we copied SpiDAC.qsch and added a voltage-controlled pot.  Change DAC reference voltage to match the 1V pot control\nvoltage range, add a pass-through parameter, and we're done.  It's that easy.  No DLL changes were required."»
+  «text (600,-550) 1 7 0 0x1000000 -1 -1 ".param SpiFreqParm=44.1K*2*10"»
+  «text (-5200,1650) 1 7 1 0x1000000 -1 -1 "Venable triggers a SPI read/write\nof the ADC/DAC on the falling\nedge of the pulse."»
+  «text (-5900,3800) 1.6 7 1 0x1000000 -1 -1 "See SpiIO_Dev_Doc.pdf for information about using/modifying the SPI components."»
+  «text (5900,-1700) 1 7 1 0x1000000 -1 -1 "Added RPOT attribute."»
+»
+

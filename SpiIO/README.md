@@ -8,7 +8,7 @@ See the SpiIO_Dev_Doc.pdf document for information about using and customizing  
 
 ***You have been warned.***
 
-## Files
+## Original SPI Framework Files
 
 * SpiIO_Dev_Doc.pdf &mdash; Developer documentation for using/modifying the components.
 * DemoSpiIO.qsch &mdash; The top-level QSpice schematic demonstrating the master and slave components.
@@ -25,3 +25,11 @@ See the SpiIO_Dev_Doc.pdf document for information about using and customizing  
 * SpiIO.h &mdash; SPI serial buffer class and SPI mode management code.
 
 The code compiles with MS VC.
+
+## SpiPot Component (A Framework Demo)
+
+These two files demonstrate how easy it is to use the SpiIO framework to implement a new SPI slave device.  This SPI potentiometer slave started with a copy of DemoSpiIO.qsch, a copy of SpiDAC.qsch, and my voltage-controlled potentiometer subcircuit/symbol (see Pot_Vctrl.qsym in the Miscellany folder).  No C-Block code changes required.
+
+* DemoSpiIO_Pot.qsch &mdash; The top-level demonstration schematic.
+* SpiPot.qsch &mdash; The SPI potentiometer slave device.
+
