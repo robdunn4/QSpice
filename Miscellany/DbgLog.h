@@ -16,9 +16,7 @@
 
 #include <cstdio>
 #include <cstdarg>
-
-// fwd decl -- must be in main unit
-void display(const char *fmt, ...);
+#include <time.h>   // for DMC msleep() only
 
 // convenience #defines -- use LOG() inside functions that have a time parameter
 // named "t" that contains the simulation time-point; use LOG() if you don't
@@ -45,6 +43,18 @@ public:
   ~DbgLog() {
     fprintf(file, "\n*** EOF ***\n");
     fclose(file);
+  }
+
+  // internal class copy of QSpice function to remove dependencies
+  void display(const char *fmt, ...) {
+    msleep(30);
+    fflush(stdout);
+    va_list args = {0};
+    va_start(args, fmt);
+    vprintf(fmt, args);
+    va_end(args);
+    fflush(stdout);
+    msleep(30);
   }
 
   void log(int lineNbr, const char *fmt...) {
