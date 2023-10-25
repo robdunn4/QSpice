@@ -11,10 +11,15 @@ This is an attempt to de-mystify C-Block component development.  The first coupl
 * CBlock_Basics.qsch &mdash; An incomplete tutorial schematic with C-Block component (EvilAmp).
 * evilamp.cpp &mdash; Sample DLL source for CBlock_Basics stuff.
 
+## C-Block Debugging
+
+DbgLog &mdash; A small utility class to write debugging messages to a log file.
+
+* DbgLog.pdf &mdash; Documentation for the DbgLog class.
+* DbgLog.h &mdash; The DbgLog header file (declares and defines the DbgLog class).
+* DbgLogTest.qsch &mdash; A test schematic with a test component to demonstrate the logging features.
+* DbgLogTest.cpp &mdash; A test component to demonstrate the logging features.
+
 ## C-Block Templates
 
 TODO:  "Improved" templates for C-Block code.
-
-## C-Block Debugging
-
-TODO:  Tools for reducing the pains of debugging C-Block code.
