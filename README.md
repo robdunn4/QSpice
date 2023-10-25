@@ -17,5 +17,8 @@ QSpice C-Block code and schematics to implement custom SPI master & slave compon
 ## PID Controller Component
 QSpice C-Block implementation of a discrete PID controller courtesy of KSKelvin.
 
+## C-Block Documentation
+Various documentation and tools relevant to C-Block component development.
+
 ## Miscellany
 Small bits, odds and ends.

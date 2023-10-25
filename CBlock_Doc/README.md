@@ -1,6 +1,6 @@
 # CBlock_Doc
 
-Various documentation relevant to C-Block component development.
+Various documentation and tools relevant to C-Block component development.
 
 
 ## C-Block Basics
