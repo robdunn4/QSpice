@@ -33,3 +33,13 @@ My "more modern C++" C-Block template.  Supports DMC and MSVC compilers.
 * Cblock_DM.h &mdash; Header for DMC compiler.
 * Cblock_VC.h &mdash; Header for MSVC compiler.
 * DbgLog*.h &mdash; DbgLog headers (see above).
+
+## Trun() Function Tests
+
+Want to understand how the QSpice C-Block Trunc() function works?  Maybe start with this code to test your assumptions.
+
+*Caution: This is ugly code, poorly commented, and not intended for beginners.*
+
+* TruncTest.zip &mdash; QSpice schematic and C-Block source files.
+
+Please do share what you learn.
