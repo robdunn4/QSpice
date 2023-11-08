@@ -34,7 +34,7 @@ My "more modern C++" C-Block template.  Supports DMC and MSVC compilers.
 * Cblock_VC.h &mdash; Header for MSVC compiler.
 * DbgLog*.h &mdash; DbgLog headers (see above).
 
-## Trun() Function Tests
+## Trunc() Function Tests
 
 Want to understand how the QSpice C-Block Trunc() function works?  Maybe start with this code to test your assumptions.
 
