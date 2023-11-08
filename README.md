@@ -5,6 +5,13 @@ Tools, components, symbols, code, etc., for Qorvo's free QSpice circuit simulato
 
 [The QSpice forum is here](https://forum.qorvo.com/c/qspice/)
 
+**Other Recommended Sites**
+
+[QSpice Forum @KSKelvin's Github repo](https://github.com/KSKelvin-Github/Qspice/)
+
+[QSpice Forum @Mgyger's GitLab repo](https://gitlab.com/mgyger/qspice-symbols/)
+
+
 ## WavIO Components
 QSpice C-Block/DLL components to read/write basic audio WAV files.  Source code and examples.
 
