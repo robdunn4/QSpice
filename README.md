@@ -12,6 +12,9 @@ Tools, components, symbols, code, etc., for Qorvo's free QSpice circuit simulato
 [QSpice Forum @Mgyger's GitLab repo](https://gitlab.com/mgyger/qspice-symbols/)
 
 
+## GPIO Components
+QSpice symbol and class to implement general purpose I/O pins (i.e., micro-controller tri-state pins).
+
 ## WavIO Components
 QSpice C-Block/DLL components to read/write basic audio WAV files.  Source code and examples.
 
