@@ -1,8 +1,8 @@
 /*------------------------------------------------------------------------------
  * DbgLog.h -- Log debugging information to file.
  *
- * This header #includes the appropriate *_DM.h or *_VC.h compiler-specific
- * header.
+ * This header #includes the appropriate *_DM.h, *_MGW, or *_VC.h
+ * compiler-specific header.
  *
  * See DbgLogTest.cpp for a demonstration of logging with this toolset.
  *
@@ -16,11 +16,13 @@
 #include "DbgLog_DM.h"
 #elif defined(_MSC_VER)
 #include "DbgLog_VC.h"
+#elif defined(__MINGW32__)
+#include "DbgLog_MGW.h"
 #else
 #error "Compiler not recognized."
 #endif
 
-#endif DBGLOG_H
+#endif   // DBGLOG_H
 /*------------------------------------------------------------------------------
  * End of DbgLog.h
  *----------------------------------------------------------------------------*/

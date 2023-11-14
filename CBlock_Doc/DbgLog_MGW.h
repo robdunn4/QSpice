@@ -1,5 +1,5 @@
 /*------------------------------------------------------------------------------
- * DbgLog_VC.h -- Log debugging information to file, Microsoft VC version.
+ * DbgLog_MGW.h -- Log debugging information to file, Microsoft VC version.
  *
  * See DbgLogTest.cpp for a demonstration of logging with this toolset.
  *
@@ -10,8 +10,8 @@
  * bad coding style but, for a single compilation unit (i.e., a single *.cpp),
  * it's simple and doesn't require more complicated multi-object compiles/links.
  *----------------------------------------------------------------------------*/
-#ifndef DBGLOG_VC_H
-#define DBGLOG_VC_H
+#ifndef DBGLOG_MGW_H
+#define DBGLOG_MGW_H
 
 #include <cstdio>
 #include <chrono>
@@ -81,7 +81,7 @@ protected:
   unsigned int lineCnt;
 };
 
-#endif   // DBGLOG_VC_H
+#endif   // DBGLOG_MGW_H
 /*------------------------------------------------------------------------------
- * End of DbgLog_VC.h
+ * End of DbgLog_MGW.h
  *----------------------------------------------------------------------------*/

@@ -13,18 +13,19 @@ This is an attempt to de-mystify C-Block component development.  The first coupl
 
 ## C-Block Debugging
 
-DbgLog &mdash; A small utility class to write debugging messages to a log file.  Supports the DMC and MSVC compilers.
+DbgLog &mdash; A small utility class to write debugging messages to a log file.  Supports DMC, MSVC, and MinGW compilers.
 
 * DbgLog.pdf &mdash; Documentation for the DbgLog class.
-* DbgLog.h &mdash; The DbgLog header file.  Redirects to DMC or MSVC versions of header.
-* DbgLog_DM.h &mdash; Header file for DMC (declares and defines the DbgLog class).
-* DbgLog_VC.h &mdash; Header file for MSVC (declares and defines the DbgLog class).
+* DbgLog.h &mdash; The DbgLog header file.  Redirects to DMC, MSVC, or MinGW versions of header.
+* DbgLog_DM.h &mdash; Header file for DMC.
+* DbgLog_VC.h &mdash; Header file for MSVC.
+* DbgLog_MGW.h &mdash; Header file for MinGW.
 * DbgLogTest.qsch &mdash; A test schematic with a test component to demonstrate the logging features.
-* DbgLogTest.cpp &mdash; A test component to demonstrate the logging features.  (Compiles cleanly under DMC only.)
+* DbgLogTest.cpp &mdash; A test component to demonstrate the logging features.
 
 ## C-Block Templates
 
-My "more modern C++" C-Block template.  Supports DMC and MSVC compilers.
+My "more modern C++" C-Block template.  Supports DMC, MSVC, and MinGW compilers.
 
 * CBlockTemplates.pdf &mdash; Documentation for the base template.
 * CBlockTemplate.qsch &mdash; A test schematic for the base template.
@@ -32,6 +33,7 @@ My "more modern C++" C-Block template.  Supports DMC and MSVC compilers.
 * Cblock.h &mdash; Base header, redirects to DMC and VC header versions.
 * Cblock_DM.h &mdash; Header for DMC compiler.
 * Cblock_VC.h &mdash; Header for MSVC compiler.
+* Cblock_MGW.h &mdash; Header for MinGW compiler.
 * DbgLog*.h &mdash; DbgLog headers (see above).
 
 ## Trunc() Function Tests

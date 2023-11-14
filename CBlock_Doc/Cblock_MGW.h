@@ -1,24 +1,18 @@
 /*==============================================================================
- * Cblock_VC.h -- Header file for custom QSpice CBlock template for MSVC.
+ * Cblock_MGW.h -- Header file for custom QSpice CBlock template for MinGW.
  *
  * Note:  This header contains both declarations and implementations.  This is
  * bad coding style but, for a single compilation unit (i.e., a single *.cpp),
  * it's simple and doesn't require more complicated multi-object compiles/links.
  *============================================================================*/
-#ifndef CBLOCK_VC_H
-#define CBLOCK_VC_H
+#ifndef CBLOCK_MGW_H
+#define CBLOCK_MGW_H
 
-#define TOOLSET "MSVC"
+#define TOOLSET "MinGW"
 
 #include <cstdio>
 #include <chrono>
 #include <thread>
-
-// #ifndef _MSVC_LANG
-// #error This header requires MSVC
-// #elif _MSVC_LANG < 201703L
-// #pragma message("This header requires C++17 standard or newer")
-// #endif
 
 // // the data type union for ports and attributes
 // union uData {
@@ -55,7 +49,7 @@ int __stdcall DllMain(void *module, unsigned int reason, void *reserved) {
   return 1;
 }
 
-#endif   // CBLOCK_VC_H
+#endif   // CBLOCK_MGW_H
 /*==============================================================================
- * End of Cblock_VC.h
+ * End of Cblock_MGW.h
  *============================================================================*/
