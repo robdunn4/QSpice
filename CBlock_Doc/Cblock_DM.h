@@ -16,6 +16,23 @@
 // were stuck with this for DMC because of the msleep() call
 #include <time.h>
 
+// the data type union for ports and attributes
+union uData {
+  bool                   b;
+  char                   c;
+  unsigned char          uc;
+  short                  s;
+  unsigned short         us;
+  int                    i;
+  unsigned int           ui;
+  float                  f;
+  double                 d;
+  long long int          i64;
+  unsigned long long int ui64;
+  char                  *str;
+  unsigned char         *bytes;
+};
+
 #define msg(...) msg_(__LINE__, __VA_ARGS__)
 
 // QSpice printf() to Output window with embedded process waits...
