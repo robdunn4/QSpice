@@ -45,3 +45,12 @@ Want to understand how the QSpice C-Block Trunc() function works?  Maybe start w
 * TruncTest.zip &mdash; QSpice schematic and C-Block source files.
 
 Please do share what you learn.
+
+## Simulation Step Detection
+
+When a QSpice simulation contains a ".step" directive and a C-Block component really needs to know which step is currently simulating, well, it's not as straight-forward as you might think.  This code demonstrates a reliable way to solve this problem.
+
+* StepCounter folder &mdash; DLL code and demonstration schematic.
+
+Note:  Requires QSpice 2023.12.31 release or later.
+

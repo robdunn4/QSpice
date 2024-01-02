@@ -1,0 +1,61 @@
+ÿØÿÛ«schematic
+  «component (0,900) 0 0
+    «symbol
+      «type: Ø(.DLL)»
+      «shorted pins: false»
+      «rect (-800,300) (200,-200) 0 0 0 0x4000000 0x4000000 -1 1 -1»
+      «text (-300,150) 1 12 0 0x1000000 -1 -1 "X1"»
+      «text (-300,50) 0.681 13 0 0x1000000 -1 -1 "StepCtr"»
+      «pin (-800,100) (0,0) 1 7 145 0x0 -1 "Vin"»
+      «pin (200,100) (0,0) 1 11 146 0x0 -1 "Out"»
+    »
+  »
+  «component (-2600,800) 0 0
+    «symbol Vsin
+      «type: V»
+      «description: Independent Voltage Source»
+      «shorted pins: false»
+      «line (0,-130) (0,-200) 0 0 0x1000000 -1 -1»
+      «line (0,200) (0,130) 0 0 0x1000000 -1 -1»
+      «rect (-25,77) (25,73) 0 0 0 0x1000000 0x3000000 -1 0 -1»
+      «rect (-2,50) (2,100) 0 0 0 0x1000000 0x3000000 -1 0 -1»
+      «rect (-25,-73) (25,-77) 0 0 0 0x1000000 0x3000000 -1 0 -1»
+      «ellipse (-130,130) (130,-130) 0 0 0 0x1000000 0x1000000 -1 -1»
+      «arc3p (0,0) (60,0) (30,0) 0 0 0x1000000 -1 -1»
+      «arc3p (0,0) (-60,0) (-30,0) 0 0 0x1000000 -1 -1»
+      «text (180,150) 1 7 0 0x1000000 -1 -1 "V1"»
+      «text (180,-150) 1 7 0 0x1000000 -1 -1 "SIN 0 X 1K"»
+      «pin (0,200) (0,0) 1 0 0 0x0 -1 "+"»
+      «pin (0,-200) (0,0) 1 0 0 0x0 -1 "-"»
+    »
+  »
+  «component (0,200) 0 0
+    «symbol
+      «type: Ø(.DLL)»
+      «shorted pins: false»
+      «rect (-800,300) (200,-200) 0 0 0 0x4000000 0x4000000 -1 1 -1»
+      «text (-300,150) 1 12 0 0x1000000 -1 -1 "X2"»
+      «text (-300,50) 0.681 13 0 0x1000000 -1 -1 "StepCtr"»
+      «pin (-800,100) (0,0) 1 7 145 0x0 -1 "Vin"»
+      «pin (200,100) (0,0) 1 11 146 0x0 -1 "Out"»
+    »
+  »
+  «net (-900,1000) 1 11 0 "Vin"»
+  «net (300,1000) 1 7 0 "Vout1"»
+  «net (-2600,600) 1 13 0 "GND"»
+  «net (300,300) 1 7 0 "Vout2"»
+  «net (-2600,1000) 1 14 0 "Vin"»
+  «net (-900,300) 1 11 0 "Vin"»
+  «wire (-900,1000) (-800,1000) "Vin"»
+  «wire (-900,300) (-800,300) "Vin"»
+  «wire (300,1000) (200,1000) "Vout1"»
+  «wire (300,300) (200,300) "Vout2"»
+  «text (-2750,250) 1 7 0 0x1000000 -1 -1 ".tran 10ms"»
+  «text (-2750,-50) 1 7 0 0x1000000 -1 -1 ".plot V(Vout1)"»
+  «text (-2750,-200) 1 7 0 0x1000000 -1 -1 ".step param X list 1 1 1"»
+  «text (-2750,100) 1 7 0 0x1000000 -1 -1 ".plot V(Vin)"»
+  «text (-2830,2230) 0.8 7 1 0x1000000 -1 -1 "This schematic demonstrates the StepCtr.cpp DLL code which \nreliably detects the current simulation step # when multiple\ncomponent instances are present. Requires QSpice 2023.12.31\nrelease or later."»
+  «text (-2850,1600) 0.8 7 1 0x1000000 -1 -1 "The input is stepped three times (at the same 1V) and the\ncomponent simply multiplies the input by the detected current\nstep # at the output."»
+  «text (-2800,-750) 0.8 7 1 0x1000000 -1 -1 "Note: The output demonstrates that the order of instance\ndestruction is FIFO and NOT the LIFO that I expected...."»
+»
+
