@@ -7,6 +7,8 @@ Tools, components, symbols, code, etc., for Qorvo's free QSpice circuit simulato
 
 **Other Recommended Sites**
 
+[The PyQSPICE Scripting Tool](https://github.com/Qorvo/PyQSPICE)
+
 [QSpice Forum @KSKelvin's Github repo](https://github.com/KSKelvin-Github/Qspice/)
 
 [QSpice Forum @Mgyger's GitLab repo](https://gitlab.com/mgyger/qspice-symbols/)
