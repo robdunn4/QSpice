@@ -1,17 +1,18 @@
 /*==============================================================================
- * Cblock_MGW.h -- Header file for custom QSpice CBlock template for MinGW.
+ * CBlockBasics2_MGW.h -- Header file for custom QSpice CBlock template for
+ *MinGW.
  *
  * Note:  This header contains both declarations and implementations.  This is
  * bad coding style but, for a single compilation unit (i.e., a single *.cpp),
  * it's simple and doesn't require more complicated multi-object compiles/links.
  *============================================================================*/
-#ifndef CBLOCK_MGW_H
-#define CBLOCK_MGW_H
+#ifndef CBlockBasics2_MGW_H
+#define CBlockBasics2_MGW_H
 
 #define TOOLSET "MinGW"
 
-#include <cstdio>
 #include <chrono>
+#include <cstdio>
 #include <thread>
 
 // the data type union for ports and attributes
@@ -49,7 +50,7 @@ int __stdcall DllMain(void *module, unsigned int reason, void *reserved) {
   return 1;
 }
 
-#endif   // CBLOCK_MGW_H
+#endif   // CBlockBasics2_MGW_H
 /*==============================================================================
- * End of Cblock_MGW.h
+ * End of CBlockBasics2_MGW.h
  *============================================================================*/

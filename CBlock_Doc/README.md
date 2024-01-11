@@ -46,11 +46,23 @@ Want to understand how the QSpice C-Block Trunc() function works?  Maybe start w
 
 Please do share what you learn.
 
-## Simulation Step Detection
+## C-Block Basics #2
 
-When a QSpice simulation contains a ".step" directive and a C-Block component really needs to know which step is currently simulating, well, it's not as straight-forward as you might think.  This code demonstrates a reliable way to solve this problem.
-
-* StepCounter folder &mdash; DLL code and demonstration schematic.
+A "properly coded" C-Block component should handle multiple schematic instances, multiple simulation steps, and shared resources (e.g., a single shared log file).  Here is example component code for both C and C++.
 
 Note:  Requires QSpice 2023.12.31 release or later.
 
+#### Documentation (C & C++)
+* CBlockBasics2.pdf &mdash; Pending.  (Working code is easy.  Coherent documentation takes more time....)
+
+#### C Code Versions (DMC)
+
+* CBlockBasics2_c.qsch &mdash; Demonstration schematic.
+* CBlockBasics2_c.cpp &mdash; Demonstration C-Block code.
+
+#### C++ Code Versions (DMC, MSVC, & MinGW)
+
+* CBlockBasics2.qsch &mdash; Demonstration schematic.
+* CBlockBasics2.cpp &mdash; Demonstration C-Block code.
+* CBlockBasics2.h &mdash; Generic header (includes compiler-specific headers).
+* CBlockBasics_*.h &mdash; Compiler-specific headers.

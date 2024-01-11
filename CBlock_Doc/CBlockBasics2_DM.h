@@ -1,18 +1,20 @@
 /*==============================================================================
- * Cblock_VC.h -- Header file for custom QSpice CBlock template for MSVC.
+ * CBlockBasics2_DM.h -- Header file for custom QSpice CBlock template for DMC.
  *
  * Note:  This header contains both declarations and implementations.  This is
  * bad coding style but, for a single compilation unit (i.e., a single *.cpp),
  * it's simple and doesn't require more complicated multi-object compiles/links.
  *============================================================================*/
-#ifndef CBLOCK_VC_H
-#define CBLOCK_VC_H
+#ifndef CBlockBasics2_DM_H
+#define CBlockBasics2_DM_H
 
-#define TOOLSET "MSVC"
+#define TOOLSET "DMC"
 
+#include <cstdarg>
 #include <cstdio>
-#include <chrono>
-#include <thread>
+
+// were stuck with this for DMC because of the msleep() call
+#include <time.h>
 
 // the data type union for ports and attributes
 union uData {
@@ -34,14 +36,16 @@ union uData {
 #define msg(...) msg_(__LINE__, __VA_ARGS__)
 
 // QSpice printf() to Output window with embedded process waits...
-template <typename... Args>
-void msg_(int lineNbr, const char *fmt, Args... args) {
-  std::this_thread::sleep_for(std::chrono::milliseconds(30));
+void msg_(int lineNbr, const char *fmt, ...) {
+  msleep(30);   // proprietary to Digital Mars libraries?
   fflush(stdout);
   fprintf(stdout, PROGRAM_INFO " @%d: ", lineNbr);
-  fprintf(stdout, fmt, args...);
+  va_list args = {0};
+  va_start(args, fmt);
+  vprintf(fmt, args);
+  va_end(args);
   fflush(stdout);
-  std::this_thread::sleep_for(std::chrono::milliseconds(30));
+  msleep(30);   // proprietary to Digital Mars libraries?
 }
 
 // int DllMain() must exist and return 1 for a process to load the .DLL
@@ -49,7 +53,7 @@ int __stdcall DllMain(void *module, unsigned int reason, void *reserved) {
   return 1;
 }
 
-#endif   // CBLOCK_VC_H
+#endif   // CBlockBasics2_DM_H
 /*==============================================================================
- * End of Cblock_VC.h
+ * End of CBlockBasics2_DM.h
  *============================================================================*/

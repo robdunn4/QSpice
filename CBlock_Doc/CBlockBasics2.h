@@ -1,27 +1,27 @@
 /*------------------------------------------------------------------------------
- * Cblock.h -- Header file for custom QSpice CBlock template.
+ * CBlockBasics2.h -- Header file for custom QSpice CBlock template.
  *
  * This header #includes the appropriate *_DM.h, *_MGW.h or *_VC.h
  * compiler-specific header.
  *----------------------------------------------------------------------------*/
-#ifndef CBLOCK_H
-#define CBLOCK_H
+#ifndef CBlockBasics2_H
+#define CBlockBasics2_H
 
 #if defined(__DMC__)
-#include "Cblock_DM.h"
+#include "CBlockBasics2_DM.h"
 
 #elif defined(_MSC_VER)
-#include "Cblock_VC.h"
+#include "CBlockBasics2_VC.h"
 
 #elif defined(__MINGW32__)
-#include "Cblock_MGW.h"
+#include "CBlockBasics2_MGW.h"
 #endif
 
 #ifndef TOOLSET
 #error "Compiler not recognized."
 #endif
 
-#endif   // CBLOCK_H
+#endif   // CBlockBasics2_H
 /*==============================================================================
- * End of Cblock.h
+ * End of CBlockBasics2.h
  *============================================================================*/
