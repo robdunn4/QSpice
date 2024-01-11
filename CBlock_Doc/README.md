@@ -30,7 +30,7 @@ My "more modern C++" C-Block template.  Supports DMC, MSVC, and MinGW compilers.
 * CBlockTemplates.pdf &mdash; Documentation for the base template.
 * CBlockTemplate.qsch &mdash; A test schematic for the base template.
 * Cblock.cpp &mdash; The base template.
-* Cblock.h &mdash; Base header, redirects to DMC and VC header versions.
+* Cblock.h &mdash; Base header, redirects to DMC, MSVC, and MinGW header versions.
 * Cblock_DM.h &mdash; Header for DMC compiler.
 * Cblock_VC.h &mdash; Header for MSVC compiler.
 * Cblock_MGW.h &mdash; Header for MinGW compiler.
@@ -53,7 +53,7 @@ A "properly coded" C-Block component should handle multiple schematic instances,
 Note:  Requires QSpice 2023.12.31 release or later.
 
 #### Documentation (C & C++)
-* CBlockBasics2.pdf &mdash; Pending.  (Working code is easy.  Coherent documentation takes more time....)
+* CBlockBasics2.pdf ("Shared Resources & Refernce Counting") &mdash; The code samples demonstrate *how*.  This document attempts to explain *why*.
 
 #### C Code Versions (DMC)
 
