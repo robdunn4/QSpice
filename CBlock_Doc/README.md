@@ -7,7 +7,7 @@ Various documentation and tools relevant to C-Block component development.
 
 This is an attempt to de-mystify C-Block component development.  The first couple of sections should (I hope) get less experienced C/C++ coders past the first hurdles.  Remaining sections share my (very likely wrong and definitely incomplete) understanding of the MaxExtStepTime() and Trunc() functions.
 
-* CBlock_Basics.pdf &mdash; The basics document.
+* CBlock_Basics.pdf ("The Absolute Basics") &mdash; The basic concepts.
 * CBlock_Basics.qsch &mdash; An incomplete tutorial schematic with C-Block component (EvilAmp).
 * evilamp.cpp &mdash; Sample DLL source for CBlock_Basics stuff.
 
@@ -48,9 +48,7 @@ Please do share what you learn.
 
 ## C-Block Basics #2
 
-A "properly coded" C-Block component should handle multiple schematic instances, multiple simulation steps, and shared resources (e.g., a single shared log file).  Here is example component code for both C and C++.
-
-Note:  Requires QSpice 2023.12.31 release or later.
+A "properly coded" C-Block component should handle multiple schematic instances, multiple simulation steps, and shared resources.  Here is sample component code for both C and C++.
 
 #### Documentation (C & C++)
 * CBlockBasics2.pdf ("Shared Resources & Refernce Counting") &mdash; The code samples demonstrate *how*.  This document attempts to explain *why*.
@@ -58,11 +56,19 @@ Note:  Requires QSpice 2023.12.31 release or later.
 #### C Code Versions (DMC)
 
 * CBlockBasics2_c.qsch &mdash; Demonstration schematic.
-* CBlockBasics2_c.cpp &mdash; Demonstration C-Block code.
+* CBlockBasics2_c.cpp &mdash; Demonstration C-Block DLL code.
 
 #### C++ Code Versions (DMC, MSVC, & MinGW)
 
 * CBlockBasics2.qsch &mdash; Demonstration schematic.
-* CBlockBasics2.cpp &mdash; Demonstration C-Block code.
+* CBlockBasics2.cpp &mdash; Demonstration C-Block DLL code.
 * CBlockBasics2.h &mdash; Generic header (includes compiler-specific headers).
 * CBlockBasics_*.h &mdash; Compiler-specific headers.
+
+## C-Block Basics #3
+
+Execute C-Block code when a QSpice simulation starts/ends using DllMain().  (Builds on C-Block Basics #2.)
+
+* CBlockBasics3.pdf ("DllMain() & Simulation Start/End Tasks") &mdash; How DllMain() works and how we can use it.
+* CBlockBasics3_c.qsch &mdash; Demonstration schematic.
+* CBlockBasics3_c.cpp &mdash; Demonstration C-Block DLL code (C-Style).
