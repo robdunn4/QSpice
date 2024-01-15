@@ -84,7 +84,7 @@ int __stdcall DllMain(void *module, unsigned int reason, void *reserved) {
     }
 
     display("Logfile opened for overwrite (\"%s\").\n", ::LogFname);
-    fprintf(::LogFile, "Toolset=%s\n", "DMC");
+    fprintf(::LogFile, "*** Start of File ***\n");
     break;
 
   case DLL_THREAD_ATTACH:   // Do thread-specific initialization.
@@ -94,11 +94,12 @@ int __stdcall DllMain(void *module, unsigned int reason, void *reserved) {
     break;
 
   case DLL_PROCESS_DETACH:   // Perform any necessary cleanup.
-    if (reserved != nullptr) {
+    // ignoring "reserved" parameter -- don't care why...
+    if (::LogFile) {
+      fprintf(::LogFile, "*** End of File ***\n");
       fclose(::LogFile);
       ::LogFile = nullptr;
       display("Logfile closed.\n");
-      break;
     }
     break;
   }
