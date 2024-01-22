@@ -1,0 +1,88 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"type": "cppbuild",
+			"label": "*** MinGW 32-bit DLL *** g++.exe build active file",
+			"command": "C:\\msys64\\mingw32\\bin\\g++.exe",
+			"args": [
+				"-O2",
+				"-std=c++17",
+				"${file}",
+				"-shared",
+				"-static",
+				"-o",
+				"${fileDirname}\\${fileBasenameNoExtension}.dll"
+			],
+			"options": {
+				"cwd": "C:\\msys64\\mingw32\\bin"
+			},
+			"problemMatcher": [
+				"$gcc"
+			],
+			"group": "build",
+			"detail": "compiler: C:\\msys64\\mingw32\\bin\\g++.exe"
+		},
+		{
+			"type": "cppbuild",
+			"label": "*** DMC 32-bit DLL *** dmc.exe build active file",
+			"command": "C:\\program files\\qspice\\dm\\bin\\dmc.exe",
+			"args": [
+				"-mn",
+				"-WD",
+				"${file}",
+				"kernel32.lib"
+			],
+			"options": {},
+			"problemMatcher": [],
+			"group": {
+				"kind": "build",
+				"isDefault": true
+			},
+			"detail": "compiler: C:\\Program Files\\QSPICE\\dm\\bin\\dmc.exe"
+		},
+		{
+			"type": "cppbuild",
+			"label": "*** MSVC 32-bit DLL *** cl.exe build active file",
+			"command": "cl.exe",
+			"args": [
+				"/std:c++17",
+				"/EHsc",
+				"/LD",
+				"${file}",
+				"/link",
+				"/PDBSTRIPPED",
+				"/out:${fileBasenameNoExtension}.dll"
+			],
+			"options": {
+				"cwd": "${fileDirname}"
+			},
+			"problemMatcher": [
+				"$msCompile"
+			],
+			"group": "build",
+			"detail": "compiler: cl.exe"
+		},
+		{
+			"type": "cppbuild",
+			"label": "*** MSVC 32-bit DLL DBG *** cl.exe build active file",
+			"command": "cl.exe",
+			"args": [
+				"/std:c++17",
+				"/EHsc",
+				"/LD",
+				"${file}",
+				"/link",
+				"/out:${fileBasenameNoExtension}.dll"
+			],
+			"options": {
+				"cwd": "${fileDirname}"
+			},
+			"problemMatcher": [
+				"$msCompile"
+			],
+			"group": "build",
+			"detail": "compiler: cl.exe"
+		}
+	]
+  }

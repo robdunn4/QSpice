@@ -15,7 +15,6 @@ Tools, components, symbols, code, etc., for Qorvo's free QSpice circuit simulato
 
 [QSpice Forum @physicboy's Github repo](https://github.com/physicboy/QSPICE)
 
-
 ## GPIO Components
 QSpice symbol and class to implement general purpose I/O pins (i.e., micro-controller tri-state pins).
 
@@ -33,6 +32,9 @@ QSpice C-Block implementation of a discrete PID controller courtesy of KSKelvin.
 
 ## C-Block Documentation
 Various documentation and tools relevant to C-Block component development.
+
+## VSCode Configuration
+Build configurations for C-Block component development using the VSCode IDE.
 
 ## Miscellany
 Small bits, odds and ends.
