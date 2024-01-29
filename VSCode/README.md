@@ -12,6 +12,8 @@ To build a C-Block DLL, make the *.cpp file the active editor item and select "R
 
 Notes:
 
+* Visual Studio Code (VSCode/VSC) and Microsoft Visual Studio (MSVS) are not the same thing.  VSCode is a Microsoft-supported open source IDE.  It does not contain a compiler so you'll need a compiler toolset.  VSCode executables, sources, and support are available [here](https://code.visualstudio.com/).
+
 * The configuration assumes default install locations for the toolsets.  If you need to edit the *.json file for different installation locations, you can do that from within VSCode.
 
 * See CBlockTemplates.pdf elsewhere in this repo and associated code if you want to compile C-Block DLLs using all three of the above toolsets and a single codebase.
