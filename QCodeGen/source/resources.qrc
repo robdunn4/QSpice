@@ -1,0 +1,10 @@
+<RCC>
+    <qresource prefix="/images">
+        <file>resources/TAE_Logo_64x64.png</file>
+        <file>resources/TAE_Logo_128x128.png</file>
+    </qresource>
+    <qresource prefix="/templates">
+        <file>templates/qspice_better.qcgt</file>
+        <file>templates/qspice_default.qcgt</file>
+    </qresource>
+</RCC>

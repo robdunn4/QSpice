@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>726</width>
+    <height>588</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>MainWindow</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <layout class="QVBoxLayout" name="verticalLayout">
+    <item>
+     <widget class="TabBar" name="componentTabs" native="true"/>
+    </item>
+    <item>
+     <widget class="TabBar" name="detailTabs" native="true"/>
+    </item>
+    <item>
+     <widget class="QPlainTextEdit" name="textBox">
+      <property name="font">
+       <font>
+        <family>Courier New</family>
+        <pointsize>10</pointsize>
+       </font>
+      </property>
+      <property name="frameShape">
+       <enum>QFrame::NoFrame</enum>
+      </property>
+      <property name="lineWidth">
+       <number>-1</number>
+      </property>
+      <property name="undoRedoEnabled">
+       <bool>false</bool>
+      </property>
+      <property name="readOnly">
+       <bool>true</bool>
+      </property>
+      <property name="textInteractionFlags">
+       <set>Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <layout class="QHBoxLayout" name="horizontalLayout_2">
+      <item>
+       <widget class="ActionButton" name="loadSchematicBtn">
+        <property name="text">
+         <string>Open Schematic</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="ActionButton" name="loadTemplateBtn">
+        <property name="text">
+         <string>Load Template</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="ActionButton" name="reloadBtn">
+        <property name="text">
+         <string>Reload</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <spacer name="horizontalSpacer">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>40</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item>
+       <widget class="ActionButton" name="saveBtn">
+        <property name="text">
+         <string>Save</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="ActionButton" name="copyBtn">
+        <property name="text">
+         <string>Copy</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="ActionButton" name="closeBtn">
+        <property name="text">
+         <string>Close</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>726</width>
+     <height>22</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menuFile">
+    <property name="title">
+     <string>&amp;File</string>
+    </property>
+    <addaction name="loadSchAct"/>
+    <addaction name="loadTmplAct"/>
+    <addaction name="reloadAct"/>
+    <addaction name="separator"/>
+    <addaction name="saveAct"/>
+    <addaction name="separator"/>
+    <addaction name="exitAct"/>
+   </widget>
+   <widget class="QMenu" name="menuAbout">
+    <property name="title">
+     <string>&amp;Help</string>
+    </property>
+    <addaction name="helpUsingAct"/>
+    <addaction name="helpAboutAct"/>
+   </widget>
+   <widget class="QMenu" name="menuEdit">
+    <property name="title">
+     <string>Edit</string>
+    </property>
+    <addaction name="copyAct"/>
+    <addaction name="separator"/>
+    <addaction name="preferencesAct"/>
+   </widget>
+   <addaction name="menuFile"/>
+   <addaction name="menuEdit"/>
+   <addaction name="menuAbout"/>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+  <action name="loadSchAct">
+   <property name="text">
+    <string>Open Schematic</string>
+   </property>
+  </action>
+  <action name="loadTmplAct">
+   <property name="text">
+    <string>Load Template</string>
+   </property>
+  </action>
+  <action name="reloadAct">
+   <property name="text">
+    <string>Reload</string>
+   </property>
+  </action>
+  <action name="saveAct">
+   <property name="text">
+    <string>Save</string>
+   </property>
+  </action>
+  <action name="exitAct">
+   <property name="text">
+    <string>Exit</string>
+   </property>
+  </action>
+  <action name="helpAboutAct">
+   <property name="text">
+    <string>About</string>
+   </property>
+  </action>
+  <action name="helpUsingAct">
+   <property name="text">
+    <string>Using</string>
+   </property>
+  </action>
+  <action name="copyAct">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Copy</string>
+   </property>
+  </action>
+  <action name="preferencesAct">
+   <property name="text">
+    <string>Preferences</string>
+   </property>
+  </action>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>ActionButton</class>
+   <extends>QPushButton</extends>
+   <header>actionbutton.h</header>
+  </customwidget>
+  <customwidget>
+   <class>TabBar</class>
+   <extends>QWidget</extends>
+   <header>tabbar.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections/>
+</ui>
