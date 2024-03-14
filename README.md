@@ -38,3 +38,6 @@ Build configurations for C-Block component development using the VSCode IDE.
 
 ## Miscellany
 Small bits, odds and ends.
+
+## QCodeGen
+An alternative to the QSpice C-Block component code generator.

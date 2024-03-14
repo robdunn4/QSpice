@@ -2,9 +2,11 @@
     <qresource prefix="/images">
         <file>resources/TAE_Logo_64x64.png</file>
         <file>resources/TAE_Logo_128x128.png</file>
+        <file>resources/TAE_Logo.ico</file>
+        <file>resources/TAE_Logo_Icons.ico</file>
+        <file>resources/TAE_Logo_Icons2.ico</file>
     </qresource>
     <qresource prefix="/templates">
-        <file>templates/qspice_better.qcgt</file>
-        <file>templates/qspice_default.qcgt</file>
+        <file>resources/qspice_default.qcgt</file>
     </qresource>
 </RCC>

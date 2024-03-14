@@ -3,7 +3,7 @@
 
 #include "cblockdata.h"
 #include "codegenerator.h"
-#include "types.h"
+#include "strings.h"
 
 typedef StrList Block;
 typedef std::vector<Block> BlockList;
@@ -16,7 +16,7 @@ public:
 
   void reset();
 
-  void loadFile(const StrList &inStrings);
+  bool loadFile(const StrList &inStrings);
 
   LineType lineType(String str) const;
   LineType lineType(int index) const { return lineType(strList[index]); }
@@ -33,7 +33,7 @@ public:
 
 protected:
   StrList getBlockText(StrList::iterator &begIter,
-                       const StrList::iterator &endIter) const;
+      const StrList::iterator &endIter) const;
   StrList getCblkText(StrList blk) const;
   CBlockData parseCblk(StrList strList);
   bool getTextParm(const String &str, String &value, bool &isComment) const;
@@ -60,9 +60,9 @@ protected:
 
   const char *idBytes = "\xff\xd8\xff\xdb";
 
-  const unsigned char startHBlk = 0xab;
-  const unsigned char endHBlk = 0xbb;
-  const unsigned char phiChr = 0xd8;
+  const unsigned char startHBlk  = 0xab;
+  const unsigned char endHBlk    = 0xbb;
+  const unsigned char phiChr     = 0xd8;
   const unsigned char overBarChr = 0xac;
 };
 

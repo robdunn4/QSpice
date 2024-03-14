@@ -3,6 +3,5 @@
 TabBar::TabBar(QWidget *parent) : QTabBar(parent) {}
 
 void TabBar::clear() {
-  while (count())
-    removeTab(0);
+  while (count()) removeTab(0);
 }

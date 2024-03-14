@@ -1,3 +1,1 @@
-#include "appexception.h"
-
-// AppException::AppException() {}
+// for the moment, this file is intentionally empty

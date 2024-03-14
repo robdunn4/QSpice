@@ -7,15 +7,25 @@
 #include "appsettings.h"
 #include "codegenerator.h"
 #include "parser.h"
-#include "types.h"
+#include "prefsdlg.h"
+#include "strings.h"
 #include <QClipboard>
+#include <QDesktopServices>
 #include <QFileDialog>
 #include <QMessageBox>
+#include <QResource>
 
-QString tmplFileSuffix("qcgt"); // change this once decided
-QString schFileName("./test_schematics/");
-QString tmplFileName("./templates/qspice_default." + tmplFileSuffix);
-// QString tmplFileName(":/templates/templates/qspice_default.qcgt");
+// for RAII/exception handling
+class FilePtr {
+public:
+  FilePtr() : ptr(nullptr) {}
+  FilePtr(FILE *ptr) : ptr(ptr) {}
+  ~FilePtr() {
+    if (ptr) fclose(ptr);
+  }
+
+  FILE *ptr;
+};
 
 QMessageBox *msgBox;
 AboutDlg *aboutDlg;
@@ -32,35 +42,26 @@ MainWindow::MainWindow(QWidget *parent)
   setWindowTitle(AboutDlg::appNameVersion);
   aboutDlg = new AboutDlg(this);
 
-  // ultimately should be this...
-  // schFileName = "./test_schematics/"; // need to load from settings
-  // schFileName = "C:/Dev/QSpice/Qt/QCodeGen/test_schematics/";
-
-  // ultimately should be this...
-  // tmplFileName = "./templates/qspice_base." + tmplFileSuffix;
-  // tmplFileName =
-  //     "C:/Dev/QSpice/Qt/QCodeGen/templates/qspice_base." + tmplFileSuffix;
-
   msgBox = new QMessageBox(QMessageBox::Warning,
-                           AboutDlg::appName + " - File I/O Error", "text",
-                           QMessageBox::Ok, this);
+      AboutDlg::appName + " - File I/O Error", "text", QMessageBox::Ok, this);
 
   clipbrd = QGuiApplication::clipboard();
 
-  connectGui();
-
   ::appSettings = new AppSettings(this);
   ::appSettings->loadSettings(this);
+  ::appSettings->loadSettings(prefsSettings);
 
-  qDebug() << QDir::currentPath();
+  ::aboutDlg->setIniFilePath(::appSettings->getIniFilePath());
 
-  // need to move this to settings load
-  StrList inStrings;
-  ui->loadTemplateBtn->setToolTip("No Template Loaded");
-  if (loadFile(tmplFileName, inStrings)) {
-    codeGenerator.loadTmplFile(inStrings);
-    ui->loadTemplateBtn->setToolTip(tmplFileName);
-  }
+  connectGui();
+
+  StrList strs = loadStringResource(defaultCodeTemplate);
+  codeGenerator.loadTmplFile(strs);
+  // ui->loadTemplateBtn->setToolTip("[Default Template]");
+
+  tmplFileName = prefsSettings.getTmplPath();
+  reloadSlot(true);
+  schFileName = prefsSettings.getSchPath();
 }
 
 MainWindow::~MainWindow() { delete ui; }
@@ -72,25 +73,43 @@ void MainWindow::connectGui() {
 
   // open/load schematic
   connect(ui->loadSchAct, &QAction::triggered, this,
-          &MainWindow::openSchematicSlot);
+      &MainWindow::openSchematicSlot);
   ui->loadSchematicBtn->setAction(ui->loadSchAct);
 
   // load template
   connect(ui->loadTmplAct, &QAction::triggered, this,
-          &MainWindow::loadTemplateSlot);
+      &MainWindow::loadTemplateSlot);
   ui->loadTemplateBtn->setAction(ui->loadTmplAct);
 
   // copy to clipboard
   connect(ui->copyAct, &QAction::triggered, this,
-          &MainWindow::copyToClipbrdSlot);
+      &MainWindow::copyToClipbrdSlot);
   ui->copyBtn->setAction(ui->copyAct);
+  ui->copyAct->setEnabled(false);
 
-  // show about dialog
+  // save
+  connect(ui->saveAct, &QAction::triggered, this, &MainWindow::saveSlot);
+  ui->saveBtn->setAction(ui->saveAct);
+  ui->saveAct->setEnabled(false);
+
+  // help
+  ui->helpAboutAct->setText("About " + AboutDlg::appName);
   connect(ui->helpAboutAct, &QAction::triggered, this,
-          &MainWindow::helpAboutSlot);
+      &MainWindow::helpAboutSlot);
+  ui->helpUsingAct->setText("Using " + AboutDlg::appName);
+  connect(ui->helpUsingAct, &QAction::triggered, this,
+      &MainWindow::helpUsingSlot);
+
+  // show preferences dialog
+  connect(ui->prefsAct, &QAction::triggered, this, &MainWindow::prefsSlot);
+
+  // reload schematic & template
+  connect(ui->reloadAct, &QAction::triggered, this, &MainWindow::reloadSlot);
+  ui->reloadBtn->setAction(ui->reloadAct);
+  ui->reloadAct->setEnabled(false);
 
   // tabs
-  cTabs = ui->componentTabs;
+  cTabs      = ui->componentTabs;
   QFont font = cTabs->font();
   font.setBold(true);
   font.setPointSize(10);
@@ -114,13 +133,6 @@ void MainWindow::connectGui() {
   dTabs->setCurrentIndex(0);
   connect(dTabs, &TabBar::currentChanged, this, &MainWindow::tabChangedSlot);
 
-  // connect buttons
-  ui->saveBtn->setAction(ui->saveAct);
-  ui->saveAct->setEnabled(false);
-
-  ui->reloadBtn->setAction(ui->reloadAct);
-  ui->reloadAct->setEnabled(false);
-
   // tooltips
   ui->loadSchAct->setToolTip("No schematic loaded");
   ui->loadTmplAct->setToolTip(tmplFileName);
@@ -129,7 +141,10 @@ void MainWindow::connectGui() {
 void MainWindow::closeSlot() { this->close(); }
 
 void MainWindow::closeEvent(QCloseEvent * /* event */) {
+  prefsSettings.schLastPath  = schFileName;
+  prefsSettings.tmplLastPath = tmplFileName;
   ::appSettings->saveSettings(this);
+  ::appSettings->saveSettings(prefsSettings);
 }
 
 // load the text from a file into a string list -- returns false on fail
@@ -141,9 +156,9 @@ bool MainWindow::loadFile(QString filePath, StrList &strList) {
 
   try {
     // open file for binary read
+    // todo:  rework for fopen_s()?
     file.ptr = fopen(filePath.toStdString().c_str(), "rb");
-    if (!file.ptr)
-      throw FileError("Error opening file");
+    if (!file.ptr) throw FileError("Error opening file");
 
     // read file into stringlist with error checking
     char *s; // start of text
@@ -158,8 +173,7 @@ bool MainWindow::loadFile(QString filePath, StrList &strList) {
 
       // trim trailing whitespace
       size_t i = strlen(s) - 1;
-      while (::isspace(s[i] & 0x7f) && i > 0)
-        s[i--] = 0;
+      while (::isspace(s[i] & 0x7f) && i >= 0) s[i--] = 0;
 
       // add to stringlist
       // add test/throw error on unexpected empty line (if not last line)?
@@ -170,8 +184,7 @@ bool MainWindow::loadFile(QString filePath, StrList &strList) {
     }
 
     // a final (probably unnecessary) error check
-    if (ferror(file.ptr))
-      throw FileError("Unexpected file error state");
+    if (ferror(file.ptr)) throw FileError("Unexpected file error state");
   } catch (const FileError &e) {
     QString msg(e.what());
     msg += ":\n" + filePath;
@@ -186,15 +199,15 @@ bool MainWindow::loadFile(QString filePath, StrList &strList) {
 }
 
 bool MainWindow::selectFileOpen(QString &filePath, QString fileType,
-                                QString filter) {
+    QString filter, bool folder) {
   QString path = QFileInfo(filePath).absolutePath();
 
   QFileDialog openDlg(this, AboutDlg::appName + " - Open " + fileType, path,
-                      filter);
-  openDlg.setFileMode(QFileDialog::ExistingFile);
+      filter);
+  openDlg.setFileMode(
+      folder ? QFileDialog::Directory : QFileDialog::ExistingFile);
 
-  if (!openDlg.exec())
-    return false;
+  if (!openDlg.exec()) return false;
 
   filePath = openDlg.selectedFiles().constFirst();
   return true;
@@ -233,44 +246,66 @@ void MainWindow::refreshGui() {
   // add set tooltips for load buttons to file names here?
 
   // send tabChangedSlot signal
-  tabChangedSlot(0);
+  tabChangedSlot();
+}
+
+// for reading default template from embedded resource
+StrList MainWindow::loadStringResource(const QString &resPath) {
+  StrList strs;
+
+  QFile file(resPath);
+  if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) return strs;
+
+  char buf[2048];
+  qint64 len;
+
+  while (!file.atEnd()) {
+    len = file.readLine(buf, sizeof(buf));
+    if (len < 1) continue;
+    while (::isspace(buf[len - 1] & 0x7f) && len > 0) buf[--len] = 0;
+    strs.push_back(String(buf));
+  }
+
+  return strs;
 }
 
 void MainWindow::openSchematicSlot() {
   QString fpath = schFileName;
 
   bool res = selectFileOpen(fpath, "Schematic",
-                            "QSpice Schematic Files (*.qsch);;All Files (*.*)");
-  if (!res)
-    return;
+      "QSpice Schematic Files (*.qsch);;All Files (*.*)");
+  if (!res) return;
 
   StrList fileStrs;
 
-  if (!loadFile(fpath, fileStrs))
-    return;
+  if (!loadFile(fpath, fileStrs)) return;
   parser.reset();
-  parser.loadFile(fileStrs);
+  if (!parser.loadFile(fileStrs)) {
+    msgBox->setText("Unable to parse schematic:\n" + fpath);
+    msgBox->exec();
+    return;
+  }
   parser.genCblkCode(codeGenerator);
 
   schFileName = fpath;
   ui->loadSchematicBtn->setToolTip(fpath);
-  ui->reloadBtn->setEnabled(true);
 
   refreshGui();
+
+  ui->reloadAct->setEnabled(true);
 }
 
 void MainWindow::loadTemplateSlot() {
   QString fpath = tmplFileName;
+
   bool res = selectFileOpen(fpath, "Template",
-                            AboutDlg::appName + " Template Files (*." +
-                                tmplFileSuffix + ");;All Files (*.*)");
-  if (!res)
-    return;
+      AboutDlg::appName + " Template Files (*." + tmplFileSuffix +
+          ");;All Files (*.*)");
+  if (!res) return;
 
   StrList fileStrs;
 
-  if (!loadFile(fpath, fileStrs))
-    return;
+  if (!loadFile(fpath, fileStrs)) return;
   codeGenerator.loadTmplFile(fileStrs);
   parser.genCblkCode(codeGenerator);
 
@@ -278,31 +313,81 @@ void MainWindow::loadTemplateSlot() {
   ui->loadTemplateBtn->setToolTip(fpath);
   ui->reloadBtn->setEnabled(true);
 
-  tabChangedSlot(0);
+  tabChangedSlot();
 }
 
-void MainWindow::reloadSlot() {
-  // // todo
-  // try {
-  //   // throws error...
-  //   loadFile(fpath, fileStrs);
-  //   parser.loadFile(fileStrs);
-  //   codeGenerator.loadTmplFile(tmplFileName);
-  //   parser.genCblkCode(codeGenerator);
-  // } catch (const FileError &e) {
-  //   QString msg(e.what());
-  //   msg += ":\n" + fpath;
-  //   msgBox->setText(msg);
-  //   msgBox->setIcon(QMessageBox::Warning);
-  //   msgBox->exec();
-  //   return;
-  // }
+void MainWindow::reloadSlot(bool inInit) {
+  StrList schStrs;
+  StrList saveSchStrs = parser.getStrList();
+  StrList tmplStrs;
+  StrList saveTmplStrs = codeGenerator.getStrList();
 
-  // refreshGui();
+  if (!tmplFileName.isEmpty()) {
+    if (!loadFile(tmplFileName, tmplStrs)) {
+      msgBox->setText("Unable to reload template:\n" + schFileName);
+      msgBox->exec();
+      tmplStrs = saveTmplStrs;
+    }
+    codeGenerator.loadTmplFile(tmplStrs);
+  }
+
+  parser.reset();
+  if (!inInit) {
+    if (!loadFile(schFileName, schStrs)) {
+      msgBox->setText("Unable to reload schematic:\n" + schFileName);
+      msgBox->exec();
+      schStrs = saveSchStrs;
+    }
+    if (!parser.loadFile(schStrs)) {
+      msgBox->setText("Unable to parse schematic:\n" + schFileName);
+      msgBox->exec();
+      parser.reset();
+    }
+    parser.genCblkCode(codeGenerator);
+  }
+
+  refreshGui();
 }
 
 void MainWindow::saveSlot() {
-  // todo
+  QString path   = QFileInfo(schFileName).absolutePath();
+  QString filter = "C/C++ Files (*.cpp);;Text Files (*.txt);;All Files (*.*)";
+  int detailNdx  = dTabs->currentIndex();
+  QString sfx;
+
+  // using switch for possible additional tabs -- currently only two
+  switch (detailNdx) {
+  case 0: // summary
+    sfx = "txt";
+    break;
+  case 1: // c-block code from template
+    sfx = "cpp";
+    break;
+  default: Q_ASSERT(0);
+  }
+  path += "/*." + sfx;
+
+  QFileDialog saveDlg(this, AboutDlg::appName + " - Save To File", path,
+      filter);
+  // QFileDialog saveDlg(this, AboutDlg::appName + " - Save To File", path,
+  //     getFileFilters());
+  saveDlg.setFileMode(QFileDialog::AnyFile);
+  saveDlg.setDefaultSuffix(sfx);
+  // apparently setting accept mode confirms overwrites for us...
+  // it also checks for write-only status and forces user to select
+  // a different filename...
+  saveDlg.setAcceptMode(QFileDialog::AcceptSave);
+
+  if (!saveDlg.exec()) return;
+
+  QString filePath = saveDlg.selectedFiles().constFirst();
+
+  QFile outFile;
+  outFile.setFileName(filePath);
+  outFile.open(QIODevice::WriteOnly);
+  QTextStream outStrm(&outFile);
+  outStrm << ui->textBox->toPlainText();
+  outFile.close();
 }
 
 void MainWindow::copyToClipbrdSlot() {
@@ -310,8 +395,7 @@ void MainWindow::copyToClipbrdSlot() {
   str.replace(QChar(0x2029), QChar('\n'));
 
   // if no selection, use entire contents
-  if (!str.length())
-    str = ui->textBox->toPlainText();
+  if (!str.length()) str = ui->textBox->toPlainText();
 
   // put it on the clipboard
   clipbrd->setText(str);
@@ -320,22 +404,36 @@ void MainWindow::copyToClipbrdSlot() {
 void MainWindow::helpAboutSlot() { aboutDlg->show(); }
 
 void MainWindow::helpUsingSlot() {
-  // todo
+  QFileInfo fInfo("./doc/" + helpUserDocName);
+
+  if (!QDesktopServices::openUrl(fInfo.absoluteFilePath())) {
+    QString msg = "Unable to locate/open help file:\n\n      " +
+                  helpUserDocName + "\n\nPlease check your installation files.";
+    QMessageBox(QMessageBox::Warning, AboutDlg::appName, msg, QMessageBox::Ok,
+        this)
+        .exec();
+  };
 }
 
-void MainWindow::tabChangedSlot(int /*index*/) {
-  // todo
-  QObject *who = sender(); // temp for debug
+void MainWindow::prefsSlot() {
+  PrefsDlg prefsDlg(prefsSettings, this);
 
+  if (prefsDlg.exec() == QDialog::Accepted) {
+    if (dTabs->isEnabled()) reloadSlot();
+  }
+}
+
+void MainWindow::tabChangedSlot() {
   ui->textBox->clear();
 
   int componentNdx = cTabs->currentIndex();
-  int detailNdx = dTabs->currentIndex();
-  if (componentNdx < 0)
-    componentNdx = 0;
+  int detailNdx    = dTabs->currentIndex();
+  if (componentNdx < 0) componentNdx = 0;
 
-  if (!parser.getCblkCnt())
-    return;
+  ui->copyAct->setEnabled(false);
+  ui->saveAct->setEnabled(false);
+
+  if (!parser.getCblkCnt()) return;
 
   CBlockData cblk = parser.getCblk(componentNdx);
   StrList strList;
@@ -348,13 +446,15 @@ void MainWindow::tabChangedSlot(int /*index*/) {
   case 1: // c-block code from template
     strList = cblk.getCblkCode();
     break;
-  default:
-    Q_ASSERT(0);
+  default: Q_ASSERT(0);
   }
 
   for (int i = 0; i < strList.size(); i++) {
     ui->textBox->appendPlainText(strList[i].c_str());
   }
+
+  ui->copyAct->setEnabled(strList.size());
+  ui->saveAct->setEnabled(strList.size());
 
   ui->textBox->moveCursor(QTextCursor::Start);
   ui->textBox->ensureCursorVisible();

@@ -1,6 +1,5 @@
 #include "parser.h"
 
-#include "appexception.h"
 #include <cstdio>
 #include <format>
 #include <regex>
@@ -15,22 +14,17 @@ void Parser::reset() {
   cblkList.clear();
 }
 
-// verify/remove ID bytes, trim leading/trailing spaces, and copy into parser
-// strList member. returns false if ID bytes invalid and leaves strList intact
-// change that -- throws an error
-std::string trim(const std::string &str,
-                 const std::string &whitespace = " \t\n\r") {
+String trim(const String &str, const String &whitespace = " \t\n\r") {
   const auto strBegin = str.find_first_not_of(whitespace);
-  if (strBegin == std::string::npos)
-    return ""; // no content
+  if (strBegin == String::npos) return ""; // no content
 
-  const auto strEnd = str.find_last_not_of(whitespace);
+  const auto strEnd   = str.find_last_not_of(whitespace);
   const auto strRange = strEnd - strBegin + 1;
 
   return str.substr(strBegin, strRange);
 }
 
-void Parser::loadFile(const StrList &inStrings) {
+bool Parser::loadFile(const StrList &inStrings) {
   StrList outStrings;
 
   for (const String &cStr : inStrings) {
@@ -40,15 +34,14 @@ void Parser::loadFile(const StrList &inStrings) {
 
   // check for ID bytes and remove
   String s = outStrings[0];
-  // const char *idBytes = "xxxx"; // intentionally breaking for debugging
-  if (!s.starts_with(idBytes))
-    throw FileError("Invalid schematic ID bytes");
+  if (!s.starts_with(idBytes)) return false;
 
-  s = s.substr(4);
+  s             = s.substr(4);
   outStrings[0] = s;
-  strList = outStrings;
+  strList       = outStrings;
 
   parseStrList();
+  return true;
 }
 
 void Parser::parseStrList() {
@@ -60,15 +53,13 @@ void Parser::parseStrList() {
   while (begIter < endIter) {
     if (lineType(*begIter) == LineType::begBlk) {
       StrList blk = getBlockText(begIter, endIter);
-      blk = getCblkText(blk);
+      blk         = getCblkText(blk);
       if (blk.size() > 0) {
         blkList.push_back(blk);
         CBlockData cblk = parseCblk(blk);
-        if (cblk.validState)
-          cblkList.push_back(cblk);
+        if (cblk.validState) cblkList.push_back(cblk);
       }
-    } else
-      begIter++;
+    } else begIter++;
   }
 }
 
@@ -82,15 +73,11 @@ void Parser::genCblkCode(CodeGenerator &generator) {
 }
 
 Parser::LineType Parser::lineType(String str) const {
-  if (!str.length())
-    return LineType::emptyLine;
-  if (isEndBlk(str[0]))
-    return LineType::endBlk;
+  if (!str.length()) return LineType::emptyLine;
+  if (isEndBlk(str[0])) return LineType::endBlk;
   if (isStartBlk(str[0])) {
-    if (isEndBlk(str[str.length() - 1]))
-      return LineType::itemBlk;
-    else
-      return LineType::begBlk;
+    if (isEndBlk(str[str.length() - 1])) return LineType::itemBlk;
+    else return LineType::begBlk;
   }
 
   return LineType::unknown;
@@ -102,15 +89,13 @@ StrList Parser::getLines() const { return strList; }
 
 // parse a block (of any type)
 StrList Parser::getBlockText(StrList::iterator &begIter,
-                             const StrList::iterator &endIter) const {
+    const StrList::iterator &endIter) const {
   StrList strList;
   int depth = 0;
 
   do {
-    if (lineType(*begIter) == LineType::begBlk)
-      depth++;
-    else if (lineType(*begIter) == LineType::endBlk)
-      depth--;
+    if (lineType(*begIter) == LineType::begBlk) depth++;
+    else if (lineType(*begIter) == LineType::endBlk) depth--;
     strList.push_back(*begIter);
   } while ((++begIter < endIter) && depth > 0);
 
@@ -123,11 +108,9 @@ StrList Parser::getCblkText(StrList blk) const {
   StrList::iterator begIter = blk.begin();
   StrList::iterator endIter = blk.end() - 1;
 
-  if (strncmp(begIter->c_str() + 1, "component", 9))
-    return strList;
+  if (strncmp(begIter->c_str() + 1, "component", 9)) return strList;
   begIter++;
-  if (strncmp(begIter->c_str() + 1, "symbol", 6))
-    return strList;
+  if (strncmp(begIter->c_str() + 1, "symbol", 6)) return strList;
   strList = getBlockText(begIter, endIter);
 
   // need better error check here...
@@ -165,7 +148,7 @@ parse a block of text into a CBlockData instance
 */
 CBlockData Parser::parseCblk(StrList strList) {
   CBlockData cblk;
-  StrList::iterator begIter = strList.begin();
+  StrList::iterator begIter       = strList.begin();
   StrList::const_iterator endIter = strList.end();
 
   static const char *reDescPat =
@@ -183,8 +166,7 @@ CBlockData Parser::parseCblk(StrList strList) {
       continue;
     }
 
-    if (!strncmp(begIter->c_str(), "\xabtext", 5))
-      break;
+    if (!strncmp(begIter->c_str(), "\xabtext", 5)) break;
     begIter++;
   }
 
@@ -217,7 +199,6 @@ CBlockData Parser::parseCblk(StrList strList) {
   // get optional attribute items
   String parm;
   while ((++begIter < endIter) && getTextParm(*begIter, parm, isComment)) {
-    // AttrItem attr(parm, isComment);
     cblk.addAttrItem(AttrItem(parm, isComment));
 
     if (isComment) {
@@ -259,33 +240,31 @@ CBlockData Parser::parseCblk(StrList strList) {
 //                          arg4: 0=normal, 1=commented out???
 
 bool Parser::getTextParm(const String &str, String &value,
-                         bool &isComment) const {
+    bool &isComment) const {
   static const char *deepParsePat =
       R"(\xabtext (\(\S+\)) (\S+) (\S+) (\S+) (\S+) (\S+) (\S+) \"(.+)\"\xbb)";
   static const std::regex reDeepParse(deepParsePat);
   std::smatch sm;
 
   std::regex_match(str, sm, reDeepParse);
-  if (sm.size() != 9)
-    return false;
+  if (sm.size() != 9) return false;
 
-  value = sm[8].str();
+  value     = sm[8].str();
   isComment = sm[4].str() != "0";
 
   return true;
 }
 
 bool Parser::getPinParm(const String &str, String &ioStr,
-                        String &pinName) const {
+    String &pinName) const {
   // note:  the below is fragile
   static const char *rePinPat = R"^(\xabpin .* ([0-9]+) .+ .+ \"(.+)\"\xbb)^";
   static const std::regex rePin(rePinPat);
 
   std::smatch sm;
-  if (!std::regex_match(str, sm, rePin) || sm.size() != 3)
-    return false;
+  if (!std::regex_match(str, sm, rePin) || sm.size() != 3) return false;
 
-  ioStr = sm[1];
+  ioStr   = sm[1];
   pinName = sm[2].str();
 
   return true;

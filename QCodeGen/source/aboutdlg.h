@@ -1,6 +1,7 @@
 #ifndef ABOUTDLG_H
 #define ABOUTDLG_H
 
+#include "mainwindow.h"
 #include <QDialog>
 
 namespace Ui {
@@ -11,7 +12,7 @@ class AboutDlg : public QDialog {
   Q_OBJECT
 
 public:
-  explicit AboutDlg(QWidget *parent = nullptr);
+  explicit AboutDlg(MainWindow *parent = nullptr);
   ~AboutDlg();
 
   static QString appName;
@@ -22,12 +23,10 @@ public:
   static QString companyName;
   static QString appNameVersion;
 
+  void setIniFilePath(QString path);
+
 protected:
   Ui::AboutDlg *ui;
-
-  // static const int appVerMajor;
-  // static const int appVerMinor;
-  // static const int appVerRel;
 };
 
 #endif // ABOUTDLG_H

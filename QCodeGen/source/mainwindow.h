@@ -2,7 +2,6 @@
 #define MAINWINDOW_H
 
 #include "parser.h"
-#include "tabbar.h"
 #include <QMainWindow>
 
 QT_BEGIN_NAMESPACE
@@ -18,31 +17,45 @@ public:
   MainWindow(QWidget *parent = nullptr);
   ~MainWindow();
 
+  bool selectFileOpen(QString &filePath, QString caption, QString filter,
+      bool folder = false);
+
+  const QString tmplFileSuffix = QString("qcgt"); // change this once decided
+
 protected:
   void closeEvent(QCloseEvent *);
 
   bool loadFile(QString filePath, StrList &strList);
-  bool selectFileOpen(QString &filePath, QString caption, QString filter);
 
   void refreshGui();
 
-  void reload();
-  void saveFile();
-  void copyToClipbrd();
+  StrList loadStringResource(const QString &resPath);
 
   Parser parser;
+
+  QString schFileName = QString("./test_schematics/*");
+  QString tmplFileName =
+      QString("./templates/qspice_default." + tmplFileSuffix);
+  // QString tmplFileName =
+  //     QString(":/templates/templates/qspice_default.") + tmplFileSuffix;
+
+  QString defaultCodeTemplate =
+      QString(":/templates/resources/qspice_default.") + tmplFileSuffix;
+
+  QString helpUserDocName = QString("QCodeGen_User_Doc.pdf");
 
 private slots:
   void closeSlot();
   void openSchematicSlot();
   void loadTemplateSlot();
-  void reloadSlot();
+  void reloadSlot(bool inInit = false);
   void saveSlot();
   void copyToClipbrdSlot();
   void helpAboutSlot();
   void helpUsingSlot();
+  void prefsSlot();
 
-  void tabChangedSlot(int index);
+  void tabChangedSlot();
 
 private:
   Ui::MainWindow *ui;

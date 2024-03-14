@@ -1,17 +1,17 @@
-# QCodeGen &mdash; Proof of Concept Code
+# QCodeGen &mdash; A QSpice C-Block Code Generator
 
-QCodeGen (a temporary name) is an attempt to reproduce the QSpice template code generator for more convenient use and to add more features, reliability, and flexibility.
+QCodeGen is a stand-alone replacement for the QSpice C-Block template code generator with more features and flexibility.
 
-This is experimental code.  By "experimental," I mean <b><i>really, really experimental!</b></i>  It's not feature-complete or thoroughly tested yet.
+Key features include:
 
-If you want to play along, I am providing binaries for 64-bit Windows and full QT project source code if you'd prefer to compile it yourself.
+* Generates code using custom user-defined templates.
+* Updates existing *.cpp code for schematic component changes with minimal programmer effort.
+* Generates code without overwriting existing *.cpp component code files.
+* Improves error analysis for malformed port and string attributes.
 
-I will definitely need folk to test the code-generation and compare it to the QSpice-generated code.  Do let me know if you try it.  In fact, please try to break it.  Let me know what works/doesn't work.
+## Files/Folders
 
-## Files (Very Early and Incomplete POC Stuff)
-
-* QCodeGen_Dev_Doc.pdf &mdash; Developer notes.
-* QCodeGen_User_Doc.pdf &mdash; Totally incomplete User documentation (installation, settings, code templates, etc. )
-* Binaries &mdash; Folder containing project binaries.
-* Sources &mdash; Folder containing Qt project sources.
-
+* /binaries &mdash; Project binaries/installation files (64-bit only).
+* /source &mdash; Project source code.
+* QCodeGen_User_Doc.pdf &mdash; User documentation.
+* QCodeGen_Dev_Doc.pdf &mdash; Developer notes (incomplete).

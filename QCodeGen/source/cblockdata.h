@@ -1,11 +1,11 @@
 #ifndef CBLOCKDATA_H
 #define CBLOCKDATA_H
 
-#include "types.h"
+#include "strings.h"
 #include <regex>
 
-// Some people, when confronted with a problem, think "I know, I'll use regular
-// expressions. Now they have two problems."
+// "Some people, when confronted with a problem, think 'I know, I'll use regular
+// expressions.'  Now they have two problems."
 
 enum IOType : int;
 enum DataType : int;
@@ -20,7 +20,7 @@ public:
 class PinItem : public ItemState {
 public:
   PinItem(const String &strType, const String &strName)
-      : strRaw(strType), varName(strName), pinNbr(-1) {
+      : pinNbr(-1), strRaw(strType), varName(strName) {
     validState = parseItem();
 
     // replace "overscore" characters with underscores ala QSpice
@@ -28,15 +28,14 @@ public:
     String::iterator begIter = this->varName.begin();
     String::iterator endIter = this->varName.end();
     while (begIter < endIter) {
-      if (*begIter == '\xac')
-        *begIter = '_';
+      if (*begIter == '\xac') *begIter = '_';
       begIter++;
     }
   }
 
-  String makeCode();
-  String makeTruncSaveCode();
-  String makeTruncRestoreCode();
+  String makeCode(int varNameLen, int dataTypeLen) const;
+  String makeTruncSaveCode(int varNameLen, int dataTypeLen);
+  String makeTruncRestoreCode(int varNameLen);
 
   String getVarName() const { return varName; }
   String getRawText() const { return strRaw; }
@@ -57,7 +56,7 @@ class AttrItem : public ItemState {
 public:
   AttrItem(String str, bool isComment = false);
 
-  String makeCode();
+  String makeCode(int varNameLen, int dataTypeLen) const;
 
   String getVarName() const;
   String getRawText() const { return strRaw; }
@@ -82,9 +81,9 @@ class CBlockData : public ItemState {
 public:
   CBlockData() {}
   CBlockData(String symName, String cblkName, String descText)
-      : symName(symName), cblkName(cblkName), descText(descText) {
-    if (!descText.length())
-      this->descText = "[no description]";
+      : maxDataTypeLen(0), maxVarNameLen(0), symName(symName),
+        descText(descText), cblkName(cblkName) {
+    if (!descText.length()) this->descText = "[no description]";
   }
 
   void addPinItem(PinItem item);
@@ -92,17 +91,21 @@ public:
 
   void indexItems();
 
-  StrList makeUdataCode();
-  StrList makeUndefCode();
+  StrList makeUdataCode(const String &blkKeyword, const String &pfx,
+      int varNameLen, int dataTypeLen) const;
+  StrList makeUndefCode(const String &blkKeyword, const String &pfx);
 
-  StrList makeTruncOutCode();
-  StrList makeTruncSaveCode();
-  StrList makeTruncRestoreCode();
+  StrList makeTruncOutCode(const String &blkKeyword, const String &pfx);
+  StrList makeTruncSaveCode(const String &blkKeyword, const String &pfx);
+  StrList makeTruncRestoreCode(const String &blkKeyword, const String &pfx);
 
   String getSymName() const { return symName; }
   String getCblkName() const { return cblkName; }
   String getCblkNameLC() const;
+  String getCblkNameUC() const;
   String getCblkDesc() const { return descText; }
+  String getUdataSize() const;
+  ;
 
   StrList getCblkSummary();
 
@@ -111,6 +114,10 @@ public:
 
   void addWarning(String &text) { warnings.push_back(text); }
   const StrList &getWarnings() const { return warnings; }
+
+  // technically, should protect these...
+  int maxDataTypeLen;
+  int maxVarNameLen;
 
 protected:
   String symName;

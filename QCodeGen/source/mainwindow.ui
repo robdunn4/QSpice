@@ -141,7 +141,7 @@
     </property>
     <addaction name="copyAct"/>
     <addaction name="separator"/>
-    <addaction name="preferencesAct"/>
+    <addaction name="prefsAct"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuEdit"/>
@@ -191,7 +191,7 @@
     <string>Copy</string>
    </property>
   </action>
-  <action name="preferencesAct">
+  <action name="prefsAct">
    <property name="text">
     <string>Preferences</string>
    </property>
