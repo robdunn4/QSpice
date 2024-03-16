@@ -13,5 +13,6 @@ Key features include:
 
 * /binaries &mdash; Project binaries/installation files (64-bit only).
 * /source &mdash; Project source code.
+* /templates &mdash; New and/or corrected template files (*.qcgt).
 * QCodeGen_User_Doc.pdf &mdash; User documentation.
 * QCodeGen_Dev_Doc.pdf &mdash; Developer notes (incomplete).

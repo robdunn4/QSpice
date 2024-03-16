@@ -1,0 +1,35 @@
+// This template simply tests/demonstrates code substitutions.
+
+// Embedded Substitutions
+
+AppName:         [%%AppName%%]
+AppVersion:      [%%AppVersion%%] 
+Author:          [%%Author%%]
+User1:           [%%User1%%]
+User2:           [%%User2%%]
+User3:           [%%User3%%]
+DateShort:       [%%DateShort%%]
+DateLong:        [%%DateLong%%]
+DateTimeShort:   [%%DateTimeShort%%]
+DateTimeLong:    [%%DateTimeLong%%]
+ComponentName:   [%%ComponentName%%]
+ComponentNameLC: [%%ComponentNameLC%%]
+ComponentNameUC: [%%ComponentNameUC%%]
+ComponentDesc:   [%%ComponentDesc%%]
+UdataSize:       [%%UdataSize%%]
+
+// Block Substitutions
+// Undef
+   %%Undef%%
+
+// UdataAll
+   %%UdataAll%%
+
+// UdataOutput
+   %%UdataOutput%%
+
+// UdataSaveOutput
+   %%UdataSaveOutput%%
+
+// UdataRestoreOutput
+   %%UdataRestoreOutput%%
