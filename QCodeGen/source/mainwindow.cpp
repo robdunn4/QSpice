@@ -14,6 +14,7 @@
 #include <QFileDialog>
 #include <QMessageBox>
 #include <QResource>
+#include <stdio.h>
 
 // for RAII/exception handling
 class FilePtr {
@@ -156,31 +157,18 @@ bool MainWindow::loadFile(QString filePath, StrList &strList) {
 
   try {
     // open file for binary read
-    // todo:  rework for fopen_s()?
-    file.ptr = fopen(filePath.toStdString().c_str(), "rb");
-    if (!file.ptr) throw FileError("Error opening file");
+    if (fopen_s(&file.ptr, filePath.toStdString().c_str(), "rb"))
+      throw FileError("Error opening file");
 
     // read file into stringlist with error checking
-    char *s; // start of text
-    s = fgets(buf, sizeof(buf), file.ptr);
-    while (!feof(file.ptr) && !ferror(file.ptr)) {
-      Q_ASSERT(s); // shouldn't happen
-
-      // ensure buffer is null-terminated (not sure about fgets())
-      size_t len = strlen(buf);
-      if (len >= sizeof(buf))
-        throw FileError("Internal buffer overflow on file read");
-
+    char *s;
+    while ((s = fgets(buf, sizeof(buf), file.ptr)) && !ferror(file.ptr)) {
       // trim trailing whitespace
       size_t i = strlen(s) - 1;
       while (::isspace(s[i] & 0x7f) && i >= 0) s[i--] = 0;
 
       // add to stringlist
-      // add test/throw error on unexpected empty line (if not last line)?
       inStrings.push_back(String(s));
-
-      // get next line
-      s = fgets(buf, sizeof(buf), file.ptr);
     }
 
     // a final (probably unnecessary) error check
