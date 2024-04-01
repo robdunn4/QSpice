@@ -24,7 +24,7 @@ public:
     validState = parseItem();
 
     // replace "overscore" characters with underscores ala QSpice
-    // should add an option to simply remove them
+    // should add an option to simply remove them (I don't like them)
     String::iterator begIter = this->varName.begin();
     String::iterator endIter = this->varName.end();
     while (begIter < endIter) {
@@ -69,6 +69,7 @@ public:
 protected:
   void parseItem();
   bool reMatch(const std::regex &regex, DataType dType);
+  bool reMatchDblFlt(const String str);
 
 protected:
   String strRaw;

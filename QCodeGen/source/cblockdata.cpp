@@ -127,7 +127,6 @@ AttrItem::AttrItem(String str, bool isComment)
     : ioType(IOType::IO_INVALID), attrNbr(-1), strRaw(str),
       bComment(isComment) {
   parseItem();
-  // varNameLen = str.length();
 }
 
 String AttrItem::makeCode(int varNameLen, int dataTypeLen) const {
@@ -212,55 +211,55 @@ bool AttrItem::reMatch(const std::regex &regex, DataType dType) {
   static const char *reParmPat = R"([a-zA-Z][_[:alnum:]]*)";
   static const std::regex reParm(reParmPat);
 
-  if (std::regex_match(str, sm, reParm)) {
-    validState = true;
-    return validState;
-  }
+  if (std::regex_match(str, sm, reParm)) return validState = true;
 
-  // validate (possibly signed) integral value (bool, char, int???)
+  // validate (possibly signed) integral value (bool, char, int)
   if (dType == DT_B || dType == DT_C || dType == DT_I) {
     static const char *reIntPat = R"(-?[0-9]+)";
     static const std::regex reInt(reIntPat);
-    if (std::regex_match(str, sm, reInt)) {
-      validState = true;
-      return validState;
-    } else if (dType != DT_C) {
-      return false;
-    }
+    if (std::regex_match(str, sm, reInt)) return validState = true;
+    else if (dType != DT_C) return false;
+    // fallthrough to quoted char
   }
 
   // validate single-quoted char
   if (dType == DT_C) {
     static const char *reCharPat = R"('.')";
     static const std::regex reChar(reCharPat);
-    if (std::regex_match(str, sm, reChar)) {
-      validState = true;
-      return validState;
-    } else return false;
+    return validState = std::regex_match(str, sm, reChar);
   }
 
-  // validate float/double
-  // does QSpice allow leading +/- and permit "." with no trailing digits?
+  // validate float/double -- it's a bit more complex
   if (dType == DT_F32 || dType == DT_D) {
-    static const char *reDblPat = R"([+-]?[0-9]+(\.[0-9]+))";
-    static const std::regex reDbl(reDblPat);
-    if (std::regex_match(str, sm, reDbl)) {
-      validState = true;
-      return validState;
-    } else return false;
+    return validState = reMatchDblFlt(str);
   }
 
   // final case -- quoted char string; ensure outer quotes are present
   // and no embedded quotes
   static const char *reStrPat = R"("[^"]*")";
   static const std::regex reStr(reStrPat);
-  if (std::regex_match(str, sm, reStr)) {
-    validState = true;
-    return validState;
-  }
+  return validState = std::regex_match(str, sm, reStr);
+}
 
-  validState = false;
-  return validState;
+// parsing double/float values is complicated...
+// might be in scientific format (e.g., 1e-6), decimal (e.g., 0.000001),
+// decimal with suffix (0.001m), etc.  trying to be flexible but
+// probably not handling all cases perfectly, definitely not well-tested...
+// note: u suffix (Mu) = 0xb5
+bool AttrItem::reMatchDblFlt(const String str) {
+  static const char *reExpPat =
+      R"(\s*[+-]?[0-9]+(\.[0-9]*)?[eE]([+-]?[0-9]+)?\s*)";
+  static const std::regex reExp(reExpPat);
+  static const char *reDecPat =
+      R"(\s*([+-]?[0-9]+)(\.[0-9]*)?([fpnmukgt\xb5]?|(meg)?)\s*)";
+  static const std::regex reDec(reDecPat, std::regex::icase);
+  std::smatch sm;
+
+  // try both formats
+  bool res = false;
+  if (std::regex_match(str, sm, reExp)) res = true;
+  else if (std::regex_match(str, sm, reDec)) res = true;
+  return res;
 }
 
 void CBlockData::addPinItem(PinItem item) {
@@ -374,10 +373,12 @@ StrList CBlockData::makeUndefCode(const String &blkKeyword, const String &pfx) {
   for (PinItem &item : pinsIn) {
     code.push_back(pfx + "#undef " + item.getVarName());
   }
+
   // apparently, QSpice doesn't undef attributes so removed for now
   // for (AttrItem &item : attrs) {
   //   code.push_back(pfx + "#undef " + item.getVarName());
   // }
+
   for (PinItem &item : pinsOut) {
     code.push_back(pfx + "#undef " + item.getVarName());
   }
@@ -477,7 +478,7 @@ StrList CBlockData::getCblkSummary() {
   strList.push_back("Input Pin Details:");
   for (PinItem &pin : pinsIn) {
     str = std::format(
-        "PinOrder: {: <2}, PinName: {: <10}, PortType: {}, DataType: {}",
+        "PinOrder: {: >2}, PinName: {: <10}, PortType: {}, DataType: {}",
         pin.pinNbr, pin.getVarName(), IOTypeText[pin.ioType],
         DataTypeText[pin.dType]);
     strList.push_back(str);
@@ -488,7 +489,7 @@ StrList CBlockData::getCblkSummary() {
   strList.push_back("Output Pin Details:");
   for (PinItem &pin : pinsOut) {
     str = std::format(
-        "PinOrder: {: <2}, PinName: {: <10}, PortType: {}, DataType: {}",
+        "PinOrder: {: >2}, PinName: {: <10}, PortType: {}, DataType: {}",
         pin.pinNbr, pin.getVarName(), IOTypeText[pin.ioType],
         DataTypeText[pin.dType]);
     strList.push_back(str);
@@ -498,7 +499,7 @@ StrList CBlockData::getCblkSummary() {
   strList.push_back("");
   strList.push_back("Input Attribute Details:");
   for (AttrItem &attr : attrs) {
-    str = std::format("TextOrder: {: <2}, Content: {: <15}, DataType: {}",
+    str = std::format("TextOrder: {: >2}, Content: {}, DataType: {}",
         attr.attrNbr + 1, attr.getRawText().c_str(), DataTypeText[attr.dType]);
     strList.push_back(str);
   }
