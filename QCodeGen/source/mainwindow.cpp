@@ -437,9 +437,9 @@ void MainWindow::tabChangedSlot() {
   default: Q_ASSERT(0);
   }
 
-  for (int i = 0; i < strList.size(); i++) {
-    ui->textBox->appendPlainText(strList[i].c_str());
-  }
+  // convert to Latin1 (for symbols in extended ASCII) and append
+  for (int i = 0; i < strList.size(); i++)
+    ui->textBox->appendPlainText(QString::fromLatin1(strList[i].c_str()));
 
   ui->copyAct->setEnabled(strList.size());
   ui->saveAct->setEnabled(strList.size());
