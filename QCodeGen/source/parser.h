@@ -44,11 +44,6 @@ protected:
   BlockList blkList;
   CBlockDataList cblkList;
 
-  // ensure that isspace(), isprint(), etc., don't promote to out of range (for
-  // debugger)
-  int isspace(int c) const { return ::isspace(c & 0x7f); }
-  int isprint(int c) const { return ::isprint(c & 0x7f); }
-
   bool isStartBlk(char c) const {
     bool b = (c & 0xff) == startHBlk;
     return b;
