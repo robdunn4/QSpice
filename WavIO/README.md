@@ -22,7 +22,8 @@ Note:  WavOut.cpp/h code probably cannot be compiled with the Digital Mars compi
 
 ## Known Issues/Limitations
 * There is an asymmetry between the ranges of positive and negative two's-complement integers, i.e., +32,767 and -32,768.  I'm uncertain how to properly handle this.  For now, the components assume/force the minimum sample value to -32,767.
-* The WavIO components currently support only basic 16-bit PCM, 1- and 2-channel WAV formats.
+* The WavOut component currently supports only basic 16-bit PCM, 1- and 2-channel WAV formats.
+* The WavSrc component currently supports only basic 16-bit and 24-bit PCM, 1- and 2-channel WAV formats.
 
 ## Finally...
 These components are new, largely untested code.  Feel free to improve the code (and share), report bugs, or just let me know that you find this project useful.  You'll find me (@RDunn) on the [Qorvo QSpice forum](https://forum.qorvo.com/c/qspice/).
