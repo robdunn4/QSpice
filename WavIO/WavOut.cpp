@@ -2,7 +2,9 @@
  * WavOut.cpp -- QSpice C-Block component to write *.WAV file data from a
  * circuit signal.
  *
- * Copyright © 2023 Robert Dunn.  Licensed for use under the GNU GPLv3.0.
+ * 2024.05.08 - v0.2 added support for 24-bit PCM stereo.
+ *
+ * Copyright © 2023-2024 Robert Dunn.  Licensed for use under the GNU GPLv3.0.
  ******************************************************************************/
 // The code was compiled with Microsoft VC:
 //   * Run from within "C:\Program Files\Microsoft Visual Studio\2022\
@@ -10,13 +12,11 @@
 //   * cl /std:c++17 /EHsc /LD wavout.cpp /link /PDBSTRIPPED /out:wavout.dll
 //
 
-#include <stdio.h>
-#include <stdarg.h>
-
-#include <cmath>
-#include <thread>
-
 #include "wavout.h"
+#include <cmath>
+#include <stdarg.h>
+#include <stdio.h>
+#include <thread>
 
 #define HIGH true
 #define LOW  false
@@ -26,11 +26,11 @@
 #define FILE_ERROR  -1
 
 #define PROGRAM_NAME    "WavOut"
-#define PROGRAM_VERSION "v0.1"
+#define PROGRAM_VERSION "v0.2"
 #define PROGRAM_INFO    PROGRAM_NAME " " PROGRAM_VERSION
 
 /*------------------------------------------------------------------------------
- * Standard type overlay for data passed in the uData parameter.
+ * Standard QSpice type overlay for data passed in the uData parameter.
  *----------------------------------------------------------------------------*/
 union uData {
   bool                   b;
@@ -50,14 +50,6 @@ union uData {
 
 // for convenience when ports/attributes are changed, generate a temporary C/C++
 // template and copy uData offsets here (with trailing "/" continuation chars).
-// #define UDATA_DEFS \
-  // double      CLK        = data[0].d; \
-  // double      IN1        = data[1].d; \
-  // double      IN2        = data[2].d; \
-  // int         frequency  = data[3].i; \
-  // const char *filename   = data[4].str; \
-  // int         maxSamples = data[5].i; \
-  // double     &OUT1       = data[6].d; \ double     &OUT2       = data[7].d;
 #define UDATA_DEFS                                                             \
   double      CLK        = data[0].d;                                          \
   double      IN1        = data[1].d;                                          \
@@ -65,9 +57,10 @@ union uData {
   int         frequency  = data[3].i;                                          \
   const char *filename   = data[4].str;                                        \
   int         maxSamples = data[5].i;                                          \
-  double     &OUT1       = data[6].d;                                          \
-  double     &OUT2       = data[7].d;                                          \
-  double     &CLIP       = data[8].d;
+  int         bitDepth   = data[6].i;                                          \
+  double     &OUT1       = data[7].d;                                          \
+  double     &OUT2       = data[8].d;                                          \
+  double     &CLIP       = data[9].d;
 
 /*------------------------------------------------------------------------------
  * constants
@@ -87,13 +80,13 @@ const char *msgFileError = "Error writing WAV file.\n";
  * Per-instance data structure stuff...
  *----------------------------------------------------------------------------*/
 struct DblVals {
-  double CH1;
-  double CH2;
+  double CH1 = 0;
+  double CH2 = 0;
 };
 
 struct IntVals {
-  int16_t CH1;
-  int16_t CH2;
+  int32_t CH1 = 0;
+  int32_t CH2 = 0;
 };
 
 // per instance data
@@ -102,17 +95,19 @@ struct InstData {
   // to fill in the blanks before finalizing the file
   WavHeader wavHeader;
 
-  bool    lastClk      = HIGH;          // last clock state (high/low)
-  FILE   *file         = nullptr;       //
-  int     fileState    = FILE_CLOSED;   // 0=closed, 1=open, -1=error
-  size_t  sampleCnt    = 0;             // number of samples
-  int     sampleRate   = 0;             // frequency
-  DblVals lastIn       = {0.0, 0.0};    // last channel inputs (for debugging)
-  DblVals lastOut      = {0.0, 0.0};    // last sample channel outputs
-  IntVals lastBytes    = {0, 0};        // last sample values written to file
-  int     maxSamples   = 0;             // 0=no limit
-  double  lastClip     = 0.0;           // last clipping output
-  bool    clipDetected = false;         // for end of sim warning
+  bool    lastClk        = HIGH;          // last clock state (high/low)
+  FILE   *file           = nullptr;       // output file
+  int     fileState      = FILE_CLOSED;   // 0=closed, 1=open, -1=error
+  size_t  sampleCnt      = 0;             // number of samples
+  int     sampleRate     = 0;             // frequency
+  int     bitDepth       = 0;             // bits per sample (16 or 24)
+  int     bytesPerSample = 0;             // bytes per sample
+  DblVals lastIn;                         // last channel inputs (for debugging)
+  DblVals lastOut;                        // last sample channel outputs
+  IntVals lastBytes;                      // last sample values written to file
+  int     maxSamples   = 0;               // 0=no limit
+  double  lastClip     = 0;               // last clipping output
+  bool    clipDetected = false;           // for end of sim warning
 };
 
 /*------------------------------------------------------------------------------
@@ -152,13 +147,14 @@ extern "C" __declspec(dllexport) void wavout(
   InstData *inst = *opaque;
 
   if (!inst) {
-    // construct/save instance
+    // construct instance
     inst = *opaque = new InstData;
     if (!inst) {   // terminate with extreme prejudice
       msg(__LINE__, "Unable to allocate memory.  Terminating simulation.\n");
       std::exit(1);
     }
 
+    // remaining initialization
     initInst(inst, t, data);
   }
 
@@ -212,32 +208,39 @@ extern "C" __declspec(dllexport) void Destroy(InstData *inst) {
 }
 
 /*------------------------------------------------------------------------------
- * initInst() -- initialize, open output file, etc.  much is hardcoded for
- * two-channel, 16-bit PCM.
+ * initInst() -- initialize, open output file, etc.
  *----------------------------------------------------------------------------*/
 void initInst(InstData *inst, double t, uData *data) {
   // port/attribute offsets/definitions
   UDATA_DEFS;
 
-  inst->lastClk    = HIGH;
-  inst->sampleRate = frequency;
-  inst->maxSamples = maxSamples;
+  inst->fileState      = FILE_ERROR;   // default to failed
+  inst->lastClk        = HIGH;
+  inst->sampleRate     = frequency;
+  inst->maxSamples     = maxSamples;
+  inst->bitDepth       = bitDepth;
+  inst->bytesPerSample = bitDepth / 8;
 
-  // open file
-  inst->fileState = FILE_ERROR;   // default
+  if (bitDepth != 16 && bitDepth != 24) {
+    msg(__LINE__, "Invalid bit depth specified.  Must be 16 or 24\n");
+    return;
+  }
 
-  inst->file = fopen(filename, "w+b");   // "b" for binary mode!!!
+  // open file for "create new" & binary read/write
+  inst->file = fopen(filename, "w+b");
   if (!inst->file) {
     msg(__LINE__, "Unable to create/open WAV file \"%s\"\n.", filename);
     return;
   }
 
-  msg(__LINE__, "Creating WAV file \"%s\" with %d samples/second.\n", filename,
-      frequency);
+  msg(__LINE__,
+      "Creating WAV file \"%s\" with %d bits/sample and %d samples/second.\n",
+      filename, bitDepth, frequency);
 
   inst->wavHeader.samplesPerSec = frequency;
   inst->wavHeader.avgBytesPerSec =
-      inst->sampleRate * inst->wavHeader.nbrChannels * sizeof(int16_t);
+      inst->sampleRate * inst->wavHeader.nbrChannels * inst->bytesPerSample;
+  inst->wavHeader.bitsPerSample = bitDepth;
 
   // write file header info (will be written again when finalizing the file)
   // this positions the file for subsequently writing sample data
@@ -255,7 +258,7 @@ void initInst(InstData *inst, double t, uData *data) {
  * and close file.
  *----------------------------------------------------------------------------*/
 void finalizeFile(InstData &inst) {
-  // default to error
+  // default to error state
   inst.fileState = FILE_ERROR;
 
   // we are finalizing so first flush (belt + suspenders?) and reposition to
@@ -266,9 +269,10 @@ void finalizeFile(InstData &inst) {
   }
 
   // update header values before writing
-  int dataSize = inst.sampleCnt * sizeof(uint16_t) * inst.wavHeader.nbrChannels;
+  int dataSize =
+      inst.sampleCnt * inst.wavHeader.nbrChannels * inst.bytesPerSample;
   inst.wavHeader.chunkSize     = sizeof(WavHeader) + dataSize - 8;
-  inst.wavHeader.dataChunkSize = dataSize;   //???
+  inst.wavHeader.dataChunkSize = dataSize;
 
   // write the final file header info
   if (fwrite(&inst.wavHeader, 1, sizeof(WavHeader), inst.file) !=
@@ -288,54 +292,79 @@ void finalizeFile(InstData &inst) {
  * convToInt() & convToDbl() -- convert sample data between doubles (on QSpice
  * side) and ints (WAV file side) with input clipping and rounding
  *----------------------------------------------------------------------------*/
-inline int16_t convToInt(InstData &inst, double val) {
-  // clip to max input value
-  if (val > 1.0) {
-    inst.clipDetected = true;
-    inst.lastClip     = 1.0;
-    val               = 1.0;
-  } else if (val < -1.0) {
-    inst.clipDetected = true;
-    inst.lastClip     = 1.0;
-    val               = -1.0;
-  }
+inline int32_t convToInt(InstData &inst, double val) {
+  // detect & limit clipping
+  inst.clipDetected = val > 1.0 || val < -1.0;
+  if (inst.clipDetected) inst.lastClip = 1.0;
+  val = std::min(std::max(val, -1.0), 1.0);
 
-  // scale value to max int
-  val *= (double)0x7fff;
+  // scale value to max 16- or 24-bit
+  int32_t maxInt = inst.bytesPerSample == 2 ? 0x7fff : 0x7fffff;
+  val *= (double)maxInt;
 
   // round to nearest integer
-  return (int16_t)round(val);
+  return round(val);
 }
 
-inline double convToDbl(int16_t val) {
-  // this function needs to be fast so pre-calculate a multiplication factor
-  // to avoid slow division
-  constexpr double factor = 1.0 / 0x7fff;
+// scale 16-bit int to double; inline for speed
+inline double convToDbl16(int32_t val) {
+  constexpr double factor = 1.0 / 0x7fff;   // pre-calculate for speed
+  return val * factor;
+}
+
+// scale 24-bit int to double; inline for speed
+inline double convToDbl24(int32_t val) {
+  constexpr double factor = 1.0 / 0x7fffff;   // pre-calculate for speed
   return val * factor;
 }
 
 /*------------------------------------------------------------------------------
- * writeSamples() -- write sample data to WAV file
+ * writeSamples() -- write sample data to WAV file.
  *----------------------------------------------------------------------------*/
 void writeSamples(InstData &inst) {
-  // convert inputs to 16-bit sample values
-  inst.lastClip      = 0.0;
+  inst.lastClip = 0.0;
+
+  // convert to int for sample and back to double for output
   inst.lastBytes.CH1 = convToInt(inst, inst.lastIn.CH1);
   inst.lastBytes.CH2 = convToInt(inst, inst.lastIn.CH2);
 
-  // convert back to double for output
-  inst.lastOut.CH1 = convToDbl(inst.lastBytes.CH1);
-  inst.lastOut.CH2 = convToDbl(inst.lastBytes.CH2);
-
-  // write the samples to the file
-  if (fwrite(&inst.lastBytes, 1, sizeof(inst.lastBytes), inst.file) !=
-      sizeof(inst.lastBytes)) {
-    msg(__LINE__, msgFileError);
-    inst.fileState = FILE_ERROR;
-    return;
+  // use switch for possible future sample-type additions (e.g., 32-bit float)
+  switch (inst.bytesPerSample) {
+  case 2:
+    inst.lastOut.CH1 = convToDbl16(inst.lastBytes.CH1);
+    inst.lastOut.CH2 = convToDbl16(inst.lastBytes.CH2);
+    break;
+  case 3:
+    inst.lastOut.CH1 = convToDbl24(inst.lastBytes.CH1);
+    inst.lastOut.CH2 = convToDbl24(inst.lastBytes.CH2);
+    break;
+  default:
+    // this shouldn't happen -- terminate with prejudice...
+    msg(__LINE__, "Unexpected program fault.  Terminating simulation.\n");
+    exit(1);
   }
 
-  inst.sampleCnt++;
+  // map int to bytes for extracting 2- or 3-byte samples
+  union {
+    int32_t i;
+    uint8_t b[4];
+  } buf[2];
+
+  buf[0].i = inst.lastBytes.CH1;
+  buf[1].i = inst.lastBytes.CH2;
+
+  // write the samples to the file
+  if (fwrite(&buf[0].b[0], 1, inst.bytesPerSample, inst.file) !=
+          inst.bytesPerSample ||
+      fwrite(&buf[1].b[0], 1, inst.bytesPerSample, inst.file) !=
+          inst.bytesPerSample) {
+    msg(__LINE__, msgFileError);
+    inst.fileState = FILE_ERROR;
+  }
+
+  if (inst.fileState != FILE_ERROR) inst.sampleCnt++;
+  else
+    msg(__LINE__, msgFileError);
 }
 /*==============================================================================
  * End of WavOut.cpp

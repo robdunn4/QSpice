@@ -3,12 +3,13 @@
     «symbol
       «description: WavOut Demo»
       «shorted pins: false»
-      «rect (-500,-900) (1500,400) 0 0 0 0xff0000 0xc8c8c8 -1 1 -1»
+      «rect (-500,-1100) (1500,400) 0 0 0 0xff0000 0xc8c8c8 -1 1 -1»
       «text (400,200) 1 12 0 0x1000000 -1 -1 "X1"»
       «text (400,50) 0.681 13 0 0x1000000 -1 -1 "WavOut"»
       «text (400,-650) 0.681 13 0 0x1000000 -1 -1 "MaxSamples=0"»
-      «text (400,-500) 0.681 13 0 0x1000000 -1 -1 "Frequency=44100"»
+      «text (400,-500) 0.681 13 0 0x1000000 -1 -1 "Frequency=48000"»
       «text (400,-350) 0.681 13 0 0x1000000 -1 -1 "FilePath="./wavout.wav""»
+      «text (400,-800) 0.681 13 0 0x1000000 -1 -1 "BitDepth=16"»
       «pin (-500,200) (0,0) 1 7 0 0x0 -1 "IN1"»
       «pin (-500,-200) (0,0) 1 7 0 0x0 -1 "IN2"»
       «pin (1500,200) (0,0) 1 11 0 0x0 -1 "OUT1"»
@@ -30,7 +31,7 @@
       «arc3p (0,0) (60,0) (30,0) 0 0 0x1000000 -1 -1»
       «arc3p (0,0) (-60,0) (-30,0) 0 0 0x1000000 -1 -1»
       «text (180,150) 1 7 0 0x1000000 -1 -1 "V1"»
-      «text (180,-150) 1 7 0 0x1000000 -1 -1 "SIN 0V 1.01V 1KHz"»
+      «text (180,-150) 1 7 0 0x1000000 -1 -1 "SIN 0V 1.00V 1KHz"»
       «pin (0,200) (0,0) 1 0 0 0x0 -1 "+"»
       «pin (0,-200) (0,0) 1 0 0 0x0 -1 "-"»
     »
@@ -72,7 +73,7 @@
   «wire (1500,0) (1200,0) "Vout2"»
   «wire (1500,400) (1200,400) "Vout1"»
   «wire (1200,-500) (1500,-500) "VClip"»
-  «text (-350,-1000) 1 7 0 0x1000000 -1 -1 ".tran 0 10ms"»
-  «text (-3750,1100) 1 7 1 0x1000000 -1 -1 "This circuit demonstrates using the WavOut component. See WavOut.qsch for details."»
+  «text (-350,-1000) 1 7 0 0x1000000 -1 -1 "ï»¿.tran 0 10ms"»
+  «text (-3750,1100) 1 7 1 0x1000000 -1 -1 "ï»¿This circuit demonstrates using the WavOut component. See WavOut.qsch for details."»
 »
 

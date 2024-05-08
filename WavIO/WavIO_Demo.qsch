@@ -17,12 +17,13 @@
     «symbol
       «description: WavOut Demo»
       «shorted pins: false»
-      «rect (-500,-900) (1500,400) 0 0 0 0xff0000 0xc8c8c8 -1 1 -1»
+      «rect (-500,-1100) (1500,400) 0 0 0 0xff0000 0xc8c8c8 -1 1 -1»
       «text (400,200) 1 12 0 0x1000000 -1 -1 "X2"»
       «text (400,50) 0.681 13 0 0x1000000 -1 -1 "WavOut"»
       «text (400,-650) 0.681 13 0 0x1000000 -1 -1 "MaxSamples=0"»
       «text (400,-500) 0.681 13 0 0x1000000 -1 -1 "Frequency=44100"»
       «text (400,-350) 0.681 13 0 0x1000000 -1 -1 "FilePath="./wavout.wav""»
+      «text (400,-800) 0.681 13 0 0x1000000 -1 -1 "BitDepth=16"»
       «pin (-500,200) (0,0) 1 7 0 0x0 -1 "IN1"»
       «pin (-500,-200) (0,0) 1 7 0 0x0 -1 "IN2"»
       «pin (1500,200) (0,0) 1 11 0 0x0 -1 "OUT1"»
@@ -44,7 +45,7 @@
   «wire (3100,-300) (2800,-300) "Vclip"»
   «wire (3100,600) (2800,600) "Vout1"»
   «wire (800,600) (100,600) "Vin1"»
-  «text (-2200,-650) 1 7 0 0x1000000 -1 -1 ".tran 10ms"»
-  «text (-2500,1350) 1 7 1 0x1000000 -1 -1 "This circuit demonstrates using the WavSrc & WavOut components for a "roundtrip.""»
+  «text (-2200,-650) 1 7 0 0x1000000 -1 -1 "ï»¿.tran 10ms"»
+  «text (-2500,1350) 1 7 1 0x1000000 -1 -1 "ï»¿This circuit demonstrates using the WavSrc & WavOut components for a "roundtrip.""»
 »
 

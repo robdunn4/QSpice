@@ -2,7 +2,7 @@
  * WavSrc.cpp -- QSpice C-Block component to read *.WAV file data as a circuit
  * signal source.
  *
- * 2024.04.29 - Added support for 24-bit PCM.
+ * 2024.04.29 - v0.2 added support for 24-bit PCM.
  *
  * Copyright © 2023-2024 Robert Dunn.  Licensed for use under the GNU GPLv3.0.
  ******************************************************************************/
