@@ -4,7 +4,7 @@
       «type: Ø(.DLL)»
       «description: WavSrc C-Block»
       «shorted pins: false»
-      «rect (-600,200) (900,-800) 0 0 0 0x4000000 0x4000000 -1 1 -1»
+      «rect (-600,200) (900,-900) 0 0 0 0x4000000 0x4000000 -1 1 -1»
       «text (150,50) 1 12 0 0x1000000 -1 -1 "X1"»
       «text (150,-100) 0.681 13 0 0x1000000 -1 -1 "WavSrc"»
       «text (150,-350) 0.681 13 0 0x1000000 -1 -1 "char* filename=FilePath"»
@@ -40,6 +40,6 @@
   «wire (-1100,600) (-1100,800) "REF"»
   «wire (-1500,800) (-1100,800) "REF"»
   «wire (-1100,100) (-1100,200) "GND"»
-  «text (-2820,2810) 1 7 1 0x1000000 -1 -1 "This is the WavSrc subcircuit. See WavSrc_Demo.qsch for a usage example.\n \nThe REF input port is intended to provide an easy way to set a DC offset on\nthe output voltages but could be a signal to modulate the output. The port \nmay be left open to default to ground.\n \nThe WAV file must be 16-bit PCM. It may be mono or stereo. (If mono, both\noutput channels are driven by the mono signal.) If the gain is set to 1.0, i.e., \nno gain, then the maximum 16-bit sample produces a 1V output. \n \nPassed Attributes:\n * filename = input WAV file path (relative or absolute; overwrites existing file)\n * loops = # of times to read the input file (0=infinite)\n * gain = gain factor to apply to input samples"»
+  «text (-2820,2810) 1 7 1 0x1000000 -1 -1 "ï»¿This is the WavSrc subcircuit. See WavSrc_Demo.qsch for a usage example.\n \nThe REF input port is intended to provide an easy way to set a DC offset on\nthe output voltages but could be a signal to modulate the output. The port \nmay be left open to default to ground.\n \nThe WAV file must be 16- or 24-bit PCM. It may be mono or stereo.  If mono,\nboth output channels are driven by the mono signal.  If the gain is set to 1.0,\ni.e., no gain, then the maximum n-bit sample produces a 1V output. \n \nPassed Attributes:\n * filename = input WAV file path (relative or absolute)\n * loops = # of times to read the input file (0=infinite)\n * gain = gain factor to apply to input samples\n \nNote:  Component outputs have 1K impedance by default.  Input impedance\nis high."»
 »
 

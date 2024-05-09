@@ -73,7 +73,7 @@
   «wire (1500,0) (1200,0) "Vout2"»
   «wire (1500,400) (1200,400) "Vout1"»
   «wire (1200,-500) (1500,-500) "VClip"»
-  «text (-350,-1000) 1 7 0 0x1000000 -1 -1 "ï»¿.tran 0 10ms"»
+  «text (-250,-1200) 1 7 0 0x1000000 -1 -1 "ï»¿.tran 0 10ms"»
   «text (-3750,1100) 1 7 1 0x1000000 -1 -1 "ï»¿This circuit demonstrates using the WavOut component. See WavOut.qsch for details."»
 »
 
