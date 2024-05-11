@@ -3,6 +3,7 @@
  * circuit signal.
  *
  * 2024.05.08 - v0.2 added support for 24-bit PCM stereo.
+ * 2024.05.11 - v0.3 revised normalization factor.
  *
  * Copyright © 2023-2024 Robert Dunn.  Licensed for use under the GNU GPLv3.0.
  ******************************************************************************/
@@ -26,7 +27,7 @@
 #define FILE_ERROR  -1
 
 #define PROGRAM_NAME    "WavOut"
-#define PROGRAM_VERSION "v0.2"
+#define PROGRAM_VERSION "v0.3"
 #define PROGRAM_INFO    PROGRAM_NAME " " PROGRAM_VERSION
 
 /*------------------------------------------------------------------------------
@@ -308,13 +309,15 @@ inline int32_t convToInt(InstData &inst, double val) {
 
 // scale 16-bit int to double; inline for speed
 inline double convToDbl16(int32_t val) {
-  constexpr double factor = 1.0 / 0x7fff;   // pre-calculate for speed
+  // constexpr double factor = 1.0 / 0x7fff;   // pre-calculate for speed
+  constexpr double factor = 1.0 / 0x8000;   // pre-calculate for speed
   return val * factor;
 }
 
 // scale 24-bit int to double; inline for speed
 inline double convToDbl24(int32_t val) {
-  constexpr double factor = 1.0 / 0x7fffff;   // pre-calculate for speed
+  // constexpr double factor = 1.0 / 0x7fffff;   // pre-calculate for speed
+  constexpr double factor = 1.0 / 0x800000;   // pre-calculate for speed
   return val * factor;
 }
 

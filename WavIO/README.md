@@ -4,7 +4,8 @@ Components to source/sink circuit signals from/to WAV files in the QSpice circui
 ## Revision History
 * 2023.09.03 -- Initial versions released (v0.1).
 * 2024.04.26 -- Added support for 24-bit PCM to WavSrc (v0.2).
-* 2024.05.08 -- Added support for 24-bit PCM to WavOut (v0.2). 
+* 2024.05.08 -- Added support for 24-bit PCM to WavOut (v0.2).
+* 2024.05.11 -- Revised sample normalization factor (WavSrc & WavOut) and fixed WavSrc sample timing. 
 
 ## WavSrc - WAV file as simulation signal source
 * WavSrc.cpp & .h &mdash; DLL source code.

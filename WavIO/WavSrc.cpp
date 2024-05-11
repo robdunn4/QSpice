@@ -3,6 +3,7 @@
  * signal source.
  *
  * 2024.04.29 - v0.2 added support for 24-bit PCM.
+ * 2024.05.11 - v0.3 revised sample timing & normalization factor.
  *
  * Copyright © 2023-2024 Robert Dunn.  Licensed for use under the GNU GPLv3.0.
  ******************************************************************************/
@@ -18,7 +19,7 @@
 #include <time.h>
 
 #define PROGRAM_NAME    "WavSrc"
-#define PROGRAM_VERSION "v0.2"
+#define PROGRAM_VERSION "v0.3"
 #define PROGRAM_INFO    PROGRAM_NAME " " PROGRAM_VERSION
 
 /*
@@ -89,12 +90,13 @@ struct InstData {
   FILE       *file;             // file stream pointer for WAV data
   int         fileState;        // 0 = closed; -1 = error; 1 = open
   fpos_t      startOfData;      // file position of start of data for looping
-  int         sampleCnt;        // # of samples read so far
-  int         nbrSamples;       // # of samples in file
+  uint32_t    sampleCnt;        // # of samples read so far
+  uint32_t    nbrSamples;       // # of samples in file
   int         bytesPerSample;   // bytes in each data sample
   double      lastCh1;   // last normalized value read/output of channel 1
   double      lastCh2;   // last normalized value read/output of channel 2
   double      nextSampleTime;   // time to fetch next sample
+  double      nextSampleIncr;   // simulation time increment for next sample
   double      maxAmplitude;   // max input amplitude for normalization to +/-1.0
   double      sampleTimeIncr;   // 1 / sample frequency
   int         nbrChannels;      // number of channels per sample
@@ -180,13 +182,15 @@ extern "C" __declspec(dllexport) void Trunc(
     InstData *inst, double t, union uData *data, double *timestep) {
   UDATA_DEFS;
 
-  if (t < inst->nextSampleTime) *timestep = inst->nextSampleTime - t;
+  // if (t < inst->nextSampleTime) *timestep = inst->nextSampleTime - t;
+  if (t < inst->nextSampleTime) *timestep = inst->nextSampleIncr;
 }
 
 /*------------------------------------------------------------------------------
  * Destroy() -- clean up upon end of simulation
  *----------------------------------------------------------------------------*/
 extern "C" __declspec(dllexport) void Destroy(InstData *inst) {
+  msg("Closing WAV file.\n");
   fclose(inst->file);
   free(inst);
 }
@@ -204,7 +208,7 @@ void initInst(InstData &inst, uData *data) {
   // default instance file state to file error
   inst.fileState = FileError;
 
-  msg("Using WAV file=\"%s\", loops=%d, gain=%f\n", filename, loops, gain);
+  msg("Reading WAV file \"%s\", loops=%d, gain=%f\n", filename, loops, gain);
 
   // open the WAV file
   if (!(bool)(inst.file = fopen(filename, "rb"))) {
@@ -268,7 +272,7 @@ void initInst(InstData &inst, uData *data) {
     return;
   }
 
-  // validate allowed format -- only 16-bit PCM is supported for now
+  // validate allowed format -- only PCM is supported for now
   if (fmtChunk.fmtCode != FmtPCM) {
     msg(MsgBadFormat, filename);
     fclose(inst.file);
@@ -287,13 +291,15 @@ void initInst(InstData &inst, uData *data) {
   switch (fmtChunk.bitsPerSample) {
     //	case 8: maxAmplitude = 0x7F; break;
   case 16:
-    inst.maxAmplitude   = 0x7fff;
+    // inst.maxAmplitude   = 0x7fff;
+    inst.maxAmplitude   = 0x8000;
     inst.getSample      = getSample16;
     inst.bytesPerSample = 2;
     break;
     //	case 20: inst.maxAmplitude = 0x07FFFF; break;
   case 24:
-    inst.maxAmplitude   = 0x7FFFFF;
+    // inst.maxAmplitude   = 0x7FFFFF;
+    inst.maxAmplitude   = 0x800000;
     inst.getSample      = getSample24;
     inst.bytesPerSample = 3;
     break;
@@ -324,6 +330,7 @@ void initInst(InstData &inst, uData *data) {
   inst.nbrSamples = chunkHdr.chunkSize / inst.bytesPerSample / inst.nbrChannels;
   inst.sampleTimeIncr = 1.0 / fmtChunk.samplesPerSec;
   inst.nextSampleTime = 0.0;
+  inst.nextSampleIncr = inst.sampleTimeIncr;
   inst.maxLoops = loops < 1 ? INT_MAX : loops;   // technically not infinity
   inst.lastCh1 = inst.lastCh2 = 0.0;
   inst.gain                   = gain;
@@ -339,6 +346,12 @@ void initInst(InstData &inst, uData *data) {
 
   // in theory, we're ready to start reading samples
   inst.fileState = FileOpen;
+
+  // msg("Using WAV file=\"%s\", loops=%d, gain=%f\n", filename, loops, gain);
+  msg("WAV Metadata: # of Channels=%d, Bit Depth=%d, Sample Rate=%dHz, # of "
+      "Samples=%d\n",
+      inst.nbrChannels, inst.bytesPerSample * 8, fmtChunk.samplesPerSec,
+      inst.nbrSamples);
 }
 
 /*------------------------------------------------------------------------------
@@ -359,8 +372,11 @@ void getSample(InstData &inst, double t, const char *filename) {
     // do we have more loops to do?
     if (inst.loopCnt >= inst.maxLoops) {
       fclose(inst.file);
-      inst.fileState      = FileClosed;
-      inst.nextSampleTime = 1e308;   // we won't be reading again anytime soon
+      inst.fileState = FileClosed;
+      // inst.nextSampleTime = 1e308;   // we won't be reading again anytime
+      // soon
+      // we won't be reading again anytime soon
+      inst.nextSampleTime = inst.nextSampleIncr = 1e308;
       return;
     }
 
@@ -381,6 +397,7 @@ void getSample(InstData &inst, double t, const char *filename) {
   // calculate next sample time adjusting for loop count
   inst.nextSampleTime = ((inst.loopCnt * inst.nbrSamples) + ++inst.sampleCnt) *
       inst.sampleTimeIncr;
+  inst.nextSampleIncr = inst.nextSampleTime - t;
 }
 
 /*------------------------------------------------------------------------------
@@ -420,9 +437,16 @@ double getSample24(InstData &inst, const char *filename) {
     return 0.0;
   }
 
+  // // reverse bytes into proper integer value and normalize
+  // int32_t intVal =
+  //     ((sampleBytes[2] << 8) + sampleBytes[1] << 8) + sampleBytes[0];
+  // double retVal = intVal / inst.maxAmplitude;
+  // if (retVal < -1.0) retVal = -1.0;
+
   // reverse bytes into proper integer value and normalize
   int32_t intVal =
       ((sampleBytes[2] << 8) + sampleBytes[1] << 8) + sampleBytes[0];
+  if (sampleBytes[2] & 0x80) intVal |= 0xff000000;   // sign extension
   double retVal = intVal / inst.maxAmplitude;
   if (retVal < -1.0) retVal = -1.0;
 
