@@ -185,7 +185,8 @@ extern "C" __declspec(dllexport) void wavout(
   OUT2             = inst->lastOut.CH2;
   CLIP             = inst->lastClip;
 
-  if (!inst->sampleCnt && inst->sampleCnt > inst->maxSamples) return;
+  // if (!inst->sampleCnt && inst->sampleCnt > inst->maxSamples) return;
+  if (inst->sampleCnt && inst->sampleCnt > inst->maxSamples) return;
 
   writeSamples(*inst);
 }
