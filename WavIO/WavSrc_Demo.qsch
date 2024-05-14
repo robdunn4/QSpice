@@ -25,7 +25,7 @@
       «rect (-25,-73) (25,-77) 0 0 0 0x1000000 0x3000000 -1 0 -1»
       «ellipse (-130,130) (130,-130) 0 0 0 0x1000000 0x1000000 -1 -1»
       «text (100,150) 1 7 0 0x1000000 -1 -1 "V1"»
-      «text (100,-150) 1 7 0 0x1000000 -1 -1 "DC 5V"»
+      «text (100,-150) 1 7 0 0x1000000 -1 -1 "DC 0V"»
       «pin (0,200) (0,0) 1 0 0 0x0 -1 "+"»
       «pin (0,-200) (0,0) 1 0 0 0x0 -1 "-"»
     »
@@ -38,7 +38,7 @@
   «wire (-2800,800) (-2100,800) "N01"»
   «wire (-200,900) (100,900) "Vch1"»
   «wire (100,600) (-200,600) "Vch2"»
-  «text (-2800,-150) 1 7 0 0x1000000 -1 -1 ".tran 150ms"»
-  «text (-3120,2060) 1 7 1 0x1000000 -1 -1 "This is a demonstration using the WavSrc subcircuit.\nSee WavSrc.qsch for details.\n \nAttributes passed to WavSrc.qsch: \n * FilePath = input WAV file path (relative or absolute)\n * Loops = # of times to read the input file (0=infinite)\n * Gain = gain factor to apply to input samples"»
+  «text (-2800,-150) 1 7 0 0x1000000 -1 -1 "ï»¿.tran 150ms"»
+  «text (-1225,1806) 1 13 1 0x1000000 -1 -1 "ï»¿This is a demonstration using the WavSrc subcircuit.\nSee WavSrc.qsch for details."»
 »
 

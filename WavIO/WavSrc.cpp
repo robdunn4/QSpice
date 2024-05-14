@@ -11,6 +11,7 @@
 // or open the component source in QSpice, right-click, compile...
 
 #include "wavsrc.h"
+#include <algorithm>   // for std::min/max
 #include <limits.h>
 #include <malloc.h>
 #include <stdarg.h>
@@ -182,7 +183,6 @@ extern "C" __declspec(dllexport) void Trunc(
     InstData *inst, double t, union uData *data, double *timestep) {
   UDATA_DEFS;
 
-  // if (t < inst->nextSampleTime) *timestep = inst->nextSampleTime - t;
   if (t < inst->nextSampleTime) *timestep = inst->nextSampleIncr;
 }
 
@@ -373,8 +373,6 @@ void getSample(InstData &inst, double t, const char *filename) {
     if (inst.loopCnt >= inst.maxLoops) {
       fclose(inst.file);
       inst.fileState = FileClosed;
-      // inst.nextSampleTime = 1e308;   // we won't be reading again anytime
-      // soon
       // we won't be reading again anytime soon
       inst.nextSampleTime = inst.nextSampleIncr = 1e308;
       return;
@@ -404,6 +402,8 @@ void getSample(InstData &inst, double t, const char *filename) {
  * getSample16() - gets the next 16-bit value from the file and normalizes it
  * to +/-1.0.
  *----------------------------------------------------------------------------*/
+// TODO:  Combine getSample16() & getSample24() and eliminate function
+// indirection?
 double getSample16(InstData &inst, const char *filename) {
   int16_t sampleVal;
 
@@ -414,10 +414,9 @@ double getSample16(InstData &inst, const char *filename) {
     return 0.0;
   }
 
-  // TODO:  Figure out what to do with +/- integer asymmetry.  for now, clip
-  // 0x8fff to 0x8ffe ...
+  // normalize & limit
   double retVal = sampleVal / inst.maxAmplitude;
-  if (retVal < -1.0) retVal = -1.0;
+  retVal        = std::max(std::min(retVal, 1.0), -1.0);
 
   return retVal;
 }
@@ -427,28 +426,25 @@ double getSample16(InstData &inst, const char *filename) {
  * to +/-1.0.
  *----------------------------------------------------------------------------*/
 double getSample24(InstData &inst, const char *filename) {
-  int8_t sampleBytes[3];
+  // PCM data is in Intel native/little-endian format... twiddle the bits...
+  union {
+    int32_t i32;
+    int8_t  b[4];
+  } buf;
 
   // read 24-bit sample bytes
-  int bytes = fread(&sampleBytes, 1, sizeof(sampleBytes), inst.file);
-  if (bytes < sizeof(sampleBytes)) {
+  if (fread(&buf, 1, 3, inst.file) != 3) {
     inst.fileState = FileError;
     msg(MsgBadRead, filename);
     return 0.0;
   }
 
-  // // reverse bytes into proper integer value and normalize
-  // int32_t intVal =
-  //     ((sampleBytes[2] << 8) + sampleBytes[1] << 8) + sampleBytes[0];
-  // double retVal = intVal / inst.maxAmplitude;
-  // if (retVal < -1.0) retVal = -1.0;
+  // set high byte for sign extension
+  buf.b[3] = buf.b[2] & 0x80 ? 0xff : 0x00;
 
-  // reverse bytes into proper integer value and normalize
-  int32_t intVal =
-      ((sampleBytes[2] << 8) + sampleBytes[1] << 8) + sampleBytes[0];
-  if (sampleBytes[2] & 0x80) intVal |= 0xff000000;   // sign extension
-  double retVal = intVal / inst.maxAmplitude;
-  if (retVal < -1.0) retVal = -1.0;
+  // normalize & limit
+  double retVal = buf.i32 / inst.maxAmplitude;
+  retVal        = std::max(std::min(retVal, 1.0), -1.0);
 
   return retVal;
 }

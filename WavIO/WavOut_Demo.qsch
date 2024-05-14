@@ -4,17 +4,17 @@
       «description: WavOut Demo»
       «shorted pins: false»
       «rect (-500,-1100) (1500,400) 0 0 0 0xff0000 0xc8c8c8 -1 1 -1»
-      «text (400,200) 1 12 0 0x1000000 -1 -1 "X1"»
-      «text (400,50) 0.681 13 0 0x1000000 -1 -1 "WavOut"»
-      «text (400,-650) 0.681 13 0 0x1000000 -1 -1 "MaxSamples=0"»
-      «text (400,-500) 0.681 13 0 0x1000000 -1 -1 "Frequency=48000"»
-      «text (400,-350) 0.681 13 0 0x1000000 -1 -1 "FilePath="./wavout.wav""»
-      «text (400,-800) 0.681 13 0 0x1000000 -1 -1 "BitDepth=16"»
+      «text (450,200) 1 12 0 0x1000000 -1 -1 "X1"»
+      «text (450,50) 0.681 13 0 0x1000000 -1 -1 "WavOut"»
+      «text (450,-650) 0.681 13 0 0x1000000 -1 -1 "MaxSamples=0"»
+      «text (450,-350) 0.681 13 0 0x1000000 -1 -1 "Frequency=48000"»
+      «text (450,-900) 0.681 13 0 0x1000000 -1 -1 "FilePath="./wavout.wav""»
+      «text (450,-500) 0.681 13 0 0x1000000 -1 -1 "BitDepth=16"»
       «pin (-500,200) (0,0) 1 7 0 0x0 -1 "IN1"»
       «pin (-500,-200) (0,0) 1 7 0 0x0 -1 "IN2"»
       «pin (1500,200) (0,0) 1 11 0 0x0 -1 "OUT1"»
       «pin (1500,-200) (0,0) 1 11 0 0x0 -1 "OUT2"»
-      «pin (1500,-700) (0,0) 1 11 0 0x0 -1 "CLIP"»
+      «pin (1500,-600) (0,0) 1 11 0 0x0 -1 "CLIP"»
     »
   »
   «component (-1700,100) 8 0
@@ -61,7 +61,7 @@
   «net (1500,0) 1 7 0 "Vout2"»
   «net (-1000,400) 1 14 0 "Vin1"»
   «net (-1000,0) 1 14 0 "Vin2"»
-  «net (1500,-500) 1 7 0 "VClip"»
+  «net (1500,-400) 1 7 0 "VClip"»
   «wire (-1700,300) (-1700,400) "Vin1"»
   «wire (-1700,-300) (-1700,-100) "GND"»
   «wire (-1200,-400) (-1200,0) "Vin2"»
@@ -72,8 +72,8 @@
   «wire (-800,0) (-1000,0) "Vin2"»
   «wire (1500,0) (1200,0) "Vout2"»
   «wire (1500,400) (1200,400) "Vout1"»
-  «wire (1200,-500) (1500,-500) "VClip"»
-  «text (-250,-1200) 1 7 0 0x1000000 -1 -1 "ï»¿.tran 0 10ms"»
-  «text (-3750,1100) 1 7 1 0x1000000 -1 -1 "ï»¿This circuit demonstrates using the WavOut component. See WavOut.qsch for details."»
+  «wire (1200,-400) (1500,-400) "VClip"»
+  «text (-3450,-1250) 1 7 0 0x1000000 -1 -1 "ï»¿.tran 0 10ms"»
+  «text (-1001,1273) 1 13 1 0x1000000 -1 -1 "ï»¿This circuit demonstrates using the WavOut component.\nSee WavOut.qsch for details."»
 »
 
