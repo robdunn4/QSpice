@@ -72,3 +72,12 @@ Execute C-Block code when a QSpice simulation starts/ends using DllMain().  (Bui
 * CBlockBasics3.pdf ("DllMain() & Simulation Start/End Tasks") &mdash; How DllMain() works and how we can use it.
 * CBlockBasics3_c.qsch &mdash; Demonstration schematic.
 * CBlockBasics3_c.cpp &mdash; Demonstration C-Block DLL code (C-Style).
+
+## C-Block Basics #4
+
+Revisiting the Trunc() function, the QSpice simulation cycle, and more.
+
+* CBlockBasics4.pdf ("Trunc() Revisited")
+* CBlockBasics4.qsch &mdash; Demonstration schematic.
+* CBlockBasics4.cpp &mdash; Demonstration C-Block DLL code.
+
