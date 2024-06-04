@@ -1,0 +1,43 @@
+ÿØÿÛ«schematic
+  «component (200,-500) 0 0
+    «symbol
+      «type: Ø(.DLL)»
+      «description: CBlockBasics5 Example»
+      «shorted pins: false»
+      «rect (-500,500) (700,-600) 0 0 0 0x4000000 0x4000000 -1 1 -1»
+      «text (100,350) 1 12 0 0x1000000 -1 -1 "X1"»
+      «text (100,250) 0.681 13 0 0x1000000 -1 -1 "CBlockBasics5"»
+      «text (100,-200) 0.681 13 0 0x1000000 -1 -1 "double TTOL=ttol"»
+      «text (100,-380) 0.681 13 0 0x1000000 -1 -1 "double FREQ=freqHz"»
+      «pin (700,0) (0,0) 1 11 146 0x0 -1 "Vout"»
+    »
+  »
+  «component (-1400,-2700) 0 2
+    «symbol B1
+      «type: B»
+      «description: Behavioral Voltage Source»
+      «shorted pins: false»
+      «line (0,-130) (0,-200) 0 0 0x1000000 -1 -1»
+      «line (0,200) (0,130) 0 0 0x1000000 -1 -1»
+      «rect (-25,77) (25,73) 0 0 0 0x1000000 0x3000000 -1 0 -1»
+      «rect (-2,50) (2,100) 0 0 0 0x1000000 0x3000000 -1 0 -1»
+      «rect (-25,-73) (25,-77) 0 0 0 0x1000000 0x3000000 -1 0 -1»
+      «ellipse (-130,130) (130,-130) 0 0 0 0x1000000 0x1000000 -1 -1»
+      «text (100,150) 1 7 0 0x1000000 -1 -1 "B1"»
+      «text (100,-150) 1 7 0 0x1000000 -1 -1 "V=abortsim(if(time>25m,1,0))"»
+      «pin (0,200) (0,0) 1 0 0 0x0 -1 "+"»
+      «pin (0,-200) (0,0) 1 0 0 0x0 -1 "-"»
+    »
+  »
+  «net (1100,-500) 1 7 0 "Vout"»
+  «net (-1400,-3000) 1 13 0 "GND"»
+  «wire (900,-500) (1100,-500) "Vout"»
+  «wire (-1400,-3000) (-1400,-2900) "GND"»
+  «rect (-1750,-1400) (2500,-3200) 0 0 2 0x4000000 0x1000000 -1 0 -1»
+  «text (900,-2400) 1 7 0 0x1000000 -1 -1 "ï»¿.tran 10000m"»
+  «text (-1850,500) 1.6 7 1 0x1000000 -1 -1 "ï»¿Example program for CBlockBasics5.pdf"»
+  «text (-1550,-1950) 1 7 1 0x1000000 -1 -1 "ï»¿Set .tran for long simulation to force QSpice to use large \ntimesteps.  Stop simulation prematurely with abortsim().\nUse "stuff with jumper" to allow simulation to run to\ncompletion."»
+  «text (900,-2800) 1 7 0 0x1000000 -1 -1 "ï»¿.param ttol=100Âµ"»
+  «text (900,-2600) 1 7 0 0x1000000 -1 -1 "ï»¿.param freqHz=1K"»
+»
+

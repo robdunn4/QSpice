@@ -81,3 +81,10 @@ Revisiting the Trunc() function, the QSpice simulation cycle, and more.
 * CBlockBasics4.qsch &mdash; Demonstration schematic.
 * CBlockBasics4.cpp &mdash; Demonstration C-Block DLL code.
 
+## C-Block Basics #5
+
+Implements an internal clock source in a C-Block component.  Describes a QSpice "peculiarity," compares Trunc() and MaxExtStepSize() functionality, and presents a reliable internal clock timing solution.
+
+* CBlockBasics5.pdf ("Implementing An Internal Clock Source")
+* CBlockBasics5.qsch &mdash; Demonstration schematic.
+* CBlockBasics5.cpp &mdash; Demonstration C-Block DLL code.
