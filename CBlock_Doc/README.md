@@ -75,7 +75,7 @@ Execute C-Block code when a QSpice simulation starts/ends using DllMain().  (Bui
 
 ## C-Block Basics #4
 
-Revisiting the Trunc() function, the QSpice simulation cycle, and more.
+Revisits the Trunc() function, the QSpice simulation cycle, and more.  Implements a comparator component example.  (Builds on C-Block Basics #1.)
 
 * CBlockBasics4.pdf ("Trunc() Revisited")
 * CBlockBasics4.qsch &mdash; Demonstration schematic.
@@ -83,8 +83,8 @@ Revisiting the Trunc() function, the QSpice simulation cycle, and more.
 
 ## C-Block Basics #5
 
-Implements an internal clock source in a C-Block component.  Describes a QSpice "peculiarity," compares Trunc() and MaxExtStepSize() functionality, and presents a reliable internal clock timing solution.
+Revisits the MaxExtStepSize() function, a QSpice "peculiarity," and more.  Implements an internal clock component example.  (Builds on C-Block Basics #4.)
 
-* CBlockBasics5.pdf ("Implementing An Internal Clock Source")
+* CBlockBasics5.pdf ("MaxExtStepSize() Revisited")
 * CBlockBasics5.qsch &mdash; Demonstration schematic.
 * CBlockBasics5.cpp &mdash; Demonstration C-Block DLL code.
