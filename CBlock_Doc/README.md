@@ -88,3 +88,12 @@ Revisits the MaxExtStepSize() function, a QSpice "peculiarity," and more.  Imple
 * CBlockBasics5.pdf ("MaxExtStepSize() Revisited")
 * CBlockBasics5.qsch &mdash; Demonstration schematic.
 * CBlockBasics5.cpp &mdash; Demonstration C-Block DLL code.
+
+## C-Block Basics #6
+
+Investigates connecting bus wires to C-Block components and why we can't use Bit Vectors in C++ components.  Discusses how QSpice passes data into/out of components.  Explores ways to implement "bit registers" as a substitute for Bit Vectors.
+
+* CBlockBasics6.pdf ("Using Bus Wires")
+* CBlockBasics6.qsch &mdash; Demonstration schematic.
+* CBlockBasics6.cpp &mdash; Basic C-Block code for attached bus wire.
+* CBlockBasics6_Alt1.cpp &mdash; C-Block code with types & functions to implement "bit registers" conveniently.
