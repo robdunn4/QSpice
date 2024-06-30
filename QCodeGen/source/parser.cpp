@@ -1,5 +1,6 @@
 #include "parser.h"
 
+#include <QtGlobal>
 #include <cstdio>
 #include <format>
 #include <regex>
@@ -170,30 +171,19 @@ CBlockData Parser::parseCblk(StrList strList) {
     begIter++;
   }
 
-  if (begIter >= endIter) {
-    // error
-    return cblk;
-  }
+  if (begIter >= endIter) return cblk; // error
 
   // symbol name item
   String symName;
   bool isComment;
-  if (!getTextParm(begIter->c_str(), symName, isComment)) {
-    // error
-    return cblk;
-  }
+  if (!getTextParm(begIter->c_str(), symName, isComment)) return cblk; // error
 
-  if (++begIter >= endIter) {
-    // error
-    return cblk;
-  }
+  if (++begIter >= endIter) return cblk; // error
 
   // cblock name item
   String cblkName;
-  if (!getTextParm(begIter->c_str(), cblkName, isComment)) {
-    // error
-    return cblk;
-  }
+  if (!getTextParm(begIter->c_str(), cblkName, isComment)) return cblk; // error
+
   cblk = CBlockData(symName, cblkName, descText);
 
   // get optional attribute items
@@ -212,12 +202,35 @@ CBlockData Parser::parseCblk(StrList strList) {
   while (begIter < endIter) {
     String ioStr;
     String pinName;
-    if (!getPinParm(*begIter, ioStr, pinName)) {
-      return cblk; // error
-    }
+    bool isBus   = false;
+    int startBus = 0;
+    int endBus   = 0;
 
-    PinItem pinItem(ioStr, pinName);
-    cblk.addPinItem(PinItem(ioStr, pinName));
+    if (!getPinParm(*begIter, ioStr, pinName, isBus, startBus, endBus))
+      return cblk; // error
+
+    if (!isBus) {
+      PinItem pinItem(ioStr, pinName);
+      cblk.addPinItem(pinItem);
+    } else {
+      // check for error
+      if (startBus < 0 || endBus < 0) {
+        PinItem pinItem(ioStr, pinName);
+        cblk.validState    = false;
+        pinItem.validState = false;
+        cblk.addPinItem(pinItem);
+      } else {
+        int incr = startBus > endBus ? -1 : 1;
+        int cnt  = abs(startBus - endBus) + 1;
+        do {
+          String varName = pinName + "_" + std::to_string(startBus) + "_";
+          PinItem pinItem(ioStr, varName);
+          cblk.addPinItem(pinItem);
+
+          startBus += incr;
+        } while (--cnt > 0);
+      }
+    }
     begIter++;
   }
 
@@ -255,17 +268,58 @@ bool Parser::getTextParm(const String &str, String &value,
   return true;
 }
 
-bool Parser::getPinParm(const String &str, String &ioStr,
-    String &pinName) const {
-  // note:  the below is fragile
+// parse pin parameters
+// Note: This took a while to debug....  When you call
+// std::regex_match(std::string str, std::smatch sm...), the values returned in
+// sm are pointers into str.  If you change str, do not subsequently use
+// sm[x].  You will likely create bugs.
+//
+bool Parser::getPinParm(const String &str, String &ioStr, String &pinName,
+    bool &isBus, int &busStart, int &busEnd) const {
+  // note:  the below is fragile???
+  isBus    = false;
+  busStart = busEnd = -1; // use -1 as error upstream
+
+  // get ioStr and pin name
   static const char *rePinPat = R"^(\xabpin .* ([0-9]+) .+ .+ \"(.+)\"\xbb)^";
   static const std::regex rePin(rePinPat);
 
   std::smatch sm;
-  if (!std::regex_match(str, sm, rePin) || sm.size() != 3) return false;
+  bool bMat;
 
-  ioStr   = sm[1];
+  bMat = std::regex_match(str, sm, rePin);
+  if (!bMat || sm.size() != 3) return false; // error
+
+  ioStr   = sm[1].str();
   pinName = sm[2].str();
 
+  // parse into a valid variable name possibly followed by more text
+  // note: special character (0xac = ) for overbar is embedded in pin name
+  static const char *rePinNamePartsPat =
+      R"^((\xac?_?[a-zA-Z\xac]+[a-zA-Z0-9_\xac]*)(.*))^";
+  static const std::regex rePinNameParts(rePinNamePartsPat);
+
+  bMat = std::regex_match(pinName, sm, rePinNameParts);
+  Q_ASSERT(bMat);         // this shouldn't fail?
+  if (!bMat) return true; // this shouldn't happen?
+
+  // there was more text; is it a valid range value ("[n:n]")?
+  String sRange = sm[2].str();
+  pinName       = sm[1].str();
+
+  if (!sRange.length()) return true; // no range text
+
+  // assume some attempt to make bus range
+  isBus = true;
+
+  static const char *reBusRangePat = R"^(\[([0-9])+:([0-9])+\])^";
+  static const std::regex reBusRange(reBusRangePat);
+
+  bMat = std::regex_match(sRange, sm, reBusRange);
+  if (!bMat) return true; // not a valid range
+
+  // make range valid
+  busStart = stoi(sm[1]);
+  busEnd   = stoi(sm[2]);
   return true;
 }

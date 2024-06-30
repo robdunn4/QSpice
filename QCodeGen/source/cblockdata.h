@@ -5,7 +5,8 @@
 #include <regex>
 
 // "Some people, when confronted with a problem, think 'I know, I'll use regular
-// expressions.'  Now they have two problems."
+// expressions.'  Now they have two problems." --Jamie Zawinski
+// If only I had listened....
 
 enum IOType : int;
 enum DataType : int;
@@ -105,8 +106,6 @@ public:
   String getCblkNameLC() const;
   String getCblkNameUC() const;
   String getCblkDesc() const { return descText; }
-  String getUdataSize() const;
-  ;
 
   StrList getCblkSummary();
 

@@ -9,6 +9,8 @@ Key features include:
 * Generates code without overwriting existing *.cpp component code files.
 * Improves error analysis for malformed port and string attributes.
 
+Release v0.9.5.1 is now available and adds support for "bus ports" to connect to QSpice bus wires.  See the CBlockBasics6 documents for an explanation of "Using Bus Wires" with C-Block components and the related issues.
+
 ## Files/Folders
 
 * /binaries &mdash; Project binaries/installation files (64-bit only).

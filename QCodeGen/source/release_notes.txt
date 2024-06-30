@@ -1,0 +1,21 @@
+Release Notes
+
+0.9.3
+* Initial public release.
+
+0.9.4
+* Improved parsing of double/float attribute values.  Now handles suffixes and
+  engineering notation.
+* Summary/Code tab contents now display Latin1 charset properly (extended
+  ASCII).
+* Fixed error dropping final line of templates when not ended with newline.
+
+0.9.5.1
+* Removed uData array size embedded template substitution parameter.  Will add
+  back to code block substitution parameter to ensure that it is correct when
+  uData array changes.
+* Added initial support for "bus ports."  QCodeGen *should* detect malformed 
+  bus port names and generate proper code when properly formed.  Needs more
+  testing to compare to QSpice code generator.
+* Full support for bus ports and "bit registers" (similar to Bit Vectors) not
+  yet implemented.

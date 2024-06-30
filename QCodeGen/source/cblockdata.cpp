@@ -1,5 +1,5 @@
 /*
- * There is much ugliness here due to early decision to have pin/attribute
+ * There is much ugliness here due to an early decision to have pin/attribute
  * classes format themselves.  Need to move into CBlockData class.
  */
 
@@ -447,11 +447,6 @@ String CBlockData::getCblkNameUC() const {
   return s;
 }
 
-String CBlockData::getUdataSize() const {
-  int dsize = int(pinsIn.size()) + int(attrs.size()) + int(pinsOut.size());
-  return std::format("{}", dsize);
-}
-
 StrList CBlockData::getCblkSummary() {
   StrList strList;
   String str;
@@ -474,34 +469,41 @@ StrList CBlockData::getCblkSummary() {
   strList.push_back(std::format("Output Pin Count:      {}", pinsOut.size()));
 
   // input pin details
-  strList.push_back("");
-  strList.push_back("Input Pin Details:");
-  for (PinItem &pin : pinsIn) {
-    str = std::format(
-        "PinOrder: {: >2}, PinName: {: <10}, PortType: {}, DataType: {}",
-        pin.pinNbr, pin.getVarName(), IOTypeText[pin.ioType],
-        DataTypeText[pin.dType]);
-    strList.push_back(str);
+  if (pinsIn.size()) {
+    strList.push_back("");
+    strList.push_back("Input Pin Details:");
+    for (PinItem &pin : pinsIn) {
+      str = std::format(
+          "PinOrder: {: >2}, PinName: {: <10}, PortType: {}, DataType: {}",
+          pin.pinNbr, pin.getVarName(), IOTypeText[pin.ioType],
+          DataTypeText[pin.dType]);
+      strList.push_back(str);
+    }
   }
 
   // output pin details
-  strList.push_back("");
-  strList.push_back("Output Pin Details:");
-  for (PinItem &pin : pinsOut) {
-    str = std::format(
-        "PinOrder: {: >2}, PinName: {: <10}, PortType: {}, DataType: {}",
-        pin.pinNbr, pin.getVarName(), IOTypeText[pin.ioType],
-        DataTypeText[pin.dType]);
-    strList.push_back(str);
+  if (pinsOut.size()) {
+    strList.push_back("");
+    strList.push_back("Output Pin Details:");
+    for (PinItem &pin : pinsOut) {
+      str = std::format(
+          "PinOrder: {: >2}, PinName: {: <10}, PortType: {}, DataType: {}",
+          pin.pinNbr, pin.getVarName(), IOTypeText[pin.ioType],
+          DataTypeText[pin.dType]);
+      strList.push_back(str);
+    }
   }
 
   // attribute string details
-  strList.push_back("");
-  strList.push_back("Input Attribute Details:");
-  for (AttrItem &attr : attrs) {
-    str = std::format("TextOrder: {: >2}, Content: {}, DataType: {}",
-        attr.attrNbr + 1, attr.getRawText().c_str(), DataTypeText[attr.dType]);
-    strList.push_back(str);
+  if (attrs.size()) {
+    strList.push_back("");
+    strList.push_back("Input Attribute Details:");
+    for (AttrItem &attr : attrs) {
+      str = std::format("TextOrder: {: >2}, Content: {}, DataType: {}",
+          attr.attrNbr + 1, attr.getRawText().c_str(),
+          DataTypeText[attr.dType]);
+      strList.push_back(str);
+    }
   }
 
   return strList;

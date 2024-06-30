@@ -2,7 +2,6 @@
 #define CODEGENERATOR_H
 
 #include "cblockdata.h"
-#include <regex>
 
 typedef std::regex Regex;
 typedef std::vector<Regex> RegexList;
@@ -14,9 +13,6 @@ public:
   void loadTmplFile(const StrList &inStrings);
   StrList makeCode(CBlockData &cblk);
   StrList getStrList();
-
-  // need to add function to test a string for embedded substitutions for use by
-  // preferences/settings dialog to warn against possible infinite recursion...
 
 protected:
   void makeRegexPats(); // could make static/initialize once

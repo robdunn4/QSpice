@@ -37,7 +37,8 @@ protected:
   StrList getCblkText(StrList blk) const;
   CBlockData parseCblk(StrList strList);
   bool getTextParm(const String &str, String &value, bool &isComment) const;
-  bool getPinParm(const String &str, String &ioStr, String &pinName) const;
+  bool getPinParm(const String &str, String &ioStr, String &pinName,
+      bool &isBus, int &busStart, int &busEnd) const;
 
 protected:
   StrList strList;

@@ -18,7 +18,6 @@ const char *const CodeGenerator::KeyWords[] = {
     "ComponentNameLC",   // embedded
     "ComponentNameUC",   // embedded
     "ComponentDesc",     // embedded
-    "UdataSize",         // embedded
     "Undef",             // block
     "UdataAll",          // block
     "UdataOutput",       // block
@@ -41,7 +40,6 @@ enum CodeGenerator::KeyWordTypes : int {
   KWT_CmpNameLC,     // embedded
   KWT_CmpNameUC,     // embedded
   KWT_CmpDesc,       // embedded
-  KWT_UdataSize,     // embeded
   KWT_Undef,         // block
   KWT_UdataAll,      // block
   KWT_UdataOutput,   // block
@@ -92,7 +90,6 @@ void CodeGenerator::makeRegexPats() {
     case KWT_CmpNameLC:
     case KWT_CmpNameUC:
     case KWT_CmpDesc:
-    case KWT_UdataSize:
       // embedded pattern
       pat = String(R"(^(.*)%%()") + KeyWords[i] + R"()%%(.*)$)";
       break;
@@ -173,9 +170,6 @@ StrList CodeGenerator::reparseText(CBlockData &cblk, String text) {
     break;
   case KWT_CmpDesc:
     strs = reparseText(cblk, pfx + cblk.getCblkDesc() + sfx);
-    break;
-  case KWT_UdataSize:
-    strs = reparseText(cblk, pfx + cblk.getUdataSize() + sfx);
     break;
 
   // block keywords

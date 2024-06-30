@@ -3,7 +3,7 @@
 
 QString AboutDlg::appName("QCodeGen");
 QString AboutDlg::appLongName("QSpice Code Generator");
-QString AboutDlg::appVersion("v0.9.4");
+QString AboutDlg::appVersion("v0.9.5.1");
 QString AboutDlg::appNameVersion(
     AboutDlg::appName + " " + AboutDlg::appVersion);
 QString AboutDlg::appCopyright("Copyright \u00a9 2024 Thin Air Enterprises &\n"

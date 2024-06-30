@@ -119,12 +119,53 @@
   «component (7800,-300) 0 0
     «symbol
       «type: Ø(.DLL)»
+      «description: Bad Port Tests»
       «shorted pins: false»
       «rect (-1100,1700) (1100,900) 0 0 0 0x4000000 0x4000000 -1 1 -1»
-      «text (50,1550) 1 12 0 0x1000000 -1 -1 "X3"»
-      «text (50,1450) 0.681 13 0 0x1000000 -1 -1 "Test_X3"»
+      «text (0,1550) 1 12 0 0x1000000 -1 -1 "X3"»
+      «text (0,1450) 0.681 13 0 0x1000000 -1 -1 "Test_X3"»
       «pin (-1100,1100) (0,0) 1 7 144 0x0 -1 "BadPort1"»
       «pin (1100,1100) (0,0) 1 11 1 0x0 -1 "BadPort2"»
+    »
+  »
+  «component (200,-3800) 0 0
+    «symbol
+      «type: Ø(.DLL)»
+      «description: Bus Tests»
+      «shorted pins: false»
+      «rect (-1100,700) (1300,-3000) 0 0 0 0x4000000 0x4000000 -1 1 -1»
+      «text (50,550) 1 12 0 0x1000000 -1 -1 "X4"»
+      «text (50,400) 0.681 13 0 0x1000000 -1 -1 "Test_X4"»
+      «text (50,-1250) 0.681 13 0 0x1000000 -1 -1 "char* Attr1="Attr1 Text""»
+      «pin (-1100,200) (0,0) 1 7 33 0x0 -1 "In1_c"»
+      «pin (-1100,0) (0,0) 1 7 97 0x0 -1 "In2_i[2:0]"»
+      «pin (-1100,-200) (0,0) 1 7 97 0x0 -1 "In3_i[0:2]"»
+      «pin (-1100,-400) (0,0) 1 7 97 0x0 -1 "In4_i[:2]"»
+      «pin (-1100,-600) (0,0) 1 7 97 0x0 -1 "In5_i[2:]"»
+      «pin (-1100,-800) (0,0) 1 7 17 0x0 -1 "In6_b[3:0]"»
+      «pin (1300,200) (0,0) 1 11 18 0x0 -1 "Out7_b[4:0]"»
+      «pin (1300,0) (0,0) 1 11 18 0x0 -1 "Out8_b[-1:4]"»
+      «pin (1300,-200) (0,0) 1 11 18 0x0 -1 "Out9_b[4]"»
+    »
+  »
+  «component (4400,-3800) 0 0
+    «symbol
+      «type: Ø(.DLL)»
+      «description: Bus Tests»
+      «shorted pins: false»
+      «rect (-1100,700) (1300,-3000) 0 0 0 0x4000000 0x4000000 -1 1 -1»
+      «text (50,550) 1 12 0 0x1000000 -1 -1 "X5"»
+      «text (50,400) 0.681 13 0 0x1000000 -1 -1 "Test_X5"»
+      «text (50,-1250) 0.681 13 0 0x1000000 -1 -1 "char* Attr1="Attr1 Text""»
+      «pin (-1100,200) (0,0) 1 7 33 0x0 -1 "In1_c"»
+      «pin (-1100,0) (0,0) 1 7 97 0x0 -1 "In2_i[2:0]"»
+      «pin (-1100,-200) (0,0) 1 7 97 0x0 -1 "In3_i[0:2]"»
+      «pin (-1100,-400) (0,0) 1 7 97 0x0 -1 "In4_i[2:2]"»
+      «pin (-1100,-600) (0,0) 1 7 97 0x0 -1 "In5_i[2:3]"»
+      «pin (-1100,-800) (0,0) 1 7 17 0x0 -1 "In6_b[3:0]"»
+      «pin (1300,200) (0,0) 1 11 18 0x0 -1 "Out7_b[4:0]"»
+      «pin (1300,0) (0,0) 1 11 18 0x0 -1 "Out8_b[1:4]"»
+      «pin (1300,-200) (0,0) 1 11 18 0x0 -1 "Out9_b[4:3]"»
     »
   »
   «net (300,-2300) 1 13 0 "GND"»
@@ -186,7 +227,9 @@
   «text (321,1750) 1.25 15 1 0x1000000 -1 -1 "ï»¿X1 Contains Errors"»
   «text (3650,1750) 1.25 7 1 0x1000000 -1 -1 "ï»¿X2 Errors Corrected"»
   «text (7250,1750) 1.25 7 1 0x1000000 -1 -1 "ï»¿X3 Bad Ports"»
-  «text (6700,0) 1 7 0 0x1000000 -1 -1 "ï»¿BadPort1: Data type specified\nbut no input/output direction"»
-  «text (6700,-500) 1 7 0 0x1000000 -1 -1 "ï»¿BadPort2: Input/output specified\nbut no data type"»
+  «text (6700,200) 1 7 0 0x1000000 -1 -1 "ï»¿BadPort1: Data type specified\nbut no input/output direction"»
+  «text (6700,-200) 1 7 0 0x1000000 -1 -1 "ï»¿BadPort2: Input/output specified\nbut no data type"»
+  «text (321,-2850) 1.25 15 1 0x1000000 -1 -1 "ï»¿X4 Bus Tests"»
+  «text (4521,-2850) 1.25 15 1 0x1000000 -1 -1 "ï»¿X5 Bus Tests"»
 »
 
