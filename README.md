@@ -15,6 +15,9 @@ Tools, components, symbols, code, etc., for Qorvo's free QSpice circuit simulato
 
 [QSpice Forum @physicboy's Github repo](https://github.com/physicboy/QSPICE)
 
+[Professor Marcos Alonso's QSpice YouTube Playlist](https://www.youtube.com/playlist?list=PLq_MUr0hT_-kn89_adwe6QNpnLpZtJeI-)
+
+
 ## GPIO Components
 QSpice symbol and class to implement general purpose I/O pins (i.e., micro-controller tri-state pins).
 
