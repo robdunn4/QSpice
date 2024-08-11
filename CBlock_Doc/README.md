@@ -97,3 +97,11 @@ Investigates connecting bus wires to C-Block components and why we can't use Bit
 * CBlockBasics6.qsch &mdash; Demonstration schematic.
 * CBlockBasics6.cpp &mdash; Basic C-Block code for attached bus wire.
 * CBlockBasics6_Alt1.cpp &mdash; C-Block code with types & functions to implement "bit registers" conveniently.
+
+## C-Block Basics #7
+
+Recent QSpice updates introduce a new Display() function and a simplified Trunc() function.  The changes are significant improvements.  For *most* existing code, the changes are fully backwards-compatible.
+
+This short paper describes the changes and steps to update existing code.  It also details the subtle implications of some "edge-cases" that may break your code.
+
+* CBlockBasics7.pdf ("Recent Changes (July/August 2024)")
