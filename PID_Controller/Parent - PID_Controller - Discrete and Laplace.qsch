@@ -60,18 +60,18 @@
     »
   »
   «component (-400,-1900) 0 0
-    «symbol PID_Controller
+    «symbol pid_controller
       «type: Ø(.DLL)»
       «shorted pins: false»
       «rect (-600,700) (600,-700) 0 0 0 0x4000000 0x4000000 -1 1 -1»
       «triangle (-600,-450) (-550,-500) (-600,-550) 0 0 0x1000000 0x2000000 -1 -1»
       «text (0,450) 1 12 0 0x1000000 -1 -1 "X1"»
       «text (0,300) 0.681 13 0 0x1000000 -1 -1 "PID_Controller"»
-      «text (-255,51) 0.681 7 0 0x1000000 -1 -1 "double Kp=Kp"»
-      «text (-255,-59) 0.681 7 0 0x1000000 -1 -1 "double Ki=Ki"»
-      «text (-257,-179) 0.681 7 0 0x1000000 -1 -1 "double Kd=Kd"»
-      «text (-257,-307) 0.681 7 0 0x1000000 -1 -1 "double Kv=1"»
-      «text (-259,-437) 0.681 7 0 0x1000000 -1 -1 "bool Itype=1"»
+      «text (-300,50) 0.681 7 0 0x1000000 -1 -1 "double Kp=<Kp>"»
+      «text (-300,-60) 0.681 7 0 0x1000000 -1 -1 "double Ki=<Ki>"»
+      «text (-300,-180) 0.681 7 0 0x1000000 -1 -1 "double Kd=<Kd>"»
+      «text (-300,-310) 0.681 7 0 0x1000000 -1 -1 "double Kv=<1>"»
+      «text (-300,-430) 0.681 7 0 0x1000000 -1 -1 "bool Itype=<1>"»
       «text (-600,-900) 0.65 7 1 0x1000000 -1 -1 "Itype:\n0=rectangular integration\n1=trapezoidal integration"»
       «pin (-600,500) (50,0) 1 7 145 0x0 -1 "setpt"»
       «pin (600,500) (-40,0) 1 11 146 0x0 -1 "ctrl"»
@@ -110,13 +110,13 @@
   «wire (-1700,-1400) (-2100,-1400) "error"»
   «rect (-1500,-900) (1250,-3050) 0 0 2 0x4000000 0x1000000 -1 0 -1»
   «rect (-1500,-3150) (1250,-4500) 0 0 2 0x4000000 0x1000000 -1 0 -1»
-  «text (-1250,1050) 1 7 0 0x1000000 -1 -1 ".tran 1"»
-  «text (-2350,150) 1 7 0 0x1000000 -1 -1 ".param fclk = 50"»
-  «text (110,-350) 1 7 0 0x1000000 -1 -1 ".param Kp=1\n.param Ki=0\n.param Kd=0"»
-  «text (-1250,750) 1 7 0 0x1000000 -1 -1 ".plot V(ctrl_analog) V(ctrl_digital)\n.plot V(error)"»
-  «text (-400,-1000) 1 7 1 0x1000000 -1 -1 "Discrete PID Controller"»
-  «text (-500,-3250) 1 7 1 0x1000000 -1 -1 "S-domain PID Controller"»
-  «text (-2610,-440) 1 7 1 0x1000000 -1 -1 "Ideal in P, I and D only verification\nCompare to Laplace PID \nAs fb=0 and Kv=1\nerror=Kv*(setpt-fb)=setpt"»
-  «text (150,0) 1 7 1 0x1000000 -1 -1 "PID Gain"»
+  «text (-1250,1050) 1 7 0 0x1000000 -1 -1 "ï»¿.tran 1"»
+  «text (-2350,150) 1 7 0 0x1000000 -1 -1 "ï»¿.param fclk = 50"»
+  «text (110,-350) 1 7 0 0x1000000 -1 -1 "ï»¿.param Kp=1\n.param Ki=0\n.param Kd=0"»
+  «text (-1250,750) 1 7 0 0x1000000 -1 -1 "ï»¿.plot V(ctrl_analog) V(ctrl_digital)\n.plot V(error)"»
+  «text (-400,-1000) 1 7 1 0x1000000 -1 -1 "ï»¿Discrete PID Controller"»
+  «text (-500,-3250) 1 7 1 0x1000000 -1 -1 "ï»¿S-domain PID Controller"»
+  «text (-2610,-440) 1 7 1 0x1000000 -1 -1 "ï»¿Ideal in P, I and D only verification\nCompare to Laplace PID \nAs fb=0 and Kv=1\nerror=Kv*(setpt-fb)=setpt"»
+  «text (150,0) 1 7 1 0x1000000 -1 -1 "ï»¿PID Gain"»
 »
 
