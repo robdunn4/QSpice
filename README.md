@@ -1,21 +1,23 @@
 # QSpice
-Tools, components, symbols, code, etc., for Qorvo's free QSpice circuit simulator.
+**Tools, components, symbols, code, etc., for Qorvo's free QSpice circuit simulator**
 
-[Get QSpice from Qorvo](https://www.qorvo.com/)
+Get QSpice from Qorvo [here](https://www.qorvo.com/)
 
-[The QSpice forum is here](https://forum.qorvo.com/c/qspice/)
+The QSpice forum [is here](https://forum.qorvo.com/c/qspice/)
+
+The Qorvo YouTube Channel [is here](https://www.youtube.com/c/qorvo)
 
 **Other Recommended Sites**
 
-[The PyQSPICE Scripting Tool](https://github.com/Qorvo/PyQSPICE)
+The PyQSPICE Scripting Tool [GitHub repo](https://github.com/Qorvo/PyQSPICE)
 
-[QSpice Forum @KSKelvin's Github repo](https://github.com/KSKelvin-Github/Qspice/)
+QSpice Forum @KSKelvin's [Github repo](https://github.com/KSKelvin-Github/Qspice/)
 
-[QSpice Forum @Mgyger's GitLab repo](https://gitlab.com/mgyger/qspice-symbols/)
+QSpice Forum @Mgyger's [GitLab repo](https://gitlab.com/mgyger/qspice-symbols/)
 
-[QSpice Forum @physicboy's Github repo](https://github.com/physicboy/QSPICE)
+QSpice Forum @physicboy's [Github repo](https://github.com/physicboy/QSPICE)
 
-[Professor Marcos Alonso's QSpice YouTube Playlist](https://www.youtube.com/playlist?list=PLq_MUr0hT_-kn89_adwe6QNpnLpZtJeI-)
+Professor Marcos Alonso's [QSpice YouTube Channel](https://www.youtube.com/@MarcosAlonsoElectronics) and [GitHub Repo](https://github.com/marcosalonsoelectronics/website)
 
 
 ## GPIO Components
