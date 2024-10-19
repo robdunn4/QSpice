@@ -105,3 +105,25 @@ Recent QSpice updates introduce a new Display() function and a simplified Trunc(
 This short paper describes the changes and steps to update existing code.  It also details the subtle implications of some "edge-cases" that may break your code.
 
 * CBlockBasics7.pdf ("Recent Changes (July/August 2024)")
+
+## C-Block Basics #8
+
+A complete "post-processing" framework using newest QSpice features (October 2024). Includes/demonstrates:
+
+* Launching an external standalone program (\*.exe) or batch command file (\*.bat or \*.cmd) from within a C-Block component.
+* Processing multiple component instances and multi-step simulations.
+* Creating a binary log file and converting it to a *.csv in post-processing.
+* Building file names and commmand line strings from user-supplied component attributes.
+* Coding a standalone program (\*.exe) and compiling with the QSpice DMC compiler.
+* And more....
+
+*Note:  This is a bit more complex than the usual C-Block Basics fare.*
+
+### Files
+* CBlockBasics8.pdf ("Post-Processing Techniques")
+* CBlockBasics8.qsch &mdash; Demonstration schematic.
+* CBlockBasics8.cpp &mdash; C-Block code for component DLL.
+* CBlockBasics8_pp.cpp &mdash; Sample code for standalone executable (converts binary to CSV).
+* CBlockBasics8_pp_dmc.cmd &mdash; Batch command file to compile CBlockBasics8_pp.cpp to *.exe with DMC.
+* CBlockBasics8_pp.cmd &mdash; Sample batch command to be launched from component.
+
