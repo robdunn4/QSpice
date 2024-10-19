@@ -113,7 +113,7 @@ A complete "post-processing" framework using newest QSpice features (October 202
 * Launching an external standalone program (\*.exe) or batch command file (\*.bat or \*.cmd) from within a C-Block component.
 * Processing multiple component instances and multi-step simulations.
 * Creating a binary log file and converting it to a *.csv in post-processing.
-* Building file names and commmand line strings from user-supplied component attributes.
+* Building file names and command line strings from user-supplied component attributes.
 * Coding a standalone program (\*.exe) and compiling with the QSpice DMC compiler.
 * And more....
 
