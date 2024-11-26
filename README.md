@@ -41,6 +41,9 @@ Various documentation and tools relevant to C-Block component development.
 ## VSCode Configuration
 Build configurations for C-Block component development using the VSCode IDE.
 
+## Microsoft Visual Studio (MSVC) Configuration
+Step-by-step guide to configure a Visual Studio project to compile and debug C-Block components.
+
 ## Miscellany
 Small bits, odds and ends.
 
