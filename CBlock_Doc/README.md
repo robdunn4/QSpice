@@ -127,16 +127,5 @@ A complete "post-processing" framework using newest QSpice features (October 202
 * CBlockBasics8_pp_dmc.cmd &mdash; Batch command file to compile CBlockBasics8_pp.cpp to *.exe with DMC.
 * CBlockBasics8_pp.cmd &mdash; Sample batch command to be launched from component.
 
-## QAlert
 
-This is a *very early* proof-of-concept component that produces an audible alert when a simulation completes.  It might be useful when a simulation takes a long time and you don't want to watch it closely.
-
-At the moment, it displays a small system-modal "alert window" and beeps until that window is closed.  Future versions could do anything (e.g., send you a text message) but, at the moment, it's very much only a POC.
-
-### Files
-* QAlertDemo.qsch -- Component test schematic.
-* QAlert.cpp & \*.dll -- Component DLL code.
-* QAlertWait.cpp & \*.exe -- Minimal windows program code to display the QAlert message box.
-
-Again, this is really raw code at the moment and will change.
 
