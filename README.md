@@ -1,15 +1,6 @@
 # QSpice
-<<<<<<< HEAD
 
 Tools, components, symbols, code, etc., for Qorvo's free QSpice circuit simulator.
-
-**QSpice/Qorvo Links**
-
-[Get QSpice from Qorvo](https://www.qorvo.com/)
-=======
-
-Tools, components, symbols, code, etc., for Qorvo's free QSpice circuit simulator
->>>>>>> dev
 
 **QSpice/Qorvo Links**
 
