@@ -182,26 +182,6 @@
       «pin (0,-200) (0,0) 1 0 0 0x0 -1 "-"»
     »
   »
-  «component (-3900,-1600) 0 0
-    «symbol PID_Controller
-      «type: Ø(.DLL)»
-      «shorted pins: false»
-      «rect (-600,700) (600,-700) 0 0 0 0x4000000 0x4000000 -1 1 -1»
-      «triangle (-600,-450) (-550,-500) (-600,-550) 0 0 0x1000000 0x2000000 -1 -1»
-      «text (0,450) 1 12 0 0x1000000 -1 -1 "X1"»
-      «text (0,300) 0.681 13 0 0x1000000 -1 -1 "PID_Controller"»
-      «text (-255,51) 0.681 7 0 0x1000000 -1 -1 "double Kp=1"»
-      «text (-255,-59) 0.681 7 0 0x1000000 -1 -1 "double Ki=1e4"»
-      «text (-257,-179) 0.681 7 0 0x1000000 -1 -1 "double Kd=1e-4"»
-      «text (-257,-307) 0.681 7 0 0x1000000 -1 -1 "double Kv=1"»
-      «text (-259,-437) 0.681 7 0 0x1000000 -1 -1 "bool Itype=1"»
-      «text (-600,-900) 0.65 7 1 0x1000000 -1 -1 "Itype:\n0=rectangular integration\n1=trapezoidal integration"»
-      «pin (-600,500) (50,0) 1 7 145 0x0 -1 "setpt"»
-      «pin (600,500) (-40,0) 1 11 146 0x0 -1 "ctrl"»
-      «pin (-600,-500) (60,0) 1 7 17 0x0 -1 "clk"»
-      «pin (-600,0) (50,0) 1 7 145 0x0 -1 "fb"»
-    »
-  »
   «component (-4800,-100) 0 0
     «symbol V
       «type: V»
@@ -215,8 +195,29 @@
       «ellipse (-130,130) (130,-130) 0 0 0 0x1000000 0x1000000 -1 -1»
       «text (100,150) 1 7 0 0x1000000 -1 -1 "V4"»
       «text (100,-150) 1 7 0 0x1000000 -1 -1 "pulse 0 1 0 0 0 0.1/fclk 1/fclk"»
+      «text (400,-300) 1 7 1 0x1000000 -1 -1 "timectrl=none"»
       «pin (0,200) (0,0) 1 0 0 0x0 -1 "+"»
       «pin (0,-200) (0,0) 1 0 0 0x0 -1 "-"»
+    »
+  »
+  «component (-3900,-1600) 0 0
+    «symbol pid_controller
+      «type: Ø(.DLL)»
+      «shorted pins: false»
+      «rect (-600,700) (600,-700) 0 0 0 0x4000000 0x4000000 -1 1 -1»
+      «triangle (-600,-450) (-550,-500) (-600,-550) 0 0 0x1000000 0x2000000 -1 -1»
+      «text (0,450) 1 12 0 0x1000000 -1 -1 "X1"»
+      «text (0,300) 0.681 13 0 0x1000000 -1 -1 "PID_Controller"»
+      «text (-300,50) 0.681 7 0 0x1000000 -1 -1 "double Kp=<1>"»
+      «text (-300,-60) 0.681 7 0 0x1000000 -1 -1 "double Ki=<1e4>"»
+      «text (-300,-180) 0.681 7 0 0x1000000 -1 -1 "double Kd=<1e-4>"»
+      «text (-300,-310) 0.681 7 0 0x1000000 -1 -1 "double Kv=<1>"»
+      «text (-300,-430) 0.681 7 0 0x1000000 -1 -1 "bool Itype=<1>"»
+      «text (-600,-900) 0.65 7 1 0x1000000 -1 -1 "Itype:\n0=rectangular integration\n1=trapezoidal integration"»
+      «pin (-600,500) (50,0) 1 7 145 0x0 -1 "setpt"»
+      «pin (600,500) (-40,0) 1 11 146 0x0 -1 "ctrl"»
+      «pin (-600,-500) (60,0) 1 7 17 0x0 -1 "clk"»
+      «pin (-600,0) (50,0) 1 7 145 0x0 -1 "fb"»
     »
   »
   «net (-1600,300) 1 13 0 "GND"»
@@ -282,15 +283,15 @@
   «wire (-2900,-1100) (-3300,-1100) "ctrl"»
   «wire (-5000,-1600) (-4800,-1600) "div"»
   «wire (-4500,-1100) (-4800,-1100) "setpt"»
-  «text (-2350,1200) 0.8 7 0 0x1000000 -1 -1 ".model IdealSW SW (Ron=1m Roff=100Meg Vt=0.5 Vh=0)"»
-  «text (-2350,1050) 0.8 7 0 0x1000000 -1 -1 ".model IdealD D (Ron=1m Roff=100Meg Vfwd=0)"»
-  «text (-2350,1350) 0.8 7 0 0x1000000 -1 -1 ".param fsawtooth = 50K"»
-  «text (-5900,1350) 1 7 0 0x1000000 -1 -1 ".tran {100/fsawtooth}"»
-  «text (-5900,950) 1 7 0 0x1000000 -1 -1 ".plot tran V(setpt)*scale V(out)\n.plot tran V(gate)\n.plot tran V(ctrl)"»
-  «text (-1000,-550) 0.8 7 0 0x1000000 -1 -1 ".param Rt=40K\n.param Rb=10K \n.param scale=(Rt+Rb)/Rb"»
-  «text (-5850,1600) 1 7 1 0x1000000 -1 -1 "Close Loop Feedback for Buck Converter with Bode Plot Analysis"»
-  «text (-1000,-250) 0.8 7 1 0x1000000 -1 -1 "Resistor Divider Network"»
-  «text (-4300,-50) 1 7 0 0x1000000 -1 -1 ".param fclk = 1Meg"»
-  «text (-5900,-600) 1 7 1 0x1000000 -1 -1 "V3 setpoint profile"»
+  «text (-2350,1200) 0.8 7 0 0x1000000 -1 -1 "ï»¿.model IdealSW SW (Ron=1m Roff=100Meg Vt=0.5 Vh=0)"»
+  «text (-2350,1050) 0.8 7 0 0x1000000 -1 -1 "ï»¿.model IdealD D (Ron=1m Roff=100Meg Vfwd=0)"»
+  «text (-2350,1350) 0.8 7 0 0x1000000 -1 -1 "ï»¿.param fsawtooth = 50K"»
+  «text (-5900,1350) 1 7 0 0x1000000 -1 -1 "ï»¿.tran {100/fsawtooth}"»
+  «text (-5900,950) 1 7 0 0x1000000 -1 -1 "ï»¿.plot tran V(setpt)*scale V(out)\n.plot tran V(gate)\n.plot tran V(ctrl)"»
+  «text (-1000,-550) 0.8 7 0 0x1000000 -1 -1 "ï»¿.param Rt=40K\n.param Rb=10K \n.param scale=(Rt+Rb)/Rb"»
+  «text (-5850,1600) 1 7 1 0x1000000 -1 -1 "ï»¿Close Loop Feedback for Buck Converter with PID Controller"»
+  «text (-1000,-250) 0.8 7 1 0x1000000 -1 -1 "ï»¿Resistor Divider Network"»
+  «text (-4300,-50) 1 7 0 0x1000000 -1 -1 "ï»¿.param fclk = 1Meg"»
+  «text (-5900,-600) 1 7 1 0x1000000 -1 -1 "ï»¿V3 setpoint profile"»
 »
 
