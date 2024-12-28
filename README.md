@@ -8,7 +8,7 @@ Get the QSpice simulator from Qorvo [here](https://www.qorvo.com/).
 
 The QSpice forum is [here](https://forum.qorvo.com/c/qspice/).
 
-The Qorvo YouTube Channel is [here](https://www.youtube.com/c/qorvo)/
+The Qorvo YouTube Channel is [here](https://www.youtube.com/c/qorvo).
 
 **Other Recommended Sites**
 
