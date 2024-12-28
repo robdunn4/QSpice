@@ -10,8 +10,6 @@ The QSpice forum is [here](https://forum.qorvo.com/c/qspice/)
 
 The Qorvo YouTube Channel is [here](https://www.youtube.com/c/qorvo)
 
-[About the QSpice Compiler (DMC)](README_DMC.md)
-
 **Other Recommended Sites**
 
 The PyQSPICE Scripting Tool [GitHub repo](https://github.com/Qorvo/PyQSPICE)
