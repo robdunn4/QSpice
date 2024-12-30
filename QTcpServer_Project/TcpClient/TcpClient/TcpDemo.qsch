@@ -1,0 +1,69 @@
+ÿØÿÛ«schematic
+  «component (-800,0) 0 0
+    «symbol V
+      «type: V»
+      «description: Independent Voltage Source»
+      «shorted pins: false»
+      «line (0,-130) (0,-200) 0 0 0x1000000 -1 -1»
+      «line (0,200) (0,130) 0 0 0x1000000 -1 -1»
+      «rect (-25,77) (25,73) 0 0 0 0x1000000 0x3000000 -1 0 -1»
+      «rect (-2,50) (2,100) 0 0 0 0x1000000 0x3000000 -1 0 -1»
+      «rect (-25,-73) (25,-77) 0 0 0 0x1000000 0x3000000 -1 0 -1»
+      «ellipse (-130,130) (130,-130) 0 0 0 0x1000000 0x1000000 -1 -1»
+      «text (100,150) 1 7 0 0x1000000 -1 -1 "V1"»
+      «text (100,-150) 1 7 0 0x1000000 -1 -1 " Sine 0 1 1K"»
+      «pin (0,200) (0,0) 1 0 0 0x0 -1 "+"»
+      «pin (0,-200) (0,0) 1 0 0 0x0 -1 "-"»
+    »
+  »
+  «component (800,500) 0 0
+    «symbol
+      «type: Ø(.DLL)»
+      «description: TcpClient Demo»
+      «shorted pins: false»
+      «rect (-1000,700) (900,-400) 0 0 0 0x4000000 0x4000000 -1 1 -1»
+      «text (-50,600) 1 12 0 0x1000000 -1 -1 "X1"»
+      «text (-50,500) 0.681 13 0 0x1000000 -1 -1 "TcpDLL"»
+      «text (-50,150) 0.681 13 0 0x1000000 -1 -1 "char* ServerName="localhost""»
+      «text (-50,0) 0.681 13 0 0x1000000 -1 -1 "char* PortNbr="666""»
+      «text (-50,-150) 0.681 13 0 0x1000000 -1 -1 "int Gain=1"»
+      «pin (-1000,300) (0,0) 1 7 145 0x0 -1 "Vin"»
+      «pin (900,300) (0,0) 1 11 146 0x0 -1 "Vout"»
+    »
+  »
+  «component (800,1900) 0 0
+    «symbol
+      «type: Ø(.DLL)»
+      «description: TcpClient Demo»
+      «shorted pins: false»
+      «rect (-1000,700) (900,-400) 0 0 0 0x4000000 0x4000000 -1 1 -1»
+      «text (-50,600) 1 12 0 0x1000000 -1 -1 "X2"»
+      «text (-50,500) 0.681 13 0 0x1000000 -1 -1 "TcpDLL"»
+      «text (-50,150) 0.681 13 0 0x1000000 -1 -1 "char* ServerName="localhost""»
+      «text (-50,0) 0.681 13 0 0x1000000 -1 -1 "char* PortNbr="666""»
+      «text (-50,-150) 0.681 13 0 0x1000000 -1 -1 "int Gain=2"»
+      «pin (-1000,300) (0,0) 1 7 145 0x0 -1 "Vin"»
+      «pin (900,300) (0,0) 1 11 146 0x0 -1 "Vout"»
+    »
+  »
+  «net (-800,-300) 1 13 0 "GND"»
+  «net (1900,800) 1 7 0 "Vout1"»
+  «net (-800,400) 1 7 0 "Vin"»
+  «net (1900,2200) 1 7 0 "Vout2"»
+  «junction (-800,800)»
+  «wire (-800,400) (-800,800) "Vin"»
+  «wire (-800,-300) (-800,-200) "GND"»
+  «wire (-800,800) (-200,800) "Vin"»
+  «wire (1700,800) (1900,800) "Vout1"»
+  «wire (-800,800) (-800,2200) "Vin"»
+  «wire (-800,2200) (-200,2200) "Vin"»
+  «wire (-800,200) (-800,400) "Vin"»
+  «wire (1900,2200) (1700,2200) "Vout2"»
+  «text (-950,-600) 1 7 0 0x1000000 -1 -1 "ï»¿.tran 10m"»
+  «text (-1010,-1210) 0.8 7 1 0x1000000 -1 -1 "ï»¿Notes:\n * "»
+  «text (260,-370) 1 7 0 0x1000000 -1 -1 "ï»¿.plot V(Vin)\n.plot V(Vout1) V(Vout2)"»
+  «text (552,4259) 2 13 1 0x1000000 -1 -1 "ï»¿QTcpServer Project\nClient Component Demo"»
+  «text (574,3307) 1 13 1 0x1000000 -1 -1 "ï»¿See https://github.com/robdunn4/QSpice/ for\nproject code and documentation."»
+  «text (-950,-800) 1 7 0 0x1000000 -1 -1 "ï»¿.step param StepVar list 1 2"»
+»
+

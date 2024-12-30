@@ -54,3 +54,6 @@ Small bits, odds and ends.
 
 ## QCodeGen
 An alternative to the QSpice C-Block component code generator.
+
+## QTcpServer Project
+A TCP-based client/server framework for QSpice components.
