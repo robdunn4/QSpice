@@ -56,4 +56,4 @@ Small bits, odds and ends.
 An alternative to the QSpice C-Block component code generator.
 
 ## QTcpServer Project
-A TCP-based client/server framework for QSpice components.
+A TCP-based client/server framework for QSpice C-Block components.
