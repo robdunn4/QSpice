@@ -26,44 +26,55 @@ Professor Marcos Alonso's [QSpice YouTube Channel](https://www.youtube.com/@Marc
 
 ## GPIO Components
 QSpice symbol and class to implement general purpose I/O pins (i.e., micro-controller tri-state pins).
+
 [Go to GPIO Components](./GPIO/)
 
 ## WavIO Components
 QSpice C-Block/DLL components to read/write basic audio WAV files.  Source code and examples.
+
 [Go to WavIO Components](./WavIO/)
 
 ## SerialIO Components
 Proof of concept serial buffer.  See SpiIO components for improved serial buffer (in SpiIO.h).
-[Go to SerialIO Compoentes](./SerialIO/)
+
+[Go to SerialIO Components](./SerialIO/)
 
 ## SpiIO Components
 QSpice C-Block code and schematics to implement custom SPI master & slave components.
+
 [Go to SpiIO Components](./SpiIO/)
 
 ## PID Controller Component
 QSpice C-Block implementation of a discrete PID controller courtesy of KSKelvin.
+
 [Go to PID Controller Component](./PID_Controller/)
 
 ## C-Block Documentation
 Various documentation and tools relevant to C-Block component development.
+
 [Go to C-Block Documentation](./CBlock_Doc/)
 
 ## VSCode Configuration
 Build configurations for C-Block component development using the VSCode IDE.
+
 [Go to VSCode Configuration](./VSCode/)
 
 ## Microsoft Visual Studio (MSVC) Configuration
 Step-by-step guide to configure a Visual Studio project to compile and debug C-Block components.
+
 [Go to MSVC Configuration](./MSVS/)
 
 ## Miscellany
 Small bits, odds and ends.
+
 [Go to Misellany](./Miscellany/)
 
 ## QCodeGen
 An alternative to the QSpice C-Block component code generator.
+
 [Go to QCodeGen](./QCodeGen/)
 
 ## QTcpServer Project
 A TCP-based client/server framework for QSpice C-Block components.
+
 [Go to QTcpServer Project](./QTcpServer_Project/)
