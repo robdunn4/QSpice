@@ -26,6 +26,7 @@ Professor Marcos Alonso's [QSpice YouTube Channel](https://www.youtube.com/@Marc
 
 ## GPIO Components
 QSpice symbol and class to implement general purpose I/O pins (i.e., micro-controller tri-state pins).
+[Go to GPIO Components](./GPIO).
 
 ## WavIO Components
 QSpice C-Block/DLL components to read/write basic audio WAV files.  Source code and examples.
