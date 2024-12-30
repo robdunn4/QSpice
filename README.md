@@ -10,6 +10,8 @@ The QSpice forum is [here](https://forum.qorvo.com/c/qspice/).
 
 The Qorvo YouTube Channel is [here](https://www.youtube.com/c/qorvo).
 
+Information about the Digitial Mars (DMC) compiler is [here](README_DMC.md).
+
 **Other Recommended Sites**
 
 The PyQSPICE Scripting Tool [GitHub repo](https://github.com/Qorvo/PyQSPICE).
