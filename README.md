@@ -78,3 +78,8 @@ An alternative to the QSpice C-Block component code generator.
 A TCP-based client/server framework for QSpice C-Block components.
 
 [Go to QTcpServer Project](./QTcpServer_Project/)
+
+## QMcServer Project
+A micro-controller simulation framework for QSpice.  Currently a (working) Proof of Concept for Microchip devices.
+
+[Go to QMcServer Project](./QMcServer_Project/)
