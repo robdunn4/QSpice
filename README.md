@@ -79,7 +79,14 @@ A TCP-based client/server framework for QSpice C-Block components.
 
 [Go to QTcpServer Project](./QTcpServer_Project/)
 
-## QMcServer Project
+## QMcServer Project (On Hold)
 A micro-controller simulation framework for QSpice.  Currently a (working) Proof of Concept for Microchip devices.
 
+**Note:  This project is on hold.  See the QMdbSim Project below for the replacement.**
+
 [Go to QMcServer Project](./QMcServer_Project/)
+
+## QMdbSim Project
+A micro-controller simulation framework for QSpice for Microchip devices.
+
+[Go to QMdbSim Project](./QMdbSim_Project/)
