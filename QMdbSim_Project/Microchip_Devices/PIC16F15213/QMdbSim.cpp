@@ -17,7 +17,15 @@
 
 #pragma warning(disable : 4996) // we'll take our chances...
 
-static const char* VersionInfo = "QMdbSim v0.1.0";
+// version information
+#ifdef _DEBUG
+#  define DBG_TXT " (DEBUG)"
+#else
+#  define DBG_TXT ""
+#endif
+static const char* VersionInfo = "QMdbSim v0.1.1" DBG_TXT;
+
+const char* gMdbSimPath = 0; // user-supplied path to MDB.bat
 
 char MdbSim::recvBuf[4096]; // shared buffer for MDB reads
 
@@ -364,16 +372,16 @@ bool MdbSim::createMdbProcess()
   siStartInfo.dwFlags |= STARTF_USESTDHANDLES;
 
   // Create the MDB child process.
-  bSuccess = CreateProcess(MdbSimPath, // command line
-      NULL,                            // arguments
-      NULL,                            // process security attributes
-      NULL,                            // primary thread security attributes
-      TRUE,                            // handles are inherited
-      0,                               // creation flags
-      NULL,                            // use parent's environment
-      NULL,                            // use parent's current directory
-      &siStartInfo,                    // STARTUPINFO pointer
-      &piProcInfo);                    // receives PROCESS_INFORMATION
+  bSuccess = CreateProcess(gMdbSimPath, // command line
+      NULL,                             // arguments
+      NULL,                             // process security attributes
+      NULL,                             // primary thread security attributes
+      TRUE,                             // handles are inherited
+      0,                                // creation flags
+      NULL,                             // use parent's environment
+      NULL,                             // use parent's current directory
+      &siStartInfo,                     // STARTUPINFO pointer
+      &piProcInfo);                     // receives PROCESS_INFORMATION
 
   // if an error occurs, set error and return failure
   if (!bSuccess)

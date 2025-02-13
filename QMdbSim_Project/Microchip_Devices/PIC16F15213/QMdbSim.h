@@ -12,9 +12,7 @@
 
 typedef std::vector<std::string> StringList;
 
-// TODO: Make this configurable from schematic or elsewhere without compile...
-static const char* MdbSimPath =
-    R"(C:\Program Files\Microchip\MPLABX\v6.20\mplab_platform\bin\mdb.bat)";
+extern const char* gMdbSimPath;
 
 // pin state constants for convenience
 const bool PIN_ANALOG  = 0;

@@ -75,27 +75,26 @@ void SimError(pInstData inst)
 extern "C" __declspec(dllexport) void pic16f15213(
     pInstData* opaque, double t, union uData* data)
 {
-  double      VDD        = data[0].d;    // input
-  double      RA0_I      = data[1].d;    // input
-  double      RA1_I      = data[2].d;    // input
-  double      RA2_I      = data[3].d;    // input
-  double      RA3_I      = data[4].d;    // input
-  double      RA4_I      = data[5].d;    // input
-  double      RA5_I      = data[6].d;    // input
-  bool        CLK        = data[7].b;    // input
-  const char* ServerName = data[8].str;  // input parameter
-  const char* PortNbr    = data[9].str;  // input parameter
-  const char* McPgm      = data[10].str; // input parameter
-  double&     RA0_O      = data[11].d;   // output
-  double&     RA0_C      = data[12].d;   // output
-  double&     RA1_O      = data[13].d;   // output
-  double&     RA2_O      = data[14].d;   // output
-  double&     RA4_O      = data[15].d;   // output
-  double&     RA5_O      = data[16].d;   // output
-  double&     RA1_C      = data[17].d;   // output
-  double&     RA2_C      = data[18].d;   // output
-  double&     RA4_C      = data[19].d;   // output
-  double&     RA5_C      = data[20].d;   // output
+  double      VDD        = data[0].d;   // input
+  double      RA0_I      = data[1].d;   // input
+  double      RA1_I      = data[2].d;   // input
+  double      RA2_I      = data[3].d;   // input
+  double      RA3_I      = data[4].d;   // input
+  double      RA4_I      = data[5].d;   // input
+  double      RA5_I      = data[6].d;   // input
+  bool        CLK        = data[7].b;   // input
+  const char* MdbSimPath = data[8].str; // input parameter
+  const char* McPgm      = data[9].str; // input parameter
+  double&     RA0_O      = data[10].d;  // output
+  double&     RA0_C      = data[11].d;  // output
+  double&     RA1_O      = data[12].d;  // output
+  double&     RA2_O      = data[13].d;  // output
+  double&     RA4_O      = data[14].d;  // output
+  double&     RA5_O      = data[15].d;  // output
+  double&     RA1_C      = data[16].d;  // output
+  double&     RA2_C      = data[17].d;  // output
+  double&     RA4_C      = data[18].d;  // output
+  double&     RA5_C      = data[19].d;  // output
 
   // if gAbortFlg is set, we're just waiting on MaxExtStepSize() to force abort
   if (gAbortFlg) return;
@@ -107,6 +106,9 @@ extern "C" __declspec(dllexport) void pic16f15213(
   {
     // allocate instance -- error handling omitted...
     *opaque = inst = new InstData();
+
+    // set user-supplied path to MDB simulator (only first time)
+    if (!gMdbSimPath) gMdbSimPath = MdbSimPath;
 
     // display some version information
     Display(

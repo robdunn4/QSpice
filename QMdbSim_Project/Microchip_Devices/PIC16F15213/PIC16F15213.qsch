@@ -147,13 +147,13 @@
   «component (0,1000) 0 0
     «symbol
       «type: Ø(.DLL)»
+      «description: Microchip PIC16F15213»
       «shorted pins: false»
       «rect (-1000,1300) (1000,-1500) 0 0 0 0x4000000 0x4000000 -1 1 -1»
       «text (0,1100) 1 12 0 0x1000000 -1 -1 "X1"»
       «text (0,950) 0.681 13 0 0x1000000 -1 -1 "PIC16F15213"»
-      «text (-1639,-2050) 1 5 0 0x1000000 -1 -1 "char* ServerName="localhost""»
-      «text (-1650,-2300) 1 5 0 0x1000000 -1 -1 "char* PortNbr="666""»
-      «text (-1650,-2550) 1 5 0 0x1000000 -1 -1 "char* McPgm=PgmPath"»
+      «text (-1889,-3000) 1 5 0 0x1000000 -1 -1 "char* MdbSimPath="C:\\Program Files\\Microchip\\MPLABX\\v6.20\\mplab_platform\\bin\\mdb.bat""»
+      «text (-1900,-2750) 1 5 0 0x1000000 -1 -1 "char* McPgm=PgmPath"»
       «text (-14,700) 0.681 13 0 0x1000000 -1 -1 "ROUT=1"»
       «pin (-1000,1100) (50,0) 1 7 145 0x0 -1 "VDD"»
       «pin (1000,1100) (-50,0) 1 11 3 0x0 -1 "VSS"»
@@ -235,7 +235,7 @@
   «text (2500,2293) 1 5 1 0x1000000 -1 -1 "ï»¿This is a rough implementation of this micro-controller.\n \nThe CLK port is used to provide a clock source to\nsynchronize the device emulation with the QSpice\nsimulation.  It is not an actual device pin.\n \n* This PIC supports an external clock on RA5.  If you want\n   to use that, tie RA5 to CLK in the schematic and\n   configure/program the device hex code appropriately.\n* Tri-state buffers are included and dynamically\n   configurable in device hex code.\n* This PIC supports configurable weak pull-ups on\n   outputs which is not (but could be) implemented here\n   (yet)."»
   «text (2550,-850) 1 5 1 0x1000000 -1 -1 "ï»¿Additional Notes:\n \n* Default output pin impedance for C-Block components\n   is 1K.  The ROUT attribute is set to override this."»
   «text (-650,-150) 0.65 7 1 0x1000000 -1 -1 "ï»¿(1,2)"»
-  «text (-2000,-2409) 0.8 5 1 0x1000000 -1 -1 "ï»¿(1) Not a device pin, used for simulation/emulation support.\n(2) CLK advances the device emulation by one device instruction cycle on\n     each falling edge.  (Input, Boolean)\n(3) RA3 is input-only on this device (MCLR)."»
+  «text (-1900,-859) 0.8 5 1 0x1000000 -1 -1 "ï»¿(1) Not a device pin, used for simulation/emulation support.\n(2) CLK advances the device emulation by one device instruction cycle on\n     each falling edge.  (Input, Boolean)\n(3) RA3 is input-only on this device (MCLR)."»
   «text (-500,250) 0.65 7 1 0x1000000 -1 -1 "ï»¿(3)"»
 »
 
