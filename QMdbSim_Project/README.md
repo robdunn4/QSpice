@@ -5,7 +5,7 @@ Microchip devices (PIC, AVR).  Under the covers, it uses Microchip's software si
 
 This first release demonstrates a PIC16F15213 component.  I'm working on documentation but, at this point, it's "read the code."
 
-* Compiled component DLL (PIC16F15213.dll) is included but assumes that you have MPLabX v6.20 installed in the default location.
+* Compiled component DLL (PIC16F15213.dll) is included.  You can change the PIC device code without recompiling the DLL.
 
 * Compiled "Charlie-Plexing" device test code (PIC16F15213_CPlex.X.debug.elf) is included.  The MPLabX project source is in PIC16F15213_CPlex.zip.
 
