@@ -4,13 +4,16 @@
 // https://github.com/robdunn4/QSpice/ for the complete project, current
 // sources, documentation, and demonstration code.
 //------------------------------------------------------------------------------
-/*
- * Notes:
+/* Notes:
  *
- * The below code is fragile.  That is, we're parsing text from the MDB.jar
- * interface.  We have the MDB Java code and ultimately need to revise it to
- * return "machine-friendly" responses to improve speed/efficiency.  But, for
- * now, it's potentially unreliable parsing.
+ * This code provides the low-level interface to MDB.  If you want to create a
+ * new Microchip device, you should not need to modify this code (at least, in
+ * theory).
+ *
+ * The below code is fragile.  That is, we're parsing text from the MDB
+ * command-line interface.  We have the MDB Java code and ultimately need to
+ * revise it to return "machine-friendly" responses to improve speed/efficiency.
+ * But, for now, it's potentially unreliable parsing.
  */
 
 #include "QMdbSim.h"
@@ -23,11 +26,12 @@
 #else
 #  define DBG_TXT ""
 #endif
-static const char* VersionInfo = "QMdbSim v0.1.1" DBG_TXT;
+static const char* VersionInfo = "QMdbSim v0.3.0" DBG_TXT;
 
 const char* gMdbSimPath = 0; // user-supplied path to MDB.bat
 
-char MdbSim::recvBuf[4096]; // shared buffer for MDB reads
+// char MdbSim::recvBuf[4096]; // shared buffer for MDB reads
+char MdbSim::recvBuf[2048]; // shared buffer for MDB reads (caution!)
 
 /*
  * MdbSim class implementation
@@ -151,7 +155,7 @@ bool MdbSim::stepInst()
 //   Pin     Mode    Value   Owner or Mapping
 //   RA0     Ain     5.0V    (RA0)/IOCA0/ANA0/ICDDAT/ICSPDAT
 //
-bool MdbSim::getPin(const char* pinName, PinState& pinState)
+bool MdbSim::getPinState(const char* pinName, PinState& pinState)
 {
   // check state
   if (simState == ErrState) return false;
@@ -161,6 +165,7 @@ bool MdbSim::getPin(const char* pinName, PinState& pinState)
     return false;
   }
 
+  // note:  probabaly should rework for (faster?) non-std::string version
   std::string cmd;
   cmd = "print pin ";
   cmd += pinName;
@@ -177,9 +182,8 @@ bool MdbSim::getPin(const char* pinName, PinState& pinState)
     return false;
   }
 
-  // strtok() modifies string; using a fixed sized buffer here...
-  // TODO:  this is potentially unsafe code...
-  static char str[128];
+  // strtok() modifies string; using a fixed sized buffer here (caution!)
+  static char str[256];
   strncpy(str, sList[1].c_str(), sizeof(str));
   char* name  = strtok(str, " \t\r\n");
   char* mode  = strtok(NULL, " \t\r\n");
@@ -191,40 +195,22 @@ bool MdbSim::getPin(const char* pinName, PinState& pinState)
     return false;
   }
 
-  pinState.daState = mode[0] == 'D' ? PIN_ANALOG : PIN_DIGITAL;
+  pinState.daState = mode[0] == 'A' ? PIN_ANALOG : PIN_DIGITAL;
   pinState.ioState = mode[1] == 'i' ? PIN_INPUT : PIN_OUTPUT;
-  pinState.hlState = value[0] == '0' || value[0] == 'L' ? PIN_LOW : PIN_HIGH;
 
-  return true;
-}
-
-// set pin with digital "HIGH" or "LOW" text
-bool MdbSim::setPin(const char* pinName, bool toHigh)
-{
-  //// check state
-  if (simState == ErrState) return false;
-  if (simState != Running)
+  // if it's an analog pin, get voltage from MDB, else set from hlState
+  if (pinState.daState == PIN_ANALOG)
   {
-    setError("setPin(not running)");
-    return false;
+    char* nextChar;
+    pinState.voltage = strtod(value, &nextChar);
+    if (*nextChar != 'V')
+    {
+      setError("getPin(invalid voltage)");
+      return false;
+    }
   }
-
-  std::string cmd;
-  cmd = "write pin ";
-  cmd += pinName;
-  cmd += toHigh ? " HIGH\r\n" : " LOW\r\n";
-  if (!sendRecvBuffer(cmd.c_str()))
-  {
-    setError("setPin(I/O failure)");
-    return false;
-  }
-
-  // we expect nothing but prompt on success
-  if (sList.size())
-  {
-    setError("setPin(write pin error)");
-    return false;
-  }
+  else
+    pinState.voltage = value[0] == 'H' ? vddV : 0;
 
   return true;
 }
@@ -240,6 +226,11 @@ bool MdbSim::setPin(const char* pinName, double toVoltage)
     return false;
   }
 
+  // clip voltage to valid range for MDB to filter possible QSpice input spikes
+  if (toVoltage > vddV) toVoltage = vddV;
+  if (toVoltage < 0) toVoltage = 0;
+
+  // probably should rework to avoid std::string for speed....
   std::string cmd;
   cmd = "write pin ";
   cmd += pinName;
@@ -262,6 +253,47 @@ bool MdbSim::setPin(const char* pinName, double toVoltage)
 
   return true;
 }
+
+// add pin/port/name mapping to PinPortMap list
+void MdbSim::addPinPortMap(const char* const pinName, double* const inPort,
+    double* const outPort, bool* const dirPort)
+{
+  ppmList.push_back(PinPortMap(pinName, inPort, outPort, dirPort));
+}
+
+// get pin states from MDB
+bool MdbSim::getPinStates()
+{
+  for (PinPortMap& ppMap : ppmList)
+    if (!getPinState(ppMap.pinName, ppMap.pinState)) return false;
+  return true;
+}
+
+// set tri-state control ports from MDB
+void MdbSim::setCtrlPorts()
+{
+  for (PinPortMap& ppMap : ppmList)
+    if (ppMap.dirPort) *ppMap.dirPort = ppMap.pinState.ioState;
+}
+
+// set MDB input pins from QSpice input ports
+bool MdbSim::setInPins()
+{
+  for (PinPortMap& ppMap : ppmList)
+    if (ppMap.pinState.isInput() && ppMap.inPort)
+      if (!setPin(ppMap.pinName, *ppMap.inPort)) return false;
+  return true;
+}
+
+// set QSpice output ports from MDB output pins
+void MdbSim::setOutPorts()
+{
+  for (PinPortMap& ppMap : ppmList)
+    if (ppMap.outPort) *ppMap.outPort = ppMap.pinState.voltage;
+}
+
+// set nominal VDD (max MDB input pin value and returned digital "HIGH" value)
+bool MdbSim::setVDD(double vdd) { return setPin("VDD", vdd); }
 
 // set error state and save a useful error msg in lastErrMsg
 void MdbSim::setError(const char* msg)

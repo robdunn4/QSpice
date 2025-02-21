@@ -4,6 +4,12 @@
 // https://github.com/robdunn4/QSpice/ for the complete project, current
 // sources, documentation, and demonstration code.
 //------------------------------------------------------------------------------
+/* Notes:
+ *
+ * This is the QSpice component code for a Microchip PIC16F15213 device.  If you
+ * want to create a new Microchip device component, this is the only code that
+ * you need to change (at least, in theory).
+ */
 #include "QMdbSim.h"
 
 /*
@@ -39,16 +45,11 @@ int __stdcall DllMain(void* module, unsigned int reason, void* reserved)
  */
 struct InstData
 {
-  // constructors/destructors
   explicit InstData() {}
   ~InstData() { mdb.stopSim(); }
 
   MdbSim mdb;
-
-  bool lastClkState = 0;
-
-  // pin states
-  PinState RA0, RA1, RA2, /*RA3, */ RA4, RA5; // RA3 is input-only
+  bool   lastClkState = 0;
 };
 
 // pointer typedef for convenience
@@ -86,28 +87,36 @@ extern "C" __declspec(dllexport) void pic16f15213(
   const char* MdbSimPath = data[8].str; // input parameter
   const char* McPgm      = data[9].str; // input parameter
   double&     RA0_O      = data[10].d;  // output
-  double&     RA0_C      = data[11].d;  // output
+  bool&       RA0_C      = data[11].b;  // output
   double&     RA1_O      = data[12].d;  // output
   double&     RA2_O      = data[13].d;  // output
   double&     RA4_O      = data[14].d;  // output
   double&     RA5_O      = data[15].d;  // output
-  double&     RA1_C      = data[16].d;  // output
-  double&     RA2_C      = data[17].d;  // output
-  double&     RA4_C      = data[18].d;  // output
-  double&     RA5_C      = data[19].d;  // output
+  bool&       RA1_C      = data[16].b;  // output
+  bool&       RA2_C      = data[17].b;  // output
+  bool&       RA4_C      = data[18].b;  // output
+  bool&       RA5_C      = data[19].b;  // output
 
   // if gAbortFlg is set, we're just waiting on MaxExtStepSize() to force abort
   if (gAbortFlg) return;
 
   pInstData inst = *opaque;
 
-  // per-instance initialization
+  // per-instance initialization section
   if (!inst)
   {
     // allocate instance -- error handling omitted...
     *opaque = inst = new InstData();
 
-    // set user-supplied path to MDB simulator (only first time)
+    // add all pin/port/name mappings to list
+    inst->mdb.addPinPortMap("RA0", &RA0_I, &RA0_O, &RA0_C);
+    inst->mdb.addPinPortMap("RA1", &RA1_I, &RA1_O, &RA1_C);
+    inst->mdb.addPinPortMap("RA2", &RA2_I, &RA2_O, &RA2_C);
+    inst->mdb.addPinPortMap("RA3", &RA3_I);
+    inst->mdb.addPinPortMap("RA4", &RA4_I, &RA4_O, &RA4_C);
+    inst->mdb.addPinPortMap("RA5", &RA5_I, &RA5_O, &RA5_C);
+
+    // set user-supplied path to MDB simulator (only first component instance)
     if (!gMdbSimPath) gMdbSimPath = MdbSimPath;
 
     // display some version information
@@ -124,33 +133,32 @@ extern "C" __declspec(dllexport) void pic16f15213(
     }
     Display("MDB simulator loaded/configured successfully...\n");
 
-    // get initial output pin states from uC
-    if (!inst->mdb.getPin("RA0", inst->RA0) ||
-        !inst->mdb.getPin("RA1", inst->RA1) ||
-        !inst->mdb.getPin("RA2", inst->RA2) ||
-        !inst->mdb.getPin("RA4", inst->RA4) ||
-        !inst->mdb.getPin("RA5", inst->RA5))
+    // set device VDD -- note that we're doing this only once and any changes
+    // to QSpice VDD don't get passed to MDB (so no brown-out detection support
+    // even if simulator supports it)
+    if (!inst->mdb.setVDD(VDD))
+    {
+      SimError(inst);
+      return;
+    }
+
+    // get initial pin states from MDB
+    if (!inst->mdb.getPinStates())
     {
       SimError(inst);
       return;
     }
 
     // set I/O direction of tri-state ports (QSpice side)
-    RA0_C = inst->RA0.isInput();
-    RA1_C = inst->RA1.isInput();
-    RA2_C = inst->RA2.isInput();
-    RA4_C = inst->RA4.isInput();
-    RA5_C = inst->RA5.isInput();
+    inst->mdb.setCtrlPorts();
 
-    // set initial output states
-    RA0_O = inst->RA0.isHigh() ? VDD : 0;
-    RA1_O = inst->RA1.isHigh() ? VDD : 0;
-    RA2_O = inst->RA2.isHigh() ? VDD : 0;
-    RA4_O = inst->RA4.isHigh() ? VDD : 0;
-    RA5_O = inst->RA5.isHigh() ? VDD : 0;
+    // set initial output port states (QSpice side)
+    inst->mdb.setOutPorts();
   } // end of instance initialization
 
-  // evaluation code begins here...
+  /*
+   * evaluation code begins here...
+   */
 
   // is QSpice initializing?
   if (*HoldICs)
@@ -164,14 +172,8 @@ extern "C" __declspec(dllexport) void pic16f15213(
   inst->lastClkState = CLK;
   if (CLK) return;
 
-  // have CLK falling edge so the fun begins...
-  // set input pin states in MDB simulator
-  if ((inst->RA0.isInput() && !inst->mdb.setPin("RA0", RA0_I)) ||
-      (inst->RA1.isInput() && !inst->mdb.setPin("RA1", RA1_I)) ||
-      (inst->RA2.isInput() && !inst->mdb.setPin("RA2", RA2_I)) ||
-      (!inst->mdb.setPin("RA3", RA3_I)) ||
-      (inst->RA4.isInput() && !inst->mdb.setPin("RA4", RA4_I)) ||
-      (inst->RA5.isInput() && !inst->mdb.setPin("RA5", RA5_I)))
+  //  set input pin states in MDB simulator from QSpice ports
+  if (!inst->mdb.setInPins())
   {
     SimError(inst);
     return;
@@ -184,30 +186,18 @@ extern "C" __declspec(dllexport) void pic16f15213(
     return;
   }
 
-  // refresh pin states
-  if (!inst->mdb.getPin("RA0", inst->RA0) ||
-      !inst->mdb.getPin("RA1", inst->RA1) ||
-      !inst->mdb.getPin("RA2", inst->RA2) ||
-      !inst->mdb.getPin("RA4", inst->RA4) ||
-      !inst->mdb.getPin("RA5", inst->RA5))
+  // refresh pin states from MDB
+  if (!inst->mdb.getPinStates())
   {
     SimError(inst);
     return;
   }
 
-  // set component tri-state pin config
-  RA0_C = inst->RA0.isInput();
-  RA1_C = inst->RA1.isInput();
-  RA2_C = inst->RA2.isInput();
-  RA4_C = inst->RA4.isInput();
-  RA5_C = inst->RA5.isInput();
+  // set component tri-state port config from MDB
+  inst->mdb.setCtrlPorts();
 
-  // shouldn't matter if setting inputs, xxx_C controls component port direction
-  RA0_O = inst->RA0.isHigh() ? VDD : 0;
-  RA1_O = inst->RA1.isHigh() ? VDD : 0;
-  RA2_O = inst->RA2.isHigh() ? VDD : 0;
-  RA4_O = inst->RA4.isHigh() ? VDD : 0;
-  RA5_O = inst->RA5.isHigh() ? VDD : 0;
+  // set output ports from MDB states
+  inst->mdb.setOutPorts();
 } // end of evaluation function
 
 /*

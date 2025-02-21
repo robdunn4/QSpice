@@ -4,6 +4,12 @@
 // https://github.com/robdunn4/QSpice/ for the complete project, current
 // sources, documentation, and demonstration code.
 //------------------------------------------------------------------------------
+/* Notes:
+ *
+ * This code provides the low-level interface to MDB.  If you want to create a
+ * new Microchip device, you should not need to modify this code (at least, in
+ * theory).
+ */
 #pragma once
 
 #include <Windows.h>
@@ -19,26 +25,42 @@ const bool PIN_ANALOG  = 0;
 const bool PIN_DIGITAL = 1;
 const bool PIN_OUTPUT  = 0;
 const bool PIN_INPUT   = 1;
-const bool PIN_LOW     = 0;
-const bool PIN_HIGH    = 1;
 
 // structure for pin state
 struct PinState
 {
-  PinState() : daState(PIN_ANALOG), ioState(PIN_INPUT), hlState(PIN_LOW) {};
+  PinState() : daState(PIN_ANALOG), ioState(PIN_INPUT) {};
 
-  bool daState : 1;
-  bool ioState : 1;
-  bool hlState : 1;
+  bool   daState;
+  bool   ioState;
+  double voltage = 0;
 
   inline bool isDigital() const { return daState == PIN_DIGITAL; }
   inline bool isAnalog() const { return !isDigital(); }
   inline bool isInput() const { return ioState == PIN_INPUT; }
   inline bool isOutput() const { return !isInput(); }
-  inline bool isHigh() const { return hlState == PIN_HIGH; }
-  inline bool isLow() const { return !isHigh(); }
 };
 
+// class to map port names to tri-state (or input-only) ports
+class PinPortMap
+{
+public:
+  PinPortMap(const char* const pinName, double* const inPort,
+      double* const outPort = NULL, bool* const dirPort = NULL) :
+      pinName(pinName), inPort(inPort), outPort(outPort), dirPort(dirPort) {};
+  ~PinPortMap() {};
+
+  const char* const pinName;
+  double* const     inPort;
+  double*           outPort;
+  bool*             dirPort;
+
+  PinState pinState;
+};
+
+typedef std::vector<PinPortMap> PinPortMapList;
+
+// simulation states
 enum SimState
 {
   NotStarted,
@@ -47,6 +69,7 @@ enum SimState
   ErrState
 };
 
+// MDB simulator interface class
 class MdbSim
 {
 public:
@@ -62,12 +85,22 @@ public:
   bool startSim(const char* deviceName, const char* pgmPath);
   bool stopSim();
   bool stepInst();
-  bool getPin(const char* pinName, PinState& pinState);
-  bool setPin(const char* pinName, bool toHigh);
+  bool getPinState(const char* pinName, PinState& pinState);
   bool setPin(const char* pinName, double toVoltage);
+
+  // support for single call updates
+  void addPinPortMap(const char* const pinName, double* const inPort,
+      double* const outPort = NULL, bool* const dirPort = NULL);
+  bool getPinStates();
+  void setCtrlPorts();
+  bool setInPins();
+  void setOutPorts();
+  bool setVDD(double vdd);
 
 protected:
   SimState simState = NotStarted;
+
+  double vddV = 5.0;
 
   std::string lastErrMsg = "No errors";
   std::string sDevName;
@@ -80,7 +113,8 @@ protected:
   HANDLE mdbStdErr_Rd = nullptr;
   HANDLE mdbStdErr_Wr = nullptr;
 
-  StringList sList;
+  StringList     sList;
+  PinPortMapList ppmList;
 
   // note:  the receive buffer is fixed size and shared across instances!
   static char recvBuf[];

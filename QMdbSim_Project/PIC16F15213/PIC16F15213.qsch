@@ -159,7 +159,7 @@
       «pin (1000,1100) (-50,0) 1 11 3 0x0 -1 "VSS"»
       «pin (1000,800) (-50,0) 1 11 145 0x0 -1 "RA0_I"»
       «pin (1000,600) (-50,0) 1 11 146 0x0 -1 "RA0_O"»
-      «pin (1000,400) (-50,0) 1 11 146 0x0 -1 "RA0_C"»
+      «pin (1000,400) (-50,0) 1 11 18 0x0 -1 "RA0_C"»
       «pin (1000,0) (-50,0) 1 11 145 0x0 -1 "RA1_I"»
       «pin (1000,-800) (-50,0) 1 11 145 0x0 -1 "RA2_I"»
       «pin (-1000,-800) (50,0) 1 7 145 0x0 -1 "RA3_I"»
@@ -169,10 +169,10 @@
       «pin (1000,-1000) (-50,0) 1 11 146 0x0 -1 "RA2_O"»
       «pin (-1000,-200) (50,0) 1 7 146 0x0 -1 "RA4_O"»
       «pin (-1000,600) (50,0) 1 7 146 0x0 -1 "RA5_O"»
-      «pin (1000,-400) (-50,0) 1 11 146 0x0 -1 "RA1_C"»
-      «pin (1000,-1200) (-50,0) 1 11 146 0x0 -1 "RA2_C"»
-      «pin (-1000,-400) (50,0) 1 7 146 0x0 -1 "RA4_C"»
-      «pin (-1000,400) (50,0) 1 7 146 0x0 -1 "RA5_C"»
+      «pin (1000,-400) (-50,0) 1 11 18 0x0 -1 "RA1_C"»
+      «pin (1000,-1200) (-50,0) 1 11 18 0x0 -1 "RA2_C"»
+      «pin (-1000,-400) (50,0) 1 7 18 0x0 -1 "RA4_C"»
+      «pin (-1000,400) (50,0) 1 7 18 0x0 -1 "RA5_C"»
       «pin (-1000,-1200) (50,0) 1 7 17 0x0 -1 "CLK"»
     »
   »
@@ -184,7 +184,7 @@
   «net (1600,1600) 1 7 1 "RA0"»
   «net (1600,800) 1 7 1 "RA1"»
   «net (1600,0) 1 7 1 "RA2"»
-  «net (-1600,-200) 1 11 1 "CLK"»
+  «net (-1600,-200) 1 11 1 "SIMCLK"»
   «wire (-1500,1600) (-1600,1600) "RA5"»
   «wire (1500,1600) (1600,1600) "RA0"»
   «wire (1500,800) (1600,800) "RA1"»
@@ -219,7 +219,7 @@
   «wire (-1200,800) (-1000,800) "N14"»
   «wire (-1000,600) (-1100,600) "N15"»
   «wire (-1600,200) (-1000,200) "RA3"»
-  «wire (-1600,-200) (-1000,-200) "CLK"»
+  «wire (-1600,-200) (-1000,-200) "SIMCLK"»
   «wire (-1100,1700) (-1200,1700) "N10"»
   «wire (-1100,1500) (-1100,1400) "N12"»
   «wire (-1100,600) (-1100,700) "N15"»
@@ -232,7 +232,7 @@
   «rect (-1650,2400) (1650,-600) 0 0 2 0xff0000 0x1000000 -1 0 -1»
   «rect (2450,2400) (6850,-1900) 0 0 2 0x4000000 0x1000000 -1 0 -1»
   «text (39,3077) 1.6 13 1 0x1000000 -1 -1 "ï»¿PIC16F15213 Implementation"»
-  «text (2500,2293) 1 5 1 0x1000000 -1 -1 "ï»¿This is a rough implementation of this micro-controller.\n \nThe CLK port is used to provide a clock source to\nsynchronize the device emulation with the QSpice\nsimulation.  It is not an actual device pin.\n \n* This PIC supports an external clock on RA5.  If you want\n   to use that, tie RA5 to CLK in the schematic and\n   configure/program the device hex code appropriately.\n* Tri-state buffers are included and dynamically\n   configurable in device hex code.\n* This PIC supports configurable weak pull-ups on\n   outputs which is not (but could be) implemented here\n   (yet)."»
+  «text (2500,2293) 1 5 1 0x1000000 -1 -1 "ï»¿This is a rough implementation of this micro-controller.\n \nThe CLK port is used to provide a clock source to\nsynchronize the device emulation with the QSpice\nsimulation.  It is not an actual device pin.\n \n* This PIC supports an external clock on RA5.  If you want\n   to use that, tie RA5 to CLK in the schematic and\n   configure/program the device hex code appropriately.\n* Tri-state buffers in the schematic are dynamically driven\n   by the GPIO state in the *.hex/*.elf code. \n* This PIC supports configurable weak pull-ups on\n   outputs which is not (but could be) implemented here\n   (yet)."»
   «text (2550,-850) 1 5 1 0x1000000 -1 -1 "ï»¿Additional Notes:\n \n* Default output pin impedance for C-Block components\n   is 1K.  The ROUT attribute is set to override this."»
   «text (-650,-150) 0.65 7 1 0x1000000 -1 -1 "ï»¿(1,2)"»
   «text (-1900,-859) 0.8 5 1 0x1000000 -1 -1 "ï»¿(1) Not a device pin, used for simulation/emulation support.\n(2) CLK advances the device emulation by one device instruction cycle on\n     each falling edge.  (Input, Boolean)\n(3) RA3 is input-only on this device (MCLR)."»
