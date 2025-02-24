@@ -10,11 +10,11 @@ The QMdbSim Project is a framework for using Microchip micro-controller devices 
 
 This initial release implements a PIC16F15213 component.
 
-* Compiled component DLL (PIC16F15213.dll) is included.  You can change the PIC device code without recompiling the DLL.
+* Compiled component DLL is included.  You can change the PIC device code without recompiling the DLL.
 
-* Compiled "Charlie-Plexing" device test code (PIC16F15213_CPlex.X.debug.elf) is included.  The MPLabX project source is in PIC16F15213_CPlex.zip.
+* Compiled and source "Charlie-Plexing" device test code is included.
 
-* MSVS 2022 project files are included if you need/want to recompile the DLL and are pre-configured for interactive debugging with QSPICE64.exe.
+* MSVS 2022 project files are included if you need/want to recompile the DLL.  (They are pre-configured for interactive debugging with QSPICE64.exe.)
 
 Of course, you can define other Microchip devices easily using the framework.
 
