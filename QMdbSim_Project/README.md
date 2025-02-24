@@ -1,17 +1,24 @@
 # QMdbSim Project
 
-The QMdbSim Project is a framework for creating QSpice micro-controller components for
-Microchip devices (PIC, AVR).  Under the covers, it uses Microchip's software simulator (MDB).  In theory, it should support the same devices to the same extent as the simulator in MPLabX.
+The QMdbSim Project is a framework for using Microchip micro-controller devices (PIC, AVR) in QSpice simulations.  It uses Microchip's software simulator so, in theory, it supports the same devices to the same extent as the simulator in MPLabX.
 
-This early release demonstrates a PIC16F15213 component.  I'm working on documentation but, at this point, it's "read the code."
+<p>
+    <img src="./images/image1.png" alt="Charlie-Plex Demo Schematic" height="100" hspace="10" >
+    <img src="./images/image2.png" alt="PIC16F15213 Device Schematic" height="100" hspace="10" >
+    <img src="./images/image3.png" alt="Charlie-Plex Waveforms" height="100" hspace="10" >
+</p>
+
+This initial release implements a PIC16F15213 component.
 
 * Compiled component DLL (PIC16F15213.dll) is included.  You can change the PIC device code without recompiling the DLL.
 
 * Compiled "Charlie-Plexing" device test code (PIC16F15213_CPlex.X.debug.elf) is included.  The MPLabX project source is in PIC16F15213_CPlex.zip.
 
-* MSVS 2022 project files are included if you need/want to recompile the DLL.  If QSpice is installed in the default location, you can debug component code in MSVS using QSPICE64.exe (i.e., non-GUI).  Hopefully all of the bits are there.
+* MSVS 2022 project files are included if you need/want to recompile the DLL and are pre-configured for interactive debugging with QSPICE64.exe.
 
-The framework is OK for the 8-pin PIC16F15213 device but will become unwieldy for large pin-count devices.  The v0.3.0 update provides a simplification -- add all pin/port/name connections to a list once during initialization and call update functions that operate on the list.  This makes the device code (PIC16F15213.cpp/DLL) less complicated and error-prone.  The device schematic (PIC16F15213.qsch) still requires three ports (in/out/ctrl) for every tri-state device pin of course.
+Of course, you can define other Microchip devices easily using the framework.
+
+Basic user and developer documentation is in the [QMdbSim_Project_Doc PDF](./QMdbSim_Project_Doc.pdf).
 
 ## Contributors Needed
 
@@ -19,10 +26,12 @@ This project will be useful only to the extent that popular Microchip devices ar
 
 ## A Special Plea To Java-Coders
 
-If you're a Java-coder with a little spare time, please contact me.  The framework is slow (and potentially unreliable) due to parsing the MDB command-line stuff.  A minimal rewrite of the MDB terminal interface to simplify machine-parsing could speed things up significantly.  I can do Java but I'm not really a fan and not currently properly set up for Java development.  I could use your help.
+If you're a Java-coder with a little spare time, please contact me.  The framework is slow (and potentially unreliable) due to parsing the MDB command-line stuff.  A minimal rewrite of the MDB terminal interface to simplify machine-parsing could speed things up significantly.  Even better would be the ability to call the Java API from C++ code directly.
 
 ## Contact Me
 
-You'll find me as @RDunn on the QSpice forums.  Send me a message if you have questions, suggestions, corrections, or code contributions.
+Send me a message if you have questions, suggestions, corrections, or code contributions.
+
+You'll find me as @RDunn on [Qorvo's QSpice forum](https://forum.qorvo.com/c/qspice/).
 
 --robert
