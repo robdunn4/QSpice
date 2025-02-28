@@ -22,7 +22,7 @@ Basic user and developer documentation is in the [QMdbSim_Project_Doc PDF](./QMd
 
 ## Core Code Revisions
 
-The QMdbSim.cpp/.h code is shared across devices.  Once we get through the initial project shake-down, it should not change much.  At this point, I forsee a few more changes....
+The QMdbSim.cpp/.h code is shared across devices.  Once we get through the initial project shake-down, it should not change much.  At this point, I foresee a few more changes....
 
 * 2025.02.26 - Initial release.  Core code v0.3.0.
 * 2025.02.28 - Core code v0.3.1. Small change to accomodate AVR/PIC supply pin naming difference.
