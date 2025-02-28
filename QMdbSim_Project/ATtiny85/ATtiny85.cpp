@@ -6,7 +6,7 @@
 //------------------------------------------------------------------------------
 /* Notes:
  *
- * This is the QSpice component code for a Microchip PIC16F15213 device.  If you
+ * This is the QSpice component code for a Microchip ATtiny85 device.  If you
  * want to create a new Microchip device component, this is the only code that
  * you need to change (at least, in theory).
  */
@@ -73,30 +73,52 @@ void SimError(pInstData inst)
 /*
  * QSpice evaluation function
  */
-extern "C" __declspec(dllexport) void pic16f15213(
+extern "C" __declspec(dllexport) void attiny85(
     pInstData* opaque, double t, union uData* data)
 {
-  double      VDD        = data[0].d;   // input
-  double      RA0_I      = data[1].d;   // input
-  double      RA1_I      = data[2].d;   // input
-  double      RA2_I      = data[3].d;   // input
-  double      RA3_I      = data[4].d;   // input
-  double      RA4_I      = data[5].d;   // input
-  double      RA5_I      = data[6].d;   // input
+  // double      VDD        = data[0].d;   // input
+  // double      RA0_I      = data[1].d;   // input
+  // double      RA1_I      = data[2].d;   // input
+  // double      RA2_I      = data[3].d;   // input
+  // double      RA3_I      = data[4].d;   // input
+  // double      RA4_I      = data[5].d;   // input
+  // double      RA5_I      = data[6].d;   // input
+  // bool        CLK        = data[7].b;   // input
+  // const char* MdbSimPath = data[8].str; // input parameter
+  // const char* McPgm      = data[9].str; // input parameter
+  // double&     RA0_O      = data[10].d;  // output
+  // bool&       RA0_C      = data[11].b;  // output
+  // double&     RA1_O      = data[12].d;  // output
+  // double&     RA2_O      = data[13].d;  // output
+  // double&     RA4_O      = data[14].d;  // output
+  // double&     RA5_O      = data[15].d;  // output
+  // bool&       RA1_C      = data[16].b;  // output
+  // bool&       RA2_C      = data[17].b;  // output
+  // bool&       RA4_C      = data[18].b;  // output
+  // bool&       RA5_C      = data[19].b;  // output
+
+  double      VCC        = data[0].d;   // input
+  double      PB2_I      = data[1].d;   // input
+  double      PB1_I      = data[2].d;   // input
+  double      PB0_I      = data[3].d;   // input
+  double      PB3_I      = data[4].d;   // input
+  double      PB4_I      = data[5].d;   // input
+  double      PB5_I      = data[6].d;   // input
   bool        CLK        = data[7].b;   // input
   const char* MdbSimPath = data[8].str; // input parameter
   const char* McPgm      = data[9].str; // input parameter
-  double&     RA0_O      = data[10].d;  // output
-  bool&       RA0_C      = data[11].b;  // output
-  double&     RA1_O      = data[12].d;  // output
-  double&     RA2_O      = data[13].d;  // output
-  double&     RA4_O      = data[14].d;  // output
-  double&     RA5_O      = data[15].d;  // output
-  bool&       RA1_C      = data[16].b;  // output
-  bool&       RA2_C      = data[17].b;  // output
-  bool&       RA4_C      = data[18].b;  // output
-  bool&       RA5_C      = data[19].b;  // output
-
+  double&     PB2_O      = data[10].d;  // output
+  bool&       PB2_C      = data[11].b;  // output
+  double&     PB1_O      = data[12].d;  // output
+  double&     PB0_O      = data[13].d;  // output
+  double&     PB4_O      = data[14].d;  // output
+  double&     PB5_O      = data[15].d;  // output
+  bool&       PB1_C      = data[16].b;  // output
+  bool&       PB0_C      = data[17].b;  // output
+  bool&       PB4_C      = data[18].b;  // output
+  bool&       PB5_C      = data[19].b;  // output
+  double&     PB3_O      = data[20].d;  // output
+  bool&       PB3_C      = data[21].b;  // output
   // if gAbortFlg is set, we're just waiting on MaxExtStepSize() to force abort
   if (gAbortFlg) return;
 
@@ -109,12 +131,12 @@ extern "C" __declspec(dllexport) void pic16f15213(
     *opaque = inst = new InstData();
 
     // add all pin/port/name mappings to list
-    inst->mdb.addPinPortMap("RA0", &RA0_I, &RA0_O, &RA0_C);
-    inst->mdb.addPinPortMap("RA1", &RA1_I, &RA1_O, &RA1_C);
-    inst->mdb.addPinPortMap("RA2", &RA2_I, &RA2_O, &RA2_C);
-    inst->mdb.addPinPortMap("RA3", &RA3_I);
-    inst->mdb.addPinPortMap("RA4", &RA4_I, &RA4_O, &RA4_C);
-    inst->mdb.addPinPortMap("RA5", &RA5_I, &RA5_O, &RA5_C);
+    inst->mdb.addPinPortMap("PB0", &PB0_I, &PB0_O, &PB0_C);
+    inst->mdb.addPinPortMap("PB1", &PB1_I, &PB1_O, &PB1_C);
+    inst->mdb.addPinPortMap("PB2", &PB2_I, &PB2_O, &PB2_C);
+    inst->mdb.addPinPortMap("PB3", &PB3_I, &PB3_O, &PB3_C);
+    inst->mdb.addPinPortMap("PB4", &PB4_I, &PB4_O, &PB4_C);
+    inst->mdb.addPinPortMap("PB5", &PB5_I, &PB5_O, &PB5_C);
 
     // set user-supplied path to MDB simulator (only first component instance)
     if (!gMdbSimPath) gMdbSimPath = MdbSimPath;
@@ -123,10 +145,10 @@ extern "C" __declspec(dllexport) void pic16f15213(
     Display(
         "%s loading MDB simulator process:\n  MDB Path: \"%s\"\n  Device:   "
         "\"%s\"\n  Program:  \"%s\"\n",
-        inst->mdb.getVerInfo(), MdbSimPath, "PIC16F15213", McPgm);
+        inst->mdb.getVerInfo(), MdbSimPath, "ATtiny85", McPgm);
 
     // start MDB simulator on server
-    if (!inst->mdb.startSim("PIC16F15213", McPgm))
+    if (!inst->mdb.startSim("ATtiny85", McPgm))
     {
       SimError(inst);
       return;
@@ -136,7 +158,7 @@ extern "C" __declspec(dllexport) void pic16f15213(
     // set device VDD -- note that we're doing this only once and any changes
     // to QSpice VDD don't get passed to MDB (so no brown-out detection support
     // even if simulator supports it)
-    if (!inst->mdb.setVDD("VDD", VDD))
+    if (!inst->mdb.setVDD("VCC", VCC))
     {
       SimError(inst);
       return;

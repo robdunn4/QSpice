@@ -1,0 +1,278 @@
+ÿØÿÛ«schematic
+  «component (1300,1600) 0 0
+    «symbol GPIO_Pin
+      «type: X»
+      «description: GPIO_PIN Symbol»
+      «library file: |.subckt GPIO_Pin GPIO PinIn PinOut PinCtrl\nR1 PinIn GPIO 1R\nR4 PinOut GPIO R=outimp()\nR5 0 PinCtrl 1G\n.func outimp()=V(PinCtrl)>0.5?10G:1\n.ends GPIO_Pin»
+      «shorted pins: false»
+      «line (-10,100) (30,100) 0 0 0x1000000 -1 -1»
+      «line (-10,0) (30,0) 0 0 0x1000000 -1 -1»
+      «line (30,100) (100,0) 0 0 0x1000000 -1 -1»
+      «line (30,0) (90,-30) 0 0 0x1000000 -1 -1»
+      «line (100,0) (200,0) 0 0 0x1000000 -1 -1»
+      «rect (-100,-150) (200,150) 0 0 0 0xff0000 0xc4c4c4 -1 0 -1»
+      «ellipse (110,-10) (90,10) 0 0 0 0x1000000 0x3000000 -1 -1»
+      «ellipse (40,-10) (20,10) 0 0 0 0x1000000 0x3000000 -1 -1»
+      «ellipse (10,30) (120,-40) 0 0 1 0x1000000 0x1000000 -1 -1»
+      «arc3p (10,-100) (70,-40) (-40,-10) 0 1 0x1000000 -1 -1»
+      «triangle (-10,-80) (-10,-120) (10,-100) 0 0 0x1000000 0x1000000 -1 -1»
+      «text (100,50) 0.5 6 0 0x1000000 -1 -1 "X2"»
+      «text (50,200) 0.5 0 2 0x1000000 -1 -1 "GPIO_PIN"»
+      «text (-50,100) 0.5 0 1 0x1000000 -1 -1 "I"»
+      «text (-50,0) 0.5 0 1 0x1000000 -1 -1 "O"»
+      «text (-50,-100) 0.5 0 1 0x1000000 -1 -1 "C"»
+      «text (170,-50) 0.5 0 1 0x1000000 -1 -1 "G"»
+      «pin (200,0) (0,0) 0.5 15 0 0x0 -1 "GPIO"»
+      «pin (-100,100) (20,0) 0.5 15 0 0x0 -1 "PinIn"»
+      «pin (-100,0) (20,0) 0.5 15 0 0x0 -1 "PinOut"»
+      «pin (-100,-100) (20,0) 0.5 15 0 0x0 -1 "PinCtrl"»
+    »
+  »
+  «component (1300,800) 0 0
+    «symbol GPIO_Pin
+      «type: X»
+      «description: GPIO_PIN Symbol»
+      «library file: |.subckt GPIO_Pin GPIO PinIn PinOut PinCtrl\nR1 PinIn GPIO 1R\nR4 PinOut GPIO R=outimp()\nR5 0 PinCtrl 1G\n.func outimp()=V(PinCtrl)>0.5?10G:1\n.ends GPIO_Pin»
+      «shorted pins: false»
+      «line (-10,100) (30,100) 0 0 0x1000000 -1 -1»
+      «line (-10,0) (30,0) 0 0 0x1000000 -1 -1»
+      «line (30,100) (100,0) 0 0 0x1000000 -1 -1»
+      «line (30,0) (90,-30) 0 0 0x1000000 -1 -1»
+      «line (100,0) (200,0) 0 0 0x1000000 -1 -1»
+      «rect (-100,-150) (200,150) 0 0 0 0xff0000 0xc4c4c4 -1 0 -1»
+      «ellipse (110,-10) (90,10) 0 0 0 0x1000000 0x3000000 -1 -1»
+      «ellipse (40,-10) (20,10) 0 0 0 0x1000000 0x3000000 -1 -1»
+      «ellipse (10,30) (120,-40) 0 0 1 0x1000000 0x1000000 -1 -1»
+      «arc3p (10,-100) (70,-40) (-40,-10) 0 1 0x1000000 -1 -1»
+      «triangle (-10,-80) (-10,-120) (10,-100) 0 0 0x1000000 0x1000000 -1 -1»
+      «text (100,50) 0.5 6 0 0x1000000 -1 -1 "X3"»
+      «text (50,200) 0.5 0 2 0x1000000 -1 -1 "GPIO_PIN"»
+      «text (-50,100) 0.5 0 1 0x1000000 -1 -1 "I"»
+      «text (-50,0) 0.5 0 1 0x1000000 -1 -1 "O"»
+      «text (-50,-100) 0.5 0 1 0x1000000 -1 -1 "C"»
+      «text (170,-50) 0.5 0 1 0x1000000 -1 -1 "G"»
+      «pin (200,0) (0,0) 0.5 15 0 0x0 -1 "GPIO"»
+      «pin (-100,100) (20,0) 0.5 15 0 0x0 -1 "PinIn"»
+      «pin (-100,0) (20,0) 0.5 15 0 0x0 -1 "PinOut"»
+      «pin (-100,-100) (20,0) 0.5 15 0 0x0 -1 "PinCtrl"»
+    »
+  »
+  «component (1300,0) 0 0
+    «symbol GPIO_Pin
+      «type: X»
+      «description: GPIO_PIN Symbol»
+      «library file: |.subckt GPIO_Pin GPIO PinIn PinOut PinCtrl\nR1 PinIn GPIO 1R\nR4 PinOut GPIO R=outimp()\nR5 0 PinCtrl 1G\n.func outimp()=V(PinCtrl)>0.5?10G:1\n.ends GPIO_Pin»
+      «shorted pins: false»
+      «line (-10,100) (30,100) 0 0 0x1000000 -1 -1»
+      «line (-10,0) (30,0) 0 0 0x1000000 -1 -1»
+      «line (30,100) (100,0) 0 0 0x1000000 -1 -1»
+      «line (30,0) (90,-30) 0 0 0x1000000 -1 -1»
+      «line (100,0) (200,0) 0 0 0x1000000 -1 -1»
+      «rect (-100,-150) (200,150) 0 0 0 0xff0000 0xc4c4c4 -1 0 -1»
+      «ellipse (110,-10) (90,10) 0 0 0 0x1000000 0x3000000 -1 -1»
+      «ellipse (40,-10) (20,10) 0 0 0 0x1000000 0x3000000 -1 -1»
+      «ellipse (10,30) (120,-40) 0 0 1 0x1000000 0x1000000 -1 -1»
+      «arc3p (10,-100) (70,-40) (-40,-10) 0 1 0x1000000 -1 -1»
+      «triangle (-10,-80) (-10,-120) (10,-100) 0 0 0x1000000 0x1000000 -1 -1»
+      «text (100,50) 0.5 6 0 0x1000000 -1 -1 "X4"»
+      «text (50,200) 0.5 0 2 0x1000000 -1 -1 "GPIO_PIN"»
+      «text (-50,100) 0.5 0 1 0x1000000 -1 -1 "I"»
+      «text (-50,0) 0.5 0 1 0x1000000 -1 -1 "O"»
+      «text (-50,-100) 0.5 0 1 0x1000000 -1 -1 "C"»
+      «text (170,-50) 0.5 0 1 0x1000000 -1 -1 "G"»
+      «pin (200,0) (0,0) 0.5 15 0 0x0 -1 "GPIO"»
+      «pin (-100,100) (20,0) 0.5 15 0 0x0 -1 "PinIn"»
+      «pin (-100,0) (20,0) 0.5 15 0 0x0 -1 "PinOut"»
+      «pin (-100,-100) (20,0) 0.5 15 0 0x0 -1 "PinCtrl"»
+    »
+  »
+  «component (-1300,500) 8 0
+    «symbol GPIO_Pin
+      «type: X»
+      «description: GPIO_PIN Symbol»
+      «library file: |.subckt GPIO_Pin GPIO PinIn PinOut PinCtrl\nR1 PinIn GPIO 1R\nR4 PinOut GPIO R=outimp()\nR5 0 PinCtrl 1G\n.func outimp()=V(PinCtrl)>0.5?10G:1\n.ends GPIO_Pin»
+      «shorted pins: false»
+      «line (-10,100) (30,100) 0 0 0x1000000 -1 -1»
+      «line (-10,0) (30,0) 0 0 0x1000000 -1 -1»
+      «line (30,100) (100,0) 0 0 0x1000000 -1 -1»
+      «line (30,0) (90,-30) 0 0 0x1000000 -1 -1»
+      «line (100,0) (200,0) 0 0 0x1000000 -1 -1»
+      «rect (-100,-150) (200,150) 0 0 0 0xff0000 0xc4c4c4 -1 0 -1»
+      «ellipse (110,-10) (90,10) 0 0 0 0x1000000 0x3000000 -1 -1»
+      «ellipse (40,-10) (20,10) 0 0 0 0x1000000 0x3000000 -1 -1»
+      «ellipse (10,30) (120,-40) 0 0 1 0x1000000 0x1000000 -1 -1»
+      «arc3p (10,-100) (70,-40) (-40,-10) 0 1 0x1000000 -1 -1»
+      «triangle (-10,-80) (-10,-120) (10,-100) 0 0 0x1000000 0x1000000 -1 -1»
+      «text (100,50) 0.5 6 0 0x1000000 -1 -1 "X5"»
+      «text (50,200) 0.5 0 2 0x1000000 -1 -1 "GPIO_PIN"»
+      «text (-50,100) 0.5 0 1 0x1000000 -1 -1 "I"»
+      «text (-50,0) 0.5 0 1 0x1000000 -1 -1 "O"»
+      «text (-50,-100) 0.5 0 1 0x1000000 -1 -1 "C"»
+      «text (170,-50) 0.5 0 1 0x1000000 -1 -1 "G"»
+      «pin (200,0) (0,0) 0.5 15 0 0x0 -1 "GPIO"»
+      «pin (-100,100) (20,0) 0.5 15 0 0x0 -1 "PinIn"»
+      «pin (-100,0) (20,0) 0.5 15 0 0x0 -1 "PinOut"»
+      «pin (-100,-100) (20,0) 0.5 15 0 0x0 -1 "PinCtrl"»
+    »
+  »
+  «component (-1300,1900) 8 0
+    «symbol GPIO_Pin
+      «type: X»
+      «description: GPIO_PIN Symbol»
+      «library file: |.subckt GPIO_Pin GPIO PinIn PinOut PinCtrl\nR1 PinIn GPIO 1R\nR4 PinOut GPIO R=outimp()\nR5 0 PinCtrl 1G\n.func outimp()=V(PinCtrl)>0.5?10G:1\n.ends GPIO_Pin»
+      «shorted pins: false»
+      «line (-10,100) (30,100) 0 0 0x1000000 -1 -1»
+      «line (-10,0) (30,0) 0 0 0x1000000 -1 -1»
+      «line (30,100) (100,0) 0 0 0x1000000 -1 -1»
+      «line (30,0) (90,-30) 0 0 0x1000000 -1 -1»
+      «line (100,0) (200,0) 0 0 0x1000000 -1 -1»
+      «rect (-100,-150) (200,150) 0 0 0 0xff0000 0xc4c4c4 -1 0 -1»
+      «ellipse (110,-10) (90,10) 0 0 0 0x1000000 0x3000000 -1 -1»
+      «ellipse (40,-10) (20,10) 0 0 0 0x1000000 0x3000000 -1 -1»
+      «ellipse (10,30) (120,-40) 0 0 1 0x1000000 0x1000000 -1 -1»
+      «arc3p (10,-100) (70,-40) (-40,-10) 0 1 0x1000000 -1 -1»
+      «triangle (-10,-80) (-10,-120) (10,-100) 0 0 0x1000000 0x1000000 -1 -1»
+      «text (100,50) 0.5 6 0 0x1000000 -1 -1 "X6"»
+      «text (50,200) 0.5 0 2 0x1000000 -1 -1 "GPIO_PIN"»
+      «text (-50,100) 0.5 0 1 0x1000000 -1 -1 "I"»
+      «text (-50,0) 0.5 0 1 0x1000000 -1 -1 "O"»
+      «text (-50,-100) 0.5 0 1 0x1000000 -1 -1 "C"»
+      «text (170,-50) 0.5 0 1 0x1000000 -1 -1 "G"»
+      «pin (200,0) (0,0) 0.5 15 0 0x0 -1 "GPIO"»
+      «pin (-100,100) (20,0) 0.5 15 0 0x0 -1 "PinIn"»
+      «pin (-100,0) (20,0) 0.5 15 0 0x0 -1 "PinOut"»
+      «pin (-100,-100) (20,0) 0.5 15 0 0x0 -1 "PinCtrl"»
+    »
+  »
+  «component (0,1000) 0 0
+    «symbol
+      «type: Ø(.DLL)»
+      «description: Microchip ATtiny85»
+      «shorted pins: false»
+      «rect (-1000,1300) (1000,-1500) 0 0 0 0x4000000 0x4000000 -1 1 -1»
+      «text (0,1100) 1 12 0 0x1000000 -1 -1 "X1"»
+      «text (0,950) 0.681 13 0 0x1000000 -1 -1 "ATtiny85"»
+      «text (-1889,-3000) 1 5 0 0x1000000 -1 -1 "char* MdbSimPath="C:\\Program Files\\Microchip\\MPLABX\\v6.20\\mplab_platform\\bin\\mdb.bat""»
+      «text (-1900,-2750) 1 5 0 0x1000000 -1 -1 "char* McPgm=PgmPath"»
+      «text (-14,700) 0.681 13 0 0x1000000 -1 -1 "ROUT=1"»
+      «pin (1000,1100) (-100,0) 1 11 145 0x0 -1 "VCC"»
+      «pin (1000,800) (-50,0) 1 11 145 0x0 -1 "PB2_I"»
+      «pin (1000,600) (-50,0) 1 11 146 0x0 -1 "PB2_O"»
+      «pin (1000,400) (-50,0) 1 11 18 0x0 -1 "PB2_C"»
+      «pin (1000,0) (-50,0) 1 11 145 0x0 -1 "PB1_I"»
+      «pin (1000,-800) (-50,0) 1 11 145 0x0 -1 "PB0_I"»
+      «pin (-1000,400) (50,0) 1 7 145 0x0 -1 "PB3_I"»
+      «pin (-1000,-300) (50,0) 1 7 145 0x0 -1 "PB4_I"»
+      «pin (-1000,1100) (50,0) 1 7 145 0x0 -1 "PB5_I"»
+      «pin (1000,-200) (-50,0) 1 11 146 0x0 -1 "PB1_O"»
+      «pin (1000,-1000) (-50,0) 1 11 146 0x0 -1 "PB0_O"»
+      «pin (-1000,-500) (50,0) 1 7 146 0x0 -1 "PB4_O"»
+      «pin (-1000,900) (50,0) 1 7 146 0x0 -1 "PB5_O"»
+      «pin (1000,-400) (-50,0) 1 11 18 0x0 -1 "PB1_C"»
+      «pin (1000,-1200) (-50,0) 1 11 18 0x0 -1 "PB0_C"»
+      «pin (-1000,-700) (50,0) 1 7 18 0x0 -1 "PB4_C"»
+      «pin (-1000,700) (50,0) 1 7 18 0x0 -1 "PB5_C"»
+      «pin (0,-1500) (0,0) 1 14 17 0x0 -1 "CLK"»
+      «pin (-1000,-1100) (50,0) 1 7 3 0x0 -1 "VEE"»
+      «pin (-1000,200) (50,0) 1 7 146 0x0 -1 "PB3_O"»
+      «pin (-1000,0) (50,0) 1 7 18 0x0 -1 "PB3_C"»
+    »
+  »
+  «component (-1300,1200) 8 0
+    «symbol GPIO_Pin
+      «type: X»
+      «description: GPIO_PIN Symbol»
+      «library file: |.subckt GPIO_Pin GPIO PinIn PinOut PinCtrl\nR1 PinIn GPIO 1R\nR4 PinOut GPIO R=outimp()\nR5 0 PinCtrl 1G\n.func outimp()=V(PinCtrl)>0.5?10G:1\n.ends GPIO_Pin»
+      «shorted pins: false»
+      «line (-10,100) (30,100) 0 0 0x1000000 -1 -1»
+      «line (-10,0) (30,0) 0 0 0x1000000 -1 -1»
+      «line (30,100) (100,0) 0 0 0x1000000 -1 -1»
+      «line (30,0) (90,-30) 0 0 0x1000000 -1 -1»
+      «line (100,0) (200,0) 0 0 0x1000000 -1 -1»
+      «rect (-100,-150) (200,150) 0 0 0 0xff0000 0xc4c4c4 -1 0 -1»
+      «ellipse (110,-10) (90,10) 0 0 0 0x1000000 0x3000000 -1 -1»
+      «ellipse (40,-10) (20,10) 0 0 0 0x1000000 0x3000000 -1 -1»
+      «ellipse (10,30) (120,-40) 0 0 1 0x1000000 0x1000000 -1 -1»
+      «arc3p (10,-100) (70,-40) (-40,-10) 0 1 0x1000000 -1 -1»
+      «triangle (-10,-80) (-10,-120) (10,-100) 0 0 0x1000000 0x1000000 -1 -1»
+      «text (100,50) 0.5 6 0 0x1000000 -1 -1 "X7"»
+      «text (50,200) 0.5 0 2 0x1000000 -1 -1 "GPIO_PIN"»
+      «text (-50,100) 0.5 0 1 0x1000000 -1 -1 "I"»
+      «text (-50,0) 0.5 0 1 0x1000000 -1 -1 "O"»
+      «text (-50,-100) 0.5 0 1 0x1000000 -1 -1 "C"»
+      «text (170,-50) 0.5 0 1 0x1000000 -1 -1 "G"»
+      «pin (200,0) (0,0) 0.5 15 0 0x0 -1 "GPIO"»
+      «pin (-100,100) (20,0) 0.5 15 0 0x0 -1 "PinIn"»
+      «pin (-100,0) (20,0) 0.5 15 0 0x0 -1 "PinOut"»
+      «pin (-100,-100) (20,0) 0.5 15 0 0x0 -1 "PinCtrl"»
+    »
+  »
+  «net (1600,2100) 1 7 1 "VCC"»
+  «net (-1600,1900) 1 11 1 "PB5"»
+  «net (-1600,500) 1 11 1 "PB4"»
+  «net (-1600,1200) 1 11 1 "PB3"»
+  «net (-1600,-100) 1 11 1 "VEE"»
+  «net (1600,1600) 1 7 1 "PB2"»
+  «net (1600,800) 1 7 1 "PB1"»
+  «net (1600,0) 1 7 1 "PB0"»
+  «net (0,-800) 1 13 1 "SIMCLK"»
+  «wire (-1500,1900) (-1600,1900) "PB5"»
+  «wire (1500,1600) (1600,1600) "PB2"»
+  «wire (1500,800) (1600,800) "PB1"»
+  «wire (1500,0) (1600,0) "PB0"»
+  «wire (-1500,500) (-1600,500) "PB4"»
+  «wire (1000,1800) (1100,1800) "N01"»
+  «wire (1100,1800) (1100,1700) "N01"»
+  «wire (1100,1700) (1200,1700) "N01"»
+  «wire (1000,1600) (1200,1600) "N02"»
+  «wire (1000,1400) (1100,1400) "N03"»
+  «wire (1100,1400) (1100,1500) "N03"»
+  «wire (1000,1000) (1100,1000) "N04"»
+  «wire (1100,1000) (1100,900) "N04"»
+  «wire (1100,900) (1200,900) "N04"»
+  «wire (1200,800) (1000,800) "N05"»
+  «wire (1200,700) (1100,700) "N06"»
+  «wire (1200,100) (1100,100) "N07"»
+  «wire (1200,0) (1000,0) "N08"»
+  «wire (1200,-100) (1100,-100) "N09"»
+  «wire (1100,-100) (1100,-200) "N09"»
+  «wire (1100,-200) (1000,-200) "N09"»
+  «wire (-1100,2100) (-1000,2100) "N10"»
+  «wire (-1000,1900) (-1200,1900) "N11"»
+  «wire (-1200,1800) (-1100,1800) "N12"»
+  «wire (-1100,1700) (-1000,1700) "N12"»
+  «wire (-1100,700) (-1100,600) "N13"»
+  «wire (-1100,600) (-1200,600) "N13"»
+  «wire (-1100,2100) (-1100,2000) "N10"»
+  «wire (-1100,1800) (-1100,1700) "N12"»
+  «wire (-1100,300) (-1100,400) "N14"»
+  «wire (-1100,400) (-1200,400) "N14"»
+  «wire (1100,1500) (1200,1500) "N03"»
+  «wire (1100,600) (1000,600) "N06"»
+  «wire (1100,700) (1100,600) "N06"»
+  «wire (1100,200) (1000,200) "N07"»
+  «wire (1100,100) (1100,200) "N07"»
+  «wire (1600,2100) (1000,2100) "VCC"»
+  «wire (-1100,2000) (-1200,2000) "N10"»
+  «wire (-1600,1200) (-1500,1200) "PB3"»
+  «wire (-1000,1200) (-1200,1200) "N15"»
+  «wire (-1000,1400) (-1100,1400) "N16"»
+  «wire (-1100,1400) (-1100,1300) "N16"»
+  «wire (-1100,1300) (-1200,1300) "N16"»
+  «wire (-1200,1100) (-1100,1100) "N17"»
+  «wire (-1100,1100) (-1100,1000) "N17"»
+  «wire (-1100,1000) (-1000,1000) "N17"»
+  «wire (-1000,700) (-1100,700) "N13"»
+  «wire (-1000,500) (-1200,500) "N18"»
+  «wire (-1000,300) (-1100,300) "N14"»
+  «wire (-1600,-100) (-1000,-100) "VEE"»
+  «wire (0,-500) (0,-800) "SIMCLK"»
+  «rect (-1650,2400) (1650,-600) 0 0 2 0xff0000 0x1000000 -1 0 -1»
+  «rect (2450,2400) (6850,-1050) 0 0 2 0x4000000 0x1000000 -1 0 -1»
+  «text (-2065,3077) 1.59904 5 1 0x1000000 -1 -1 "ï»¿ATtiny85 Device Implementation"»
+  «text (2500,2293) 1 5 1 0x1000000 -1 -1 "ï»¿This is a rough implementation of this micro-controller.\n \nThe CLK port is used to provide a clock source to\nsynchronize the device emulation with the QSpice\nsimulation.  It is not an actual device pin.\n \n* Tri-state buffers in the schematic are dynamically driven\n   by the GPIO state in the *.hex/*.elf code. \n* This device supports configurable weak pull-ups on\n   outputs which is not (but could be) implemented here\n   (yet)."»
+  «text (2500,-50) 1 5 1 0x1000000 -1 -1 "ï»¿Additional Notes:\n \n* Default output pin impedance for C-Block components\n   is 1K.  The ROUT attribute is set to override this."»
+  «text (200,-350) 0.65 7 1 0x1000000 -1 -1 "ï»¿(1,2)"»
+  «text (-1900,-1159) 0.8 5 1 0x1000000 -1 -1 "ï»¿(1) Not a device pin, used for simulation/emulation support.\n(2) CLK advances the device emulation by one device instruction cycle on\n     each falling edge.  (Input, Boolean)"»
+»
+

@@ -8,9 +8,9 @@ The QMdbSim Project is a framework for using Microchip micro-controller devices 
     <img src="./images/image3.png" alt="Charlie-Plex Waveforms" height="100" hspace="10" >
 </p>
 
-This initial release implements a PIC16F15213 component.
+This initial release implements PIC16F15213 and ATtiny85 components.
 
-* Compiled component DLL is included.  You can change the PIC device code without recompiling the DLL.
+* Compiled component DLLs are included.  You can change the PIC/AVR device code without recompiling the DLL.
 
 * Compiled and source "Charlie-Plexing" device test code is included.
 
@@ -18,7 +18,19 @@ This initial release implements a PIC16F15213 component.
 
 Of course, you can define other Microchip devices easily using the framework.
 
-Basic user and developer documentation is in the [QMdbSim_Project_Doc PDF](./QMdbSim_Project_Doc.pdf).
+Basic user and developer documentation is in the [QMdbSim_Project_Doc PDF](./QMdbSim_Project_Doc.pdf).  Note that the documentation was written for the PIC16F15213 chip.  It applies equally to the ATtiny85 device.
+
+## Core Code Revisions
+
+The QMdbSim.cpp/.h code is shared across devices.  Once we get through the initial project shake-down, it should not change much.  At this point, I forsee a few more changes....
+
+* 2025.02.26 - Initial release.  Core code v0.3.0.
+* 2025.02.28 - Core code v0.3.1. Small change to accomodate AVR/PIC supply pin naming difference.
+
+## Implemented Devices
+
+* PIC16F15213 (2025.02.26)
+* ATtiny85 (2025.02.28)
 
 ## Contributors Needed
 
