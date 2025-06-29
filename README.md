@@ -65,7 +65,7 @@ Step-by-step guide to configure a Visual Studio project to compile and debug C-B
 [Go to MSVC Configuration](./MSVS/)
 
 ## Miscellany
-Small bits, odds and ends.
+Odds and ends, bits and bobs that may be useful.
 
 [Go to Misellany](./Miscellany/)
 
