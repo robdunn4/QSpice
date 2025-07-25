@@ -1,0 +1,69 @@
+ÿØÿÛ«schematic
+  «component (-400,-1100) 2 0
+    «symbol R
+      «type: R»
+      «description: Resistor(USA Style Symbol)»
+      «shorted pins: false»
+      «line (0,200) (0,180) 0 0 0x1000000 -1 -1»
+      «line (0,-180) (0,-200) 0 0 0x1000000 -1 -1»
+      «zigzag (-80,180) (80,-180) 0 0 0 0x1000000 -1 -1»
+      «text (80,0) 1 110 0 0x1000000 -1 -1 "R1"»
+      «text (-80,0) 1 109 0 0x1000000 -1 -1 "1R"»
+      «pin (0,200) (0,0) 1 0 0 0x0 -1 "1"»
+      «pin (0,-200) (0,0) 1 0 0 0x0 -1 "2"»
+    »
+  »
+  «component (-600,-300) 0 0
+    «symbol SW
+      «type: S»
+      «description: Voltage Controlled Switch»
+      «shorted pins: false»
+      «line (-136,100) (-200,100) 0 0 0x1000000 -1 -1»
+      «line (-136,100) (-121,89) 0 0 0x1000000 -1 -1»
+      «line (-136,-100) (-200,-100) 0 0 0x1000000 -1 -1»
+      «line (-165,91) (-165,61) 0 0 0x1000000 -1 -1»
+      «line (-180,76) (-150,76) 0 0 0x1000000 -1 -1»
+      «line (-180,-76) (-150,-76) 0 0 0x1000000 -1 -1»
+      «line (-136,-100) (-121,-89) 0 0 0x1000000 -1 -1»
+      «line (0,200) (0,105) 0 0 0x1000000 -1 -1»
+      «line (0,-200) (0,-105) 0 0 0x1000000 -1 -1»
+      «line (94,-45) (15,60) 0 0 0x1000000 -1 -1»
+      «ellipse (-150,-150) (150,150) 0 0 0 0x1000000 0x1000000 -1 -1»
+      «ellipse (-25,55) (25,105) 0 0 0 0x1000000 0x1000000 -1 -1»
+      «ellipse (-25,-105) (25,-55) 0 0 0 0x1000000 0x1000000 -1 -1»
+      «text (150,150) 1 7 0 0x1000000 -1 -1 "S1"»
+      «text (150,-175) 0.5 7 0 0x1000000 -1 -1 "Ron=1G"»
+      «text (150,-250) 0.5 7 0 0x1000000 -1 -1 "Roff=Rsw"»
+      «text (150,-325) 0.5 7 0 0x1000000 -1 -1 "Vt=0.5"»
+      «text (150,-400) 0.5 7 0 0x1000000 -1 -1 "Vh=-0.49"»
+      «pin (0,200) (0,0) 1 0 0 0x0 -1 "1"»
+      «pin (0,-200) (0,0) 1 0 0 0x0 -1 "2"»
+      «pin (-200,100) (0,0) 1 0 0 0x0 -1 "+"»
+      «pin (-200,-100) (0,0) 1 0 0 0x0 -1 "-"»
+    »
+  »
+  «net (-900,-400) 1 11 0 "GND"»
+  «net (-600,-600) 1 13 0 "GND"»
+  «net (-1100,-1100) 1 11 1 "GPIOin"»
+  «net (-1100,100) 1 11 1 "GPIOout"»
+  «net (500,100) 1 7 1 "GPIOpin"»
+  «junction (200,100)»
+  «wire (-900,-400) (-800,-400) "GND"»
+  «wire (-600,-500) (-600,-600) "GND"»
+  «wire (-600,100) (-600,-100) "GPIOpin"»
+  «wire (200,100) (200,-1100) "GPIOpin"»
+  «wire (-600,-1100) (-1100,-1100) "GPIOin"»
+  «wire (200,100) (500,100) "GPIOpin"»
+  «wire (-600,100) (200,100) "GPIOpin"»
+  «wire (200,-1100) (-200,-1100) "GPIOpin"»
+  «wire (-1100,100) (-800,100) "GPIOout"»
+  «wire (-800,100) (-800,-200) "GPIOout"»
+  «text (-1850,1321) 1.6 5 1 0x1000000 -1 -1 "ï»¿GPIO Tri-State Pin Model"»
+  «text (-1750,-1689) 1 5 1 0x1000000 -1 -1 "ï»¿* GPIOpin is high-impedance when GPIOout is 1V\n* GPIOpin is pulled low (GND) when GPIOout is 0V"»
+  «text (-1750,-2435) 1 5 1 0x1000000 -1 -1 "ï»¿* R1 merely splits GPIOin/GPIOpin nets.\n* Above may differ from final symbol implementation."»
+  «text (-1850,721) 1 5 1 0x1000000 -1 -1 "ï»¿Open Collector/Drain GPIO Pin"»
+  «text (-1850,-1439) 1.25 5 1 0x1000000 -1 -1 "ï»¿State Table:"»
+  «text (-1850,-2185) 1.25 5 1 0x1000000 -1 -1 "ï»¿Notes:"»
+  «text (-1850,1001) 0.8 5 1 0x1000000 -1 -1 "ï»¿Micro-controller GPIO pin implementation"»
+»
+

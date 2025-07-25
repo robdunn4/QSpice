@@ -18,7 +18,7 @@
       «ellipse (-25,55) (25,105) 0 0 0 0x1000000 0x1000000 -1 -1»
       «ellipse (-25,-105) (25,-55) 0 0 0 0x1000000 0x1000000 -1 -1»
       «text (200,-150) 1 75 0 0x1000000 -1 -1 "S1"»
-      «text (200,0) 0.5 75 0 0x1000000 -1 -1 "Ron=50"»
+      «text (200,0) 0.5 75 0 0x1000000 -1 -1 "Ron=Rsw"»
       «text (200,100) 0.5 75 0 0x1000000 -1 -1 "Roff=1G"»
       «text (200,200) 0.5 75 0 0x1000000 -1 -1 "Vt=0.5"»
       «text (200,300) 0.5 75 0 0x1000000 -1 -1 "Vh=-0.49"»
@@ -47,7 +47,7 @@
       «ellipse (-25,55) (25,105) 0 0 0 0x1000000 0x1000000 -1 -1»
       «ellipse (-25,-105) (25,-55) 0 0 0 0x1000000 0x1000000 -1 -1»
       «text (200,-150) 1 75 0 0x1000000 -1 -1 "S2"»
-      «text (200,0) 0.5 75 0 0x1000000 -1 -1 "Ron=50"»
+      «text (200,0) 0.5 75 0 0x1000000 -1 -1 "Ron=Rsw"»
       «text (200,100) 0.5 75 0 0x1000000 -1 -1 "Roff=1G"»
       «text (200,200) 0.5 75 0 0x1000000 -1 -1 "Vt=0.5"»
       «text (200,300) 0.5 75 0 0x1000000 -1 -1 "Vh=-0.49"»
@@ -66,7 +66,7 @@
       «line (0,-180) (0,-200) 0 0 0x1000000 -1 -1»
       «zigzag (-80,180) (80,-180) 0 0 0 0x1000000 -1 -1»
       «text (80,0) 1 110 0 0x1000000 -1 -1 "R1"»
-      «text (-80,0) 1 109 0 0x1000000 -1 -1 "1K"»
+      «text (-80,0) 1 109 0 0x1000000 -1 -1 "1R"»
       «pin (0,200) (0,0) 1 0 0 0x0 -1 "1"»
       «pin (0,-200) (0,0) 1 0 0 0x0 -1 "2"»
     »
@@ -97,9 +97,12 @@
   «wire (300,200) (500,200) "GPIOpin"»
   «wire (-600,200) (300,200) "GPIOpin"»
   «wire (300,-900) (-200,-900) "GPIOpin"»
-  «text (-1850,2071) 1.6 5 1 0x1000000 -1 -1 "ï»¿GPIO Tri-State Pin Model"»
-  «text (-1850,1751) 0.8 5 1 0x1000000 -1 -1 "ï»¿Micro-controller GPIO pin implementation\nAdapted from sample provided by Mike Engelhardt"»
-  «text (-1800,-1489) 1 5 1 0x1000000 -1 -1 "ï»¿State Table:\n  * GPIOpin is high-impedance when GPIOout is 0V\n  * GPIOpin is high (VDD) when GPIOout is +1V\n  * GPIOpin is low (GND) when GPIOout is -1V"»
-  «text (-1800,-2585) 0.8 5 1 0x1000000 -1 -1 "ï»¿Note: R1 merely splits GPIOin/GPIOpin nets."»
+  «text (-1850,2371) 1.6 5 1 0x1000000 -1 -1 "ï»¿GPIO Tri-State Pin Model"»
+  «text (-1850,2001) 0.8 5 1 0x1000000 -1 -1 "ï»¿Micro-controller GPIO pin implementation\nAdapted from sample provided by Mike Engelhardt"»
+  «text (-1700,-1639) 1 5 1 0x1000000 -1 -1 "ï»¿* GPIOpin is high-impedance when GPIOout is 0V\n* GPIOpin is high (VDD) when GPIOout is +1V\n* GPIOpin is low (GND) when GPIOout is -1V"»
+  «text (-1700,-2635) 1 5 1 0x1000000 -1 -1 "ï»¿* R1 merely splits GPIOin/GPIOpin nets.\n* Above may differ from final symbol implementation."»
+  «text (-1850,1571) 1 5 1 0x1000000 -1 -1 "ï»¿Push-Pull GPIO Pin"»
+  «text (-1800,-1339) 1.25 5 1 0x1000000 -1 -1 "ï»¿State Table:"»
+  «text (-1800,-2335) 1.25 5 1 0x1000000 -1 -1 "ï»¿Notes:"»
 »
 

@@ -27,7 +27,7 @@
       «pin (0,-200) (0,0) 1 0 0 0x0 -1 "2"»
     »
   »
-  «component (700,300) 0 0
+  «component (700,400) 0 0
     «symbol V
       «type: V»
       «description: Independent Voltage Source»
@@ -62,10 +62,10 @@
     »
   »
   «component (-900,700) 0 0
-    «symbol GPIO_Pin2
+    «symbol GPIO_PP
       «type: X»
-      «description: GPIO Pin #2»
-      «library file: |.subckt GPIO_Pin2 VDD GPIOin GPIOout GPIOpin\nS1 GPIOpin VDD GPIOout 0 Ron=50 Roff=1G Vt=0.5 Vh=-0.49\nS2 0 GPIOpin 0 GPIOout Ron=50 Roff=1G Vt=0.5 Vh=-0.49\nR1 GPIOin GPIOpin 1K\n.ends GPIO_Pin2»
+      «description: GPIO Pin -- Push-Pull»
+      «library file: |.subckt GPIO_PP VDD GPIOin GPIOout GPIOpin\nS1 GPIOpin VDD GPIOout 0 Ron=Rsw Roff=1G Vt=0.5 Vh=-0.49\nS2 0 GPIOpin 0 GPIOout Ron=Rsw Roff=1G Vt=0.5 Vh=-0.49\nR1 GPIOin GPIOpin 1K\n.ends GPIO_PP»
       «shorted pins: false»
       «rect (-100,-150) (100,50) 0 0 0 0xff0000 0x4000000 -1 0 -1»
       «triangle (-50,-120) (-50,-80) (-80,-100) 0 0 0x1000000 0x0 -1 -1»
@@ -73,8 +73,9 @@
       «triangle (40,-120) (40,-80) (10,-100) 0 0 0x1000000 0x0 -1 -1»
       «triangle (60,-80) (60,-120) (90,-100) 0 0 0x1000000 0x0 -1 -1»
       «text (-4,50) 0.5 14 0 0x1000000 -1 -1 "X1"»
-      «text (0,-300) 1 15 2 0x1000000 -1 -1 "GPIO_PIN2"»
+      «text (0,-200) 0.5 15 2 0x1000000 -1 -1 "GPIO_PP"»
       «text (87,5) 0.63 11 1 0x800000 -1 -1 "+"»
+      «text (0,-300) 0.5 15 2 0x1000000 -1 -1 "Rsw=<1> Internal Switch Resistance"»
       «pin (100,0) (0,0) 1 15 0 0x0 -1 "VDD"»
       «pin (-100,-100) (20,0) 1 15 0 0x0 -1 "GPIOin"»
       «pin (-100,0) (0,0) 1 15 0 0x0 -1 "GPIOout"»
@@ -82,15 +83,15 @@
     »
   »
   «net (0,-800) 1 13 0 "GND"»
-  «net (700,0) 1 13 0 "GND"»
+  «net (700,100) 1 13 0 "GND"»
   «net (100,-100) 1 7 0 "GPIOpin"»
   «net (-1700,700) 1 14 0 "GPIOout"»
   «net (-1700,-1200) 1 13 0 "GND"»
   «net (-1400,-100) 1 7 0 "GPIOin"»
   «junction (0,700)»
   «junction (0,-100)»
-  «wire (700,500) (700,700) "N01"»
-  «wire (700,0) (700,100) "GND"»
+  «wire (700,600) (700,700) "N01"»
+  «wire (700,100) (700,200) "GND"»
   «wire (700,700) (0,700) "N01"»
   «wire (0,-700) (0,-800) "GND"»
   «wire (0,700) (0,500) "N01"»
@@ -111,5 +112,6 @@
   «text (1700,650) 1 7 0 0x1000000 -1 -1 "ï»¿.plot V(GPIOout)"»
   «text (1700,500) 1 7 0 0x1000000 -1 -1 "ï»¿.plot V(GPIOin)"»
   «text (1700,350) 1 7 0 0x1000000 -1 -1 "ï»¿.plot V(GPIOpin)"»
+  «text (1200,-450) 1 7 0 0x1000000 -1 -1 "ï»¿.param Rswset=1K"»
 »
 

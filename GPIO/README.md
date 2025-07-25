@@ -1,17 +1,17 @@
 # GPIO Components
 
-QSpice symbol and class to implement general purpose I/O pins (i.e., micro-controller tri-state pins).
+QSpice symbols and classes to implement general purpose I/O pins (i.e., micro-controller tri-state pins).
 
 ## Documentation
 
-At this point, there is no separate "how to" documentation.  The sources are listed below; hopefully, that's enough to get you started.
+At this point, there is no separate "how to" documentation.  See the Microchip micro-controller simulator project for detailed examples.
 
-## GPIO Pin Symbol #1
+## GPIO Pin Symbol (Basic)
 
 * GPIO_Pin.qsch &mdash; The sub-circuit schematic.  Not required to use the symbol.
 * GPIO_Pin.qsym &mdash; QSpice symbol (self-contained sub-circuit).
 
-## GPIO Class
+## GPIO Class (Basic)
 
 **Note:  The GPIO class code uses features not available in the QSpice DMC compiler.  MSVC is recommended but any compiler supporting C++17 or newer should work.**
 
@@ -22,14 +22,21 @@ At this point, there is no separate "how to" documentation.  The sources are lis
 * GPIO_Test.pfg &mdash; Waveform display configuration file for convenience.
 * Cblock*.h &mdash;  Utility headers from the C-Block Template tools elsewhere in this repository.
 
-## GPIO Pin Symbol #2
+## GPIO Pin &mdash; Push-Pull (GPIO_PP)
 
-This is an alternate implementation of a GPIO tri-state pin based on a circuit suggested by Mike Engelhardt.  It is *not* a drop-in replacement for the first version.  It will likely be used in future versions of the Microchip simulator projects available elsewhere in this repository.
+A push-pull tri-state pin using switches.
 
-* GPIO_Pin2.qsch &mdash; The sub-circuit schematic.  Not required to use the symbol but does contain comments about how to use the symbol.
-* GPIO_Pin2.qsym &mdash; QSpice symbol (self-contained sub-circuit).
-* GPIO_Pin2_Test_Sch.qsch &mdash; Test for GPIO_Pin2.qsch.
-* GPIO_Pin2_Test_Sym.qsch &mdash; Test for GPIO_Pin2.qsym.
+* GPIO_PP.qsym &mdash; Sub-circuit symbol.
+* GPIO_PP.qsch &mdash; The sub-circuit schematic.
+* GPIO_PP_Test_Sym.qsch &mdash; Demonstration schematic using GPIO_PP.qsym.
+
+## GPIO Pin &mdash; Open-Collector/Open-Drain (GPIO_OCD)
+
+A single-switch open-collector/open-drain tri-state pin implementation.
+
+* GPIO_OCD.qsym &mdash; Sub-circuit symbol.
+* GPIO_OCD.qsch &mdash; The sub-circuit schematic.
+* GPIO_OCD_Test_Sym.qsch &mdash; Demonstration schematic using GPIO_OCD.qsym.
 
 ## Finally...
 These components are new, largely untested code.  Feel free to improve the code (and share), report bugs, or just let me know that you find this project useful.  You'll find me (@RDunn) on the [Qorvo QSpice forum](https://forum.qorvo.com/c/qspice/).
