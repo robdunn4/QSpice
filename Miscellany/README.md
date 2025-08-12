@@ -32,3 +32,10 @@ Well, the 2025.06.26 QSpice update added a "GUI_HWND" so now we can.  Here's a d
 ## TL081 Op Amp Symbol
 
 TL081 Op Amp from TI Spice model.  *(Not extensively tested.)*
+
+## WhereIsQS.exe
+
+Code demonstrating how to retrieve the QSpice installation folder location from the Windows Registry.  See comments in the source code.
+
+* WhereIsQS.cpp &mdash; Demonstration source code.
+* WhereIsQS.exe &mdash; Compiled executable.
