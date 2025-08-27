@@ -127,5 +127,11 @@ A complete "post-processing" framework using newest QSpice features (October 202
 * CBlockBasics8_pp_dmc.cmd &mdash; Batch command file to compile CBlockBasics8_pp.cpp to *.exe with DMC.
 * CBlockBasics8_pp.cmd &mdash; Sample batch command to be launched from component.
 
+## C-Block Basics #9
 
+QSpice added a EngAtof() function that allows runtime evaluation of "expressions."  It's pretty clever but a bit opaque.  This paper details how it works.
 
+### Files
+* CBlockBasics9.pdf ("The EngAtof() Function")
+* CBlockBasics9.qsch &mdash; Demonstration schematic.
+* CBlockBasics9.cpp &mdash; Sample DLL code.

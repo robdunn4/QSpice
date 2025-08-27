@@ -1,0 +1,46 @@
+ÿØÿÛ«schematic
+  «component (1300,100) 0 0
+    «symbol
+      «type: Ø(.DLL)»
+      «shorted pins: false»
+      «rect (-400,300) (400,-400) 0 0 0 0x4000000 0x4000000 -1 1 -1»
+      «text (0,200) 1 12 0 0x1000000 -1 -1 "X1"»
+      «text (0,-150) 0.681 13 0 0x1000000 -1 -1 "CBlockBasics9"»
+      «text (-1538,-624) 0.926 7 0 0x1000000 -1 -1 "char *ExprStrAttr="100mV 2e-3 {2 * EvilVal} rint(pi) UserFunc(2)*2""»
+      «pin (-400,0) (20,0) 1 7 145 0x0 -1 "IN"»
+      «pin (400,0) (-20,0) 1 11 146 0x0 -1 "OUT"»
+    »
+  »
+  «component (-1400,-400) 0 0
+    «symbol V
+      «type: V»
+      «description: Independent Voltage Source»
+      «shorted pins: false»
+      «line (0,-130) (0,-200) 0 0 0x1000000 -1 -1»
+      «line (0,200) (0,130) 0 0 0x1000000 -1 -1»
+      «rect (-25,77) (25,73) 0 0 0 0x1000000 0x3000000 -1 0 -1»
+      «rect (-2,50) (2,100) 0 0 0 0x1000000 0x3000000 -1 0 -1»
+      «rect (-25,-73) (25,-77) 0 0 0 0x1000000 0x3000000 -1 0 -1»
+      «ellipse (-130,130) (130,-130) 0 0 0 0x1000000 0x1000000 -1 -1»
+      «text (100,150) 1 7 0 0x1000000 -1 -1 "V1"»
+      «text (100,-150) 1 7 0 0x1000000 -1 -1 "SINE 0 1 1K"»
+      «pin (0,200) (0,0) 1 0 0 0x0 -1 "+"»
+      «pin (0,-200) (0,0) 1 0 0 0x0 -1 "-"»
+    »
+  »
+  «net (-1400,-700) 1 13 0 "GND"»
+  «net (3600,100) 1 7 0 "OUT"»
+  «net (-1400,100) 1 14 0 "IN"»
+  «wire (3600,100) (1700,100) "OUT"»
+  «wire (-1400,-600) (-1400,-700) "GND"»
+  «wire (-1400,100) (-1400,-200) "IN"»
+  «wire (900,100) (-1400,100) "IN"»
+  «line (-100,-450) (850,-100) 0 2 0xff0000 -1 -1»
+  «text (-1450,-1150) 1 7 0 0x1000000 -1 -1 "ï»¿.tran 3m\n.plot V(out)\n.plot V(in)"»
+  «text (-250,-1000) 1 7 0 0x1000000 -1 -1 "ï»¿.func UserFunc(z) {z*z*z}"»
+  «text (1323,1150) 1.25 15 1 0x1000000 -1 -1 "ï»¿Example Schematic for CBlockBasics9"»
+  «text (1315,950) 1 15 1 0x1000000 -1 -1 "ï»¿Demonstrates the EngAtof() Function"»
+  «text (-250,-800) 1 7 0 0x1000000 -1 -1 "ï»¿.param EvilVal=666"»
+  «text (1415,700) 0.65 15 1 0x1000000 -1 -1 "ï»¿See https://github.com/robdunn4/QSpice for the complete project."»
+»
+
