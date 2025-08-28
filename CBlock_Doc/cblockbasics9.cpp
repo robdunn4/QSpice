@@ -75,15 +75,21 @@ extern "C" __declspec(dllexport) void cblockbasics9(
     }
 
     // Ex 2: We can retrieve a .param value directly, i.e., without passing
-    // via a String Attribute (e.g., "double val=EvilVal").  We still must set
-    // up the indrect pointer (pExpr) as if parsing a list even though
-    // evaluating a single expression.  Note that this provides a way to
-    // determine if a user-defined variable exists.
-    // const char evilValExpr[] = "EvilVal";   // this won't work
-    const char evilValExpr[] = "evilval";   // must be lower case
-    pExpr                    = (const char *)&evilValExpr;
+    // via a String Attribute (e.g., "double val=EvilVal").
+    //
+    // This example uses minimal code to evaluate a single expression.  It omits
+    // the pExpr used above and uses the string pointer directly.  The downside
+    // is that evilValExpr no longer points to the start of the string after the
+    // EngAtof() call.
+    //
+    // If you need to use the string in, say, a Display() call, you'll need to
+    // save the original pointer or set the call up with pExpr as above and in
+    // (3) below.
 
-    inst->gain = EngAtof(&pExpr);
+    // const char *evilValExpr = "EvilVal";   // this won't work
+    const char *evilValExpr = "evilval";   // must be lower case
+
+    inst->gain = EngAtof(&evilValExpr);
     if (isnan(inst->gain))
       Display("\n(2) .param EvilVal is either missing or invalid.\n");
     else
@@ -91,8 +97,13 @@ extern "C" __declspec(dllexport) void cblockbasics9(
 
     // Ex 3: We can construct an expression at runtime.  Here, we'll evaluate a
     // user-defined function with an arbitrary runtime value.
-    double rtVal = 3;     // some arbitrary runtime value
-    char   rtExpr[128];   // buffer for expression string
+    //
+    // We build the expression string in a buffer using sprintf().  We really
+    // should use snprintf() instead but DMC doesn't appear to have it.  If
+    // you're using a modern compiler, change to snprintf(rtExpr,
+    // sizeof(rtExpr), ...).
+    double rtVal = 3;    // some arbitrary runtime value
+    char   rtExpr[64];   // buffer for expression string
 
     sprintf(rtExpr, "userfunc(%g)", rtVal);   // note lower case
 
