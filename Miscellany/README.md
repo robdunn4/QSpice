@@ -28,6 +28,10 @@ Well, the 2025.06.26 QSpice update added a "GUI_HWND" so now we can.  Here's a d
 
 * WinMsgBox.qsch &mdash; Example schematic.
 * WinMsgBox.cpp &mdash; Example source code.
+* WinMsgBox2.qsch &mdash; Example schematic.
+* WinMsgBox2.cpp &mdash; Example Source code.
+
+Note:  The difference between the versions is that the first does not have an active "X button" (it is present greyed out) and does not respond to the ESC key.  The second version has both.  See comments in the second version *.cpp or the WinAPI documentation for more information.
 
 ## TL081 Op Amp Symbol
 
