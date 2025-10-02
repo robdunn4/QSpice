@@ -135,3 +135,12 @@ QSpice added a EngAtof() function that allows runtime evaluation of "expressions
 * CBlockBasics9.pdf ("The EngAtof() Function")
 * CBlockBasics9.qsch &mdash; Demonstration schematic.
 * CBlockBasics9.cpp &mdash; Sample DLL code.
+
+## C-Block Basics #10
+
+QSpice now supports client/server components with the "Berkeley Sockets API."  This paper is a "technical reference" (not a tutorial) that provides details about the new API calls, the client/server messaging, and limitations of the basic QSpice template-generated code.
+
+Note:  A future document will demonstrate how to work around those limitations.
+
+### Files
+* CBlockBasics10.pdf ("A Berkeley Sockets API Reference")
