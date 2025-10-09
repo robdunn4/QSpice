@@ -140,7 +140,21 @@ QSpice added a EngAtof() function that allows runtime evaluation of "expressions
 
 QSpice now supports client/server components with the "Berkeley Sockets API."  This paper is a "technical reference" (not a tutorial) that provides details about the new API calls, the client/server messaging, and limitations of the basic QSpice template-generated code.
 
-Note:  A future document will demonstrate how to work around those limitations.
+See C-Block Basics #11 for details about working around the template code limitiations.
 
 ### Files
 * CBlockBasics10.pdf ("A Berkeley Sockets API Reference")
+
+## C-Block Basics #11
+
+How to work around the "Berkeley Sockets API framework" limitations identified in C-Block Basics #10.
+
+This is a "code-heavy" conversion of a basic "monolithic DLL component" to a "full-featured" client/server component.
+
+### Files
+* CBlockBasics11.pdf ("Extending The 'Berkeley Sockets API'") &mdash; ***Pending***
+* CB11_Monolithic.qsch &mdash; Schematic for the basic DLL component.
+* CB11_Monolithic.cpp &mdash; Sample code for the basic DLL component.
+* CB11_SocketAPI.qsch &mdash; Schematic for the converted client/server component.
+* CB11_Client.cpp &mdash; Client code for the converted component.
+* CB11_Server.cpp &mdash; Server code for the converted component.
