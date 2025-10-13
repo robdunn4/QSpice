@@ -155,6 +155,8 @@ This is a "code-heavy" conversion of a basic "monolithic DLL component" to a "fu
 * CBlockBasics11.pdf ("Extending The 'Berkeley Sockets API'") &mdash; ***Pending***
 * CB11_Monolithic.qsch &mdash; Schematic for the basic DLL component.
 * CB11_Monolithic.cpp &mdash; Sample code for the basic DLL component.
-* CB11_SocketAPI.qsch &mdash; Schematic for the converted client/server component.
+* CB11_SocketAPI_Cpp.qsch &mdash; Schematic for the converted client/server component (C++).
+* CB11_SocketAPI_Py.qsch &mdash; Schematic for the converted client/server component (Python).
 * CB11_Client.cpp &mdash; Client code for the converted component.
-* CB11_Server.cpp &mdash; Server code for the converted component.
+* CB11_Server.cpp &mdash; C++ server code for the converted component.
+* CB11_Server.py &mdash; Python server code for the converted component.
