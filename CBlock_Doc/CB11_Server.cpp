@@ -98,12 +98,13 @@ void Evaluate(char *buffer) {
  * MaxStepSize() -- this is where user-defined MaxExtStepSize() code goes
  */
 double MaxStepSize(char *buffer) {
-  const double t = *((double *)(buffer + 4));
-  // return a number other than 1e308 to stipulate a max timestep.
+  const double t      = *((double *)(buffer + 4));
+  double       retVal = 1e308;   // set default
 
+  // return a number other than 1e308 to stipulate a max timestep.
   // logic that might change retVal omitted for demo
-  LOG("MaxStep():  InstName=%s", inst.instName);
-  return 1e308;
+  LOG("MaxStep():  t=%g, retVal=%g", t, retVal);
+  return retVal;
 }
 
 /*
@@ -116,16 +117,15 @@ double Truncate(char *buffer) {
   const double EN     = inputs[2];
   const double timestep =
       inputs[3];   // This is the otherwise planned timestep.
+
+  double retVal = 1e308;
   // return a number other than 1e308 to tactically stipulate a shorter
   // timestep.
 
   // logic that might change *timestep value omitted for demo
-
-  // LOG("Trunc():    InstName=%s, Gain=%d, EN=%d, IN=%g, OUT=%g\n",
-  //     inst->instName, inst->Gain, EN, IN, OUT);
-  LOG("Trunc():    InstName=%s, Gain=%d, EN=%d, IN=%g", inst.instName,
-      inst.gainVal, EN, IN);
-  return 1e308;
+  LOG("Trunc():    t=%g, Gain=%d, EN=%d, IN=%g, timestep=%g, retVal=%g", t,
+      inst.gainVal, EN, IN, timestep, retVal);
+  return retVal;
 }
 
 /*
@@ -153,10 +153,10 @@ void Destroy() {
 /*
  * PostProcess() -- this is the custom handler for the PORT_POSTPROCESS msg;
  * user code for end-of-simulation events goes here; this is called immediately
- * before Destroy(); inst.PostProcess is already set in msg dispatch loop
+ * before Destroy()
  */
 void PostProcess() {
-  // nothing required in this example
+  // set flag used in Destroy()
   inst.postProcess = true;
 }
 
@@ -174,12 +174,15 @@ bool Initialize() {
     return false;
   }
 
-  // write initiallog entries; error handling omitted
-  if (inst.stepNbr == 1)
-    LOG("Inst %s Port %d: Beginning Simulation...", inst.instName,
-        inst.portNbr);
-  LOG("Inst %s Port %d: Beginning Step %d", inst.instName, inst.portNbr,
-      inst.stepNbr);
+  // write initial log entries; error handling omitted
+  // if (inst.stepNbr == 1)
+  //   LOG("Inst %s Port %d: Beginning Simulation...", inst.instName,
+  //       inst.portNbr);
+  // LOG("Inst %s Port %d: Beginning Step %d", inst.instName, inst.portNbr,
+  //     inst.stepNbr);
+  if (inst.stepNbr == 1) LOG("Beginning Simulation...", 0);
+
+  LOG("Beginning Step %d", inst.stepNbr);
 
   return true;
 }
