@@ -96,10 +96,9 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
                 simTime = inputs[0]
                 IN = inputs[1]
                 EN = inputs[2]
-                timestep = inputs[3]  # missing/added
+                dt = inputs[3] # This is the otherwise planned timestep.
 
-                # calculate new return value
-                dt = 1e-6  # default
+                # You can stipulate a shorter timestep here
 
                 LOGFILE.write(
                     f"Inst {inst.inst_name} Port {PORT}: "
