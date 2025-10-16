@@ -24,6 +24,11 @@ QSpice Forum @physicboy's [Github repo](https://github.com/physicboy/QSPICE).
 
 Professor Marcos Alonso's [QSpice YouTube Channel](https://www.youtube.com/@MarcosAlonsoElectronics) and [GitHub Repo](https://github.com/marcosalonsoelectronics/website).
 
+**Useful Forum Threads**
+
+"General Guide To Import A TI Spice Model" (KSKelvin) [[View Thread]](https://forum.qorvo.com/t/general-guide-to-import-a-ti-spice-model/23993)
+
+
 ## GPIO Components
 QSpice symbol and class to implement general purpose I/O pins (i.e., micro-controller tri-state pins).
 
