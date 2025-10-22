@@ -97,7 +97,7 @@
   «text (750,137) 1 5 0 0x1000000 -1 -1 "ï»¿.plot V(VIN)\n.plot V(VOUT1) V(VOUT2)\n.plot V(VEN)"»
   «text (750,-700) 1 7 0 0x1000000 -1 -1 "ï»¿.step param GainStep list 10 20"»
   «text (750,-900) 1 7 1 0x1000000 -1 -1 "ï»¿.param GainStep=10"»
-  «text (105,3080) 1.25 13 1 0x1000000 -1 -1 "ï»¿Client/Server Berkeley Sockets API"»
+  «text (105,3080) 1.25 13 1 0x1000000 -1 -1 "ï»¿Client/Server Berkeley Sockets API (Python Server)"»
   «text (118,2705) 0.65 13 1 0x1000000 -1 -1 "ï»¿Full code & documentation is available at https://github.com/robdunn4/QSpice"»
 »
 

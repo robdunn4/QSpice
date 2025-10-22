@@ -152,7 +152,7 @@ How to work around the "Berkeley Sockets API framework" limitations identified i
 This is a "code-heavy" conversion of a basic "monolithic DLL component" to a "full-featured" client/server component.
 
 ### Files
-* CBlockBasics11.pdf ("Extending The 'Berkeley Sockets API'") &mdash; ***Pending***
+* CBlockBasics11.pdf ("Extending The 'Berkeley Sockets API'")
 * CB11_Monolithic.qsch &mdash; Schematic for the basic DLL component.
 * CB11_Monolithic.cpp &mdash; Sample code for the basic DLL component.
 * CB11_SocketAPI_Cpp.qsch &mdash; Schematic for the converted client/server component (C++).
