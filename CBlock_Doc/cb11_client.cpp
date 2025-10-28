@@ -194,7 +194,7 @@ extern "C" __declspec(dllexport) void Trunc(
   vector[2]      = EN;
   vector[3]      = *timestep;
 
-  SocketSend(inst->ConnectSocket, inst->buffer, 12 + 8 * Ninputs);
+  SocketSend(inst->ConnectSocket, inst->buffer, 4 + 8 * (Ninputs + 2));
   SocketRecv(inst->ConnectSocket, inst->buffer, 8);
 
   const double dt = ((double *)inst->buffer)[0];
