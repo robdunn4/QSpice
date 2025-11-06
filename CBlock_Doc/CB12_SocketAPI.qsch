@@ -9,7 +9,7 @@
       «text (0,300) 0.681 13 0 0x1000000 -1 -1 "CB12_Client"»
       «text (0,-500) 0.681 13 0 0x1000000 -1 -1 "int Gain=GainStep"»
       «text (0,-650) 0.681 13 0 0x1000000 -1 -1 "char *LogName="@logfile1.log""»
-      «text (0,-800) 0.681 13 0 0x1000000 -1 -1 "char *server=IPv4:666/"»
+      «text (0,-800) 0.681 13 0 0x1000000 -1 -1 "char *server=localhost:666/"»
       «pin (-700,-200) (0,0) 1 7 145 0x0 -1 "IN"»
       «pin (700,-100) (0,0) 1 11 146 0x0 -1 "OUT"»
       «pin (-700,100) (0,0) 1 7 145 0x0 -1 "EN"»
@@ -97,7 +97,7 @@
   «text (750,137) 1 5 0 0x1000000 -1 -1 "ï»¿.plot V(VIN)\n.plot V(VOUT1)\n.plot V(VOUT2)\n.plot V(VEN)"»
   «text (750,-1300) 1 7 1 0x1000000 -1 -1 "ï»¿.step param GainStep 1 1000 1"»
   «text (750,-900) 1 7 1 0x1000000 -1 -1 "ï»¿.param GainStep=10"»
-  «text (105,3080) 1.25 13 1 0x1000000 -1 -1 "ï»¿Host Server for Berkeley Sockets API"»
+  «text (105,3080) 1.25 13 1 0x1000000 -1 -1 "ï»¿Multi-Client Host Server for Berkeley Sockets API"»
   «text (118,2705) 0.65 13 1 0x1000000 -1 -1 "ï»¿Full code & documentation is available at https://github.com/robdunn4/QSpice"»
   «text (750,-1100) 1 7 0 0x1000000 -1 -1 "ï»¿.step param GainStep list 10 20 30"»
 »
