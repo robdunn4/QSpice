@@ -163,12 +163,11 @@ This is a "code-heavy" conversion of a basic "monolithic DLL component" to a "fu
 
 ## C-Block Basics #12
 
-***This is an early preview, functional but subject to significant future revisions.  Documentation is pending.***
-
-A multi-client QSpice "Berkeley Sockets API" server suitable for running on a separate host.  This builds on concepts from C-Block Basics #10 & #11.
+A multi-client, multi-threading QSpice "Berkeley Sockets API" server suitable for running on a separate host.  This builds on concepts from C-Block Basics #10 & #11.
 
 ### Files
-* CBlockBasics12.pdf &mdash; **TBD**.
-* CB12_SocketAPI.qsch &mdash; Schematic to connect local client to non-local host server.
-* CB12_Client.cpp &mdash; Component client code example.
-* CB12_HostServer.cpp &mdash; Server code example.  (Requires C++20 or better.)
+* CBlockBasics12.pdf (A “Berkeley Sockets API” Multi-Client Server)
+* CB12_SocketAPI.qsch &mdash; Example schematic.
+* CB12_Client.cpp &mdash; Example component client code.
+* CB12_HostServer.cpp &mdash; Example server code.  (Requires C++20 or better.)
+* CB12_Binaries.zip &mdash; Schematic and pre-compiled client DLL and server executable.

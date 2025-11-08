@@ -7,13 +7,9 @@
 // This code compiles successfully using the Digital Mars C++ Compiler:
 //    dmc -mn -WD cb12_client.cpp kernel32.lib
 //
-// It also compiles successfully with MSVC 2022 (Community Edition)
-//
 
 #include <cstring>
 #include <malloc.h>
-
-// #include <winsock2.h>   // to retrieve port number
 
 #ifdef __DMC__
 #pragma comment(lib, "wsock32.lib")

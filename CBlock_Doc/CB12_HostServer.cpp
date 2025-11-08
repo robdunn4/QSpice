@@ -10,6 +10,7 @@
 //
 // To start server: CB12_HostServer.exe <port>
 // To close server: <CTRL-C>
+//
 
 // clang-format off // prevent sorting of #includes
 #include <winsock2.h>
@@ -25,7 +26,8 @@
 #undef IN
 #undef OUT
 
-#define syncOut std::osyncstream(std::cout)   // to prevent cout interleaving
+// macro for synchronized output to console to prevent cout interleaving
+#define syncOut std::osyncstream(std::cout)
 
 // default template message IDs
 #define PORT_EVALUATE     2
@@ -41,7 +43,7 @@
 #define PORT_POSTPROCESS 1029   // event: client PostProcess()
 #define PORT_INITIALZE   1030   // cmd: initialize server with current values
 #define PORT_CLOSESERVER 1031   // cmd: close server
-#define PORT_GETPORTNBR  1032   // get: return server port number to client
+#define PORT_GETPORTNBR  1032   // get: return connection port number to client
 
 #define MAX_BUFFER_SIZE 1024   // msg buffer size; must match client
 
@@ -191,7 +193,7 @@ int main(int argc, char *argv[]) {
     }
 
     g_clientThreads.emplace_back(handleClient, clientSocket, clientAddr);
-    g_clientSockets.push_back(clientSocket);   // ???
+    g_clientSockets.push_back(clientSocket);
   }
 
   syncOut << "[Server] Waiting for client threads to finish..." << std::endl;
@@ -289,10 +291,7 @@ void performCommand(SOCKET clientSocket, uint32_t cmdID, InstData *instData,
     break;
 
   case CmdInitialize:
-    if (!handleCmdInitialize(buffer, bytesReceived, instData)) {
-      // TODO:  handle error?
-      return;
-    }
+    if (!handleCmdInitialize(buffer, bytesReceived, instData)) { return; }
     break;
 
   case CmdCloseConnection:
@@ -439,13 +438,15 @@ bool handleCmdInitialize(char *buffer, int bytesReceived, InstData *instData) {
 
   // perform any initialization needed with current state values...
   // for example, open a logfile and write initial entry (use instData->stepNbr
-  // to determine whether to open for overwrite or append)
+  // to determine whether to open for overwrite or append) -- logfile omitted
+  // here for demo purposes
+  instData->initialized = true;
   syncOut << "[" << instData->portNbr << ":" << instData->instName
           << "] Initialized.  Log File Name: " << instData->logName
           << "; Gain Value: " << instData->gainVal
           << "; Step Number: " << instData->stepNbr << std::endl;
 
-  // return false to close socket???
+  // return false to close socket on error
   return true;   // success
 }
 
