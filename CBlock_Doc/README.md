@@ -149,7 +149,9 @@ See C-Block Basics #11 for details about working around the template code limiti
 
 How to work around the "Berkeley Sockets API framework" limitations identified in C-Block Basics #10.
 
-This is a "code-heavy" conversion of a basic "monolithic DLL component" to a "full-featured" client/server component.
+This is a "code-heavy" conversion of a basic "monolithic DLL component" to a "full-featured" client/server component.  
+
+C++, Python, and Java server code examples are included.
 
 ### Files
 * CBlockBasics11.pdf ("Extending The 'Berkeley Sockets API'")
