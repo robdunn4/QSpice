@@ -274,16 +274,12 @@ public class CB11_Server {
   private void handlePortDestroy() {
     // do final processing for simulation step for component instance before
     // releasing resources, closing logs, etc.
-    // System.out.println("Instance " + instData.instName + ": handlePortDestroy()
-    // -- end simulation step");
     instData.logFile.println("Instance " + instData.instName +
         ": handlePortDestroy() -- end simulation step");
 
     if (instData.postProcess) {
       // do final processing for simulation for component instance before
       // releasing resources, closing logs, etc.
-      // System.out.println("Instance " + instData.instName + ": handlePortDestroy()
-      // -- end of simulation");
       instData.logFile.println("Instance " + instData.instName +
           ": handlePortDestroy() -- end of simulation");
     }
