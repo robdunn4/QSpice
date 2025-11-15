@@ -167,7 +167,7 @@ C++, Python, and Java server code examples are included.
 
 ## C-Block Basics #12
 
-A multi-client, multi-threading QSpice "Berkeley Sockets API" server suitable for running on a separate host.  This builds on concepts from C-Block Basics #10 & #11.  Now includes code for both C++ and Python servers.
+Multi-client, multi-threading QSpice "Berkeley Sockets API" servers suitable for running on a separate host.  This builds on concepts from C-Block Basics #10 & #11.  Now includes code for C++, Python, and Java servers.
 
 ### Files
 * CBlockBasics12.pdf (A “Berkeley Sockets API” Multi-Client Server)
@@ -175,4 +175,5 @@ A multi-client, multi-threading QSpice "Berkeley Sockets API" server suitable fo
 * CB12_Client.cpp &mdash; Example component client code (C++ DLL).
 * CB12_HostServer.cpp &mdash; Example C++ server code.
 * CB12_HostServer.py &mdash; Example Python server code.
+* CB12_HostServer.java &mdash; Example Java server code.
 * CB12_Binaries.zip &mdash; Schematic and pre-compiled client DLL and C++ server executable.

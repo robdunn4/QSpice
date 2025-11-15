@@ -48,8 +48,7 @@ public class CB11_Server {
     int stepNbr = 0; // current simulation step number (from client)
     String logName; // logfile path (from client)
     String instName; // component instance name (from client)
-    // File logFile; // logfile handle (not used in this demo)
-    PrintWriter logFile;
+    PrintWriter logFile; // log printer
     boolean postProcess = false; // end simulation flag (from client event)
   }
 
@@ -312,9 +311,6 @@ public class CB11_Server {
       System.exit(-1); // ungracefully terminate
     }
 
-    // System.out.println("Initializing: Instance=" + instData.instName +
-    // " Port=" + instData.portNbr + " LogName=" + instData.logName +
-    // " StepNbr=" + instData.stepNbr + " GainVal=" + instData.gainVal);
     instData.logFile.println("Initializing:  Instance=" + instData.instName +
         " Port=" + instData.portNbr + " LogName=" + instData.logName +
         " StepNbr=" + instData.stepNbr + " GainVal=" + instData.gainVal);
