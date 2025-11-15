@@ -157,9 +157,11 @@ This is a "code-heavy" conversion of a basic "monolithic DLL component" to a "fu
 * CB11_Monolithic.cpp &mdash; Sample code for the basic DLL component.
 * CB11_SocketAPI_Cpp.qsch &mdash; Schematic for the converted client/server component (C++).
 * CB11_SocketAPI_Py.qsch &mdash; Schematic for the converted client/server component (Python).
+* CB11_SocketAPI_Java.qsch &mdash; Schematic for the converted client/server component (Java).
 * CB11_Client.cpp &mdash; Client code for the converted component.
 * CB11_Server.cpp &mdash; C++ server code for the converted component.
 * CB11_Server.py &mdash; Python server code for the converted component.
+* CB11_Server.java &mdash; Java server code for the converted component.
 
 ## C-Block Basics #12
 
