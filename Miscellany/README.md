@@ -43,3 +43,7 @@ Code demonstrating how to retrieve the QSpice installation folder location from 
 
 * WhereIsQS.cpp &mdash; Demonstration source code.
 * WhereIsQS.exe &mdash; Compiled executable.
+
+## LM358 Op Amp Symbol
+
+LM358 Op Amp from OnSemi Spice model.  *(Not extensively tested.)*
