@@ -28,6 +28,8 @@ Professor Marcos Alonso's [QSpice YouTube Channel](https://www.youtube.com/@Marc
 
 "General Guide To Import A TI Spice Model" (KSKelvin) [[View Thread]](https://forum.qorvo.com/t/general-guide-to-import-a-ti-spice-model/23993)
 
+"New User To Basic User (File Upload)" (KSKelvin) [[View Thread]](https://forum.qorvo.com/t/qspice-forum-new-user-to-basic-user-file-upload/24340)
+
 
 ## GPIO Components
 QSpice symbol and class to implement general purpose I/O pins (i.e., micro-controller tri-state pins).
