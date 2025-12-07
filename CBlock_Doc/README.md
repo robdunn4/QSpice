@@ -182,7 +182,7 @@ Multi-client, multi-threading QSpice "Berkeley Sockets API" servers suitable for
 
 How to share data directly between component DLLs (and why you shouldn't).
 
-Uses Windows LoadLibrary() and GetProcAddres() APIs.  (Probably not for beginners.)
+Uses Windows LoadLibrary() and GetProcAddress() APIs.  (Probably not for beginners.)
 
 ### Files
 * CBlockBasics14.pdf ("Sharing Data Between Component DLLs")
