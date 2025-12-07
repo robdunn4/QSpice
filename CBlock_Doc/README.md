@@ -177,3 +177,14 @@ Multi-client, multi-threading QSpice "Berkeley Sockets API" servers suitable for
 * CB12_HostServer.py &mdash; Example Python server code.
 * CB12_HostServer.java &mdash; Example Java server code.
 * CB12_Binaries.zip &mdash; Schematic and pre-compiled client DLL and C++ server executable.
+
+## C-Block Basics #13
+
+How to share data directly between component DLLs (and why you shouldn't).
+
+### Files
+* CBlockBasics14.pdf ("Sharing Data Between Component DLLs")
+* CB13_Test_A.qsch &mdash; Example schematic (broken example).
+* CB13_Test_B.qsch &mdash; Example schematic (working example).
+* CB13_MyDll1.cpp &mdash; Example component (exposes shared data).
+* CB13_MyDll2.cpp &mdash; Example component (retrieves shared data).
