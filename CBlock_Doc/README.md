@@ -196,7 +196,7 @@ Uses Windows LoadLibrary() and GetProcAddress() APIs.  (Probably not for beginne
 Provides a simple technique to create a QSpice symbol file from a C-Block component.  Also demonstrates using Programmable Attributes.
 
 ### Files
-* CBlockBasics14.pdf ("C-Block Component Symbols")
+* CBlockBasics14.pdf ("C-Block Component Symbols") &mdash; Pending.
 * CB14_Test_Component.qsch &mdash; Schematic for developing/testing the example component.
 * CB14_DLL.cpp &mdash; Example component DLL code.
 * CB14_Symbol1.qsym &mdash; First version of component symbol.
