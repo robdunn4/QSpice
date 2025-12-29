@@ -1,0 +1,15 @@
+ÿØÿÛ«symbol CB14_Symbol1
+  «type: Ø(.DLL)»
+  «description: Symbol1 -- Example DLL Component Symbol»
+  «shorted pins: false»
+  «rect (-800,400) (800,-700) 0 0 0 0x4000000 0x4000000 -1 1 -1»
+  «text (0,300) 1 12 0 0x1000000 -1 -1 "X1"»
+  «text (0,200) 0.681 13 0 0x1000000 -1 -1 "CB14_DLL"»
+  «text (0,-100) 0.681 13 0 0x1000000 -1 -1 "bool Enable=1"»
+  «text (0,-250) 0.681 13 0 0x1000000 -1 -1 "int Gain=5"»
+  «text (0,-400) 0.681 13 0 0x1000000 -1 -1 "char *StrVal="Ab Cd Ef""»
+  «text (0,-550) 0.681 13 0 0x1000000 -1 -1 "float FltVal=1.234"»
+  «text (0,-700) 0.681 13 2 0x1000000 -1 -1 "ROUT=1p"»
+  «pin (-800,0) (0,0) 1 7 145 0x0 -1 "In"»
+  «pin (800,0) (0,0) 1 11 146 0x0 -1 "Out"»
+»

@@ -185,8 +185,21 @@ How to share data directly between component DLLs (and why you shouldn't).
 Uses Windows LoadLibrary() and GetProcAddress() APIs.  (Probably not for beginners.)
 
 ### Files
-* CBlockBasics14.pdf ("Sharing Data Between Component DLLs")
+* CBlockBasics13.pdf ("Sharing Data Between Component DLLs")
 * CB13_Test_A.qsch &mdash; Example schematic (broken example).
 * CB13_Test_B.qsch &mdash; Example schematic (working example).
 * CB13_MyDll1.cpp &mdash; Example component (exposes shared data).
 * CB13_MyDll2.cpp &mdash; Example component (retrieves shared data).
+
+## C-Block Basics #14
+
+Provides a simple technique to create a QSpice symbol file from a C-Block component.  Also demonstrates using Programmable Attributes.
+
+### Files
+* CBlockBasics14.pdf ("C-Block Component Symbols")
+* CB14_Test_Component.qsch &mdash; Schematic for developing/testing the example component.
+* CB14_DLL.cpp &mdash; Example component DLL code.
+* CB14_Symbol1.qsym &mdash; First version of component symbol.
+* CB14_Test_Symbol1.qsch &mdash; Test schematic for symbol #1.
+* CB14_Symbol2.qsym &mdash; Adds Programmable Attributes to symbol #1.
+* CB14_Test_Symbol2.qsch &mdash; Test schematic for symbol #2.
