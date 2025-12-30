@@ -62,5 +62,6 @@
   «wire (2600,-300) (2400,-300) "TDiff"»
   «text (-1100,-1700) 1 7 0 0x1000000 -1 -1 "ï»¿.tran 2m"»
   «text (200,-1592) 1 5 0 0x1000000 -1 -1 "ï»¿.plot V(X1In) V(OutIn) V(X2Out)\n.plot V(TDiff)*1s/1V"»
+  «text (912,950) 1 13 1 0x1000000 -1 -1 "ï»¿Example for C-Block Basics #13"»
 »
 
