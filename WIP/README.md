@@ -8,7 +8,7 @@ This folder contains some project code under development.  Feel free to browse b
 * I might get bored or distracted and set any of this aside for a while.
 * I might delete or remove anything at any time.
 
-In short, none of this is guaranteed to see a proper release.  But, if you want to see what I'm working on and aren't bothered by seeing *"how the sausage is made,"* you're welcome to check it out.
+In short, none of this is guaranteed to see a proper release.  But, if you want to see what I'm working on and aren't bothered by seeing *how the sausage is made,* you're welcome to check it out.
 
 ## QParser2 Folder
 
