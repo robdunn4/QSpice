@@ -1,0 +1,17 @@
+<Solution>
+  <Configurations>
+    <BuildType Name="Debug" />
+    <BuildType Name="Debug BOM" />
+    <BuildType Name="Debug QSCH" />
+    <BuildType Name="Debug QSYM" />
+    <BuildType Name="Release" />
+    <Platform Name="x64" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Project Path="QBomGen/QBomGen.vcxproj" Id="5b0ebe21-8c23-4e74-ae5e-34391bb5e328">
+    <BuildType Solution="Debug QSCH|*" Project="Debug" />
+    <BuildType Solution="Debug QSYM|*" Project="Debug" />
+  </Project>
+  <Project Path="QParser2_Shared/QParser2_Shared.vcxitems" Id="1962edfd-3156-4afc-a11d-8ba0c2994d82" />
+  <Project Path="QParser2_Tests/QParser2_Tests.vcxproj" Id="4dcff4b7-ef67-4254-a3a5-e586aef4bb01" />
+</Solution>

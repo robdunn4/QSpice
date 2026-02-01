@@ -16,4 +16,4 @@ I've partially parsed QSpice \*.sch/\*.sym files for other projects in the past 
 
 I'm also toying with AI coding tools just to see what it can do.
 
-The *.zip file contains the code and MSVS 2026 project files.
+The folders contain MSVS 2026 project/solution files.

@@ -1,0 +1,76 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup Label="Globals">
+    <MSBuildAllProjects Condition="'$(MSBuildVersion)' == '' Or '$(MSBuildVersion)' &lt; '16.0'">$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+    <HasSharedItems>true</HasSharedItems>
+    <ItemsProjectGuid>{1962edfd-3156-4afc-a11d-8ba0c2994d82}</ItemsProjectGuid>
+  </PropertyGroup>
+  <ItemDefinitionGroup>
+    <ClCompile>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(MSBuildThisFileDirectory)</AdditionalIncludeDirectories>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ProjectCapability Include="SourceItemsFromImports" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="$(MSBuildThisFileDirectory)EnumStrMap.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)QArgUtils.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)QArgUtils2.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)QItemArc3P.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)QItemBase.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)QItemCmp.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)QItemCoil.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)QItemDBG.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)QItemDesc.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)QItemEllipse.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)QItemJunction.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)QItemLib.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)QItemLine.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)QItemNet.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)QItemPin.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)QItemRect.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)QItemSch.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)QItemShort.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)QItemSym.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)QItemTap.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)QItemText.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)QItemTriangle.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)QItemType.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)QItemTypes.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)QItemWire.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)QItemZigzag.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)QParseException.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)QSchTree.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)StrUtils.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="$(MSBuildThisFileDirectory)QArgUtils.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)QArgUtils2.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)QItemArc3P.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)QItemBase.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)QItemCmp.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)QItemCoil.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)QItemDBG.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)QItemDesc.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)QItemEllipse.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)QItemJunction.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)QItemLib.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)QItemLine.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)QItemNet.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)QItemPin.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)QItemRect.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)QItemSch.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)QItemShort.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)QItemSym.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)QItemTap.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)QItemText.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)QItemTriangle.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)QItemType.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)QItemTypes.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)QItemWire.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)QItemZigzag.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)QSchTree.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)StrUtils.cpp" />
+  </ItemGroup>
+</Project>
