@@ -1,3 +1,7 @@
+//-----------------------------------------------------------------------------
+// This file is part of the the QParser2 project.  You can find the complete
+// project here:  https://github.com/robdunn4/QSpice/
+//-----------------------------------------------------------------------------
 #include "QItemEllipse.h"
 #include "StrUtils.h"
 
@@ -5,8 +9,8 @@ QItemEllipse::QItemEllipse(std::string typeStr, std::string argStr)
     : QItemBase(typeStr, argStr) {}
 
 QItemEllipse::QItemEllipse(const QItemEllipse &other)
-    : QItemBase(other), p1(other.p1), p2(other.p2), p3(other.p3), p4(other.p4),
-      p5(other.p5), p6(other.p6), p7(other.p7), p8(other.p8), p9(other.p9) {}
+    : QItemBase(other), pt1(other.pt1), pt2(other.pt2), rotate(other.rotate), lineWidth(other.lineWidth),
+      lineType(other.lineType), lineColor(other.lineColor), fillColor(other.fillColor), p8(other.p8), p9(other.p9) {}
 
 QItemBasePtr QItemEllipse::clone() const {
   return std::make_shared<QItemEllipse>(*this);
@@ -20,21 +24,21 @@ void QItemEllipse::parseItem() {
     throw std::invalid_argument(str);
   }
 
-  p1 = ArgPoint(strList[0]);
-  p2 = ArgPoint(strList[1]);
-  p3 = ArgRot(strList[2]);
-  p4 = ArgLineWidth(strList[3]);
-  p5 = ArgLineType(strList[4]);
-  p6 = ArgColor(strList[5]);
-  p7 = ArgColor(strList[6]);
+  pt1 = ArgPoint(strList[0]);
+  pt2 = ArgPoint(strList[1]);
+  rotate = ArgRot(strList[2]);
+  lineWidth = ArgLineWidth(strList[3]);
+  lineType = ArgLineType(strList[4]);
+  lineColor = ArgColor(strList[5]);
+  fillColor = ArgColor(strList[6]);
   p8 = ArgInt(strList[7]);
   p9 = ArgInt(strList[8]);
 }
 
 std::string QItemEllipse::toString() const {
-  std::string str = typeStr + " " + p1.toString() + " " + p2.toString() + " " +
-                    p3.toString() + " " + p4.toString() + " " + p5.toString() +
-                    " " + p6.toString() + " " + p7.toString() + " " +
+  std::string str = typeStr + " " + pt1.toString() + " " + pt2.toString() + " " +
+                    rotate.toString() + " " + lineWidth.toString() + " " + lineType.toString() +
+                    " " + lineColor.toString() + " " + fillColor.toString() + " " +
                     p8.toString() + " " + p9.toString();
   return str;
 }

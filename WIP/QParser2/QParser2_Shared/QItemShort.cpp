@@ -1,5 +1,8 @@
+//-----------------------------------------------------------------------------
+// This file is part of the the QParser2 project.  You can find the complete
+// project here:  https://github.com/robdunn4/QSpice/
+//-----------------------------------------------------------------------------
 #include "QItemShort.h"
-#include "StrUtils.h"
 
 QItemShort::QItemShort(std::string typeStr, std::string argStr)
     : QItemBase(typeStr, argStr) {}

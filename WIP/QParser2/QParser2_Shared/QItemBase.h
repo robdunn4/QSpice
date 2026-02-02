@@ -1,3 +1,7 @@
+//-----------------------------------------------------------------------------
+// This file is part of the the QParser2 project.  You can find the complete
+// project here:  https://github.com/robdunn4/QSpice/
+//-----------------------------------------------------------------------------
 /*
  * QItemBase.h -- Base class for line items.  Contains factory methods for
  * derived classes.

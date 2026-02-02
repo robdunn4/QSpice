@@ -1,3 +1,7 @@
+//-----------------------------------------------------------------------------
+// This file is part of the the QParser2 project.  You can find the complete
+// project here:  https://github.com/robdunn4/QSpice/
+//-----------------------------------------------------------------------------
 /*
  * QItemLine.h -- Line item class.
  *
@@ -13,7 +17,6 @@
  *   P6 -- ?
  *   P7 -- ?
  */
-
 #pragma once
 #include "QArgUtils2.h"
 #include "QItemBase.h"
@@ -27,16 +30,13 @@ public:
   void parseItem() override;
   std::string toString() const override;
 
-  ArgPoint p1;
-  ArgPoint p2;
-  ArgLineWidth p3;
-  ArgLineType p4;
-  ArgColor p5;
+  ArgPoint pt1;
+  ArgPoint pt2;
+  ArgLineWidth lineWidth;
+  ArgLineType lineType;
+  ArgColor lineColor;
   ArgInt p6;
   ArgInt p7;
-
-protected:
-  // Add schematic-specific member variables as needed
 };
 
 typedef std::shared_ptr<QItemLine> QItemLinePtr;

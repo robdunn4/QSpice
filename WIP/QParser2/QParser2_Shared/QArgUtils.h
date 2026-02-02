@@ -1,3 +1,7 @@
+//-----------------------------------------------------------------------------
+// This file is part of the the QParser2 project.  You can find the complete
+// project here:  https://github.com/robdunn4/QSpice/
+//-----------------------------------------------------------------------------
 /*
  * Classes for simple argument types/values.  The idea is that we start with
  * basic types that can later be derived to more descriptive types.  For

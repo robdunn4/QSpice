@@ -1,3 +1,7 @@
+//-----------------------------------------------------------------------------
+// This file is part of the the QParser2 project.  You can find the complete
+// project here:  https://github.com/robdunn4/QSpice/
+//-----------------------------------------------------------------------------
 #include "QItemBase.h"
 #include "QItemArc3P.h"
 #include "QItemCmp.h"
@@ -20,7 +24,6 @@
 #include "QItemType.h"
 #include "QItemWire.h"
 #include "QItemZigzag.h"
-// #include <stdexcept>
 
 // Constructor: sets basic fields only, NO parsing
 QItemBase::QItemBase(std::string typeStr, std::string argStr)

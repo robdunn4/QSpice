@@ -1,3 +1,7 @@
+//-----------------------------------------------------------------------------
+// This file is part of the the QParser2 project.  You can find the complete
+// project here:  https://github.com/robdunn4/QSpice/
+//-----------------------------------------------------------------------------
 #include "QSchTree.h"
 #include <fstream>
 #include <iostream>
@@ -93,9 +97,9 @@ int main(int argc, char *argv[]) {
     std::cout << "\n=== Parsed Tree Structure ===\n";
     parsedTree->printWithPrefix();
 
-    // std::cout << "\n=== Parsed Tree Structure -- Breadth First ==="
-    //           << std::endl;
-    // parsedTree->printBreadthFirst();
+    std::cout << "\n=== Parsed Tree Structure -- Breadth First ==="
+              << std::endl;
+    parsedTree->printBreadthFirst();
 
     // Write to output file
     std::cout << "\n=== Writing Output File ===\n";

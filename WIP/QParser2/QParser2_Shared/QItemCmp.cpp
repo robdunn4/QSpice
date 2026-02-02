@@ -1,3 +1,7 @@
+//-----------------------------------------------------------------------------
+// This file is part of the the QParser2 project.  You can find the complete
+// project here:  https://github.com/robdunn4/QSpice/
+//-----------------------------------------------------------------------------
 #include "QItemCmp.h"
 #include "StrUtils.h"
 
@@ -6,7 +10,7 @@ QItemCmp::QItemCmp(std::string typeStr, std::string argStr)
 
 // copy constructor
 QItemCmp::QItemCmp(const QItemCmp &other)
-    : QItemBase(other), p1(other.p1), p2(other.p2), p3(other.p3) {}
+    : QItemBase(other), pt1(other.pt1), rotate(other.rotate), stuffShort(other.stuffShort) {}
 
 // clone method
 QItemBasePtr QItemCmp::clone() const {
@@ -20,13 +24,13 @@ void QItemCmp::parseItem() {
     throw std::invalid_argument(str);
   }
 
-  p1 = ArgPoint(strList[0]);
-  p2 = ArgRot(strList[1]);
-  p3 = ArgStuff(strList[2]);
+  pt1 = ArgPoint(strList[0]);
+  rotate = ArgRot(strList[1]);
+  stuffShort = ArgStuff(strList[2]);
 }
 
 std::string QItemCmp::toString() const {
   std::string str =
-      typeStr + " " + p1.toString() + " " + p2.toString() + " " + p3.toString();
+      typeStr + " " + pt1.toString() + " " + rotate.toString() + " " + stuffShort.toString();
   return str;
 }

@@ -1,3 +1,7 @@
+//-----------------------------------------------------------------------------
+// This file is part of the the QParser2 project.  You can find the complete
+// project here:  https://github.com/robdunn4/QSpice/
+//-----------------------------------------------------------------------------
 #include "QItemJunction.h"
 #include "StrUtils.h"
 
@@ -5,7 +9,7 @@ QItemJunction::QItemJunction(std::string typeStr, std::string argStr)
     : QItemBase(typeStr, argStr) {}
 
 QItemJunction::QItemJunction(const QItemJunction &other)
-    : QItemBase(other), p1(other.p1) {}
+    : QItemBase(other), pt1(other.pt1) {}
 
 QItemBasePtr QItemJunction::clone() const {
   return std::make_shared<QItemJunction>(*this);
@@ -19,10 +23,10 @@ void QItemJunction::parseItem() {
     throw std::invalid_argument(str);
   }
 
-  p1 = ArgPoint(strList[0]);
+  pt1 = ArgPoint(strList[0]);
 }
 
 std::string QItemJunction::toString() const {
-  std::string str = typeStr + " " + p1.toString();
+  std::string str = typeStr + " " + pt1.toString();
   return str;
 }

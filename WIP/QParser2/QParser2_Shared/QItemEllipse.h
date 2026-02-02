@@ -1,3 +1,7 @@
+//-----------------------------------------------------------------------------
+// This file is part of the the QParser2 project.  You can find the complete
+// project here:  https://github.com/robdunn4/QSpice/
+//-----------------------------------------------------------------------------
 /*
  * QItemEllipse.h -- Ellipse item class.
  *
@@ -15,7 +19,6 @@
  *   P8 -- ?
  *   P9 -- ?
  */
-
 #pragma once
 #include "QArgUtils2.h"
 #include "QItemBase.h"
@@ -29,18 +32,15 @@ public:
   void parseItem() override;
   std::string toString() const override;
 
-  ArgPoint p1;
-  ArgPoint p2;
-  ArgRot p3;
-  ArgLineWidth p4;
-  ArgLineType p5;
-  ArgColor p6;
-  ArgColor p7;
+  ArgPoint pt1;
+  ArgPoint pt2;
+  ArgRot rotate;
+  ArgLineWidth lineWidth;
+  ArgLineType lineType;
+  ArgColor lineColor;
+  ArgColor fillColor;
   ArgInt p8;
   ArgInt p9;
-
-protected:
-  // Add schematic-specific member variables as needed
 };
 
 typedef std::shared_ptr<QItemEllipse> QItemEllipsePtr;

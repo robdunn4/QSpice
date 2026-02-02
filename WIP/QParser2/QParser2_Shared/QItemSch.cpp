@@ -1,3 +1,7 @@
+//-----------------------------------------------------------------------------
+// This file is part of the the QParser2 project.  You can find the complete
+// project here:  https://github.com/robdunn4/QSpice/
+//-----------------------------------------------------------------------------
 #include "QItemSch.h"
 
 QItemSch::QItemSch(std::string typeStr, std::string argStr)
@@ -14,8 +18,6 @@ void QItemSch::parseItem() {
     std::string str = "Unexpected content in " + typeStr + " " + argStr;
     throw std::invalid_argument(str);
   }
-
-  // nothing more to do?
 }
 
 std::string QItemSch::toString() const { return typeStr; }

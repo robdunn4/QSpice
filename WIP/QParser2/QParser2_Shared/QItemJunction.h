@@ -1,11 +1,15 @@
-/*
- * QItemJunction.h -- Junction item class.
- *
- * Expecting: "junction" (P1)
- * Example:   "junction (1500,0)"
- *
- * Analysis:
- *   P1 -- Endpoint coordinate
+//-----------------------------------------------------------------------------
+// This file is part of the the QParser2 project.  You can find the complete
+// project here:  https://github.com/robdunn4/QSpice/
+//-----------------------------------------------------------------------------
+/*                                                                             \
+ * QItemJunction.h -- Junction item class.                                     \
+ *                                                                             \
+ * Expecting: "junction" (P1)                                                  \
+ * Example:   "junction (1500,0)"                                              \
+ *                                                                             \
+ * Analysis:                                                                   \
+ *   P1 -- Endpoint coordinate                                                 \
  */                                                                            \
 #pragma once
 #include "QArgUtils.h"
@@ -20,10 +24,7 @@ public:
   void parseItem() override;
   std::string toString() const override;
 
-  ArgPoint p1;
-
-protected:
-  // Add schematic-specific member variables as needed
+  ArgPoint pt1;
 };
 
 typedef std::shared_ptr<QItemJunction> QItemJunctionPtr;

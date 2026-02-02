@@ -1,3 +1,7 @@
+//-----------------------------------------------------------------------------
+// This file is part of the the QParser2 project.  You can find the complete
+// project here:  https://github.com/robdunn4/QSpice/
+//-----------------------------------------------------------------------------
 /*
  * QItemTriangle.h -- Triangle item class.
  *
@@ -30,18 +34,15 @@ public:
   void parseItem() override;
   std::string toString() const override;
 
-  ArgPoint p1;
-  ArgPoint p2;
-  ArgPoint p3;
-  ArgLineWidth p4;
-  ArgLineType p5;
-  ArgColor p6;
-  ArgColor p7;
+  ArgPoint pt1;
+  ArgPoint pt2;
+  ArgPoint pt3;
+  ArgLineWidth lineWidth;
+  ArgLineType lineType;
+  ArgColor lineColor;
+  ArgColor fillColor;
   ArgInt p8;
   ArgInt p9;
-
-protected:
-  // Add schematic-specific member variables as needed
 };
 
 typedef std::shared_ptr<QItemTriangle> QItemTrianglePtr;

@@ -1,3 +1,7 @@
+//-----------------------------------------------------------------------------
+// This file is part of the the QParser2 project.  You can find the complete
+// project here:  https://github.com/robdunn4/QSpice/
+//-----------------------------------------------------------------------------
 // clang-format off
 /*
  * QItemRect.h -- Rectangle item class.
@@ -43,10 +47,8 @@
  * Fill Change3:  Solid fill color -- 0x04 + ???
  * Fill Change4:  Custom color     -- 0x00 + custom color
  * Image type:    Use background image  -- 0x05
- * 
  */
 // clang-format on
-
 #pragma once
 #include "QArgUtils2.h"
 #include "QItemBase.h"
@@ -60,20 +62,17 @@ public:
   void parseItem() override;
   std::string toString() const override;
 
-  ArgPoint p1;
-  ArgPoint p2;
-  ArgRot p3;
-  ArgLineWidth p4;
-  ArgLineType p5;
-  ArgColor p6;
-  ArgColor p7;
+  ArgPoint pt1;
+  ArgPoint pt2;
+  ArgRot rotate;
+  ArgLineWidth lineWidth;
+  ArgLineType lineType;
+  ArgColor lineColor;
+  ArgColor fillColor;
   ArgInt p8;
-  ArgInt p9;
+  ArgInt isHierarchicalBlock;
   ArgInt p10;
-  ArgImage p11; // image bitmap
-
-protected:
-  // Add schematic-specific member variables as needed
+  ArgImage imageData; // image bitmap
 };
 
 typedef std::shared_ptr<QItemRect> QItemRectPtr;

@@ -1,3 +1,7 @@
+//-----------------------------------------------------------------------------
+// This file is part of the the QParser2 project.  You can find the complete
+// project here:  https://github.com/robdunn4/QSpice/
+//-----------------------------------------------------------------------------
 /*
  * QItemDBG.h -- Dummy class for debugging.  Simply uses the line text.
  */
@@ -12,9 +16,6 @@ public:
 
   void parseItem() override;
   std::string toString() const override;
-
-protected:
-  // Add schematic-specific member variables as needed
 };
 
 typedef std::shared_ptr<QItemDbg> QItemDbgPtr;

@@ -1,3 +1,7 @@
+//-----------------------------------------------------------------------------
+// This file is part of the the QParser2 project.  You can find the complete
+// project here:  https://github.com/robdunn4/QSpice/
+//-----------------------------------------------------------------------------
 /*
  * QItemZigzag.h -- Zigzag item class.
  *
@@ -28,17 +32,14 @@ public:
   void parseItem() override;
   std::string toString() const override;
 
-  ArgPoint p1;
-  ArgPoint p2;
-  ArgRot p3;
-  ArgLineWidth p4;
-  ArgLineType p5;
-  ArgColor p6;
+  ArgPoint pt1;
+  ArgPoint pt2;
+  ArgRot rotation;
+  ArgLineWidth lineWidth;
+  ArgLineType lineType;
+  ArgColor lineColor;
   ArgInt p7;
   ArgInt p8;
-
-protected:
-  // Add schematic-specific member variables as needed
 };
 
 typedef std::shared_ptr<QItemZigzag> QItemZigzagPtr;

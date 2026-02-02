@@ -1,3 +1,7 @@
+//-----------------------------------------------------------------------------
+// This file is part of the the QParser2 project.  You can find the complete
+// project here:  https://github.com/robdunn4/QSpice/
+//-----------------------------------------------------------------------------
 #include "StrUtils.h"
 #include <iostream>
 #include <sstream>
@@ -92,15 +96,6 @@ std::string trimRight(const std::string &str) {
 // double-quotes into some fields which may break QSpice.  This code probably
 // works no better...
 //
-// Original attempts used regex to parse quoted strings.  It failed when parsing
-// rectangles that included image data due to excessive string length. Reworking
-// to parse manually.
-//
-// New Approach:  Break into space-delimited strings.  If a string begins with
-// double-quote, return the entire remainder as the last string.  It will be up
-// to the various QItem* parsers to determine if that last item requires further
-// parsing.
-//
 StrList tokenize(const std::string &input) {
   std::istringstream iss(input);
   std::string curToken;
@@ -114,7 +109,6 @@ StrList tokenize(const std::string &input) {
       getline(iss, remainder);
       curToken += remainder;
     }
-    // if (curToken.length())
     tokens.push_back(curToken);
   }
 

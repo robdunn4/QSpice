@@ -1,3 +1,7 @@
+//-----------------------------------------------------------------------------
+// This file is part of the the QParser2 project.  You can find the complete
+// project here:  https://github.com/robdunn4/QSpice/
+//-----------------------------------------------------------------------------
 /*
  * QSchTree.h -- Schematic or symbol tree.
  */
@@ -112,6 +116,5 @@ protected:
   void writeNodeRecursive(std::ostream &stream, int indent = 0) const;
 
   // Recursive helper function to parse nodes from a stream
-  //                                                    int &currentLine);
   static QSchTreePtr parseNodeRecursive(std::istream &stream, int &currentLine);
 };

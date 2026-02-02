@@ -1,6 +1,14 @@
+//-----------------------------------------------------------------------------
+// This file is part of the the QParser2 project.  You can find the complete
+// project here:  https://github.com/robdunn4/QSpice/
+//-----------------------------------------------------------------------------
+/*
+ * QBomGen.cpp -- Bill of materials generator for QSpice schematic files.
+ *
+ * This program is part of the the QParser2 project.  You can find the complete
+ * project here:  https://github.com/robdunn4/QSpice/
+ */
 #include "QBomData.h"
-// #include "QItemSym.h" // is there an include for all types?  should there be?
-// #include "QItemType.h"
 #include "QSchTree.h"
 #include <fstream>
 #include <iostream>
@@ -25,9 +33,6 @@ std::string getFileExtension(const std::string &filename) {
   return filename.substr(lastDot);
 }
 
-// void getSymItems(std::shared_ptr<QSchTree> parsedTree,
-//                  std::shared_ptr<QSchTree> symTree);
-
 int main(int argc, char *argv[]) {
   std::cerr << verIdStr << std::endl << std::endl;
 
@@ -40,10 +45,10 @@ int main(int argc, char *argv[]) {
 
   std::string inputFilename = argv[1];
 
-  // Generate output filename with "_out" suffix before extension
+  // Generate output filename with "_out.csv" suffix
   std::string baseFilename = getFilenameWithoutExtension(inputFilename);
   std::string extension = getFileExtension(inputFilename);
-  std::string outputFilename = baseFilename + "_out" + extension;
+  std::string outputFilename = baseFilename + "_out.csv";
 
   std::cout << "=== Parsing Input File ===" << std::endl;
   std::cout << "Input file: " << inputFilename << std::endl;
@@ -56,13 +61,12 @@ int main(int argc, char *argv[]) {
     }
 
     // Parse from stream
-    // auto parsedTree = QSchTree::parseFromStream(inputFile);
     QSchTreePtr parsedTree = QSchTree::parseFromStream(inputFile);
     inputFile.close();
 
     // if not a schematic, quick out
     if (parsedTree->enumID != QPI::SCH) {
-      std::cout << "Input file is not a schematic?\n";
+      std::cout << "Input file is not a schematic.\n";
       return -1;
     }
 
@@ -70,14 +74,15 @@ int main(int argc, char *argv[]) {
     std::cout << "\n=== Generating BOM ===" << std::endl;
     QBomList bomList;
 
+    // parse first-level QItemCmp elements (skip others)
     QSchTreePtr cmpItem = parsedTree->getFirstChild();
     while (cmpItem) {
-      // should be QItemCmp
       if (cmpItem->enumID == QPI::COMP) {
         // next down should be QItemSym
         QSchTreePtr symItem = cmpItem->getFirstChild();
         if (symItem && symItem->enumID != QPI::SYM) break;
 
+        // parse and add to BOM list if valid
         QBomData bomData;
         if (bomData.parseData(symItem)) bomList.push_back(bomData);
       }
@@ -85,29 +90,27 @@ int main(int argc, char *argv[]) {
       cmpItem = cmpItem->getNextSibling();
     }
 
-    // Write to output file
+    if (!bomList.size()) {
+      std::cout << "BOM list is empty.\n";
+      return 0;
+    }
     std::cout << "Found " << bomList.size() << " BOM items.\n";
 
-    if (bomList.size()) {
-      std::cout << std::endl;
-      QBomData::writeHeader(std::cout);
-      for (QBomData bomItem : bomList)
-        bomItem.writeData(std::cout);
-    }
-
-    // sort BOM and write output again
-    // how to sort vector...
+    // sort BOM...
     bomList.sort1();
 
-    // Write to output file
-    std::cout << "\n=== Sorted BOM ===\n";
-
-    if (bomList.size()) {
-      std::cout << std::endl;
-      QBomData::writeHeader(std::cout);
-      for (QBomData bomItem : bomList)
-        bomItem.writeData(std::cout);
+    // Open output file
+    std::ofstream outputFile(outputFilename, std::ios::binary);
+    if (!outputFile.is_open()) {
+      throw std::runtime_error("Cannot open file: " + outputFilename);
     }
+
+    std::cout << "Writing BOM to " << outputFilename << "...";
+    QBomData::writeHeader(outputFile);
+    for (QBomData bomItem : bomList)
+      bomItem.writeData(outputFile);
+    outputFile.close();
+    std::cout << "  Done.\n";
 
   } catch (const std::exception &e) {
     std::cerr << "Error: " << e.what() << std::endl;

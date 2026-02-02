@@ -1,7 +1,10 @@
+//-----------------------------------------------------------------------------
+// This file is part of the the QParser2 project.  You can find the complete
+// project here:  https://github.com/robdunn4/QSpice/
+//-----------------------------------------------------------------------------
 /*
  * QItemTypes.h -- Utility class for mapping text to enum for the item types.
  */
-
 #pragma once
 #include "EnumStrMap.h"
 

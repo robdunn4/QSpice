@@ -1,3 +1,7 @@
+//-----------------------------------------------------------------------------
+// This file is part of the the QParser2 project.  You can find the complete
+// project here:  https://github.com/robdunn4/QSpice/
+//-----------------------------------------------------------------------------
 /*
  * QItemNet.h -- Net item class.
  *
@@ -11,7 +15,7 @@
  *   P4 -- Net type (net = 0, port = 1)
  *   P5 -- Net name
  *   P6 -- Descriptive text (optional)
- */                                                                            \
+ */
 #pragma once
 #include "QArgUtils2.h"
 #include "QItemBase.h"
@@ -25,15 +29,12 @@ public:
   void parseItem() override;
   std::string toString() const override;
 
-  ArgPoint p1;
-  ArgFontSize p2;
-  ArgRotAlign p3;
-  ArgInt p4;
-  ArgString p5;
-  ArgString p6; // optional description
-
-protected:
-  // Add schematic-specific member variables as needed
+  ArgPoint pt1;
+  ArgFontSize fontSize;
+  ArgRotAlign rotateAlign;
+  ArgInt netType;
+  ArgString netName;
+  ArgString netDesc; // optional description
 };
 
 typedef std::shared_ptr<QItemNet> QItemNetPtr;

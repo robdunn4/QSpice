@@ -1,3 +1,7 @@
+//-----------------------------------------------------------------------------
+// This file is part of the the QParser2 project.  You can find the complete
+// project here:  https://github.com/robdunn4/QSpice/
+//-----------------------------------------------------------------------------
 /*
  * QItemTap.h -- Bus tap item class.
  *
@@ -21,11 +25,8 @@ public:
   void parseItem() override;
   std::string toString() const override;
 
-  ArgPoint p1;
-  ArgPoint p2;
-
-protected:
-  // Add schematic-specific member variables as needed
+  ArgPoint pt1;
+  ArgPoint pt2;
 };
 
 typedef std::shared_ptr<QItemTap> QItemTapPtr;

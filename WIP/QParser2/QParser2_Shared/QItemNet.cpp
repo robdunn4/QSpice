@@ -1,3 +1,7 @@
+//-----------------------------------------------------------------------------
+// This file is part of the the QParser2 project.  You can find the complete
+// project here:  https://github.com/robdunn4/QSpice/
+//-----------------------------------------------------------------------------
 #include "QItemNet.h"
 #include "StrUtils.h"
 
@@ -5,8 +9,8 @@ QItemNet::QItemNet(std::string typeStr, std::string argStr)
     : QItemBase(typeStr, argStr) {}
 
 QItemNet::QItemNet(const QItemNet &other)
-    : QItemBase(other), p1(other.p1), p2(other.p2), p3(other.p3), p4(other.p4),
-      p5(other.p5) {}
+    : QItemBase(other), pt1(other.pt1), fontSize(other.fontSize), rotateAlign(other.rotateAlign), netType(other.netType),
+      netName(other.netName) {}
 
 QItemBasePtr QItemNet::clone() const {
   return std::make_shared<QItemNet>(*this);
@@ -20,24 +24,24 @@ void QItemNet::parseItem() {
     throw std::invalid_argument(str);
   }
 
-  p1 = ArgPoint(strList[0]);
-  p2 = ArgFontSize(strList[1]);
-  p3 = ArgRotAlign(strList[2]);
-  p4 = ArgInt(strList[3]);
-  p5 = strList[4];
-  p6 = std::string();
+  pt1 = ArgPoint(strList[0]);
+  fontSize = ArgFontSize(strList[1]);
+  rotateAlign = ArgRotAlign(strList[2]);
+  netType = ArgInt(strList[3]);
+  netName = strList[4];
+  netDesc = std::string();
 
   // reparse for net description if present
   size_t pos = strList[4].find_first_of(" ");
   if (pos != std::string::npos) {
-    p5 = strList[4].substr(0, pos);
-    p6 = strList[4].substr(pos + 1);
+    netName = strList[4].substr(0, pos);
+    netDesc = strList[4].substr(pos + 1);
   }
 }
 
 std::string QItemNet::toString() const {
-  std::string str = typeStr + " " + p1.toString() + " " + p2.toString() + " " +
-                    p3.toString() + " " + p4.toString() + " " + p5.toString();
-  if (p6.getValue().length()) str += " " + p6.toString();
+  std::string str = typeStr + " " + pt1.toString() + " " + fontSize.toString() + " " +
+                    rotateAlign.toString() + " " + netType.toString() + " " + netName.toString();
+  if (netDesc.getValue().length()) str += " " + netDesc.toString();
   return str;
 }

@@ -40,7 +40,6 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)QItemTypes.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)QItemWire.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)QItemZigzag.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)QParseException.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)QSchTree.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)StrUtils.h" />
   </ItemGroup>

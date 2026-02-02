@@ -1,3 +1,7 @@
+//-----------------------------------------------------------------------------
+// This file is part of the the QParser2 project.  You can find the complete
+// project here:  https://github.com/robdunn4/QSpice/
+//-----------------------------------------------------------------------------
 /*
  * QItemShort.h -- Shorted Pins item class.
  *
@@ -21,9 +25,6 @@ public:
   std::string toString() const override;
 
   ArgBool bShorted;
-
-protected:
-  // Add schematic-specific member variables as needed
 };
 
 typedef std::shared_ptr<QItemShort> QItemShortPtr;

@@ -1,3 +1,7 @@
+//-----------------------------------------------------------------------------
+// This file is part of the the QParser2 project.  You can find the complete
+// project here:  https://github.com/robdunn4/QSpice/
+//-----------------------------------------------------------------------------
 /*
  * QItemLib.h -- Library file item class.
  *
@@ -20,10 +24,7 @@ public:
   void parseItem() override;
   std::string toString() const override;
 
-  ArgString p1Str;
-
-protected:
-  // Add schematic-specific member variables as needed
+  ArgString libText;
 };
 
 typedef std::shared_ptr<QItemLib> QItemLibPtr;

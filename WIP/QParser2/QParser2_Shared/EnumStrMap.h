@@ -1,8 +1,11 @@
+//-----------------------------------------------------------------------------
+// This file is part of the the QParser2 project.  You can find the complete
+// project here:  https://github.com/robdunn4/QSpice/
+//-----------------------------------------------------------------------------
 /*
  * EnumStrMap.h -- Template for enum/string bi-directional lookups.
  */
 #pragma once
-#include <concepts>
 #include <initializer_list>
 #include <stdexcept>
 #include <string>

@@ -1,3 +1,7 @@
+//-----------------------------------------------------------------------------
+// This file is part of the the QParser2 project.  You can find the complete
+// project here:  https://github.com/robdunn4/QSpice/
+//-----------------------------------------------------------------------------
 /*
  * QItemPin.h -- Pin item class.
  *
@@ -14,11 +18,11 @@
  *   P6 -- Text color
  *   P7 -- ?
  *   P8 -- Pin label text
- *   P9 -- (as yet unidentified optional quoted string argument)
+ *   P9 -- Attached to net name -- for example, when pin is attached to a net in
+ *         a symbol file?
  *
  * Note: Pin order is determined by order of occurrance in symbol.
  */
-
 #pragma once
 #include "QArgUtils2.h"
 #include "QItemBase.h"
@@ -32,18 +36,15 @@ public:
   void parseItem() override;
   std::string toString() const override;
 
-  ArgPoint p1;
-  ArgPoint p2;
-  ArgFontSize p3;
-  ArgRotAlign p4;
-  ArgPinInfo p5;
-  ArgColor p6;
+  ArgPoint pt1;
+  ArgPoint pt2;
+  ArgFontSize fontSize;
+  ArgRotAlign rotateAlign;
+  ArgPinInfo pinInfo;
+  ArgColor textColor;
   ArgInt p7;
-  ArgString p8;
-  ArgString p9;
-
-protected:
-  // Add schematic-specific member variables as needed
+  ArgString pinLabel;
+  ArgString netName;
 };
 
 typedef std::shared_ptr<QItemPin> QItemPinPtr;

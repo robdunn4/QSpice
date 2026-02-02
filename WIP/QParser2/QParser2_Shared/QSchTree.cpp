@@ -1,4 +1,7 @@
-// QSchTree.cpp
+//-----------------------------------------------------------------------------
+// This file is part of the the QParser2 project.  You can find the complete
+// project here:  https://github.com/robdunn4/QSpice/
+//-----------------------------------------------------------------------------
 #include "QSchTree.h"
 #include <algorithm>
 #include <fstream>
@@ -53,7 +56,6 @@ QSchTree &QSchTree::operator=(const QSchTree &other) {
 
 std::string QSchTree::toString() const { return itemPtr->toString(); }
 
-// void QSchTree::addChild(std::shared_ptr<QSchTree> child) {
 void QSchTree::addChild(QSchTreePtr child) {
   if (child) {
     children.push_back(child);
@@ -71,7 +73,6 @@ void QSchTree::addChild(const std::string &value) {
   // Parent will be set when tree is properly constructed
 }
 
-// void QSchTree::insertChild(size_t index, std::shared_ptr<QSchTree> child) {
 void QSchTree::insertChild(size_t index, QSchTreePtr child) {
   if (child && index <= children.size()) {
     children.insert(children.begin() + index, child);
@@ -86,7 +87,6 @@ void QSchTree::removeChild(size_t index) {
   }
 }
 
-// void QSchTree::removeChild(const std::shared_ptr<QSchTree> &child) {
 void QSchTree::removeChild(const QSchTreePtr &child) {
   auto it = std::find(children.begin(), children.end(), child);
   if (it != children.end()) {
@@ -96,8 +96,6 @@ void QSchTree::removeChild(const QSchTreePtr &child) {
 }
 
 // Navigation methods
-// std::shared_ptr<QSchTree> QSchTree::getParent() const { return parent.lock();
-// }
 QSchTreePtr QSchTree::getParent() const { return parent.lock(); }
 
 QSchTreePtr QSchTree::getFirstChild() const {

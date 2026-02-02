@@ -1,3 +1,7 @@
+//-----------------------------------------------------------------------------
+// This file is part of the the QParser2 project.  You can find the complete
+// project here:  https://github.com/robdunn4/QSpice/
+//-----------------------------------------------------------------------------
 /*
  * QItemCmp.h -- Component item class.
  *
@@ -22,12 +26,9 @@ public:
   void parseItem() override;
   std::string toString() const override;
 
-  ArgPoint p1;
-  ArgRot p2;
-  ArgStuff p3;
-
-protected:
-  // Add schematic-specific member variables as needed
+  ArgPoint pt1;
+  ArgRot rotate;
+  ArgStuff stuffShort;
 };
 
 typedef std::shared_ptr<QItemCmp> QItemCmpPtr;

@@ -1,3 +1,7 @@
+//-----------------------------------------------------------------------------
+// This file is part of the the QParser2 project.  You can find the complete
+// project here:  https://github.com/robdunn4/QSpice/
+//-----------------------------------------------------------------------------
 /*
  * QItemText.h -- Text/Comment item class.
  *
@@ -5,7 +9,7 @@
  * Example:   "text (100,150) 1 7 0 0x1000000 -1 -1 "V1""
  *
  * Analysis:
- *   P1 -- Anchor coordinate?
+ *   P1 -- Anchor coordinate
  *   P2 -- Float - Font Size (5 4 3 2.5 2 1.6 1.25 1 0.8 0.65)
  *   P3 -- Text alignment/rotation
  *   P4 -- Bit 0: clear = text, set = comment
@@ -31,17 +35,14 @@ public:
   void parseItem() override;
   std::string toString() const override;
 
-  ArgPoint p1;
-  ArgFontSize p2;
-  ArgRotAlign p3;
-  ArgInt p4;
-  ArgColor p5;
+  ArgPoint pt1;
+  ArgFontSize fontSize;
+  ArgRotAlign rotateAlign;
+  ArgInt commentVisible;
+  ArgColor textColor;
   ArgInt p6;
   ArgInt p7;
-  ArgString p8;
-
-protected:
-  // Add schematic-specific member variables as needed
+  ArgString text;
 };
 
 typedef std::shared_ptr<QItemText> QItemTextPtr;
