@@ -4,11 +4,101 @@
 //-----------------------------------------------------------------------------
 /*
  * QArgUtils2.h -- Specializations of generic argument types.
- *
- * TODO:  Consider breaking up/grouping types into "graphical" vs other types.
  */
 #pragma once
 #include "QArgUtils.h"
+#include <iostream>
+
+// ============================================================================
+// ArgUnkown -- intended for debugging currently unknown parameters; writes
+// message to stderr if value != -1
+// ============================================================================
+
+class ArgUnknown : public ArgInt {
+public:
+  // using ArgInt::ArgInt; // Inherit constructors
+  ArgUnknown() : ArgInt(0) {}
+  ArgUnknown(int val) : ArgInt(val) { checkValue(); }
+  ArgUnknown(const std::string &str) : ArgInt(str) { checkValue(); }
+
+  // Explicit conversion required
+  explicit ArgUnknown(const ArgInt &other) : ArgInt(other) { checkValue(); }
+
+  void checkValue() {
+    if (value != -1) {
+      // for now, show message on cerr?  set breakpoint here...
+      std::cerr << "A parameter of type ArgUknown isn't -1.  Please send files "
+                   "to author for investigation.\n";
+    }
+  }
+};
+
+// ============================================================================
+// ArgLookupNdx -- used with programmable symbols? (details TBD)
+// ============================================================================
+
+// class ArgLookupNdx : public ArgInt {
+// public:
+//   using ArgInt::ArgInt; // Inherit constructors
+//
+//   // Explicit conversion required
+//   explicit ArgLookupNdx(const ArgInt &other) : ArgInt(other) {}
+// };
+
+// for now, deriving from ArgUnknown to generate debugging messages if not -1...
+class ArgLookupNdx : public ArgUnknown {
+public:
+  using ArgUnknown::ArgUnknown; // Inherit constructors
+
+  // Explicit conversion required
+  explicit ArgLookupNdx(const ArgUnknown &other) : ArgUnknown(other) {}
+};
+
+// ============================================================================
+// ArgPinNdx -- used with programmable symbols? (details TBD)
+//
+// Some built-in symbols use this parameter (Ã, ¥, €, and £?) so can't just
+// throw errors when other than -1 is encountered...
+// ============================================================================
+
+class ArgPinNdx : public ArgInt {
+public:
+  using ArgInt::ArgInt; // Inherit constructors
+
+  // Explicit conversion required
+  explicit ArgPinNdx(const ArgInt &other) : ArgInt(other) {}
+};
+
+// ============================================================================
+// ArgTextFlags
+// ============================================================================
+
+class ArgTextFlags : public ArgInt {
+public:
+  using ArgInt::ArgInt; // Inherit constructors
+
+  // Explicit conversion required
+  explicit ArgTextFlags(const ArgInt &other) : ArgInt(other) {}
+
+  static constexpr int COMMENT_BIT = 0x01;
+  static constexpr int VISIBLE_BIT = 0x02;
+
+  // TODO:  Consider making the commentVisible stuff a class of its own...
+
+  // the visible/hidden bit affects only symbol attribute visiblity, i.e.,
+  // top-level text items are always visible as far as I can determine
+  bool isComment() const { return value & COMMENT_BIT; }
+  // bool isDirective() const { return !isComment(); }
+  bool isHidden() const { return value & VISIBLE_BIT; }
+  // bool isVisible() const { return !isHidden(); }
+
+  // set/clear flags without altering other bits (just in case they are
+  // used for something as yet unknown)
+  void setComment() { value |= COMMENT_BIT; }
+  void clearComment() { value &= ~COMMENT_BIT; }
+  void setHidden() { value |= VISIBLE_BIT; }
+  void clearHidden() { value &= ~VISIBLE_BIT; }
+};
 
 // ============================================================================
 // ArgImage

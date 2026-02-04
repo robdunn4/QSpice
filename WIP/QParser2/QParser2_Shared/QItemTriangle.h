@@ -41,8 +41,8 @@ public:
   ArgLineType lineType;
   ArgColor lineColor;
   ArgColor fillColor;
-  ArgInt p8;
-  ArgInt p9;
+  ArgLookupNdx p8;
+  ArgPinNdx p9;
 };
 
 typedef std::shared_ptr<QItemTriangle> QItemTrianglePtr;

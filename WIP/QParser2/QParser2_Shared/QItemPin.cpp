@@ -9,8 +9,10 @@ QItemPin::QItemPin(std::string typeStr, std::string argStr)
     : QItemBase(typeStr, argStr) {}
 
 QItemPin::QItemPin(const QItemPin &other)
-    : QItemBase(other), pt1(other.pt1), pt2(other.pt2), fontSize(other.fontSize), rotateAlign(other.rotateAlign),
-      pinInfo(other.pinInfo), textColor(other.textColor), p7(other.p7), pinLabel(other.pinLabel) {}
+    : QItemBase(other), pt1(other.pt1), pt2(other.pt2),
+      fontSize(other.fontSize), rotateAlign(other.rotateAlign),
+      pinInfo(other.pinInfo), textColor(other.textColor), p7(other.p7),
+      pinLabel(other.pinLabel) {}
 
 QItemBasePtr QItemPin::clone() const {
   return std::make_shared<QItemPin>(*this);
@@ -31,16 +33,16 @@ void QItemPin::parseItem() {
   rotateAlign = ArgRotAlign(strList[3]);
   pinInfo = ArgPinInfo(strList[4]);
   textColor = ArgColor(strList[5]);
-  p7 = ArgInt(strList[6]);
+  p7 = ArgLookupNdx(strList[6]);
   pinLabel = ArgString(strList[7]);
   netName = strList.size() < 9 ? std::string() : strList[8];
 }
 
 std::string QItemPin::toString() const {
-  std::string str = typeStr + " " + pt1.toString() + " " + pt2.toString() + " " +
-                    fontSize.toString() + " " + rotateAlign.toString() + " " + pinInfo.toString() +
-                    " " + textColor.toString() + " " + p7.toString() + " " +
-                    pinLabel.toString();
+  std::string str = typeStr + " " + pt1.toString() + " " + pt2.toString() +
+                    " " + fontSize.toString() + " " + rotateAlign.toString() +
+                    " " + pinInfo.toString() + " " + textColor.toString() +
+                    " " + p7.toString() + " " + pinLabel.toString();
   if (netName.getValue().length()) str += " " + netName.toString();
   return str;
 }

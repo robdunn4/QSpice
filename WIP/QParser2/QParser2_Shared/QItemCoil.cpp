@@ -10,8 +10,9 @@ QItemCoil::QItemCoil(std::string typeStr, std::string argStr)
 
 // copy constructor
 QItemCoil::QItemCoil(const QItemCoil &other)
-    : QItemBase(other), pt1(other.pt1), pt2(other.pt2), rotate(other.rotate), lineWidth(other.lineWidth),
-      lineType(other.lineType), lineColor(other.lineColor), p7(other.p7), p8(other.p8) {}
+    : QItemBase(other), pt1(other.pt1), pt2(other.pt2), rotate(other.rotate),
+      lineWidth(other.lineWidth), lineType(other.lineType),
+      lineColor(other.lineColor), p7(other.p7), p8(other.p8) {}
 
 // clone method
 QItemBasePtr QItemCoil::clone() const {
@@ -32,14 +33,14 @@ void QItemCoil::parseItem() {
   lineWidth = ArgLineWidth(strList[3]);
   lineType = ArgLineType(strList[4]);
   lineColor = ArgColor(strList[5]);
-  p7 = ArgInt(strList[6]);
-  p8 = ArgInt(strList[7]);
+  p7 = ArgLookupNdx(strList[6]);
+  p8 = ArgPinNdx(strList[7]);
 }
 
 std::string QItemCoil::toString() const {
-  std::string str = typeStr + " " + pt1.toString() + " " + pt2.toString() + " " +
-                    rotate.toString() + " " + lineWidth.toString() + " " + lineType.toString() +
-                    " " + lineColor.toString() + " " + p7.toString() + " " +
-                    p8.toString();
+  std::string str = typeStr + " " + pt1.toString() + " " + pt2.toString() +
+                    " " + rotate.toString() + " " + lineWidth.toString() + " " +
+                    lineType.toString() + " " + lineColor.toString() + " " +
+                    p7.toString() + " " + p8.toString();
   return str;
 }

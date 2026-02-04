@@ -9,8 +9,10 @@ QItemEllipse::QItemEllipse(std::string typeStr, std::string argStr)
     : QItemBase(typeStr, argStr) {}
 
 QItemEllipse::QItemEllipse(const QItemEllipse &other)
-    : QItemBase(other), pt1(other.pt1), pt2(other.pt2), rotate(other.rotate), lineWidth(other.lineWidth),
-      lineType(other.lineType), lineColor(other.lineColor), fillColor(other.fillColor), p8(other.p8), p9(other.p9) {}
+    : QItemBase(other), pt1(other.pt1), pt2(other.pt2), rotate(other.rotate),
+      lineWidth(other.lineWidth), lineType(other.lineType),
+      lineColor(other.lineColor), fillColor(other.fillColor), p8(other.p8),
+      p9(other.p9) {}
 
 QItemBasePtr QItemEllipse::clone() const {
   return std::make_shared<QItemEllipse>(*this);
@@ -31,14 +33,15 @@ void QItemEllipse::parseItem() {
   lineType = ArgLineType(strList[4]);
   lineColor = ArgColor(strList[5]);
   fillColor = ArgColor(strList[6]);
-  p8 = ArgInt(strList[7]);
-  p9 = ArgInt(strList[8]);
+  p8 = ArgLookupNdx(strList[7]);
+  p9 = ArgPinNdx(strList[8]);
 }
 
 std::string QItemEllipse::toString() const {
-  std::string str = typeStr + " " + pt1.toString() + " " + pt2.toString() + " " +
-                    rotate.toString() + " " + lineWidth.toString() + " " + lineType.toString() +
-                    " " + lineColor.toString() + " " + fillColor.toString() + " " +
-                    p8.toString() + " " + p9.toString();
+  std::string str = typeStr + " " + pt1.toString() + " " + pt2.toString() +
+                    " " + rotate.toString() + " " + lineWidth.toString() + " " +
+                    lineType.toString() + " " + lineColor.toString() + " " +
+                    fillColor.toString() + " " + p8.toString() + " " +
+                    p9.toString();
   return str;
 }

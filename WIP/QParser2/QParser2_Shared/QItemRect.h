@@ -69,9 +69,9 @@ public:
   ArgLineType lineType;
   ArgColor lineColor;
   ArgColor fillColor;
-  ArgInt p8;
+  ArgLookupNdx p8;
   ArgInt isHierarchicalBlock;
-  ArgInt p10;
+  ArgPinNdx p10;
   ArgImage imageData; // image bitmap
 };
 

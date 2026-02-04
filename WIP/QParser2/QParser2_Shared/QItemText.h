@@ -15,12 +15,10 @@
  *   P4 -- Bit 0: clear = text, set = comment
  *         Bit 1: clear = visible, set = hidden
  *   P5 -- RGB color
- *   P6 -- ?
- *   P7 -- ?
+ *   P6 -- A lookup index (per ME)
+ *   P7 -- A pin index (per ME)
  *   P8 -- String value.  Note special characters.  Overbars are embedded
- *         special characters?
- *
- * Note:  Per ME, P7 is a "lookup index."  Didn't ask what it indexes into...
+ *         special characters.
  */
 #pragma once
 #include "QArgUtils2.h"
@@ -38,10 +36,10 @@ public:
   ArgPoint pt1;
   ArgFontSize fontSize;
   ArgRotAlign rotateAlign;
-  ArgInt commentVisible;
+  ArgTextFlags textFlags;
   ArgColor textColor;
-  ArgInt p6;
-  ArgInt p7;
+  ArgLookupNdx lookupNdx;
+  ArgPinNdx pinNdx;
   ArgString text;
 };
 

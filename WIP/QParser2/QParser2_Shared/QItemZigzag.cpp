@@ -11,8 +11,10 @@ QItemZigzag::QItemZigzag(std::string typeStr, std::string argStr)
 }
 
 QItemZigzag::QItemZigzag(const QItemZigzag &other)
-    : QItemBase(other), pt1(other.pt1), pt2(other.pt2), rotation(other.rotation), lineWidth(other.lineWidth),
-      lineType(other.lineType), lineColor(other.lineColor), p7(other.p7), p8(other.p8) {}
+    : QItemBase(other), pt1(other.pt1), pt2(other.pt2),
+      rotation(other.rotation), lineWidth(other.lineWidth),
+      lineType(other.lineType), lineColor(other.lineColor), p7(other.p7),
+      p8(other.p8) {}
 
 QItemBasePtr QItemZigzag::clone() const {
   return std::make_shared<QItemZigzag>(*this);
@@ -32,14 +34,14 @@ void QItemZigzag::parseItem() {
   lineWidth = ArgLineWidth(strList[3]);
   lineType = ArgLineType(strList[4]);
   lineColor = ArgColor(strList[5]);
-  p7 = ArgInt(strList[6]);
-  p8 = ArgInt(strList[7]);
+  p7 = ArgLookupNdx(strList[6]);
+  p8 = ArgPinNdx(strList[7]);
 }
 
 std::string QItemZigzag::toString() const {
-  std::string str = typeStr + " " + pt1.toString() + " " + pt2.toString() + " " +
-                    rotation.toString() + " " + lineWidth.toString() + " " + lineType.toString() +
-                    " " + lineColor.toString() + " " + p7.toString() + " " +
-                    p8.toString();
+  std::string str = typeStr + " " + pt1.toString() + " " + pt2.toString() +
+                    " " + rotation.toString() + " " + lineWidth.toString() +
+                    " " + lineType.toString() + " " + lineColor.toString() +
+                    " " + p7.toString() + " " + p8.toString();
   return str;
 }

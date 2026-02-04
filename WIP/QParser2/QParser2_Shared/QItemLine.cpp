@@ -10,7 +10,8 @@ QItemLine::QItemLine(std::string typeStr, std::string argStr)
 
 // copy constructor
 QItemLine::QItemLine(const QItemLine &other)
-    : QItemBase(other), pt1(other.pt1), pt2(other.pt2), lineWidth(other.lineWidth), lineType(other.lineType),
+    : QItemBase(other), pt1(other.pt1), pt2(other.pt2),
+      lineWidth(other.lineWidth), lineType(other.lineType),
       lineColor(other.lineColor), p6(other.p6), p7(other.p7) {}
 
 // clone method
@@ -31,13 +32,14 @@ void QItemLine::parseItem() {
   lineWidth = ArgLineWidth(strList[2]);
   lineType = ArgLineType(strList[3]);
   lineColor = ArgColor(strList[4]);
-  p6 = ArgInt(strList[5]);
-  p7 = ArgInt(strList[6]);
+  p6 = ArgLookupNdx(strList[5]);
+  p7 = ArgPinNdx(strList[6]);
 }
 
 std::string QItemLine::toString() const {
-  std::string str = typeStr + " " + pt1.toString() + " " + pt2.toString() + " " +
-                    lineWidth.toString() + " " + lineType.toString() + " " + lineColor.toString() +
-                    " " + p6.toString() + " " + p7.toString();
+  std::string str = typeStr + " " + pt1.toString() + " " + pt2.toString() +
+                    " " + lineWidth.toString() + " " + lineType.toString() +
+                    " " + lineColor.toString() + " " + p6.toString() + " " +
+                    p7.toString();
   return str;
 }

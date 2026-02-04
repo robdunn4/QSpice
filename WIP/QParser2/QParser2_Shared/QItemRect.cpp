@@ -9,9 +9,11 @@ QItemRect::QItemRect(std::string typeStr, std::string argStr)
     : QItemBase(typeStr, argStr) {}
 
 QItemRect::QItemRect(const QItemRect &other)
-    : QItemBase(other), pt1(other.pt1), pt2(other.pt2), rotate(other.rotate), lineWidth(other.lineWidth),
-      lineType(other.lineType), lineColor(other.lineColor), fillColor(other.fillColor), p8(other.p8), isHierarchicalBlock(other.isHierarchicalBlock),
-      p10(other.p10), imageData(other.imageData) {}
+    : QItemBase(other), pt1(other.pt1), pt2(other.pt2), rotate(other.rotate),
+      lineWidth(other.lineWidth), lineType(other.lineType),
+      lineColor(other.lineColor), fillColor(other.fillColor), p8(other.p8),
+      isHierarchicalBlock(other.isHierarchicalBlock), p10(other.p10),
+      imageData(other.imageData) {}
 
 QItemBasePtr QItemRect::clone() const {
   return std::make_shared<QItemRect>(*this);
@@ -33,17 +35,18 @@ void QItemRect::parseItem() {
   lineType = ArgLineType(strList[4]);
   lineColor = ArgColor(strList[5]);
   fillColor = ArgColor(strList[6]);
-  p8 = ArgInt(strList[7]);
+  p8 = ArgLookupNdx(strList[7]);
   isHierarchicalBlock = ArgInt(strList[8]);
-  p10 = ArgInt(strList[9]);
+  p10 = ArgPinNdx(strList[9]);
   if (strList.size() == 11) imageData = ArgImage(strList[10]);
 }
 
 std::string QItemRect::toString() const {
-  std::string str = typeStr + " " + pt1.toString() + " " + pt2.toString() + " " +
-                    rotate.toString() + " " + lineWidth.toString() + " " + lineType.toString() +
-                    " " + lineColor.toString() + " " + fillColor.toString() + " " +
-                    p8.toString() + " " + isHierarchicalBlock.toString() + " " + p10.toString();
+  std::string str = typeStr + " " + pt1.toString() + " " + pt2.toString() +
+                    " " + rotate.toString() + " " + lineWidth.toString() + " " +
+                    lineType.toString() + " " + lineColor.toString() + " " +
+                    fillColor.toString() + " " + p8.toString() + " " +
+                    isHierarchicalBlock.toString() + " " + p10.toString();
   // if image data present...
   if (imageData.getValue().length()) str += " " + imageData.toString();
   return str;

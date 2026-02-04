@@ -40,6 +40,6 @@ public:
   ArgLineWidth lineWidth;
   ArgLineType lineType;
   ArgColor lineColor;
-  ArgInt p7;
-  ArgInt p8;
+  ArgLookupNdx p7;
+  ArgPinNdx p8;
 };

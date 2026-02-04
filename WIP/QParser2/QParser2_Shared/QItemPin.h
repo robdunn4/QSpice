@@ -42,7 +42,7 @@ public:
   ArgRotAlign rotateAlign;
   ArgPinInfo pinInfo;
   ArgColor textColor;
-  ArgInt p7;
+  ArgLookupNdx p7;
   ArgString pinLabel;
   ArgString netName;
 };

@@ -35,8 +35,8 @@ public:
   ArgLineWidth lineWidth;
   ArgLineType lineType;
   ArgColor lineColor;
-  ArgInt p6;
-  ArgInt p7;
+  ArgLookupNdx p6;
+  ArgPinNdx p7;
 };
 
 typedef std::shared_ptr<QItemLine> QItemLinePtr;
