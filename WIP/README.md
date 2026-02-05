@@ -17,3 +17,10 @@ I've partially parsed QSpice \*.sch/\*.sym files for other projects in the past 
 I'm also toying with AI coding tools just to see what it can do.
 
 The folders contain MSVS 2026 project/solution files.
+
+## QColorPrefs Folder
+
+QColorPrefs is a command-line tool to save/restore QSpice schematic and waveform view color settings.
+
+* Binaries subfolder contains the compiled executable.
+* Sources subfolder contains the MSVS project sources.
