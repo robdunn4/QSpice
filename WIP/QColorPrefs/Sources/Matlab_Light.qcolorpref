@@ -1,0 +1,40 @@
+# QColorPrefs.exe saved preferences
+# Generated automatically - do not edit unless you know what you're doing
+# Registry path: HKEY_CURRENT_USER\Software\Marcus Aurelius Software LLC\QSPICE\[Preferences]
+#
+# This is a Matlab light theme provided by forum member @KSKelvin
+# 12 trace colors, waveform settings only
+#
+# Before installing a new theme, you should first make a backup of the current settings, e.g.:
+#    QColorPrefs -s MyBackup
+#
+# Install this theme with:
+#    QColorPrefs -rwav MatLab_Light
+#
+# The current version of QColorPrefs (1.1) will show some warnings:
+#   "Restore complete: 18 succeeded, 20 skipped (different section), 14 not found in file"
+#
+# This is normal.  Only the 18 below items will be applied to the QSpice color settings.
+#
+
+[waveform]
+NumberDataTraceColors=12
+CursorBackFore=0xffffff
+CursorBackGnd=0x0000ff
+CursorLineColor=0xc8c8c8
+FrameColor=0xc8c8c8
+BackgroundColor=0xffffff
+# WaveFormViewerFontPoints=120
+# WaveformPlotLineWidth=2.5
+DataColor1=0xbe8511
+DataColor2=0x0054dd
+DataColor3=0x20b1ed
+DataColor4=0xd11685
+DataColor5=0x32aa3b
+DataColor6=0xbfbe2f
+DataColor7=0x8b04d1
+DataColor8=0x0ad6ff
+DataColor9=0xdd8265
+DataColor10=0x3a45ff
+DataColor11=0xa3a300
+DataColor12=0x5c84cb

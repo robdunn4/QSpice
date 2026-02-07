@@ -17,7 +17,7 @@
 #include <windows.h>
 
 const char *ProgName = "QColorPrefs.exe";
-const char *VersionID = "v1.0   [" __TIMESTAMP__ "]";
+const char *VersionID = "v1.1   [" __TIMESTAMP__ "]";
 
 const char *WAVSEC = "waveform";
 const char *SCHSEC = "schematic";
@@ -59,6 +59,13 @@ std::vector<RegistryValue> g_registryValues = {
 
     // Waveform-related values
     {WAVSEC, "NumberDataTraceColors"},
+    {WAVSEC, "CursorBackFore"},           // Attached Cursor Text Color
+    {WAVSEC, "CursorBackGnd"},            // Attached Cursor Background
+    {WAVSEC, "CursorLineColor"},          // Cursor Color
+    {WAVSEC, "FrameColor"},               // Ticks & Axis Color
+    {WAVSEC, "BackgroundColor"},          // Background Color
+    {WAVSEC, "WaveFormViewerFontPoints"}, // not a color but relevant
+    {WAVSEC, "WaveformPlotLineWidth"},    // not a color but relevant
     {WAVSEC, "DataColor1"},
     {WAVSEC, "DataColor2"},
     {WAVSEC, "DataColor3"},
@@ -89,11 +96,17 @@ std::vector<RegistryValue> g_registryValues = {
 void ShowUsage() {
   std::cout << "Usage: " << ProgName << " <option> <filepath>\n\n";
   std::cout << "Options:\n";
-  std::cout << "  -s, -save      Save registry values to file\n";
-  std::cout << "  -r, -restore   Restore registry values from file\n\n";
+  std::cout << "  -s         Save QSpice registry color settings to file\n";
+  std::cout
+      << "  -rall      Restore all QSpice registry color settings from file\n";
+  std::cout << "  -rwav      Restore only waveform color settings from file\n";
+  std::cout
+      << "  -rsch      Restore only schematic color settings from file\n\n";
   std::cout << "Example:\n";
-  std::cout << "  " << ProgName << " -save mycolors\n";
-  std::cout << "  " << ProgName << " -restore mycolors.qcolorpref\n\n";
+  std::cout << "  " << ProgName << " -s mycolors\n";
+  std::cout << "  " << ProgName << " -rall mycolors.qcolorpref\n";
+  std::cout << "  " << ProgName << " -rwav mycolors.qcolorpref\n";
+  std::cout << "  " << ProgName << " -rsch mycolors.qcolorpref\n\n";
   std::cout << "Note: If no extension is provided, .qcolorpref will be added "
                "automatically.\n";
 }
@@ -262,7 +275,8 @@ bool SavePreferences(const std::string &filepath) {
   return true;
 }
 
-bool RestorePreferences(const std::string &filepath) {
+bool RestorePreferences(const std::string &filepath,
+                        const std::string &sectionFilter = "") {
   std::ifstream file(filepath);
   if (!file.is_open()) {
     std::cerr << "Error: Could not open file: " << filepath << std::endl;
@@ -272,6 +286,9 @@ bool RestorePreferences(const std::string &filepath) {
   // Prompt for confirmation before modifying registry
   std::cout << "This will write values from '" << filepath
             << "' to the Windows registry.\n";
+  if (!sectionFilter.empty()) {
+    std::cout << "Only restoring [" << sectionFilter << "] section.\n";
+  }
   std::cout << "If QSpice is open, please close it before continuing.\n";
 
   std::cout << "Continue? (y/n): ";
@@ -351,8 +368,15 @@ bool RestorePreferences(const std::string &filepath) {
   int successCount = 0;
   int failCount = 0;
   int notFoundCount = 0;
+  int skippedCount = 0;
 
   for (const auto &regValue : g_registryValues) {
+    // Skip if section filter is specified and doesn't match
+    if (!sectionFilter.empty() && regValue.section != sectionFilter) {
+      skippedCount++;
+      continue;
+    }
+
     // Look for the value in the appropriate section
     auto sectionIt = preferences.find(regValue.section);
     if (sectionIt == preferences.end()) {
@@ -379,6 +403,9 @@ bool RestorePreferences(const std::string &filepath) {
   }
 
   std::cout << "Restore complete: " << successCount << " succeeded";
+  if (skippedCount > 0) {
+    std::cout << ", " << skippedCount << " skipped (different section)";
+  }
   if (notFoundCount > 0) {
     std::cout << ", " << notFoundCount << " not found in file";
   }
@@ -404,18 +431,27 @@ int main(int argc, char *argv[]) {
   std::string option = ToLower(argv[1]);
   std::string filepath = NormalizeFilePath(argv[2]);
 
-  bool isSave = (option == "-s" || option == "-save");
-  bool isRestore = (option == "-r" || option == "-restore");
+  bool isSave = (option == "-s");
+  bool isRestoreAll = (option == "-rall");
+  bool isRestoreWav = (option == "-rwav");
+  bool isRestoreSch = (option == "-rsch");
 
-  if (!isSave && !isRestore) {
+  if (!isSave && !isRestoreAll && !isRestoreWav && !isRestoreSch) {
     std::cerr << "Error: Invalid option '" << argv[1] << "'.\n\n";
     ShowUsage();
     return 1;
   }
 
   bool success;
-  if (isSave) success = SavePreferences(filepath);
-  else success = RestorePreferences(filepath);
+  if (isSave) {
+    success = SavePreferences(filepath);
+  } else if (isRestoreAll) {
+    success = RestorePreferences(filepath);
+  } else if (isRestoreWav) {
+    success = RestorePreferences(filepath, WAVSEC);
+  } else { // isRestoreSch
+    success = RestorePreferences(filepath, SCHSEC);
+  }
 
   return success ? 0 : 1;
 }
