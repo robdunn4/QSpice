@@ -1,0 +1,131 @@
+================================================================================
+QColorPrefs - Developer Notes
+================================================================================
+
+PROJECT INFORMATION
+-------------------
+Complete documentation, source code, and Microsoft Visual Studio build files 
+for this project are available at:  https://github.com/robdunn4/QSpice
+
+
+CONFIGURING REGISTRY VALUES
+---------------------------
+To configure which registry values QColorPrefs will save and restore, you must
+edit the source code file QColorPrefs.cpp.
+
+All registry values are read from/stored in:
+  HKEY_CURRENT_USER\Software\Marcus Aurelius Software LLC\QSPICE\[Preferences]
+
+Locate the g_registryValues vector (around line 27) and add the values you
+want to backup, organized by section:
+
+  std::vector<RegistryValue> g_registryValues = {
+      // Schematic-related values
+      {SCHSEC, "ColorBackground", "Background Color"},
+      {SCHSEC, "ColorWire", "Wire Color"},
+      {SCHSEC, "ColorComponent", "Component Color"},
+	  ...
+      
+      // Waveform-related values
+      {WAVSEC, "ColorTrace1", "Waveform Trace #1 Color"},
+      {WAVSEC, "ColorTrace2", "Waveform Trace #2 Color"},
+      {WAVSEC, "ColorGrid", "Grid Color"},
+	  ...
+  };
+
+Each entry consists of:
+  - Section name (e.g., SCHSEC for "schematic", WAVSEC for "waveform") - 
+    used to organize the preferences file
+  - Value name - the name of the REG_SZ (string) value in the registry
+  - Comment - descriptive text that appears as an inline comment in the
+    generated .qcolorpref file (optional, use "" for no comment)
+
+The section names are purely for organization in the preferences file and
+help keep related settings grouped together. All values are still read from
+and written to the above registry location.
+
+After adding your values, recompile the program.
+
+
+COMPILATION
+-----------
+To compile QColorPrefs, you need a C++11 compatible compiler.
+
+Using Microsoft Visual C++ compiler:
+  cl QColorPrefs.cpp /EHsc /std:c++11
+
+Or using MinGW:
+  g++ -std=c++11 QColorPrefs.cpp -o QColorPrefs.exe
+
+
+TECHNICAL DETAILS
+-----------------
+* Language: C++11
+* Platform: Windows
+* Registry API: Windows Registry API (advapi32.lib)
+* Supported value types: REG_SZ (string values only)
+* Build systems: Microsoft Visual Studio, MinGW, or any C++11 compiler
+
+Key source files:
+  QColorPrefs.cpp - Main source file containing all functionality
+
+The program is designed to be simple and self-contained in a single source
+file for easy compilation and distribution.
+
+
+ARCHITECTURE NOTES
+------------------
+The program uses a vector-based configuration system where each registry
+value is defined by a RegistryValue struct containing:
+  - section: Section identifier (SCHSEC or WAVSEC constants)
+  - valueName: Registry value name
+  - comment: Human-readable description for the .qcolorpref file
+
+The SavePreferences() and RestorePreferences() functions support optional
+section filtering, allowing selective save/restore operations for schematic
+or waveform values independently.
+
+The preferences file format uses INI-style sections with inline comments,
+making it human-readable and easy to edit or share.
+
+
+DEVELOPER TROUBLESHOOTING
+-------------------------
+"Error: No registry values configured to save"
+  - You need to add values to the g_registryValues vector in the source
+    code and recompile. See CONFIGURING REGISTRY VALUES section above.
+
+Build errors related to missing includes:
+  - Ensure you have the Windows SDK installed
+  - QColorPrefs requires: <windows.h>, <string>, <vector>, <iostream>,
+    <fstream>, <sstream>, <iomanip>, <algorithm>
+
+Linker errors:
+  - Make sure advapi32.lib is linked (automatic with most Windows compilers)
+
+
+EXTENDING THE PROGRAM
+---------------------
+To add support for additional QSpice preferences:
+  1. Identify the registry value name in QSPICE\Preferences key
+  2. Determine if it's a REG_SZ (string) type (required)
+  3. Add entry to g_registryValues vector with appropriate section
+  4. Add descriptive comment for the preferences file
+  5. Recompile
+
+To add support for additional value types (DWORD, BINARY, etc.):
+  - Modify the RegistryValue struct to include type information
+  - Update SavePreferences() to handle different value types
+  - Update RestorePreferences() to write different value types
+  - Update file format to distinguish between types
+
+
+VERSION HISTORY
+---------------
+See changelog.txt for detailed version history and feature changes.
+
+
+LICENSE
+-------
+QColorPrefs is licensed under the GNU General Public License v3.0.
+See license.txt for details.

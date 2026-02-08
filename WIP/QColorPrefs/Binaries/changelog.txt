@@ -1,0 +1,117 @@
+================================================================================
+QColorPrefs - Changelog
+================================================================================
+
+Version 1.2 - February 2026
+----------------------------
+
+NEW FEATURES:
+* Added selective save functionality with new command-line options:
+  - Added -sall option to save all color settings (replaces -s)
+  - Added -ssch option to save only schematic color settings
+  - Added -swav option to save only waveform color settings
+* Added verbose mode with -v command-line option:
+  - Without -v: Suppresses warnings about missing registry values or file entries
+  - With -v: Shows detailed warnings and diagnostic messages
+  - Can be combined with any save or restore operation
+* Added inline comments to preferences file format:
+  - Each key=value pair can have a descriptive comment after # symbol
+  - Comments are automatically generated from the RegistryValue definitions
+  - Comments are aligned within each section for better readability
+  - DataColor1-24 entries now show "Waveform Trace #N Color" comments
+  - Comments are ignored during restore operations
+
+CHANGES:
+* Updated RegistryValue structure to include comment field for documentation
+* Modified SavePreferences() function to:
+  - Support optional section filtering (like RestorePreferences)
+  - Generate aligned inline comments in output files
+  - Calculate optimal padding for comment alignment within each section
+* Modified RestorePreferences() function to:
+  - Strip inline comments when parsing key=value pairs
+  - Respect verbose flag for warning messages
+* Enhanced command-line parsing:
+  - -v flag can appear anywhere in argument list
+  - More flexible argument processing
+* Updated all DataColor entries (1-24) with descriptive comments
+* Improved user feedback:
+  - Shows skipped count when using section filters (in verbose mode)
+  - Cleaner output in non-verbose mode
+
+DOCUMENTATION:
+* Updated readme.txt with new command syntax and examples
+* Added documentation for inline comment format
+* Added verbose mode usage instructions
+* Updated RegistryValue configuration examples to show three-parameter format
+
+
+Version 1.1 - February 2026
+----------------------------
+
+NEW FEATURES:
+* Added selective restore functionality with new command-line options:
+  - Added -rall option to restore all color settings (replaces -restore/-r)
+  - Added -rwav option to restore only waveform color settings
+  - Added -rsch option to restore only schematic color settings
+* Users can now selectively update waveform or schematic colors without
+  affecting the other section
+
+CHANGES:
+* Simplified command-line options:
+  - Removed -save option (use -s instead)
+  - Removed -restore option (use -rall instead)
+  - Changed -r to -rall for clarity (restores all sections)
+* Updated RestorePreferences() function to support optional section filtering
+* Improved user feedback during restore operations:
+  - Shows which section is being restored when using selective restore
+  - Reports number of values skipped when using section filters
+* Enhanced restore confirmation prompt to remind users to close QSpice before
+  continuing
+
+DOCUMENTATION:
+* Updated readme.txt with clearer descriptions and better examples
+* Added examples of selective restore operations
+* Improved overview section to highlight selective restore capability
+* Added safety features section explaining selective restore benefits
+
+
+Version 1.0 - February 2026
+----------------------------
+
+INITIAL RELEASE:
+* Command-line utility to save and restore QSpice color preferences
+* Saves registry values to human-readable .qcolorpref text files
+* Restores registry values from .qcolorpref files
+* Supports two sections: schematic and waveform color settings
+* Automatic .qcolorpref extension handling
+* File overwrite protection with user confirmation
+* Registry modification confirmation before restore
+* Comprehensive error handling and user feedback
+* Full list of QSpice color preferences pre-configured:
+  - 20 schematic-related color settings
+  - 25 waveform-related color settings
+
+COMMAND-LINE OPTIONS:
+* -s / -save: Save current registry values to file
+* -r / -restore: Restore all registry values from file
+
+SAFETY FEATURES:
+* Prompts before overwriting existing files
+* Prompts before modifying registry
+* Clear error messages and warnings
+* Validates file format and registry access
+
+TECHNICAL DETAILS:
+* C++11 compatible
+* Windows Registry API integration
+* REG_SZ (string) value support
+* Organized preferences file with sections
+* Comment support in preferences files
+* Whitespace and blank line handling
+* Cross-compiler support (MSVC, MinGW)
+
+
+================================================================================
+For more information and latest version:
+https://github.com/robdunn4/QSpice/
+================================================================================
