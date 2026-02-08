@@ -35,6 +35,19 @@ public:
 
 // ============================================================================
 // ArgLookupNdx -- used with programmable symbols? (details TBD)
+//
+// I assume this is used with the LOOKUP programmable attribute.
+// A first thing to note is that the QItemSym symbol name is the name of the
+// symbol file (without the extension).  This, I think, becomes the first
+// level subfolder under [QSpice Folder]\Repository\SYMBOLNAME\...
+//
+// Of course, once you drag/drop a symbol into a schematic, the entire symbol
+// is copied into the schematic so the symbol name normally doesn't matter.
+// But, as above, the symbol name will matter if you're using this LOOKUP
+// thing.  Seems to me that, if you had something that worked and changed
+// the name of the symbol file, it would break the link to the proper folder
+// name....
+//
 // ============================================================================
 
 // class ArgLookupNdx : public ArgInt {
@@ -55,10 +68,24 @@ public:
 };
 
 // ============================================================================
-// ArgPinNdx -- used with programmable symbols? (details TBD)
+// ArgPinNdx -- used with programmable symbols?
 //
 // Some built-in symbols use this parameter (Ã, ¥, €, and £?) so can't just
 // throw errors when other than -1 is encountered...
+//
+// -----
+//
+// OK, new information.  Graphical elements (rectangles, triangles, etc.) can
+// set this parameter to a pin index.  This is the zero-based index of the
+// QItemPin record within the enclosing symbol.  If this index is not -1 and the
+// QItemPin net name is "¥" (0xA5) then the graphic element is rendered
+// invisible and the pin is disabled.
+//
+// The Symbol Editor has a right-click menu item for graphical elements to set
+// the pin association, "Associated Pin".  However, it seems to be
+// unimplemented.
+//
+// Mentioned to Mike on 2026.02.08.  Fixed on 2026.02.08.  (He's fast!)
 // ============================================================================
 
 class ArgPinNdx : public ArgInt {
