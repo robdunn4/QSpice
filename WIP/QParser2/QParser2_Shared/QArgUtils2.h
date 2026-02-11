@@ -15,11 +15,11 @@
 //
 // The order of QItem* elements within a QItemSym matters.  It's complicated....
 //
-// Within a QItemSym all QItem* elements of a given type occur as a group
-// without interceding elements of other types.  That is, all QItemText records
-// are grouped, all QItemPin records are grouped, all QItemRect records are
-// grouped, etc.  (I assume that there is a specific order of groups by QItem*
-// type but haven't yet reverse-engineered the required order.)
+// Within a container (e.g., QItemSch, QItemCmp, QItemSym), all QItem* elements
+// of a given type occur as a group without interceding elements of other types.
+// That is, all QItemText records are grouped, all QItemPin records are grouped,
+// all QItemRect records are grouped, etc.  The order of groups of QItem* types
+// also appears to be important (see QItemTypes.* for sorting order).
 //
 // Within a group, the first element of that type is at index 0.  The index
 // position is used in ArgLookupNdx and ArgPinNdx fields to refer to the
@@ -29,7 +29,9 @@
 // As a contrived (and possibly incorrect) example, graphical elements such as a
 // QItemRect or QItemText may be associated with a QItemPin record in the
 // ArgPinNdx argument.  The index value of ArgPinNdx points to the index within
-// the group of QItemPin records.
+// the group of QItemPin records.  If the QItemPin is disabled (tied to the
+// special net "¥" (0xA5)), then both the pin and the graphical element are
+// hidden.
 // ============================================================================
 
 // ============================================================================
@@ -57,28 +59,36 @@ public:
 };
 
 // ============================================================================
-// ArgLookupNdx -- used with programmable symbols? (details TBD)
+// ArgLookupNdx -- Used with the LOOKUP programmable symbol attribute.
 //
-// I assume this is used with the LOOKUP programmable attribute.
 // A first thing to note is that the QItemSym symbol name is the name of the
-// symbol file (without the extension).  This, I think, becomes the first
-// level subfolder under [QSpice Folder]\Repository\SYMBOLNAME\...
+// symbol file (without the extension).  This becomes the first level subfolder
+// under [QSpice Folder]\Repository\SYMBOLNAME\...
 //
 // Of course, once you drag/drop a symbol into a schematic, the entire symbol
 // is copied into the schematic so the symbol name normally doesn't matter.
-// But, as above, the symbol name will matter if you're using this LOOKUP
-// thing.  Seems to me that, if you had something that worked and changed
-// the name of the symbol file, it would break the link to the proper folder
-// name....
+// However, the symbol name will matter if you're using this LOOKUP thing. I
+// infer that, if you had something that worked and changed the name of the
+// symbol file before dropping it onto a schematic, it would break the link to
+// the proper [QSpice Folder]\Repository\SYMBOLNAME folder....
 //
 // =====
 //
-// Additional Info:  The ArgLookupNdx value is an index into the QItemText
-// record group.  That QItemText record is expected to contain a programmable
-// attribute ("LOOKUP") that ultimately loaded the record from a symbol file
-// found in [QSpice]\Repository\SYMNAME.
+// The ArgLookupNdx value is an index into the QItemText record group if not
+// set to -1.  This indicates that the QItem* was merged from a symbol file
+// using the LOOKUP programmable attribute.  The ArgLookupNdx is an index into
+// the QItemText group for the QItemText record that contains the LOOKUP
+// attribute text.
 //
-// TODO:  Verify above and explain more clearly.
+// That QItemText record is expected to contain a programmable attribute
+// ("LOOKUP") that ultimately loaded the record from a symbol file found in
+// [QSpice]\Repository\SYMNAME.
+//
+// Therefore, if QItemText records are added, deleted, or reordered, special
+// care should be taken to ensure that the QLookupNdx value is updated to match
+// the related QItemText record containing the LOOKUP attribute.
+//
+// TODO:  Need to document LOOKUP and explain more clearly.
 //
 // ============================================================================
 
@@ -100,24 +110,17 @@ public:
 };
 
 // ============================================================================
-// ArgPinNdx -- used with programmable symbols?
+// ArgPinNdx -- An index into a group of QItemPin records if used.  Set to -1 if
+// not used.
 //
-// Some built-in symbols use this parameter (Ã, ¥, €, and £?) so can't just
-// throw errors when other than -1 is encountered...
-//
-// -----
-//
-// OK, new information.  Graphical elements (rectangles, triangles, etc.) can
-// set this parameter to a pin index.  This is the zero-based index of the
-// QItemPin record within the enclosing symbol.  If this index is not -1 and the
-// QItemPin net name is "¥" (0xA5) then the graphic element is rendered
-// invisible and the pin is disabled.
+// Graphical elements (rectangles, triangles, text, etc.) can set this parameter
+// to a pin index.  This is the zero-based index of the QItemPin record within
+// the enclosing symbol.  If this index is not -1 and the QItemPin net name is
+// "¥" (0xA5) then the graphic element is rendered invisible and the pin is
+// disabled.
 //
 // The Symbol Editor has a right-click menu item for graphical elements to set
-// the pin association, "Associated Pin".  However, it seems to be
-// unimplemented.
-//
-// Mentioned to Mike on 2026.02.08.  Fixed on 2026.02.08.  (He's fast!)
+// the pin association, "Associated Pin".
 // ============================================================================
 
 class ArgPinNdx : public ArgInt {
@@ -189,28 +192,27 @@ public:
 // Here's how I *think* colors work:
 //   0xXXBBGGRR where BB, GG, and RR are blue, green, and red values.
 //
-//   If XX = 0x00, then the specified RGB color is used.
+//   If XX = 0x00, then the specified RGB color is used ("custom color")
 //   If XX = 0x01, then the default color specified for the type of item is
-//                 fetched from the registry.
-//   If XX = 0x05, then use a background image (see QItemRect).
-//   If XX = 0x??, it corresponds to other specific registry entries (e.g.,
-//                 schematic background color)
+//                 fetched from the registry or not filled.
+//   If XX = 0x02, then background color from registry.
+//   If XX = 0x03, then foreground color from registry.
+//   If XX = 0x04, then solid fill color from registry.
+//   If XX = 0x05, use background image, BLT = SRCCOPY
+//   If XX = 0x06, use background image, BLT = SRCPAINT
+//   If XX = 0x07, use background image, BLT = SRCAND
+//   If XX = 0x08, use background image, BLT = SRCINVERT
+//   If XX = 0x09, use background image, BLT = SRCERASE
+//   If XX = 0x0A, use background image, BLT = NOTSRCERASE
+//   If XX = 0x0B, use background image, BLT = MERGEPAINT
 //
-// New Info:  2026.02.10...
+// Note: For XX = 0x01-0x04 fill colors and the RGB values are present,
+// presumably copied from registry when the color selection (from the GUI menu)
+// was set. I assume that the RGB values are used even if the registry values
+// are changed.
 //
-// XX also encodes BLT mode for images (not sure if it might more)
-//
-//   If XX = 0x05, BLT = SRCCOPY
-//   If XX = 0x06, BLT = SRCPAINT
-//   If XX = 0x07, BLT = SRCAND
-//   If XX = 0x08, BLT = SRCINVERT
-//   If XX = 0x09, BLT = SRCERASE
-//   If XX = 0x0A, BLT = NOTSRCERASE
-//   If XX = 0x0B, BLT = MERGEPAINT
-//
-// What are the meanings for 0x02 - 0x04?  (Above suggests values that I don't
-// remember today... or it was mere conjecture when I first wrote it?)
-//
+// I think handling of color vs fill color is slightly different.  It may make
+// sense to have a separate (or derived) fill color class.
 // ============================================================================
 
 class ArgColor : public ArgHex {
