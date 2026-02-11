@@ -10,6 +10,29 @@
 #include <iostream>
 
 // ============================================================================
+// TODO:  Revisit This!  Extract these notes (once confirmed) to an overview
+// document....
+//
+// The order of QItem* elements within a QItemSym matters.  It's complicated....
+//
+// Within a QItemSym all QItem* elements of a given type occur as a group
+// without interceding elements of other types.  That is, all QItemText records
+// are grouped, all QItemPin records are grouped, all QItemRect records are
+// grouped, etc.  (I assume that there is a specific order of groups by QItem*
+// type but haven't yet reverse-engineered the required order.)
+//
+// Within a group, the first element of that type is at index 0.  The index
+// position is used in ArgLookupNdx and ArgPinNdx fields to refer to the
+// related item.  If records are inserted/deleted/reordered outside of the GUI,
+// take care to adjust any Arg*Ndx records.
+//
+// As a contrived (and possibly incorrect) example, graphical elements such as a
+// QItemRect or QItemText may be associated with a QItemPin record in the
+// ArgPinNdx argument.  The index value of ArgPinNdx points to the index within
+// the group of QItemPin records.
+// ============================================================================
+
+// ============================================================================
 // ArgUnkown -- intended for debugging currently unknown parameters; writes
 // message to stderr if value != -1
 // ============================================================================
@@ -47,6 +70,15 @@ public:
 // thing.  Seems to me that, if you had something that worked and changed
 // the name of the symbol file, it would break the link to the proper folder
 // name....
+//
+// =====
+//
+// Additional Info:  The ArgLookupNdx value is an index into the QItemText
+// record group.  That QItemText record is expected to contain a programmable
+// attribute ("LOOKUP") that ultimately loaded the record from a symbol file
+// found in [QSpice]\Repository\SYMNAME.
+//
+// TODO:  Verify above and explain more clearly.
 //
 // ============================================================================
 
@@ -163,6 +195,21 @@ public:
 //   If XX = 0x05, then use a background image (see QItemRect).
 //   If XX = 0x??, it corresponds to other specific registry entries (e.g.,
 //                 schematic background color)
+//
+// New Info:  2026.02.10...
+//
+// XX also encodes BLT mode for images (not sure if it might more)
+//
+//   If XX = 0x05, BLT = SRCCOPY
+//   If XX = 0x06, BLT = SRCPAINT
+//   If XX = 0x07, BLT = SRCAND
+//   If XX = 0x08, BLT = SRCINVERT
+//   If XX = 0x09, BLT = SRCERASE
+//   If XX = 0x0A, BLT = NOTSRCERASE
+//   If XX = 0x0B, BLT = MERGEPAINT
+//
+// What are the meanings for 0x02 - 0x04?  (Above suggests values that I don't
+// remember today... or it was mere conjecture when I first wrote it?)
 //
 // ============================================================================
 

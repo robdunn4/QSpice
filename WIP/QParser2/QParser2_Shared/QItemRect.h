@@ -47,6 +47,19 @@
  * Fill Change3:  Solid fill color -- 0x04 + ???
  * Fill Change4:  Custom color     -- 0x00 + custom color
  * Image type:    Use background image  -- 0x05
+ * 
+ * New Image Info:
+ *   SRCCOPY:     rect (-97,-6844)  (97,-6656)   0 0 2 0x4000000 0x5000000 -1 0 -1 [Image Data] 
+ *   SRCPAINT:    rect (-347,-7144) (-153,-6956) 0 0 2 0x4000000 0x6000000 -1 0 -1 [Image Data]
+ *   SRCAND:      rect (-297,-7594) (-103,-7406) 0 0 2 0x4000000 0x7000000 -1 0 -1 [Image Data]
+ *   SRCINVERT:   rect (203,-8094)  (397,-7906)  0 0 2 0x4000000 0x8000000 -1 0 -1 [Image Data]
+ *   SRCERASE:    rect (-97,-8294)  (97,-8106)   0 0 2 0x4000000 0x9000000 -1 0 -1 [Image Data]
+ *   NOTSRCERASE: rect (-147,-8794) (47,-8606)   0 0 2 0x4000000 0xa000000 -1 0 -1 [Image Data]
+ *   MERGEPAINT:  rect (53,-9044)   (247,-8856)  0 0 2 0x4000000 0xb000000 -1 0 -1 [Image Data]
+ * 
+ * OK, fillColor/P7 high bits are used for image BLT mode....
+ * 
+ * 
  */
 // clang-format on
 #pragma once
