@@ -2,6 +2,81 @@
 QColorPrefs - Changelog
 ================================================================================
 
+Version 1.3 - February 2026
+----------------------------
+
+NEW FEATURES:
+* Added selective update functionality with new command-line options:
+  - Added -uall option to update all existing keys in file with current registry values
+  - Added -usch option to update only schematic keys in file with current registry values
+  - Added -uwav option to update only waveform keys in file with current registry values
+* Update operations preserve file structure and only modify existing keys
+* Update operations require an existing file (error if file not found)
+* Added test mode functionality with -t command-line option:
+  - Shows what would change without making any changes (dry-run mode)
+  - Works with all operations: save, update, and restore
+  - Automatically shows verbose-style output
+  - Skips user confirmation prompts for non-interactive testing
+  - Reports only values that would actually change (not total count)
+* Added verbose mode with -v command-line option:
+  - Shows detailed before/after values for each setting
+  - Per-section alignment for easy visual comparison
+  - Works with all operations: save, update, and restore
+  - Can be combined with test mode for maximum detail
+
+CHANGES:
+* Enhanced file headers with better metadata:
+  - Added current date and time to first line
+  - Shows "created" vs "modified" based on operation type
+  - Removed confusing compile timestamp from version string
+  - Clean version display (e.g., "v1.3" instead of "v1.3 [timestamp]")
+  - Line 2 now always present for both save and update operations
+* Improved output formatting and alignment:
+  - Per-section alignment in verbose and test modes
+  - Before values right-aligned within each section
+  - Arrows (-> or ==) vertically aligned within each section
+  - After values left-aligned within each section
+  - Blank lines separate sections for clarity
+  - Schematic and waveform sections align independently
+* Enhanced test mode reporting:
+  - Shows changed count instead of total count
+  - Format: "Would change X value(s) (Y unchanged)"
+  - Groups related info in parentheses
+  - Clear hierarchy: primary, secondary, tertiary information
+* Updated summary messages for better clarity:
+  - Save to new file: "Would create new file with X value(s)"
+  - Save to existing: "Would change X value(s) in: filename (Y unchanged)"
+  - Update: "Would change X value(s) (Y unchanged, Z not in original file)"
+  - Restore: "Would change X registry value(s) (Y unchanged)"
+* Code improvements:
+  - Removed unused includes (iomanip, sstream)
+  - Fixed deprecated localtime() - now uses localtime_s() for Windows
+  - Better error handling in date/time formatting
+  - Cleaner code structure
+
+DOCUMENTATION:
+* Updated README_USER.txt with comprehensive user guide:
+  - Added section on editing .qcolorpref files
+  - Documented how to comment out entries to preserve personal preferences
+  - Complete registry value reference (all 55 values documented)
+  - Example of custom edited theme with commented-out preferences
+  - Common settings users typically want to preserve
+  - Expanded troubleshooting section
+  - More detailed workflow examples
+* Added inline comments in generated .qcolorpref files
+* All registry values now have descriptive comments
+* Comments aligned for readability within each section
+
+BENEFITS:
+* Allows maintaining customized .qcolorpref files with subset of keys
+* Update refreshes values without adding unwanted keys
+* Useful for version control (smaller, focused preference files)
+* Test mode provides safe preview before committing changes
+* Verbose mode shows exactly what changed for transparency
+* Better metadata tracking with timestamps
+* Users can share color-only themes (preserving personal size preferences)
+
+
 Version 1.2 - February 2026
 ----------------------------
 
@@ -88,8 +163,9 @@ INITIAL RELEASE:
 * Registry modification confirmation before restore
 * Comprehensive error handling and user feedback
 * Full list of QSpice color preferences pre-configured:
-  - 20 schematic-related color settings
-  - 25 waveform-related color settings
+  - 20 schematic-related color settings (including 4 size/dimension values)
+  - 25 waveform-related color settings (including 3 size/configuration values)
+  - Total: 55 registry values
 
 COMMAND-LINE OPTIONS:
 * -s / -save: Save current registry values to file
@@ -109,6 +185,45 @@ TECHNICAL DETAILS:
 * Comment support in preferences files
 * Whitespace and blank line handling
 * Cross-compiler support (MSVC, MinGW)
+
+
+REGISTRY VALUES MANAGED:
+-------------------------
+QColorPrefs manages 55 total registry values in:
+HKEY_CURRENT_USER\Software\Marcus Aurelius Software LLC\QSPICE\[Preferences]
+
+SCHEMATIC SECTION (24 values):
+  20 color values (CADHighlightColor, CADBackgroundColor, etc.)
+  4 size/dimension values (JunctionSize, CADlineWidth, BUSwidthMultiplier, DefaultTextSize)
+
+WAVEFORM SECTION (31 values):
+  28 color values (BackgroundColor, FrameColor, DataColor1-24, etc.)
+  3 size/configuration values (NumberDataTraceColors, WaveFormViewerFontPoints, WaveformPlotLineWidth)
+
+
+FUTURE ENHANCEMENTS (Planned):
+-------------------------------
+* GUI version for users who prefer visual interface
+* Support for additional QSpice registry values as they're added
+* Preset theme library with built-in color schemes
+* Color scheme preview without applying
+* Import/export from other formats (JSON, XML)
+
+
+KNOWN LIMITATIONS:
+------------------
+* Only supports REG_SZ (string) registry value types
+* Requires QSpice to be closed for restore to take effect
+* Windows-only (uses Windows Registry API)
+* No undo functionality (user must maintain backups)
+
+
+COMPATIBILITY:
+--------------
+* Tested on Windows 10 and Windows 11
+* Compatible with QSpice all versions
+* Works with MSVC and MinGW compilers
+* Requires C++11 or later
 
 
 ================================================================================

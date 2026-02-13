@@ -1,14 +1,11 @@
-# QColorPrefs.exe saved preferences
+# This file was created by QColorPrefs v1.3 on February 12, 2026 at 06:31 PM
 # Generated automatically - do not edit unless you know what you're doing
 # Registry path: HKEY_CURRENT_USER\Software\Marcus Aurelius Software LLC\QSPICE\[Preferences]
 # Section filter: [waveform] only
 #
-# This is a Matlab dark theme provided by forum member @KSKelvin
-# 12 trace colors, waveform settings only
-#
-# Install this theme with:
-#    QColorPrefs -rwav MatLab_Dark
-#
+# Matlab light glow theme (12 colors)
+# Contributed by QSpice forum member @KSKelvin
+# Thanks, Kelvin!
 
 [waveform]
 NumberDataTraceColors=12     # Number of Trace Colors
@@ -16,21 +13,21 @@ CursorBackFore=0xffffff      # Attached Cursor Text Color
 CursorBackGnd=0x0000ff       # Attached Cursor Background
 CursorLineColor=0xc8c8c8     # Cursor Color
 FrameColor=0xc8c8c8          # Ticks & Axis Color
-BackgroundColor=0x000000     # Background Color
-WaveFormViewerFontPoints=120 # not a color but relevant
-WaveformPlotLineWidth=2.5    # not a color but relevant
-DataColor1=0x00ff00          # Waveform Trace #1 Color
-DataColor2=0xff3f00          # Waveform Trace #2 Color
-DataColor3=0x003fff          # Waveform Trace #3 Color
-DataColor4=0x008000          # Waveform Trace #4 Color
-DataColor5=0x807f00          # Waveform Trace #5 Color
-DataColor6=0x007f80          # Waveform Trace #6 Color
-DataColor7=0xffff00          # Waveform Trace #7 Color
-DataColor8=0xff00bf          # Waveform Trace #8 Color
-DataColor9=0x9314ff          # Waveform Trace #9 Color
-DataColor10=0x0080ff         # Waveform Trace #10 Color
-DataColor11=0x00ffff         # Waveform Trace #11 Color
-DataColor12=0xffffff         # Waveform Trace #12 Color
+BackgroundColor=0xffffff     # Background Color
+WaveFormViewerFontPoints=120 # Font Point Size
+WaveformPlotLineWidth=2.5    # Plot Line Thickness
+DataColor1=0xdd8c26          # Waveform Trace #1 Color
+DataColor2=0x2877f5          # Waveform Trace #2 Color
+DataColor3=0x64e8ff          # Waveform Trace #3 Color
+DataColor4=0xfb5cc0          # Waveform Trace #4 Color
+DataColor5=0x40db49          # Waveform Trace #5 Color
+DataColor6=0xfff46c          # Waveform Trace #6 Color
+DataColor7=0xc567f2          # Waveform Trace #7 Color
+DataColor8=0x4cc0fe          # Waveform Trace #8 Color
+DataColor9=0xffa97d          # Waveform Trace #9 Color
+DataColor10=0x747aff         # Waveform Trace #10 Color
+DataColor11=0xbecf1e         # Waveform Trace #11 Color
+DataColor12=0x6c99dc         # Waveform Trace #12 Color
 DataColor13=0x00ff00         # Waveform Trace #13 Color
 DataColor14=0xff3f00         # Waveform Trace #14 Color
 DataColor15=0x003fff         # Waveform Trace #15 Color

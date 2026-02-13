@@ -22,5 +22,3 @@ The folders contain MSVS 2026 project/solution files.
 
 QColorPrefs is a command-line tool to save/restore QSpice schematic and waveform view color settings.
 
-* Binaries subfolder contains the compiled executable.
-* Sources subfolder contains the MSVS project sources.

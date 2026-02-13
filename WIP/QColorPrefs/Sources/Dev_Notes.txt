@@ -8,6 +8,18 @@ Complete documentation, source code, and Microsoft Visual Studio build files
 for this project are available at:  https://github.com/robdunn4/QSpice
 
 
+CURRENT VERSION
+---------------
+Version: 1.3
+Features:
+  * Save/restore QSpice color preferences
+  * Selective save/restore by section (schematic or waveform)
+  * Update existing files with current registry values
+  * Test mode for safe previewing
+  * Verbose mode with per-section alignment
+  * Human-readable .qcolorpref file format with inline comments
+
+
 CONFIGURING REGISTRY VALUES
 ---------------------------
 To configure which registry values QColorPrefs will save and restore, you must
@@ -16,35 +28,60 @@ edit the source code file QColorPrefs.cpp.
 All registry values are read from/stored in:
   HKEY_CURRENT_USER\Software\Marcus Aurelius Software LLC\QSPICE\[Preferences]
 
-Locate the g_registryValues vector (around line 27) and add the values you
+Locate the g_registryValues vector (around line 72) and add the values you
 want to backup, organized by section:
 
   std::vector<RegistryValue> g_registryValues = {
       // Schematic-related values
-      {SCHSEC, "ColorBackground", "Background Color"},
-      {SCHSEC, "ColorWire", "Wire Color"},
-      {SCHSEC, "ColorComponent", "Component Color"},
-	  ...
+      {SCHSEC, "CADHighlightColor", "Highlight Color"},
+      {SCHSEC, "CADBackgroundColor", "Background"},
+      {SCHSEC, "CADwireColor", "Wire Color"},
+      ...
       
       // Waveform-related values
-      {WAVSEC, "ColorTrace1", "Waveform Trace #1 Color"},
-      {WAVSEC, "ColorTrace2", "Waveform Trace #2 Color"},
-      {WAVSEC, "ColorGrid", "Grid Color"},
-	  ...
+      {WAVSEC, "DataColor1", "Waveform Trace #1 Color"},
+      {WAVSEC, "DataColor2", "Waveform Trace #2 Color"},
+      {WAVSEC, "BackgroundColor", "Background Color"},
+      ...
   };
 
-Each entry consists of:
+Each entry consists of three parameters:
   - Section name (e.g., SCHSEC for "schematic", WAVSEC for "waveform") - 
-    used to organize the preferences file
+    used to organize the preferences file and enable selective operations
   - Value name - the name of the REG_SZ (string) value in the registry
   - Comment - descriptive text that appears as an inline comment in the
-    generated .qcolorpref file (optional, use "" for no comment)
+    generated .qcolorpref file (use "" for no comment)
 
 The section names are purely for organization in the preferences file and
 help keep related settings grouped together. All values are still read from
-and written to the above registry location.
+and written to the same registry location.
 
 After adding your values, recompile the program.
+
+
+CURRENT REGISTRY VALUES (v1.3)
+-------------------------------
+QColorPrefs currently manages 55 registry values:
+
+SCHEMATIC SECTION (24 values):
+  20 color values:
+    CADHighlightColor, CADBackgroundColor, CADbomberSight, 
+    CADgrapicAnnotation, CADsolidAnnotation, CADgrapicText,
+    CADnormalText, CADnormalSchText, CADcommentText, CADnetLabelText,
+    CADwireColor, CADhighlightWireColor, CADpinDotColor, CADspritedAnchor,
+    CADpinColor, CADportBkColor, CADhierarchalBlock, CADhierarchalFill,
+    CADunconnectedPin, CADbusTapError
+
+  4 size/dimension values (numeric):
+    JunctionSize, CADlineWidth, BUSwidthMultiplier, DefaultTextSize
+
+WAVEFORM SECTION (31 values):
+  28 color values:
+    BackgroundColor, FrameColor, CursorLineColor, CursorBackFore,
+    CursorBackGnd, DataColor1 through DataColor24
+
+  3 size/configuration values (numeric):
+    NumberDataTraceColors, WaveFormViewerFontPoints, WaveformPlotLineWidth
 
 
 COMPILATION
@@ -57,12 +94,15 @@ Using Microsoft Visual C++ compiler:
 Or using MinGW:
   g++ -std=c++11 QColorPrefs.cpp -o QColorPrefs.exe
 
+The program uses only standard C++ libraries and Windows API, so no external
+dependencies are required.
+
 
 TECHNICAL DETAILS
 -----------------
 * Language: C++11
-* Platform: Windows
-* Registry API: Windows Registry API (advapi32.lib)
+* Platform: Windows (uses Windows Registry API)
+* API: Windows Registry API (advapi32.lib - automatically linked)
 * Supported value types: REG_SZ (string values only)
 * Build systems: Microsoft Visual Studio, MinGW, or any C++11 compiler
 
@@ -71,6 +111,16 @@ Key source files:
 
 The program is designed to be simple and self-contained in a single source
 file for easy compilation and distribution.
+
+Required includes:
+  <algorithm>     - for std::transform, std::find
+  <fstream>       - for file I/O
+  <iostream>      - for console output
+  <map>           - for section/key/value storage
+  <string>        - for string handling
+  <vector>        - for registry value list
+  <windows.h>     - for Registry API
+  <ctime>         - for date/time formatting
 
 
 ARCHITECTURE NOTES
@@ -81,12 +131,67 @@ value is defined by a RegistryValue struct containing:
   - valueName: Registry value name
   - comment: Human-readable description for the .qcolorpref file
 
-The SavePreferences() and RestorePreferences() functions support optional
-section filtering, allowing selective save/restore operations for schematic
-or waveform values independently.
+Key functions:
+  SavePreferences()     - Saves registry values to .qcolorpref file
+  UpdatePreferences()   - Updates existing .qcolorpref file with current values
+  RestorePreferences()  - Restores registry values from .qcolorpref file
+  GetCurrentDateTime()  - Returns formatted date/time string
+  GetVersionString()    - Extracts version without compile timestamp
+  PrintVerboseLine()    - Formats aligned before/after output
+
+The SavePreferences(), UpdatePreferences(), and RestorePreferences() functions 
+support optional section filtering, allowing selective save/restore/update 
+operations for schematic or waveform values independently.
 
 The preferences file format uses INI-style sections with inline comments,
 making it human-readable and easy to edit or share.
+
+Verbose and test modes use per-section alignment for professional output:
+  - Each section computes its own label, before-value, and after-value widths
+  - Values are aligned within their section (not globally)
+  - This prevents misalignment between hex colors and numeric values
+  - Blank lines separate sections visually
+
+
+GLOBAL FLAGS
+------------
+The program uses two global boolean flags that can be set via command line:
+
+  g_verbose (set by -v flag):
+    - Shows detailed before/after values during operations
+    - Displays per-value changes with alignment
+    - Shows additional warnings and diagnostic information
+
+  g_testMode (set by -t flag):
+    - Preview mode - shows what would happen without making changes
+    - Skips file writing and registry modification
+    - Skips user confirmation prompts
+    - Automatically shows verbose-style output
+    - Reports only changed values (not total count)
+
+
+FILE FORMAT
+-----------
+The .qcolorpref file format:
+
+  # This file was {created|modified} by QColorPrefs {version} on {datetime}
+  # Generated automatically - do not edit unless you know what you're doing
+  # Registry path: HKEY_CURRENT_USER\{registry_path}
+  {optional: # Section filter: [section] only}
+
+  [section1]
+  key1=value1       # Comment 1
+  key2=value2       # Comment 2
+
+  [section2]
+  key3=value3       # Comment 3
+
+Features:
+  - Header with metadata (version, date/time, registry path)
+  - INI-style section markers
+  - Inline comments for each key (aligned within section)
+  - Comments and blank lines are ignored during restore
+  - Users can comment out lines with # to prevent restoration
 
 
 DEVELOPER TROUBLESHOOTING
@@ -98,10 +203,20 @@ DEVELOPER TROUBLESHOOTING
 Build errors related to missing includes:
   - Ensure you have the Windows SDK installed
   - QColorPrefs requires: <windows.h>, <string>, <vector>, <iostream>,
-    <fstream>, <sstream>, <iomanip>, <algorithm>
+    <fstream>, <map>, <algorithm>, <ctime>
 
 Linker errors:
   - Make sure advapi32.lib is linked (automatic with most Windows compilers)
+  - For MinGW, this should be automatic
+
+Deprecated function warnings (localtime):
+  - Fixed in v1.3 - now uses localtime_s() for Windows
+  - If you see this warning, update to latest code
+
+Alignment issues in verbose output:
+  - Ensure labelWidth, beforeValueWidth, and afterValueWidth are computed
+    per-section, not globally
+  - Check that PrintVerboseLine receives correct width parameters
 
 
 EXTENDING THE PROGRAM
@@ -118,14 +233,141 @@ To add support for additional value types (DWORD, BINARY, etc.):
   - Update SavePreferences() to handle different value types
   - Update RestorePreferences() to write different value types
   - Update file format to distinguish between types
+  - Add functions ReadRegistryDWord(), WriteRegistryDWord(), etc.
+
+To add new command-line options:
+  1. Add new boolean flag variable (e.g., bool g_newFeature = false)
+  2. Update command-line parsing in main() to recognize the flag
+  3. Update ShowUsage() to document the new option
+  4. Implement the feature in appropriate functions
+  5. Test thoroughly with various combinations of flags
+
+
+TESTING CHECKLIST
+-----------------
+Before releasing a new version, test:
+
+  Basic operations:
+    □ Save all (-sall) to new file
+    □ Save all (-sall) overwriting existing file
+    □ Save schematic only (-ssch)
+    □ Save waveform only (-swav)
+    □ Update all (-uall)
+    □ Update schematic only (-usch)
+    □ Update waveform only (-uwav)
+    □ Restore all (-rall)
+    □ Restore schematic only (-rsch)
+    □ Restore waveform only (-rwav)
+
+  Test mode:
+    □ Test mode with save (-t -sall)
+    □ Test mode with update (-t -uall)
+    □ Test mode with restore (-t -rall)
+    □ Verify no files created/modified in test mode
+    □ Verify no registry changes in test mode
+    □ Verify changed count reporting is accurate
+
+  Verbose mode:
+    □ Verbose save (-v -sall)
+    □ Verbose update (-v -uall)
+    □ Verbose restore (-v -rall)
+    □ Verify per-section alignment works correctly
+    □ Verify before/after values display correctly
+
+  Combined modes:
+    □ Test + verbose (-t -v -rall)
+    □ Verify flags can appear in any order
+
+  Edge cases:
+    □ File doesn't exist (update should fail)
+    □ File is empty
+    □ File has only comments
+    □ File missing section headers
+    □ File with unknown keys (should be preserved)
+    □ Registry key doesn't exist
+    □ Cancel on overwrite prompt
+    □ Cancel on restore prompt
+
+  File format:
+    □ Header includes correct version
+    □ Header includes current date/time
+    □ Comments are aligned within sections
+    □ All registry values have comments
+    □ Blank lines between sections
+
+  Error handling:
+    □ Invalid command-line options
+    □ Missing filepath
+    □ Invalid file format
+    □ Registry access denied
+    □ Disk full when writing
+
+
+CODE STYLE GUIDELINES
+---------------------
+* Use consistent indentation (2 spaces)
+* Keep functions focused and reasonably sized
+* Use descriptive variable names
+* Add comments for non-obvious logic
+* Keep lines under 80 characters when practical
+* Use const where appropriate
+* Check return values from API calls
+* Provide clear error messages to users
+
+
+VERSION NUMBERING
+-----------------
+Version format: MAJOR.MINOR
+
+MAJOR version increments:
+  - Breaking changes to file format
+  - Major architectural changes
+  - Incompatible command-line changes
+
+MINOR version increments:
+  - New features
+  - Non-breaking enhancements
+  - Bug fixes
+  - Documentation updates
+
+Current: v1.3
 
 
 VERSION HISTORY
 ---------------
-See changelog.txt for detailed version history and feature changes.
+See CHANGELOG.txt for detailed version history and feature changes.
 
 
 LICENSE
 -------
 QColorPrefs is licensed under the GNU General Public License v3.0.
-See license.txt for details.
+See LICENSE.txt for details.
+
+
+CONTACT
+-------
+Project maintainer: Rob Dunn
+GitHub: https://github.com/robdunn4/QSpice
+Issues: https://github.com/robdunn4/QSpice/issues
+
+
+CONTRIBUTING
+------------
+Contributions are welcome! Please:
+  1. Fork the repository
+  2. Create a feature branch
+  3. Make your changes
+  4. Test thoroughly
+  5. Submit a pull request
+
+Include:
+  - Clear description of changes
+  - Updated documentation
+  - Test results
+  - Rationale for the change
+
+
+================================================================================
+For questions, issues, or contributions, visit:
+https://github.com/robdunn4/QSpice
+================================================================================

@@ -1,14 +1,11 @@
-# QColorPrefs.exe saved preferences
+# This file was created by QColorPrefs v1.3 on February 12, 2026 at 06:40 PM
 # Generated automatically - do not edit unless you know what you're doing
 # Registry path: HKEY_CURRENT_USER\Software\Marcus Aurelius Software LLC\QSPICE\[Preferences]
 # Section filter: [waveform] only
 #
-# This is a Matlab dark theme provided by forum member @KSKelvin
-# 12 trace colors, waveform settings only
-#
-# Install this theme with:
-#    QColorPrefs -rwav MatLab_Dark
-#
+# QSpice dark theme (12 colors)
+# Contributed by QSpice forum member @KSKelvin
+# Thanks, Kelvin!
 
 [waveform]
 NumberDataTraceColors=12     # Number of Trace Colors
@@ -17,8 +14,8 @@ CursorBackGnd=0x0000ff       # Attached Cursor Background
 CursorLineColor=0xc8c8c8     # Cursor Color
 FrameColor=0xc8c8c8          # Ticks & Axis Color
 BackgroundColor=0x000000     # Background Color
-WaveFormViewerFontPoints=120 # not a color but relevant
-WaveformPlotLineWidth=2.5    # not a color but relevant
+WaveFormViewerFontPoints=120 # Font Point Size
+WaveformPlotLineWidth=2.5    # Plot Line Thickness
 DataColor1=0x00ff00          # Waveform Trace #1 Color
 DataColor2=0xff3f00          # Waveform Trace #2 Color
 DataColor3=0x003fff          # Waveform Trace #3 Color
