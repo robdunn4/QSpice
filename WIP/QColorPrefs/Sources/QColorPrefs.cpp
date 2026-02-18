@@ -2,75 +2,96 @@
  * QColorPrefs.cpp -- A command-line utility to save/restore QSpice color
  *                    settings.
  *
+ * Requires C++20 (MSVC /std:c++20 or later).
+ *
  * The complete source code, documentation, and MSVS project files for the
  * current official version of this project is available at:
  *
  *   https://github.com/robdunn4/QSpice/
  *
  */
+#define NOMINMAX
 #include <algorithm>
+#include <cassert>
+#include <ctime>
+#include <filesystem>
+#include <format>
 #include <fstream>
 #include <iostream>
 #include <map>
+#include <optional>
+#include <ranges>
 #include <string>
 #include <vector>
 #include <windows.h>
-#include <ctime>
 
-const char *ProgName = "QColorPrefs.exe";
-const char *VersionID = "v1.3   [" __TIMESTAMP__ "]";
+#ifndef NDEBUG
+#define DBGMSG "\n\n***** Debug Build *****"
+#else
+#define DBGMSG ""
+#endif
 
-const char *WAVSEC = "waveform";
-const char *SCHSEC = "schematic";
+namespace fs = std::filesystem;
 
-// Global verbose flag
-bool g_verbose = false;
+const char *ProgName = "QColorPrefs";
+const char *FileExt = ".qcolorpref";
+// const char *ProgName = "QTheme";
+// const char *FileExt  = ".qtheme";
 
-// Global test mode flag
-bool g_testMode = false;
+const char *Version = "v1.6";
+const char *BuildTimestamp = __TIMESTAMP__;
 
-// Get current date and time as formatted string
-std::string GetCurrentDateTime() {
-  std::time_t now = std::time(nullptr);
-  std::tm timeInfo;
-  
-  // Use localtime_s (secure version) instead of deprecated localtime
-  if (localtime_s(&timeInfo, &now) != 0) {
-    return "Unknown Date";
-  }
-  
-  char buffer[100];
-  // Format: February 12, 2026 at 2:30 PM
-  std::strftime(buffer, sizeof(buffer), "%B %d, %Y at %I:%M %p", &timeInfo);
-  return std::string(buffer);
-}
-
-// Extract version string without compile timestamp
-std::string GetVersionString() {
-  // VersionID is like "v1.3   [Feb 12 2026 14:30:45]"
-  // Extract just "v1.3"
-  std::string version = VersionID;
-  size_t pos = version.find("   [");
-  if (pos != std::string::npos) {
-    return version.substr(0, pos);
-  }
-  return version;
-}
+const std::string WAVSEC = "waveform";
+const std::string SCHSEC = "schematic";
 
 // Base registry path for all values
 const char *REGISTRY_BASE_PATH =
     "Software\\Marcus Aurelius Software LLC\\QSPICE\\[Preferences]";
 
+using Operation = unsigned char;
+const Operation OpSecSch = 1, OpSecWav = 2, OpSecAll = OpSecSch | OpSecWav;
+const Operation OpActSave = 4, OpActUpdate = 8, OpActRestore = 16,
+                OpActMask = OpActSave | OpActUpdate | OpActRestore;
+
+struct CmdArgs {
+  // values set in ParseArgs()
+  Operation op = 0;
+  std::string filepath;
+  bool verbose = false;
+  bool testMode = false;
+  bool silentMode = false;
+};
+
 // Structure to hold registry value configuration
-struct RegistryValue {
+struct PrefEntry {
   std::string section;
   std::string valueName;
-  std::string comment; // Optional comment for documentation
+  std::string comment;
+};
+
+// Structure to hold both registry and file values for a single key
+struct PrefValue {
+  std::string registryValue;
+  std::string fileValue;
+  std::string comment;
+  bool inRegistry = false;
+  bool inFile = false;
+};
+
+// Data structure: section -> key -> PrefValue
+using PrefData = std::map<std::string, std::map<std::string, PrefValue>>;
+
+// Results from AnalyzeOperation()
+struct PrePassResult {
+  int changedCount = 0;   // values that would change
+  int unchangedCount = 0; // values already matching
+  int skippedCount = 0;   // values excluded by section filter
+  int notFoundCount = 0;  // keys absent from file (restore/update)
+  int totalCount = 0;     // total values that would be written (save)
 };
 
 // Registry values to be saved/restored
-std::vector<RegistryValue> g_registryValues = {
-
+const PrefEntry g_prefEntries[] = {
     // Schematic-related values
     {SCHSEC, "CADHighlightColor", "Highlight Color"},
     {SCHSEC, "CADBackgroundColor", "Background"},
@@ -129,1023 +150,844 @@ std::vector<RegistryValue> g_registryValues = {
     {WAVSEC, "DataColor21", "Waveform Trace #21 Color"},
     {WAVSEC, "DataColor22", "Waveform Trace #22 Color"},
     {WAVSEC, "DataColor23", "Waveform Trace #23 Color"},
-    {WAVSEC, "DataColor24", "Waveform Trace #24 Color"}
+    {WAVSEC, "DataColor24", "Waveform Trace #24 Color"}};
 
+// RAII wrapper for registry key handles
+struct RegKeyGuard {
+  HKEY key = nullptr;
+  explicit RegKeyGuard(HKEY k = nullptr) : key(k) {}
+  ~RegKeyGuard() {
+    if (key) RegCloseKey(key);
+  }
+  RegKeyGuard(const RegKeyGuard &) = delete;
+  RegKeyGuard &operator=(const RegKeyGuard &) = delete;
 };
 
-void ShowUsage() {
-  std::cout << "Usage: " << ProgName << " [options] <filepath>\n\n";
-  std::cout << "Options:\n";
-  std::cout << "  -sall      Save all QSpice registry color settings to file\n";
-  std::cout << "  -ssch      Save only schematic color settings to file\n";
-  std::cout << "  -swav      Save only waveform color settings to file\n";
-  std::cout << "  -uall      Update all existing entries in file with current registry values\n";
-  std::cout << "  -usch      Update only schematic entries in file with current registry values\n";
-  std::cout << "  -uwav      Update only waveform entries in file with current registry values\n";
-  std::cout
-      << "  -rall      Restore all QSpice registry color settings from file\n";
-  std::cout << "  -rwav      Restore only waveform color settings from file\n";
-  std::cout << "  -rsch      Restore only schematic color settings from file\n";
-  std::cout << "  -v         Verbose mode: show per-value before/after changes\n";
-  std::cout << "  -t         Test mode: show what would happen without making changes\n\n";
-  std::cout << "Example:\n";
-  std::cout << "  " << ProgName << " -sall mycolors\n";
-  std::cout << "  " << ProgName << " -ssch schematic_colors\n";
-  std::cout << "  " << ProgName << " -swav waveform_colors\n";
-  std::cout << "  " << ProgName << " -uall mycolors.qcolorpref\n";
-  std::cout << "  " << ProgName << " -uwav mycolors.qcolorpref\n";
-  std::cout << "  " << ProgName << " -t -rall mycolors.qcolorpref\n";
-  std::cout << "  " << ProgName << " -t -v -sall mycolors.qcolorpref\n";
-  std::cout << "  " << ProgName << " -v -rwav mycolors.qcolorpref\n";
-  std::cout << "  " << ProgName << " -rsch mycolors.qcolorpref\n\n";
-  std::cout << "Note: If no extension is provided, .qcolorpref will be added "
-               "automatically.\n";
-  std::cout << "      The -v option can be combined with any other option for "
-               "verbose output.\n";
-  std::cout << "      The -t option shows actions without making changes "
-               "(dry-run mode).\n";
-  std::cout << "      Update operations only modify existing keys in the file, "
-               "preserving structure.\n";
+// Get current date and time as formatted string
+std::string GetCurrentDateTime() {
+  std::time_t now = std::time(nullptr);
+  std::tm timeInfo;
+  if (localtime_s(&timeInfo, &now) != 0) {
+    return "Unknown Date";
+  }
+  char buffer[100];
+  std::strftime(buffer, sizeof(buffer), "%B %d, %Y at %I:%M %p", &timeInfo);
+  return std::string(buffer);
 }
 
-std::string NormalizeFilePath(const std::string &filepath) {
-  std::string normalized = filepath;
+// clang-format off
+void ShowSyntax() {
+  std::cout << std::format(
+      "Usage: {0}  [options] <action> <filepath>\n\n"
 
-  // Check if file has an extension
+      "<action>:\n"
+      "  -sall  Save all QSpice registry color settings to file\n"
+      "  -ssch  Save only schematic color settings to file\n"
+      "  -swav  Save only waveform color settings to file\n\n"
+
+      "  -uall  Update all existing entries in file with current registry values\n"
+      "  -usch  Update only existing schematic entries in file with current registry values\n"
+      "  -uwav  Update only existing waveform entries in file with current registry values\n\n"
+
+      "  -rall  Restore all QSpice registry color settings from file\n"
+      "  -rwav  Restore only waveform color settings from file\n"
+      "  -rsch  Restore only schematic color settings from file\n\n"
+
+      "[options]:\n"
+      "     -v  (Verbose Mode) Show per-value before/after changes\n"
+      "     -t  (Test Mode)    Show what would happen without making changes\n"
+      "     -s  (Silent Mode)  No user confirmation prompt (for use in batch files)\n\n"
+
+      "Examples:\n"
+      "  {0} -sall mycolors{1}\n"
+      "  {0} -uwav mycolors\n"
+      "  {0} -t -rall mycolors\n"
+      "  {0} -t -v -sall mycolors\n"
+      "  {0} -v -rwav mycolors\n\n"
+
+      "Note: If no file extension is provided, '{1}' will be added automatically.\n"
+      "      The -v option can be combined with any other option for verbose output.\n"
+      "      The -t option shows actions without making changes (dry-run mode).\n",
+
+      ProgName, FileExt);
+}
+// clang-format on
+
+// Add default extension if the filepath has no extension.
+void NormalizeFilePath(std::string &filepath) {
+  std::string normalized = filepath;
   size_t lastDot = normalized.find_last_of('.');
   size_t lastSlash = normalized.find_last_of("\\/");
 
   // If no dot found, or dot is before last slash (part of directory name)
   if (lastDot == std::string::npos ||
       (lastSlash != std::string::npos && lastDot < lastSlash)) {
-    normalized += ".qcolorpref";
+    normalized += FileExt;
   }
-
-  return normalized;
+  filepath = normalized;
 }
 
 std::string ToLower(const std::string &str) {
   std::string lower = str;
-  std::transform(lower.begin(), lower.end(), lower.begin(), ::tolower);
+  std::ranges::transform(lower, lower.begin(),
+                         [](unsigned char c) { return std::tolower(c); });
   return lower;
 }
 
-// Open a registry key for reading or writing. Caller must call CloseRegistryKey
-// when done.
+// Open a registry key. Caller must use RegKeyGuard for RAII cleanup.
 bool OpenRegistryKey(HKEY hive, const std::string &subkey, REGSAM access,
                      HKEY &hKey) {
   LONG result = RegOpenKeyExA(hive, subkey.c_str(), 0, access, &hKey);
   if (result != ERROR_SUCCESS) {
-    std::cerr << "Error: Could not open registry key: " << subkey << std::endl;
+    std::cerr << std::format("Error: Could not open registry key: {}\n",
+                             subkey);
     return false;
   }
   return true;
 }
 
-void CloseRegistryKey(HKEY hKey) { RegCloseKey(hKey); }
-
-bool ReadRegistryValue(HKEY hKey, const std::string &valueName,
-                       std::string &value) {
-  // First, get the size of the string
+// Returns value on success, std::nullopt on failure.
+// Caller decides whether to warn.
+std::optional<std::string> ReadRegistryValue(HKEY hKey,
+                                             const std::string &valueName) {
   DWORD dataSize = 0;
   DWORD type;
 
   LONG result =
       RegQueryValueExA(hKey, valueName.c_str(), NULL, &type, NULL, &dataSize);
-
-  if (result != ERROR_SUCCESS) {
-    std::cerr << "Error: Could not read registry value: " << valueName
-              << std::endl;
-    return false;
+  if (result != ERROR_SUCCESS || type != REG_SZ) {
+    return std::nullopt;
   }
 
-  if (type != REG_SZ) {
-    std::cerr << "Error: Registry value is not a string (REG_SZ): " << valueName
-              << std::endl;
-    return false;
-  }
-
-  // Allocate buffer and read the string
   std::vector<char> buffer(dataSize);
   result = RegQueryValueExA(hKey, valueName.c_str(), NULL, &type,
                             reinterpret_cast<LPBYTE>(buffer.data()), &dataSize);
-
   if (result != ERROR_SUCCESS) {
-    std::cerr << "Error: Could not read registry value: " << valueName
-              << std::endl;
-    return false;
+    return std::nullopt;
   }
 
-  value = std::string(buffer.data());
-  return true;
+  return std::string(buffer.data());
 }
 
 bool WriteRegistryValue(HKEY hKey, const std::string &valueName,
                         const std::string &value) {
   LONG result = RegSetValueExA(hKey, valueName.c_str(), 0, REG_SZ,
                                reinterpret_cast<const BYTE *>(value.c_str()),
-                               static_cast<DWORD>(value.length() + 1));
-
+                               static_cast<DWORD>(value.size() + 1));
   if (result != ERROR_SUCCESS) {
-    std::cerr << "Error: Could not write registry value: " << valueName
-              << std::endl;
+    std::cerr << std::format("Error: Could not write registry value: {}\n",
+                             valueName);
     return false;
   }
-
   return true;
 }
 
-// Parse a .qcolorpref file into a section->key->value map. Returns an empty
-// map if the file cannot be opened or contains no valid entries.
+// Parse a preferences file into a section->key->value map.
 std::map<std::string, std::map<std::string, std::string>>
 ParsePreferencesFile(const std::string &filepath) {
   std::map<std::string, std::map<std::string, std::string>> prefs;
   std::ifstream f(filepath);
-  if (!f.is_open())
-    return prefs;
+  if (!f.is_open()) return prefs;
 
   std::string currentSection;
   std::string line;
   while (std::getline(f, line)) {
     line.erase(0, line.find_first_not_of(" \t\r\n"));
-    if (line.empty() || line[0] == '#')
-      continue;
-    if (line[0] == '[') {
+    if (line.empty() || line.starts_with('#')) continue;
+    if (line.starts_with('[')) {
       size_t end = line.find(']');
-      if (end != std::string::npos)
-        currentSection = line.substr(1, end - 1);
+      if (end != std::string::npos) currentSection = line.substr(1, end - 1);
       continue;
     }
-    if (currentSection.empty())
-      continue;
+    if (currentSection.empty()) continue;
     size_t eq = line.find('=');
-    if (eq == std::string::npos)
-      continue;
+    if (eq == std::string::npos) continue;
     std::string key = line.substr(0, eq);
     std::string value = line.substr(eq + 1);
     // Strip inline comment
     size_t cp = value.find('#');
-    if (cp != std::string::npos)
-      value = value.substr(0, cp);
+    if (cp != std::string::npos) value = value.substr(0, cp);
     // Trim
     key.erase(0, key.find_first_not_of(" \t"));
     key.erase(key.find_last_not_of(" \t") + 1);
     value.erase(0, value.find_first_not_of(" \t"));
     value.erase(value.find_last_not_of(" \t") + 1);
+    // Normalize hex color values to lowercase for consistent comparison
+    if (value.size() >= 2 && value[0] == '0' &&
+        (value[1] == 'x' || value[1] == 'X'))
+      value = ToLower(value);
     prefs[currentSection][key] = value;
   }
   return prefs;
 }
 
-// Print one verbose change line with column-aligned values.
-// labelWidth: pre-computed max width of "  key (comment):" across all entries
-//             in the current operation, so value columns line up.
-// beforeValueWidth: pre-computed max width of before values for alignment
-// afterValueWidth: pre-computed max width of after values for alignment
-// hasBefore:  false for new-file saves (no prior value exists).
-// beforeValue/afterValue: the two sides of the change.
-// When hasBefore is true and the values are equal, prints "==" instead of "->".
-void PrintVerboseLine(size_t labelWidth, size_t beforeValueWidth,
-                      size_t afterValueWidth, const std::string &key,
-                      const std::string &comment, bool hasBefore,
-                      const std::string &beforeValue,
+// Helper: get ordered list of unique section names from g_prefEntries
+std::vector<std::string> GetSectionOrder() {
+  std::vector<std::string> sections;
+  for (const PrefEntry &rv : g_prefEntries) {
+    if (std::ranges::find(sections, rv.section) == sections.end()) {
+      sections.push_back(rv.section);
+    }
+  }
+  return sections;
+}
+
+// Helper: get the preference entries belonging to a given section,
+// in declaration order
+std::vector<const PrefEntry *> GetSectionEntries(const std::string &section) {
+  std::vector<const PrefEntry *> entries;
+  for (const PrefEntry &rv : g_prefEntries) {
+    if (rv.section == section) {
+      entries.push_back(&rv);
+    }
+  }
+  return entries;
+}
+
+// Load all registry values into prefData at startup.
+bool LoadRegistryValues(const CmdArgs &args, PrefData &prefData) {
+  HKEY hKey;
+  if (!OpenRegistryKey(HKEY_CURRENT_USER, REGISTRY_BASE_PATH, KEY_READ, hKey)) {
+    return false;
+  }
+  RegKeyGuard guard(hKey);
+
+  for (const PrefEntry &entry : g_prefEntries) {
+    PrefValue &pv = prefData[entry.section][entry.valueName];
+    pv.comment = entry.comment;
+
+    std::optional<std::string> val = ReadRegistryValue(hKey, entry.valueName);
+    if (val) {
+      // Normalize hex color values to lowercase for consistent comparison
+      if (val->size() >= 2 && (*val)[0] == '0' &&
+          ((*val)[1] == 'x' || (*val)[1] == 'X'))
+        *val = ToLower(*val);
+      pv.registryValue = *val;
+      pv.inRegistry = true;
+    } else {
+      pv.inRegistry = false;
+      if (args.verbose) {
+        std::cerr << std::format("Warning: Registry value not found: {}\n",
+                                 entry.valueName);
+      }
+    }
+  }
+
+  return true;
+}
+
+// Load file values into prefData.
+void LoadFileValues(const std::string &filepath, PrefData &prefData) {
+  std::map<std::string, std::map<std::string, std::string>> filePrefs =
+      ParsePreferencesFile(filepath);
+
+  for (const std::pair<const std::string, std::map<std::string, std::string>>
+           &secPair : filePrefs) {
+    const std::string &secName = secPair.first;
+    const std::map<std::string, std::string> &keys = secPair.second;
+
+    std::map<std::string, std::map<std::string, PrefValue>>::iterator secIter =
+        prefData.find(secName);
+    if (secIter == prefData.end()) continue;
+
+    for (const std::pair<const std::string, std::string> &keyPair : keys) {
+      std::map<std::string, PrefValue>::iterator keyIter =
+          secIter->second.find(keyPair.first);
+      if (keyIter == secIter->second.end()) continue;
+      keyIter->second.fileValue = keyPair.second;
+      keyIter->second.inFile = true;
+    }
+  }
+}
+
+// Column-width constants for aligned output.
+// Assumes max display width of 12 characters for any value.
+const int MAX_VALUE_DISPLAY_WIDTH = 12;
+
+struct ColumnWidths {
+  size_t maxKeyLen = 0;
+  size_t maxCommentLen = 0;
+  size_t labelWidth = 0;
+  size_t maxKeyValueLen = 0;
+};
+
+// Compute column widths based on g_prefEntries at runtime.
+ColumnWidths ComputeColumnWidths() {
+  ColumnWidths w;
+  for (const PrefEntry &rv : g_prefEntries) {
+    w.maxKeyLen = std::max(w.maxKeyLen, rv.valueName.size());
+    w.maxCommentLen = std::max(w.maxCommentLen, rv.comment.size());
+  }
+  // "  key (comment):" = 2 + maxKeyLen + 2 + maxCommentLen + 2
+  w.labelWidth = 2 + w.maxKeyLen + 2 + w.maxCommentLen + 2;
+  // "key=value" = maxKeyLen + 1 + MAX_VALUE_DISPLAY_WIDTH
+  w.maxKeyValueLen = w.maxKeyLen + 1 + MAX_VALUE_DISPLAY_WIDTH;
+  return w;
+}
+
+const ColumnWidths g_colWidths = ComputeColumnWidths();
+
+// Print one verbose change line with aligned columns.
+// hasBefore:  true when a prior state exists (file for save, registry for
+// restore). When hasBefore is false (save to new file only), shows just the
+// value. When hasBefore is true and values are equal, shows "==" instead of
+// "->". When hasBefore is true but beforeValue is empty, shows "(new)" for
+// that key.
+void PrintVerboseLine(const std::string &key, const std::string &comment,
+                      bool hasBefore, const std::string &beforeValue,
                       const std::string &afterValue) {
-  // Build the label: "  key (comment):"
-  std::string label = "  " + key + " (" + comment + "):";
-  // Pad to labelWidth so all value columns align
-  if (label.size() < labelWidth)
-    label += std::string(labelWidth - label.size(), ' ');
-  std::cout << label << " ";
-  
+  std::string label = std::format("  {} ({}):", key, comment);
+  std::cout << std::format("{:<{}} ", label, g_colWidths.labelWidth);
+
   if (hasBefore) {
-    // Right-align the before value
-    if (beforeValue.size() < beforeValueWidth)
-      std::cout << std::string(beforeValueWidth - beforeValue.size(), ' ');
-    std::cout << beforeValue << " ";
-    
-    // Arrow or equals
-    const std::string &arrow = (beforeValue == afterValue) ? "==" : "->";
-    std::cout << arrow << " ";
-    
-    // Left-align the after value
-    std::cout << afterValue;
-    if (afterValue.size() < afterValueWidth)
-      std::cout << std::string(afterValueWidth - afterValue.size(), ' ');
+    std::string displayBefore = beforeValue.empty() ? "(new)" : beforeValue;
+    const char *arrow = (beforeValue == afterValue) ? "==" : "->";
+    std::cout << std::format("{:>{}} {} {}", displayBefore,
+                             MAX_VALUE_DISPLAY_WIDTH, arrow, afterValue);
   } else {
-    // No before value - align appropriately
-    std::cout << std::string(beforeValueWidth, ' ') << " -> " << afterValue;
-    if (afterValue.size() < afterValueWidth)
-      std::cout << std::string(afterValueWidth - afterValue.size(), ' ');
+    // No prior state — just show the value being written
+    std::cout << std::format("{:>{}}", afterValue, MAX_VALUE_DISPLAY_WIDTH);
   }
   std::cout << "\n";
 }
 
-bool SavePreferences(const std::string &filepath,
-                     const std::string &sectionFilter = "") {
-  if (g_registryValues.empty()) {
-    std::cerr << "Error: No registry values configured to save.\n";
-    return false;
+// Write the standard file header
+void WriteFileHeader(std::ofstream &file, const char *verb,
+                     const std::string &sectionFilter) {
+  file << std::format("# This file was {} by {} {} on {}\n", verb, ProgName,
+                      Version, GetCurrentDateTime());
+  file << "# Generated automatically - do not edit unless you know what "
+          "you're doing\n";
+  file << std::format("# Registry path: HKEY_CURRENT_USER\\{}\n",
+                      REGISTRY_BASE_PATH);
+  if (!sectionFilter.empty()) {
+    file << std::format("# Section filter: [{}] only\n", sectionFilter);
   }
-
-  // Determine whether the file already exists and, if verbose, parse it now
-  // so we can show before/after values.
-  bool fileExisted = false;
-  std::map<std::string, std::map<std::string, std::string>> existingPrefs;
-
-  {
-    std::ifstream testFile(filepath);
-    if (testFile.good()) {
-      fileExisted = true;
-      testFile.close();
-      if (g_verbose || g_testMode)
-        existingPrefs = ParsePreferencesFile(filepath);
-
-      if (!g_testMode) {
-        std::cout << "File '" << filepath << "' already exists.\n";
-        std::cout << "Overwrite? (y/n): ";
-        std::string response;
-        std::getline(std::cin, response);
-        if (response.empty() || (ToLower(response)[0] != 'y')) {
-          std::cout << "Operation cancelled.\n";
-          return false;
-        }
-      }
-    }
-  }
-
-  // In test mode, we'll just build the data structure but not write the file
-  std::ofstream file;
-  if (!g_testMode) {
-    file.open(filepath);
-    if (!file.is_open()) {
-      std::cerr << "Error: Could not create file: " << filepath << std::endl;
-      return false;
-    }
-
-    file << "# This file was created by QColorPrefs " << GetVersionString() << " on " 
-         << GetCurrentDateTime() << "\n";
-    file << "# Generated automatically - do not edit unless you know what you're "
-            "doing\n";
-    file << "# Registry path: HKEY_CURRENT_USER\\" << REGISTRY_BASE_PATH << "\n";
-    if (!sectionFilter.empty()) {
-      file << "# Section filter: [" << sectionFilter << "] only\n";
-    }
-    file << "\n";
-  } else {
-    if (fileExisted) {
-      std::cout << "TEST MODE: Would overwrite existing file '" << filepath << "'\n";
-    } else {
-      std::cout << "TEST MODE: Would create new file '" << filepath << "'\n";
-    }
-    std::cout << "\n";
-  }
-
-  // Organize values by section with comments
-  std::map<std::string,
-           std::vector<std::tuple<std::string, std::string, std::string>>>
-      sections;
-
-  HKEY hKey;
-  if (!OpenRegistryKey(HKEY_CURRENT_USER, REGISTRY_BASE_PATH, KEY_READ,
-                       hKey)) {
-    file.close();
-    return false;
-  }
-
-  int skippedCount = 0;
-  for (const auto &regValue : g_registryValues) {
-    // Skip if section filter is specified and doesn't match
-    if (!sectionFilter.empty() && regValue.section != sectionFilter) {
-      skippedCount++;
-      continue;
-    }
-
-    std::string value;
-    if (ReadRegistryValue(hKey, regValue.valueName, value)) {
-      sections[regValue.section].push_back(
-          std::make_tuple(regValue.valueName, value, regValue.comment));
-    } else {
-      if (g_verbose) {
-        std::cerr << "Warning: Skipping " << regValue.valueName
-                  << " (could not read)\n";
-      }
-    }
-  }
-
-  CloseRegistryKey(hKey);
-
-  // Write sections to file
-  int totalSaved = 0;
-  int changedCount = 0;
-  int unchangedCount = 0;
-
-  for (const auto &section : sections) {
-    if (!g_testMode) {
-      file << "[" << section.first << "]\n";
-    }
-
-    // Pre-compute widths for this section only (for verbose/test output)
-    size_t labelWidth = 0;
-    size_t beforeValueWidth = 0;
-    size_t afterValueWidth = 0;
-    
-    if (g_verbose || g_testMode) {
-      for (const auto &item : section.second) {
-        const std::string &key = std::get<0>(item);
-        const std::string &value = std::get<1>(item);
-        const std::string &comment = std::get<2>(item);
-        
-        // Compute label width: "  key (comment):" length
-        size_t w = 2 + key.size() + 2 + comment.size() + 2;
-        if (w > labelWidth)
-          labelWidth = w;
-        
-        // Compute after value width
-        if (value.size() > afterValueWidth)
-          afterValueWidth = value.size();
-        
-        // Compute before value width (if file existed)
-        if (fileExisted) {
-          auto secIt = existingPrefs.find(section.first);
-          if (secIt != existingPrefs.end()) {
-            auto valIt = secIt->second.find(key);
-            if (valIt != secIt->second.end()) {
-              if (valIt->second.size() > beforeValueWidth)
-                beforeValueWidth = valIt->second.size();
-            }
-          }
-        }
-      }
-    }
-
-    // Find the maximum key=value length for alignment of inline comments
-    size_t maxKeyValueLen = 0;
-    for (const auto &item : section.second) {
-      size_t keyValueLen = std::get<0>(item).length() + 1 +
-                           std::get<1>(item).length(); // key + '=' + value
-      if (keyValueLen > maxKeyValueLen) {
-        maxKeyValueLen = keyValueLen;
-      }
-    }
-
-    // Write each key=value pair with aligned comments
-    for (const auto &item : section.second) {
-      std::string key = std::get<0>(item);
-      std::string value = std::get<1>(item);
-      std::string comment = std::get<2>(item);
-
-      if (!g_testMode) {
-        file << key << "=" << value;
-
-        // Add inline comment if available, with padding for alignment
-        if (!comment.empty()) {
-          size_t currentLen = key.length() + 1 + value.length();
-          size_t padding =
-              maxKeyValueLen - currentLen + 1; // +1 for at least one space
-          file << std::string(padding, ' ') << "# " << comment;
-        }
-        file << "\n";
-      }
-      totalSaved++;
-
-      // Verbose or test mode: show before/after for this entry
-      if (g_verbose || g_testMode) {
-        std::string beforeValue;
-        bool hasBefore = false;
-        if (fileExisted) {
-          hasBefore = true;
-          auto secIt = existingPrefs.find(section.first);
-          if (secIt != existingPrefs.end()) {
-            auto valIt = secIt->second.find(key);
-            if (valIt != secIt->second.end())
-              beforeValue = valIt->second;
-          }
-        }
-        
-        // Track if value changed
-        if (hasBefore && beforeValue == value) {
-          unchangedCount++;
-        } else {
-          changedCount++;
-        }
-        
-        PrintVerboseLine(labelWidth, beforeValueWidth, afterValueWidth, key,
-                         comment, hasBefore, beforeValue, value);
-      }
-    }
-    if (!g_testMode) {
-      file << "\n";
-    }
-    
-    // Blank line between sections in verbose/test mode
-    if ((g_verbose || g_testMode) && !section.second.empty()) {
-      std::cout << std::endl;
-    }
-  }
-
-  if (!g_testMode) {
-    file.close();
-    std::cout << "Successfully saved " << totalSaved
-              << " preference(s) to: " << filepath;
-  } else {
-    if (fileExisted) {
-      std::cout << "TEST MODE: Would change " << changedCount
-                << " value(s) in: " << filepath;
-      if (unchangedCount > 0) {
-        std::cout << " (" << unchangedCount << " unchanged)";
-      }
-    } else {
-      std::cout << "TEST MODE: Would create new file with " << totalSaved
-                << " value(s): " << filepath;
-    }
-  }
-  if (skippedCount > 0 && (g_verbose || g_testMode)) {
-    std::cout << ", " << skippedCount << " skipped due to section filter";
-  }
-  std::cout << std::endl;
-  return true;
+  file << "\n";
 }
 
-bool UpdatePreferences(const std::string &filepath,
-                       const std::string &sectionFilter = "") {
-  // Check if file exists
-  std::ifstream testFile(filepath);
-  if (!testFile.good()) {
-    std::cerr << "Error: File '" << filepath << "' does not exist.\n";
-    std::cerr << "Update operations require an existing file to modify.\n";
-    std::cerr << "Use -sall, -ssch, or -swav to create a new file.\n";
-    return false;
+// Write one key=value line with aligned comment.
+void WriteKeyValue(std::ofstream &file, const std::string &key,
+                   const std::string &value, const std::string &comment) {
+  if (comment.empty()) {
+    file << std::format("{}={}\n", key, value);
+  } else {
+    size_t kvLen = key.size() + 1 + value.size();
+    size_t pad = (kvLen < g_colWidths.maxKeyValueLen)
+                     ? g_colWidths.maxKeyValueLen - kvLen + 1
+                     : 1;
+    file << std::format("{}={}{:>{}}# {}\n", key, value, "", pad, comment);
   }
-  testFile.close();
+}
 
-  // Parse the existing file
-  std::map<std::string, std::map<std::string, std::string>> existingPrefs =
-      ParsePreferencesFile(filepath);
+// Derive section filter string from the operation enum
+std::string GetSectionFilter(const CmdArgs &args) {
+  switch (args.op & OpSecAll) {
+  case OpSecSch:
+    return SCHSEC;
+  case OpSecWav:
+    return WAVSEC;
+  }
+  return ""; // no section filter
+}
 
-  if (existingPrefs.empty()) {
-    std::cerr << "Error: Could not parse existing file or file is empty.\n";
-    return false;
+// Get human-readable description of what the operation will do
+std::string GetOperationDescription(const CmdArgs &args) {
+  switch (args.op) {
+  case OpActSave | OpSecAll:
+    return std::format("Save all settings from registry to {}", args.filepath);
+  case OpActSave | OpSecSch:
+    return std::format("Save only schematic settings from registry to {}",
+                       args.filepath);
+  case OpActSave | OpSecWav:
+    return std::format("Save only waveform settings from registry to {}",
+                       args.filepath);
+  case OpActUpdate | OpSecAll:
+    return std::format(
+        "Update all existing entries in {} with current registry values",
+        args.filepath);
+  case OpActUpdate | OpSecSch:
+    return std::format(
+        "Update only schematic entries in {} with current registry values",
+        args.filepath);
+  case OpActUpdate | OpSecWav:
+    return std::format(
+        "Update only waveform entries in {} with current registry values",
+        args.filepath);
+  case OpActRestore | OpSecAll:
+    return std::format("Restore all settings from {} to registry",
+                       args.filepath);
+  case OpActRestore | OpSecSch:
+    return std::format("Restore only schematic settings from {} to registry",
+                       args.filepath);
+  case OpActRestore | OpSecWav:
+    return std::format("Restore only waveform settings from {} to registry",
+                       args.filepath);
   }
 
-  // Read current registry values
-  HKEY hKey;
-  if (!OpenRegistryKey(HKEY_CURRENT_USER, REGISTRY_BASE_PATH, KEY_READ,
-                       hKey)) {
-    return false;
-  }
+  // should not get here
+  assert(0 && "Invalid operation enum value");
+  return "Unknown operation";
+}
 
-  // Build updated sections - only include keys that exist in the file
-  std::map<std::string,
-           std::vector<std::tuple<std::string, std::string, std::string>>>
-      sections;
-  
-  int updatedCount = 0;
-  int unchangedCount = 0;
-  int skippedCount = 0;
-  int notInFileCount = 0;
+// ---------------------------------------------------------------------------
+// AnalyzeOperation
+// Performs a read-only pre-pass over prefData to count what would change,
+// what would be skipped, etc.  Also prints verbose per-value lines if
+// args.verbose is set.  Returns a PrePassResult for use by
+// PrintPrePassSummary() and the confirmation prompt.
+// ---------------------------------------------------------------------------
+PrePassResult AnalyzeOperation(const CmdArgs &args, const PrefData &prefData) {
+  PrePassResult result;
+  const std::string sectionFilter = GetSectionFilter(args);
+  const Operation action = args.op & OpActMask;
+  const bool fileExists = fs::exists(args.filepath);
 
-  for (const auto &regValue : g_registryValues) {
-    // Skip if section filter is specified and doesn't match
-    if (!sectionFilter.empty() && regValue.section != sectionFilter) {
-      skippedCount++;
+  for (const std::string &secName : GetSectionOrder()) {
+
+    // Section excluded by filter: count skipped entries and move on.
+    // Count all canonical entries for this section; every one of them is
+    // excluded regardless of its registry/file presence state.
+    if (!sectionFilter.empty() && secName != sectionFilter) {
+      result.skippedCount +=
+          static_cast<int>(GetSectionEntries(secName).size());
       continue;
     }
 
-    // Check if this key exists in the file
-    auto sectionIt = existingPrefs.find(regValue.section);
-    if (sectionIt == existingPrefs.end()) {
-      notInFileCount++;
-      continue;
-    }
+    PrefData::const_iterator secIter = prefData.find(secName);
+    if (secIter == prefData.end()) continue;
 
-    auto valueIt = sectionIt->second.find(regValue.valueName);
-    if (valueIt == sectionIt->second.end()) {
-      notInFileCount++;
-      continue;
-    }
+    bool any = false;
+    for (const PrefEntry *rv : GetSectionEntries(secName)) {
+      std::map<std::string, PrefValue>::const_iterator keyIter =
+          secIter->second.find(rv->valueName);
+      if (keyIter == secIter->second.end()) continue;
+      const PrefValue &pv = keyIter->second;
 
-    // Key exists in file - read current registry value
-    std::string currentValue;
-    if (ReadRegistryValue(hKey, regValue.valueName, currentValue)) {
-      sections[regValue.section].push_back(
-          std::make_tuple(regValue.valueName, currentValue, regValue.comment));
-      
-      // Track if value changed
-      if (currentValue != valueIt->second) {
-        updatedCount++;
-      } else {
-        unchangedCount++;
+      if (action == OpActSave) {
+        if (!pv.inRegistry) continue;
+        result.totalCount++;
+        if (fileExists && pv.inFile) {
+          if (pv.fileValue == pv.registryValue) result.unchangedCount++;
+          else result.changedCount++;
+        } else {
+          result.changedCount++;
+        }
+        if (args.verbose)
+          PrintVerboseLine(rv->valueName, pv.comment, fileExists, pv.fileValue,
+                           pv.registryValue);
+
+      } else if (action == OpActUpdate) {
+        if (!pv.inFile) {
+          if (pv.inRegistry) result.notFoundCount++;
+          continue;
+        }
+        if (pv.fileValue == pv.registryValue) result.unchangedCount++;
+        else result.changedCount++;
+        if (args.verbose)
+          PrintVerboseLine(rv->valueName, pv.comment, true, pv.fileValue,
+                           pv.registryValue);
+
+      } else if (action == OpActRestore) {
+        if (!pv.inFile) {
+          result.notFoundCount++;
+          continue;
+        }
+        if (!pv.inRegistry || pv.registryValue != pv.fileValue)
+          result.changedCount++;
+        else result.unchangedCount++;
+        if (args.verbose)
+          PrintVerboseLine(rv->valueName, pv.comment, true, pv.registryValue,
+                           pv.fileValue);
       }
+      any = true;
+    }
+    if (args.verbose && any) std::cout << "\n";
+  }
+  return result;
+}
+
+// ---------------------------------------------------------------------------
+// PrintPrePassSummary
+// Reports what the operation will do (or would do in test mode).
+// ---------------------------------------------------------------------------
+void PrintPrePassSummary(const CmdArgs &args, const PrePassResult &result) {
+  const Operation action = args.op & OpActMask;
+  const bool fileExists = fs::exists(args.filepath);
+  const std::string prefix = args.testMode ? "TEST MODE: Would" : "Will";
+
+  if (action == OpActSave) {
+    if (fileExists) {
+      std::cout << std::format("{} change {} value(s) in: {}", prefix,
+                               result.changedCount, args.filepath);
+      if (result.unchangedCount > 0)
+        std::cout << std::format(" ({} unchanged)", result.unchangedCount);
     } else {
-      if (g_verbose) {
-        std::cerr << "Warning: Could not read registry value: "
-                  << regValue.valueName << "\n";
-      }
-    }
-  }
-
-  CloseRegistryKey(hKey);
-
-  if (sections.empty()) {
-    std::cerr << "Error: No matching keys found in file to update.\n";
-    return false;
-  }
-
-  // Write updated file (or show what would be written in test mode)
-  std::ofstream file;
-  if (!g_testMode) {
-    file.open(filepath);
-    if (!file.is_open()) {
-      std::cerr << "Error: Could not open file for writing: " << filepath
-                << std::endl;
-      return false;
+      std::cout << std::format("{} create new file with {} value(s): {}",
+                               prefix, result.totalCount, args.filepath);
     }
 
-    file << "# This file was modified by QColorPrefs " << GetVersionString() << " on " 
-         << GetCurrentDateTime() << "\n";
-    file << "# Generated automatically - do not edit unless you know what you're "
-            "doing\n";
-    file << "# Registry path: HKEY_CURRENT_USER\\" << REGISTRY_BASE_PATH << "\n";
-    if (!sectionFilter.empty()) {
-      file << "# Section filter: [" << sectionFilter << "] only\n";
-    }
-    file << "\n";
-  } else {
-    std::cout << "TEST MODE: Would update file '" << filepath << "'\n";
-    std::cout << "\n";
-  }
-
-  // Pre-compute widths per section for verbose output
-  for (const auto &section : sections) {
-    if (!g_testMode) {
-      file << "[" << section.first << "]\n";
-    }
-
-    size_t labelWidth = 0;
-    size_t beforeValueWidth = 0;
-    size_t afterValueWidth = 0;
-
-    if (g_verbose || g_testMode) {
-      for (const auto &item : section.second) {
-        const std::string &key = std::get<0>(item);
-        const std::string &value = std::get<1>(item);
-        const std::string &comment = std::get<2>(item);
-
-        // Compute label width
-        size_t w = 2 + key.size() + 2 + comment.size() + 2;
-        if (w > labelWidth)
-          labelWidth = w;
-
-        // After value width (current registry value)
-        if (value.size() > afterValueWidth)
-          afterValueWidth = value.size();
-
-        // Before value width (old file value)
-        auto secIt = existingPrefs.find(section.first);
-        if (secIt != existingPrefs.end()) {
-          auto valIt = secIt->second.find(key);
-          if (valIt != secIt->second.end()) {
-            if (valIt->second.size() > beforeValueWidth)
-              beforeValueWidth = valIt->second.size();
-          }
-        }
-      }
-    }
-
-    // Find max key=value length for comment alignment
-    size_t maxKeyValueLen = 0;
-    for (const auto &item : section.second) {
-      size_t keyValueLen = std::get<0>(item).length() + 1 +
-                           std::get<1>(item).length();
-      if (keyValueLen > maxKeyValueLen) {
-        maxKeyValueLen = keyValueLen;
-      }
-    }
-
-    // Write each key=value pair
-    for (const auto &item : section.second) {
-      std::string key = std::get<0>(item);
-      std::string value = std::get<1>(item);
-      std::string comment = std::get<2>(item);
-
-      if (!g_testMode) {
-        file << key << "=" << value;
-
-        // Add inline comment if available
-        if (!comment.empty()) {
-          size_t currentLen = key.length() + 1 + value.length();
-          size_t padding = maxKeyValueLen - currentLen + 1;
-          file << std::string(padding, ' ') << "# " << comment;
-        }
-        file << "\n";
-      }
-
-      // Verbose or test mode output
-      if (g_verbose || g_testMode) {
-        std::string beforeValue;
-        bool hasBefore = false;
-        auto secIt = existingPrefs.find(section.first);
-        if (secIt != existingPrefs.end()) {
-          auto valIt = secIt->second.find(key);
-          if (valIt != secIt->second.end()) {
-            beforeValue = valIt->second;
-            hasBefore = true;
-          }
-        }
-        PrintVerboseLine(labelWidth, beforeValueWidth, afterValueWidth, key,
-                         comment, hasBefore, beforeValue, value);
-      }
-    }
-    if (!g_testMode) {
-      file << "\n";
-    }
-    
-    // Blank line after section in verbose/test mode
-    if ((g_verbose || g_testMode) && !section.second.empty()) {
-      std::cout << std::endl;
-    }
-  }
-
-  if (!g_testMode) {
-    file.close();
-    std::cout << "Update complete: " << updatedCount << " changed, "
-              << unchangedCount << " unchanged";
-  } else {
-    std::cout << "TEST MODE: Would change " << updatedCount << " value(s)";
-    if (unchangedCount > 0 || notInFileCount > 0) {
+  } else if (action == OpActUpdate) {
+    std::cout << std::format("{} change {} value(s)", prefix,
+                             result.changedCount);
+    if (result.unchangedCount > 0 || result.notFoundCount > 0) {
       std::cout << " (";
-      if (unchangedCount > 0) {
-        std::cout << unchangedCount << " unchanged";
-        if (notInFileCount > 0) {
-          std::cout << ", ";
-        }
+      if (result.unchangedCount > 0) {
+        std::cout << std::format("{} unchanged", result.unchangedCount);
+        if (result.notFoundCount > 0) std::cout << ", ";
       }
-      if (notInFileCount > 0) {
-        std::cout << notInFileCount << " not in original file";
-      }
+      if (result.notFoundCount > 0)
+        std::cout << std::format("{} not in file", result.notFoundCount);
       std::cout << ")";
     }
-  }
-  if (skippedCount > 0 && (g_verbose || g_testMode)) {
-    std::cout << ", " << skippedCount << " skipped (section filter)";
-  }
-  std::cout << std::endl;
 
-  return true;
+  } else if (action == OpActRestore) {
+    std::cout << std::format("{} change {} registry value(s)", prefix,
+                             result.changedCount);
+    if (result.unchangedCount > 0)
+      std::cout << std::format(" ({} unchanged)", result.unchangedCount);
+    if (result.notFoundCount > 0 && args.verbose)
+      std::cout << std::format(", {} not found in file", result.notFoundCount);
+  }
+
+  if (result.skippedCount > 0)
+    std::cout << std::format(", {} skipped (section filter)",
+                             result.skippedCount);
+  std::cout << "\n";
 }
 
-bool RestorePreferences(const std::string &filepath,
-                        const std::string &sectionFilter = "") {
-  std::ifstream file(filepath);
+// ---------------------------------------------------------------------------
+// ConfirmOperation
+// Prompts the user to confirm before making changes.  Returns true if the
+// user confirms, false if they cancel.
+// ---------------------------------------------------------------------------
+bool ConfirmOperation(const CmdArgs &args) {
+  const Operation action = args.op & OpActMask;
+  const std::string sectionFilter = GetSectionFilter(args);
+
+  if (action == OpActRestore) {
+    std::cout << "This will write values to the Windows registry.\n";
+    if (!sectionFilter.empty())
+      std::cout << std::format("Only restoring [{}] section.\n", sectionFilter);
+    std::cout << "If QSpice is open, please close it before continuing.\n";
+  } else if (action == OpActSave && fs::exists(args.filepath)) {
+    std::cout << std::format("File '{}' already exists.\n", args.filepath);
+  }
+
+  std::cout << std::format("{}? (y/N): ", GetOperationDescription(args));
+  std::string response;
+  std::getline(std::cin, response);
+  return !response.empty() && ToLower(response)[0] == 'y';
+}
+
+// ---------------------------------------------------------------------------
+// SavePreferences  (write pass only)
+// ---------------------------------------------------------------------------
+bool SavePreferences(const CmdArgs &args, const PrefData &prefData) {
+  const std::string sectionFilter = GetSectionFilter(args);
+
+  std::ofstream file(args.filepath);
   if (!file.is_open()) {
-    std::cerr << "Error: Could not open file: " << filepath << std::endl;
+    std::cerr << std::format("Error: Could not create file: {}\n",
+                             args.filepath);
     return false;
   }
+  WriteFileHeader(file, "created", sectionFilter);
 
-  // Prompt for confirmation before modifying registry (skip in test mode)
-  if (!g_testMode) {
-    std::cout << "This will write values from '" << filepath
-              << "' to the Windows registry.\n";
-    if (!sectionFilter.empty()) {
-      std::cout << "Only restoring [" << sectionFilter << "] section.\n";
+  int totalSaved = 0;
+  for (const std::string &secName : GetSectionOrder()) {
+    if (!sectionFilter.empty() && secName != sectionFilter) continue;
+    PrefData::const_iterator secIter = prefData.find(secName);
+    if (secIter == prefData.end()) continue;
+
+    bool any = false;
+    for (const PrefEntry *rv : GetSectionEntries(secName)) {
+      std::map<std::string, PrefValue>::const_iterator keyIter =
+          secIter->second.find(rv->valueName);
+      if (keyIter == secIter->second.end()) continue;
+      if (!keyIter->second.inRegistry) continue;
+      if (!any) file << std::format("[{}]\n", secName); // lazy header
+      WriteKeyValue(file, rv->valueName, keyIter->second.registryValue,
+                    rv->comment);
+      any = true;
+      totalSaved++;
     }
-    std::cout << "If QSpice is open, please close it before continuing.\n";
-
-    std::cout << "Continue? (y/n): ";
-    std::string response;
-    std::getline(std::cin, response);
-
-    if (response.empty() || (ToLower(response)[0] != 'y')) {
-      file.close();
-      std::cout << "Operation cancelled.\n";
-      return false;
-    }
-  } else {
-    std::cout << "TEST MODE: Would write values from '" << filepath
-              << "' to Windows registry\n";
-    if (!sectionFilter.empty()) {
-      std::cout << "TEST MODE: Would restore only [" << sectionFilter << "] section\n";
-    }
-    std::cout << "\n";
-  }
-
-  std::string currentSection;
-  std::map<std::string, std::map<std::string, std::string>> preferences;
-  std::string line;
-  int lineNumber = 0;
-
-  // Parse the preferences file
-  while (std::getline(file, line)) {
-    lineNumber++;
-
-    // Trim whitespace
-    line.erase(0, line.find_first_not_of(" \t\r\n"));
-    line.erase(line.find_last_not_of(" \t\r\n") + 1);
-
-    // Skip empty lines and comments
-    if (line.empty() || line[0] == '#') {
-      continue;
-    }
-
-    // Check for section header
-    if (line[0] == '[') {
-      size_t endBracket = line.find(']');
-      if (endBracket == std::string::npos) {
-        std::cerr << "Warning: Malformed section header at line " << lineNumber
-                  << std::endl;
-        continue;
-      }
-      currentSection = line.substr(1, endBracket - 1);
-      continue;
-    }
-
-    // Parse key=value (only if we have a current section)
-    if (currentSection.empty()) {
-      std::cerr << "Warning: Key-value pair outside of section at line "
-                << lineNumber << std::endl;
-      continue;
-    }
-
-    size_t equalsPos = line.find('=');
-    if (equalsPos == std::string::npos) {
-      std::cerr << "Warning: Malformed key-value pair at line " << lineNumber
-                << std::endl;
-      continue;
-    }
-
-    std::string key = line.substr(0, equalsPos);
-    std::string value = line.substr(equalsPos + 1);
-
-    // Strip inline comment (anything after #) from value
-    size_t commentPos = value.find('#');
-    if (commentPos != std::string::npos) {
-      value = value.substr(0, commentPos);
-    }
-
-    // Trim key and value
-    key.erase(0, key.find_first_not_of(" \t"));
-    key.erase(key.find_last_not_of(" \t") + 1);
-    value.erase(0, value.find_first_not_of(" \t"));
-    value.erase(value.find_last_not_of(" \t") + 1);
-
-    preferences[currentSection][key] = value;
+    if (any) file << "\n";
   }
 
   file.close();
+  std::cout << std::format("Saved {} preference(s) to: {}\n", totalSaved,
+                           args.filepath);
+  return true;
+}
 
-  if (preferences.empty()) {
-    std::cerr << "Error: No valid preferences found in file.\n";
+// ---------------------------------------------------------------------------
+// UpdatePreferences  (write pass only)
+// ---------------------------------------------------------------------------
+bool UpdatePreferences(const CmdArgs &args, const PrefData &prefData) {
+  const std::string sectionFilter = GetSectionFilter(args);
+
+  std::ofstream file(args.filepath);
+  if (!file.is_open()) {
+    std::cerr << std::format("Error: Could not open file for writing: {}\n",
+                             args.filepath);
     return false;
   }
+  WriteFileHeader(file, "modified", sectionFilter);
 
-  // Write values to registry.
-  // Open with KEY_READ|KEY_WRITE so we can read the current value before
-  // writing when verbose mode is active.
-  HKEY hKey;
-  if (!OpenRegistryKey(HKEY_CURRENT_USER, REGISTRY_BASE_PATH,
-                       KEY_READ | KEY_WRITE, hKey)) {
-    return false;
+  int updatedCount = 0;
+  for (const std::string &secName : GetSectionOrder()) {
+    if (!sectionFilter.empty() && secName != sectionFilter) continue;
+    PrefData::const_iterator secIter = prefData.find(secName);
+    if (secIter == prefData.end()) continue;
+
+    bool any = false;
+    for (const PrefEntry *rv : GetSectionEntries(secName)) {
+      std::map<std::string, PrefValue>::const_iterator keyIter =
+          secIter->second.find(rv->valueName);
+      if (keyIter == secIter->second.end()) continue;
+      if (!keyIter->second.inFile) continue;
+      if (!any) file << std::format("[{}]\n", secName); // lazy header
+      WriteKeyValue(file, rv->valueName, keyIter->second.registryValue,
+                    rv->comment);
+      any = true;
+      updatedCount++;
+    }
+    if (any) file << "\n";
   }
 
-  int successCount = 0;
-  int failCount = 0;
-  int notFoundCount = 0;
-  int skippedCount = 0;
-  int changedCount = 0;
-  int unchangedCount = 0;
+  file.close();
+  std::cout << std::format("Updated {} preference(s) in: {}\n", updatedCount,
+                           args.filepath);
+  return true;
+}
 
-  // Group registry values by section for per-section alignment
-  std::map<std::string, std::vector<const RegistryValue*>> valuesBySection;
-  for (const auto &rv : g_registryValues) {
-    if (!sectionFilter.empty() && rv.section != sectionFilter) {
-      skippedCount++;
-      continue;
-    }
-    valuesBySection[rv.section].push_back(&rv);
+// ---------------------------------------------------------------------------
+// RestorePreferences  (write pass only)
+// ---------------------------------------------------------------------------
+bool RestorePreferences(const CmdArgs &args, const PrefData &prefData) {
+  const std::string sectionFilter = GetSectionFilter(args);
+
+  RegKeyGuard guard;
+  {
+    HKEY hKey;
+    if (!OpenRegistryKey(HKEY_CURRENT_USER, REGISTRY_BASE_PATH,
+                         KEY_READ | KEY_WRITE, hKey))
+      return false;
+    guard.key = hKey;
   }
 
-  // Process each section separately for proper alignment
-  for (const auto &sectionPair : valuesBySection) {
-    const std::string &currentSection = sectionPair.first;
-    const std::vector<const RegistryValue*> &sectionValues = sectionPair.second;
+  int successCount = 0, failCount = 0;
+  for (const std::string &secName : GetSectionOrder()) {
+    if (!sectionFilter.empty() && secName != sectionFilter) continue;
+    PrefData::const_iterator secIter = prefData.find(secName);
+    if (secIter == prefData.end()) continue;
 
-    // Pre-compute widths for this section only (for verbose/test output)
-    size_t labelWidth = 0;
-    size_t beforeValueWidth = 0;
-    size_t afterValueWidth = 0;
-    
-    if (g_verbose || g_testMode) {
-      for (const auto *rv : sectionValues) {
-        // Compute label width: "  key (comment):" length
-        size_t w = 2 + rv->valueName.size() + 2 + rv->comment.size() + 2;
-        if (w > labelWidth)
-          labelWidth = w;
-        
-        // Look for the value in the preferences to get after value width
-        auto sectionIt = preferences.find(rv->section);
-        if (sectionIt != preferences.end()) {
-          auto valueIt = sectionIt->second.find(rv->valueName);
-          if (valueIt != sectionIt->second.end()) {
-            if (valueIt->second.size() > afterValueWidth)
-              afterValueWidth = valueIt->second.size();
-          }
-        }
-        
-        // Get current registry value for before value width
-        std::string currentValue;
-        if (ReadRegistryValue(hKey, rv->valueName, currentValue)) {
-          if (currentValue.size() > beforeValueWidth)
-            beforeValueWidth = currentValue.size();
-        }
-      }
-    }
+    for (const PrefEntry *rv : GetSectionEntries(secName)) {
+      std::map<std::string, PrefValue>::const_iterator keyIter =
+          secIter->second.find(rv->valueName);
+      if (keyIter == secIter->second.end()) continue;
+      if (!keyIter->second.inFile) continue;
 
-    // Process all values in this section
-    for (const auto *regValue : sectionValues) {
-      // Look for the value in the appropriate section
-      auto sectionIt = preferences.find(regValue->section);
-      if (sectionIt == preferences.end()) {
-        if (g_verbose) {
-          std::cerr << "Warning: Key '" << regValue->valueName << "' - Section '"
-                    << regValue->section << "' not found in file\n";
-        }
-        notFoundCount++;
-        continue;
-      }
-
-      auto valueIt = sectionIt->second.find(regValue->valueName);
-      if (valueIt == sectionIt->second.end()) {
-        if (g_verbose) {
-          std::cerr << "Warning: Key '" << regValue->valueName
-                    << "' not found in section '" << regValue->section << "'\n";
-        }
-        notFoundCount++;
-        continue;
-      }
-
-      // In verbose or test mode, read the current registry value before writing so we
-      // can display the before/after change.
-      std::string beforeValue;
-      bool hasBefore = false;
-      if (g_verbose || g_testMode) {
-        hasBefore = ReadRegistryValue(hKey, regValue->valueName, beforeValue);
-        // Failure to read is non-fatal here; hasBefore stays false.
-      }
-
-      if (!g_testMode) {
-        if (WriteRegistryValue(hKey, regValue->valueName, valueIt->second)) {
-          successCount++;
-          
-          // Track if value actually changed
-          if (hasBefore && beforeValue == valueIt->second) {
-            unchangedCount++;
-          } else {
-            changedCount++;
-          }
-          
-          if (g_verbose) {
-            PrintVerboseLine(labelWidth, beforeValueWidth, afterValueWidth,
-                             regValue->valueName, regValue->comment, hasBefore,
-                             beforeValue, valueIt->second);
-          }
-        } else {
-          failCount++;
-        }
-      } else {
-        // Test mode - just show what would happen
+      if (WriteRegistryValue(guard.key, rv->valueName,
+                             keyIter->second.fileValue))
         successCount++;
-        
-        // Track if value would change
-        if (hasBefore && beforeValue == valueIt->second) {
-          unchangedCount++;
-        } else {
-          changedCount++;
-        }
-        
-        PrintVerboseLine(labelWidth, beforeValueWidth, afterValueWidth,
-                         regValue->valueName, regValue->comment, hasBefore,
-                         beforeValue, valueIt->second);
-      }
-    }
-    
-    // Add blank line between sections in verbose/test mode
-    if ((g_verbose || g_testMode) && !sectionValues.empty()) {
-      std::cout << std::endl;
+      else failCount++;
     }
   }
 
-  CloseRegistryKey(hKey);
-
-  if (!g_testMode) {
-    std::cout << "Restore complete: " << successCount << " succeeded";
-  } else {
-    std::cout << "TEST MODE: Would change " << changedCount << " registry value(s)";
-    if (unchangedCount > 0) {
-      std::cout << " (" << unchangedCount << " unchanged)";
-    }
-  }
-  if (skippedCount > 0) {
-    std::cout << ", " << skippedCount << " skipped (different section)";
-  }
-  if (notFoundCount > 0) {
-    std::cout << ", " << notFoundCount << " not found in file";
-  }
-  if (failCount > 0 && !g_testMode) {
-    std::cout << ", " << failCount << " failed";
-  }
-  std::cout << std::endl;
+  std::cout << std::format("Restored {} value(s) to registry", successCount);
+  if (failCount > 0) std::cout << std::format(", {} failed", failCount);
+  std::cout << "\n";
 
   return failCount == 0;
 }
 
-int main(int argc, char *argv[]) {
-  // show version ID
-  std::cout << ProgName << " " << VersionID << "\n\n";
+// ---------------------------------------------------------------------------
+// ParseArgs
+// ---------------------------------------------------------------------------
+bool ParseArgs(int argc, char *argv[], CmdArgs &args) {
+  // Action map for converting strings to Operation enum
+  static const std::map<std::string, Operation> actionMap = {
+      {"-sall", OpActSave | OpSecAll},    {"-ssch", OpActSave | OpSecSch},
+      {"-swav", OpActSave | OpSecWav},    {"-uall", OpActUpdate | OpSecAll},
+      {"-usch", OpActUpdate | OpSecSch},  {"-uwav", OpActUpdate | OpSecWav},
+      {"-rall", OpActRestore | OpSecAll}, {"-rsch", OpActRestore | OpSecSch},
+      {"-rwav", OpActRestore | OpSecWav},
+  };
 
-  // Check command line arguments
-  if (argc < 3) {
-    std::cerr << "Error: Invalid number of arguments.\n\n";
-    ShowUsage();
-    return 1;
-  }
+  std::string action;
 
-  // Parse options and filepath
-  std::string option;
-  std::string filepath;
-
-  // Check for -v and -t flags in any position
-  for (int i = 1; i < argc; i++) {
+  int i = 0;
+  while (++i < argc) {
     std::string arg = ToLower(argv[i]);
+
     if (arg == "-v") {
-      g_verbose = true;
-    } else if (arg == "-t") {
-      g_testMode = true;
-    } else if (option.empty() && arg[0] == '-') {
-      option = arg;
-    } else if (filepath.empty()) {
-      filepath = argv[i];
+      if (args.verbose) {
+        std::cerr << "Error: -v (verbose) option specified multiple times.\n\n";
+        return false;
+      }
+      args.verbose = true;
+      continue;
     }
+
+    if (arg == "-s") {
+      if (args.silentMode) {
+        std::cerr
+            << "Error: -s (silent mode) option specified multiple times.\n\n";
+        return false;
+      }
+      args.silentMode = true;
+      continue;
+    }
+
+    if (arg == "-t") {
+      if (args.testMode) {
+        std::cerr
+            << "Error: -t (test mode) option specified multiple times.\n\n";
+        return false;
+      }
+      args.testMode = true;
+      continue;
+    }
+
+    if (arg.starts_with('-')) {
+      if (!action.empty()) {
+        std::cerr << std::format(
+            "Error: Too many actions specified: '{}' and '{}'.\n\n", action,
+            arg);
+        return false;
+      }
+      action = arg;
+      continue;
+    }
+
+    if (!args.filepath.empty()) {
+      std::cerr << std::format(
+          "Error: Too many files specified: '{}' and '{}'.\n\n", args.filepath,
+          argv[i]);
+      return false;
+    }
+    args.filepath = argv[i]; // use raw argv for filepath to preserve case
   }
 
-  if (option.empty() || filepath.empty()) {
-    std::cerr << "Error: Missing required option or filepath.\n\n";
-    ShowUsage();
+  if (action.empty()) {
+    std::cerr << "Error: Missing required action argument.\n\n";
+    return false;
+  }
+
+  if (args.filepath.empty()) {
+    std::cerr << "Error: Missing required filepath argument.\n\n";
+    return false;
+  }
+  NormalizeFilePath(args.filepath);
+
+  // Convert action string to operation
+  std::map<std::string, Operation>::const_iterator actIter =
+      actionMap.find(action);
+  if (actIter == actionMap.end()) {
+    std::cerr << std::format("Error: Invalid option '{}'.\n\n", action);
+    return false;
+  }
+  args.op = actIter->second;
+
+  return true;
+}
+
+// ---------------------------------------------------------------------------
+// main
+// ---------------------------------------------------------------------------
+int main(int argc, char *argv[]) {
+  std::cout << std::format("\n{} {} [{}]   " DBGMSG "\n\n", ProgName, Version,
+                           BuildTimestamp);
+
+  CmdArgs args;
+  PrefData prefData;
+
+  if (!ParseArgs(argc, argv, args)) {
+    ShowSyntax();
     return 1;
   }
 
-  filepath = NormalizeFilePath(filepath);
+  std::cout << std::format("SELECTED OPERATION:  {}\n\n",
+                           GetOperationDescription(args));
 
-  bool isSaveAll = (option == "-sall");
-  bool isSaveSch = (option == "-ssch");
-  bool isSaveWav = (option == "-swav");
-  bool isUpdateAll = (option == "-uall");
-  bool isUpdateSch = (option == "-usch");
-  bool isUpdateWav = (option == "-uwav");
-  bool isRestoreAll = (option == "-rall");
-  bool isRestoreWav = (option == "-rwav");
-  bool isRestoreSch = (option == "-rsch");
+  if (args.testMode)
+    std::cout << "TEST MODE enabled (no changes will be made).\n\n";
 
-  if (!isSaveAll && !isSaveSch && !isSaveWav && !isUpdateAll &&
-      !isUpdateSch && !isUpdateWav && !isRestoreAll && !isRestoreWav &&
-      !isRestoreSch) {
-    std::cerr << "Error: Invalid option '" << option << "'.\n\n";
-    ShowUsage();
+  // For restore operations, the source file must exist
+  if ((args.op & OpActMask) == OpActRestore && !fs::exists(args.filepath)) {
+    std::cerr << std::format(
+        "Error: Preferences file not found: {}\n"
+        "       Cannot restore registry values without a source file.\n",
+        args.filepath);
     return 1;
   }
 
-  if (g_verbose) {
-    std::cout << "Verbose mode enabled (showing per-value before/after "
-                 "changes).\n";
+  // Load all data upfront
+  if (!LoadRegistryValues(args, prefData)) {
+    std::cerr << "Error: Could not load registry values.\n";
+    return 1;
   }
 
-  if (g_testMode) {
-    std::cout << "TEST MODE enabled (no changes will be made).\n";
+  if (fs::exists(args.filepath)) {
+    LoadFileValues(args.filepath, prefData);
+    if (args.verbose) {
+      int fileKeyCount = 0;
+      for (const std::pair<const std::string, std::map<std::string, PrefValue>>
+               &secPair : prefData)
+        for (const std::pair<const std::string, PrefValue> &kvPair :
+             secPair.second)
+          if (kvPair.second.inFile) fileKeyCount++;
+      std::cout << std::format("Loaded {} value(s) from: {}\n\n", fileKeyCount,
+                               args.filepath);
+    }
+  } else if (args.verbose) {
+    std::cout << std::format("File does not exist and will be created: {}\n\n",
+                             args.filepath);
   }
 
-  if (g_verbose || g_testMode) {
-    std::cout << "\n";
+  if (args.verbose)
+    std::cout << "VERBOSE MODE enabled (showing per-value before/after "
+                 "changes).\n\n";
+
+  // Pre-pass: analyze what would happen, print verbose lines if requested
+  PrePassResult result = AnalyzeOperation(args, prefData);
+
+  // Report what will/would happen
+  PrintPrePassSummary(args, result);
+
+  if (args.testMode) return 0;
+
+  // If nothing would change, skip prompt and exit cleanly
+  if (result.changedCount == 0) {
+    std::cout << "No changes to make.\n";
+    return 0;
   }
 
-  bool success;
-  if (isSaveAll) {
-    success = SavePreferences(filepath);
-  } else if (isSaveSch) {
-    success = SavePreferences(filepath, SCHSEC);
-  } else if (isSaveWav) {
-    success = SavePreferences(filepath, WAVSEC);
-  } else if (isUpdateAll) {
-    success = UpdatePreferences(filepath);
-  } else if (isUpdateSch) {
-    success = UpdatePreferences(filepath, SCHSEC);
-  } else if (isUpdateWav) {
-    success = UpdatePreferences(filepath, WAVSEC);
-  } else if (isRestoreAll) {
-    success = RestorePreferences(filepath);
-  } else if (isRestoreWav) {
-    success = RestorePreferences(filepath, WAVSEC);
-  } else { // isRestoreSch
-    success = RestorePreferences(filepath, SCHSEC);
+  // Confirm with user before making any changes
+  if (!args.silentMode && !ConfirmOperation(args)) {
+    std::cout << "Operation cancelled.\n";
+    return 0;
   }
+
+  // Dispatch — write passes only from here
+  bool success = false;
+  switch (args.op & OpActMask) {
+  case OpActSave:
+    success = SavePreferences(args, prefData);
+    break;
+  case OpActUpdate:
+    success = UpdatePreferences(args, prefData);
+    break;
+  case OpActRestore:
+    success = RestorePreferences(args, prefData);
+    break;
+  default:
+    assert(0 && "Invalid operation");
+  }
+
+  if (!success) std::cerr << "Operation failed.\n";
 
   return success ? 0 : 1;
 }
