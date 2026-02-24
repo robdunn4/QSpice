@@ -97,3 +97,8 @@ A micro-controller simulation framework for QSpice.  Currently a (working) Proof
 A micro-controller simulation framework for QSpice for Microchip devices.
 
 [Go to QMdbSim Project](./QMdbSim_Project/)
+
+## QColorPrefs Project
+A command-line utility to switch between QSpice color themes.
+
+[To to QColorPrefs Project](./QColorPrefs/)
