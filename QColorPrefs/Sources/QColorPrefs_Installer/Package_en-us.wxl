@@ -1,0 +1,12 @@
+<!--
+  This file contains the declaration of all the localizable strings.
+-->
+<WixLocalization xmlns="http://wixtoolset.org/schemas/v4/wxl" Culture="en-US">
+
+  <String Id="DowngradeError" Value="A newer version of [ProductName] is already installed." />
+
+  <String Id="InstallWarningTitle" Value="Backup Existing Files" />
+  <String Id="InstallWarningText" Value="Installing [ProductName] to an existing folder will replace any files remaining from a prior installation.  Please be sure to back up any existing files." />
+
+
+</WixLocalization>

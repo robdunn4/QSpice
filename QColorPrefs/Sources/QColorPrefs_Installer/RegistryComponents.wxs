@@ -1,0 +1,36 @@
+<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs">
+  <Fragment>
+    <ComponentGroup Id="RegistryComponents" Directory="INSTALLFOLDER">
+
+      <Component Id="FileAssociation" Guid="1cdd5a3e-cc4e-4a25-a137-3bb99d276763">
+
+        <!-- Register .QColorPref extension -->
+        <RegistryValue Root="HKLM"
+                       Key="SOFTWARE\Classes\.QColorPref"
+                       Value="QColorPrefs.Document"
+                       Type="string"
+                       KeyPath="yes" />
+
+        <!-- Define the file type -->
+        <RegistryValue Root="HKLM"
+                       Key="SOFTWARE\Classes\QColorPrefs.Document"
+                       Value="QColorPrefs Theme"
+                       Type="string" />
+
+        <!-- Icon from embedded EXE resource, index 0 -->
+        <RegistryValue Root="HKLM"
+                       Key="SOFTWARE\Classes\QColorPrefs.Document\DefaultIcon"
+                       Value="[INSTALLFOLDER]QColorPrefs.exe,0"
+                       Type="string" />
+
+        <!-- Open command with -rall -s flags -->
+        <RegistryValue Root="HKLM"
+                       Key="SOFTWARE\Classes\QColorPrefs.Document\shell\open\command"
+                       Value="&quot;[INSTALLFOLDER]QColorPrefs.exe&quot; -rall -s &quot;%1&quot;"
+                       Type="string" />
+
+      </Component>
+
+    </ComponentGroup>
+  </Fragment>
+</Wix>

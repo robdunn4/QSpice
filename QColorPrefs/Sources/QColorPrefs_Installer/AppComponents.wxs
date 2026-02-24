@@ -1,0 +1,68 @@
+<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs">
+  <Fragment>
+
+    <ComponentGroup Id="AppComponents" Directory="INSTALLFOLDER">
+
+      <Component Id="MainExe" Guid="ced94e10-40a2-46f0-8386-348b0dafc7f4">
+        <File Source="$(var.QColorPrefs.TargetPath)" KeyPath="yes" />
+      </Component>
+
+      <Component Id="BackupBat" Guid="d19c5005-e112-4b22-84a2-2e78d13b6e70">
+        <File Id="MyBackupBat" Source="$(var.QColorPrefs.ProjectDir)@MyBackup.bat" KeyPath="yes" />
+      </Component>
+
+    </ComponentGroup>
+
+    <ComponentGroup Id="CopyFiles" Directory="INSTALLFOLDER">
+
+      <Component Guid="9846ca1e-0485-407c-bf9d-b21b60891c76" Permanent="yes">
+        <File Source="$(var.QColorPrefs.ProjectDir)CopyFiles\license.txt" />
+      </Component>
+
+      <Component Guid="8003c0be-c1da-45c4-bf16-aa3609a3ac67" Permanent="yes">
+        <File Source="$(var.QColorPrefs.ProjectDir)CopyFiles\readme.txt" />
+      </Component>
+
+      <Component Guid="f028aaf3-c5d3-4d32-a72e-9da4905c12c8" Permanent="yes">
+        <File Source="$(var.QColorPrefs.ProjectDir)CopyFiles\Theme_24_R1.qcolorpref" />
+      </Component>
+
+      <Component Guid="3104b7ab-261a-4cd5-9686-659df1db1c0f" Permanent="yes">
+        <File Source="$(var.QColorPrefs.ProjectDir)CopyFiles\Theme_24_R2.qcolorpref" />
+      </Component>
+
+      <Component Guid="deed7d16-73a7-498d-8cb8-20191e6636b7" Permanent="yes">
+        <File Source="$(var.QColorPrefs.ProjectDir)CopyFiles\Theme_LTspice_Dark_default12.qcolorpref" />
+      </Component>
+
+      <Component Guid="c36727ca-199a-4181-bb98-f9621199d79f" Permanent="yes">
+        <File Source="$(var.QColorPrefs.ProjectDir)CopyFiles\Theme_Matlab_Light_gem12.qcolorpref" />
+      </Component>
+
+      <Component Guid="793d261a-1dcc-4c05-91ed-80beeee38951" Permanent="yes">
+        <File Source="$(var.QColorPrefs.ProjectDir)CopyFiles\Theme_Matlab_Light_glow12.qcolorpref" />
+      </Component>
+
+      <Component Guid="8c7dd680-d13e-44d9-9520-141544683cbe" Permanent="yes">
+        <File Source="$(var.QColorPrefs.ProjectDir)CopyFiles\Theme_Qspice_Dark_KSK12.qcolorpref" />
+      </Component>
+
+      <Component Guid="ff643bc6-edd9-4699-972d-19f497896555" Permanent="yes">
+        <File Id="CommandPromptBat"
+              Name="@Command_Prompt.bat"
+              Source="$(var.QColorPrefs.ProjectDir)CopyFiles\@Command_Prompt.bat"
+              KeyPath="yes" />
+      </Component>
+
+      <Component Guid="a1b2c3d4-e5f6-7890-abcd-ef1234567890" Permanent="yes">
+        <File Source="$(var.QColorPrefs.ProjectDir)CopyFiles\Demo_Traces.qsch" />
+      </Component>
+
+      <Component Guid="cac206e0-a43a-40ad-bd3c-1c087c1c556c" Permanent="yes">
+        <File Source="$(var.QColorPrefs.ProjectDir)CopyFiles\QColorPrefs.pdf" KeyPath="yes" />
+      </Component>
+
+    </ComponentGroup>
+
+  </Fragment>
+</Wix>

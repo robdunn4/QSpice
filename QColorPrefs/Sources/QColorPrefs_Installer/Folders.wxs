@@ -1,0 +1,7 @@
+<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs">
+  <Fragment>
+    <StandardDirectory Id="TARGETDIR">
+      <Directory Id="INSTALLFOLDER" Name="QColorPrefs" />
+    </StandardDirectory>
+  </Fragment>
+</Wix>

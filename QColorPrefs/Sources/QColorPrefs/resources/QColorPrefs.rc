@@ -1,0 +1,91 @@
+// QColorPrefs.rc  --  Win32 resource script
+//
+// Compile with the MSVC resource compiler:
+//   rc.exe /nologo /fo QColorPrefs.res QColorPrefs.rc
+//
+// Then link the .res into the executable:
+//   cl.exe ... QColorPrefs.res QColorPrefs.cpp
+//
+// Or add QColorPrefs.rc directly to the MSVS project; the IDE will
+// compile and link it automatically.
+//
+// The ICO file (QColorPrefs.ico) must be in the same directory as
+// this .rc file when rc.exe is run.  It contains the following sizes,
+// all 32-bit RGBA / PNG-compressed as recommended for Vista+:
+//
+//   16x16   20x20   24x24   32x32   40x40   48x48
+//   60x60   64x64   72x72   96x96  128x128  256x256
+//
+// Coverage notes:
+//   16 / 32 / 48 / 256  -- Windows 96 DPI baseline (all shell contexts)
+//   20 / 40              -- 120 DPI (125 % scaling) shell icons
+//   24 / 48              -- 144 DPI (150 % scaling) shell icons
+//   60 / 72              -- 120 DPI and 144 DPI medium/large views
+//   64 / 96              -- 100 % and 150 % large icon views
+//   128                  -- 200 % scaling (HiDPI) medium icons
+//   256                  -- maximum; Windows scales down from here
+//                           for any size not explicitly present
+
+#include "resource.h"
+
+// -------------------------------------------------------------------------
+// Language declaration
+// Language-neutral resources (icons, version info) should use LANG 0,0 so
+// that Windows picks them regardless of the user's locale.
+// -------------------------------------------------------------------------
+LANGUAGE 0, 0
+
+// -------------------------------------------------------------------------
+// Application icon
+// Windows uses the FIRST icon group listed in the resource section as the
+// executable's default icon (shown in Explorer, taskbar, ALT+TAB, etc.).
+// -------------------------------------------------------------------------
+IDI_APPICON  ICON  "QColorPrefs.ico"
+
+// -------------------------------------------------------------------------
+// DPI-awareness manifest
+// Declares the process as Per-Monitor DPI Aware v2 (Windows 10 1703+),
+// with fallback to System DPI Aware on earlier versions.  This prevents
+// Windows from bitmap-scaling the window and ensures correct icon sizes
+// are selected at runtime.
+// -------------------------------------------------------------------------
+1  24  "QColorPrefs.manifest"
+
+// -------------------------------------------------------------------------
+// Version information
+// Displayed in Explorer's "Details" tab and in the "Properties" dialog.
+// -------------------------------------------------------------------------
+VS_VERSION_INFO  VERSIONINFO
+    FILEVERSION     VER_MAJOR, VER_MINOR, VER_PATCH, VER_BUILD
+    PRODUCTVERSION  VER_MAJOR, VER_MINOR, VER_PATCH, VER_BUILD
+    FILEFLAGSMASK   0x0000003FL         // VS_FFI_FILEFLAGSMASK
+#ifdef _DEBUG
+    FILEFLAGS       0x00000003L         // VS_FF_DEBUG | VS_FF_PRERELEASE
+#else
+    FILEFLAGS       0x0L
+#endif
+    FILEOS          0x00040004L         // VOS_NT_WINDOWS32
+    FILETYPE        0x00000001L         // VFT_APP
+    FILESUBTYPE     0x00000000L         // VFT_UNKNOWN
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        // 0409 = English (US),  04B0 = Unicode (UTF-16 LE)
+        BLOCK "040904B0"
+        BEGIN
+            VALUE "CompanyName",      "Rob Dunn\0"
+            VALUE "FileDescription",  "QSpice Color Preferences Utility\0"
+            VALUE "FileVersion",      VER_FILE_STR
+            VALUE "InternalName",     "QColorPrefs\0"
+            VALUE "LegalCopyright",   "\251 Rob Dunn.  All rights reserved.\0"
+            VALUE "OriginalFilename", "QColorPrefs.exe\0"
+            VALUE "ProductName",      "QColorPrefs\0"
+            VALUE "ProductVersion",   VER_PRODUCT_STR
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        // 0409 = English (US),  04B0 = Unicode
+        VALUE "Translation", 0x0409, 0x04B0
+    END
+END

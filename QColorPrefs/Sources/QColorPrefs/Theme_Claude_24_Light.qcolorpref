@@ -1,0 +1,39 @@
+# This file was created by QColorPrefs v1.6 on February 17, 2026 at 04:39 PM
+# Generated automatically - do not edit unless you know what you're doing
+# Registry path: HKEY_CURRENT_USER\Software\Marcus Aurelius Software LLC\QSPICE\[Preferences]
+# Section filter: [waveform] only
+
+[waveform]
+NumberDataTraceColors=24              # Number of Trace Colors
+CursorBackFore=0xffffff               # Attached Cursor Text Color
+CursorBackGnd=0x0000ff                # Attached Cursor Background
+CursorLineColor=0xc8c8c8              # Cursor Color
+FrameColor=0x000000                   # Ticks & Axis Color
+BackgroundColor=0xffffff              # Background Color
+WaveFormViewerFontPoints=120          # Font Point Size
+WaveformPlotLineWidth=2.5             # Plot Line Thickness
+DataColor1=0xff3232                   # Waveform Trace #1 Color
+DataColor2=0x00ff00                   # Waveform Trace #2 Color
+DataColor3=0x3232ff                   # Waveform Trace #3 Color
+DataColor4=0xfeff00                   # Waveform Trace #4 Color
+DataColor5=0xff32fe                   # Waveform Trace #5 Color
+DataColor6=0x00feff                   # Waveform Trace #6 Color
+DataColor7=0xffb299                   # Waveform Trace #7 Color
+DataColor8=0x65ff8c                   # Waveform Trace #8 Color
+DataColor9=0xb299ff                   # Waveform Trace #9 Color
+DataColor10=0xd8ff65                  # Waveform Trace #10 Color
+DataColor11=0xff99e5                  # Waveform Trace #11 Color
+DataColor12=0x65d8ff                  # Waveform Trace #12 Color
+DataColor13=0xff6598                  # Waveform Trace #13 Color
+DataColor14=0x76ff32                  # Waveform Trace #14 Color
+DataColor15=0x6598ff                  # Waveform Trace #15 Color
+DataColor16=0xffbb32                  # Waveform Trace #16 Color
+DataColor17=0xcc65ff                  # Waveform Trace #17 Color
+DataColor18=0x32ffbb                  # Waveform Trace #18 Color
+DataColor19=0xe57f19                  # Waveform Trace #19 Color
+DataColor20=0x5eeda5                  # Waveform Trace #20 Color
+DataColor21=0x7f19e5                  # Waveform Trace #21 Color
+DataColor22=0xa5ed5e                  # Waveform Trace #22 Color
+DataColor23=0xe5197f                  # Waveform Trace #23 Color
+DataColor24=0x5ea5ed                  # Waveform Trace #24 Color
+

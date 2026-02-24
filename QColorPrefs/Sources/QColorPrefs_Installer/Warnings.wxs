@@ -1,0 +1,45 @@
+<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs">
+  <Fragment>
+    <UI Id="InstallWarningUI">
+
+      <!-- ═══════════════════════════════════════════════════════
+           Install Warning Dialog
+           ═══════════════════════════════════════════════════════ -->
+      <Dialog Id="InstallWarningDlg" Width="370" Height="270" Title="[ProductName] Setup">
+
+        <Control Id="BannerBitmap" Type="Bitmap" X="0" Y="0" Width="370" Height="44"
+                 TabSkip="yes" Text="WixUI_Bmp_Banner" />
+        <Control Id="BannerLine" Type="Line" X="0" Y="44" Width="370" Height="0" />
+
+        <Control Id="Title" Type="Text" X="15" Y="6" Width="340" Height="15"
+                 Transparent="yes" NoPrefix="yes">
+          <Text Value="{\WixUI_Font_Title}!(loc.InstallWarningTitle)" />
+        </Control>
+
+        <Control Id="Description" Type="Text" X="25" Y="60" Width="320" Height="60"
+                 NoPrefix="yes">
+          <Text Value="!(loc.InstallWarningText)" />
+        </Control>
+
+        <Control Id="BottomLine" Type="Line" X="0" Y="234" Width="370" Height="0" />
+
+        <Control Id="BackButton" Type="PushButton" X="136" Y="243" Width="72" Height="17"
+                 Text="&lt; &amp;Back">
+          <Publish Event="NewDialog" Value="LicenseAgreementDlg" />
+        </Control>
+
+        <Control Id="NextButton" Type="PushButton" X="212" Y="243" Width="72" Height="17"
+                 Default="yes" Text="&amp;Next &gt;">
+          <Publish Event="NewDialog" Value="InstallDirDlg" />
+        </Control>
+
+        <Control Id="CancelButton" Type="PushButton" X="289" Y="243" Width="72" Height="17"
+                 Cancel="yes" Text="Cancel">
+          <Publish Event="SpawnDialog" Value="CancelDlg" />
+        </Control>
+
+      </Dialog>
+
+    </UI>
+  </Fragment>
+</Wix>

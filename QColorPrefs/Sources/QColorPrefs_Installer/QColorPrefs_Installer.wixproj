@@ -1,0 +1,11 @@
+<Project Sdk="WixToolset.Sdk/6.0.2">
+  <PropertyGroup>
+    <OutputType>Package</OutputType>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="WixToolset.UI.wixext" Version="6.0.2" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\QColorPrefs\QColorPrefs.vcxproj" />
+  </ItemGroup>
+</Project>

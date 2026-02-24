@@ -18,7 +18,3 @@ I'm also toying with AI coding tools just to see what it can do.
 
 The folders contain MSVS 2026 project/solution files.
 
-## QColorPrefs Folder
-
-QColorPrefs is a command-line tool to save/restore QSpice schematic and waveform view color settings.
-

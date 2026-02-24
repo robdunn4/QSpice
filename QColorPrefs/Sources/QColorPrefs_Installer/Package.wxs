@@ -1,0 +1,61 @@
+<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs"
+     xmlns:ui="http://wixtoolset.org/schemas/v4/wxs/ui">
+
+  <Package Id="RobertDunn.QColorPrefs"
+           Name="QColorPrefs"
+           Manufacturer="Robert Dunn"
+           Version="1.0.0.0"
+           UpgradeCode="{B0DA7787-B9F0-43BD-B90C-B81E4C596125}">
+
+    <MajorUpgrade DowngradeErrorMessage="!(loc.DowngradeError)" />
+    <MediaTemplate EmbedCab="yes" />
+
+    <ui:WixUI Id="WixUI_InstallDir" InstallDirectory="INSTALLFOLDER" />
+
+    <UI>
+      <!-- Redirect LicenseAgreementDlg Next -> InstallWarningDlg -->
+      <Publish Dialog="LicenseAgreementDlg" Control="Next" Event="NewDialog"
+               Value="InstallWarningDlg" Order="2"
+               Condition="LicenseAccepted = &quot;1&quot;" />
+
+      <!-- Redirect InstallDirDlg Back -> InstallWarningDlg -->
+      <Publish Dialog="InstallDirDlg" Control="Back" Event="NewDialog"
+               Value="InstallWarningDlg" Order="2" />
+    </UI>
+
+    <!-- Custom action: run @MyBackup.bat after install -->
+    <CustomAction Id="RunMyBackup"
+                  Directory="INSTALLFOLDER"
+                  Execute="deferred"
+                  Impersonate="yes"
+                  ExeCommand="cmd.exe /c &quot;[INSTALLFOLDER]@MyBackup.bat&quot;"
+                  Return="ignore" />
+
+    <!-- Custom action: notify Windows shell to refresh file icons -->
+    <CustomAction Id="RefreshShellIcons"
+                  Directory="INSTALLFOLDER"
+                  Execute="deferred"
+                  Impersonate="yes"
+                  ExeCommand="cmd.exe /c ie4uinit.exe -show"
+                  Return="ignore" />
+
+    <InstallExecuteSequence>
+      <Custom Action="RunMyBackup" Before="InstallFinalize" Condition="NOT Installed" />
+      <Custom Action="RefreshShellIcons" Before="InstallFinalize" />
+    </InstallExecuteSequence>
+
+    <Feature Id="Main">
+      <ComponentGroupRef Id="AppComponents" />
+      <ComponentGroupRef Id="RegistryComponents" />
+      <ComponentGroupRef Id="CopyFiles" />
+    </Feature>
+
+    <WixVariable Id="WixUIDialogBmp" Value="$(var.QColorPrefs.ProjectDir)Installer\dialog.png" />
+    <WixVariable Id="WixUIBannerBmp" Value="$(var.QColorPrefs.ProjectDir)Installer\banner.png" />
+    <WixVariable Id="WixUILicenseRtf" Value="$(var.QColorPrefs.ProjectDir)Installer\license.rtf" />
+
+    <Icon Id="QColorPrefsIcon" SourceFile="$(var.QColorPrefs.ProjectDir)Resources\QColorPrefs.ico" />
+    <Property Id="ARPPRODUCTICON" Value="QColorPrefsIcon" />
+
+  </Package>
+</Wix>

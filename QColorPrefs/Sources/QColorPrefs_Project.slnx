@@ -1,0 +1,11 @@
+<Solution>
+  <Configurations>
+    <Platform Name="ARM64" />
+    <Platform Name="x64" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Project Path="QColorPrefs/QColorPrefs.vcxproj" Id="deeb5f9e-7532-4a06-a7db-541d75bfcd7a">
+    <Platform Solution="*|ARM64" Project="x64" />
+  </Project>
+  <Project Path="QColorPrefs_Installer/QColorPrefs_Installer.wixproj" Type="b7dd6f7e-def8-4e67-b5b7-07ef123db6f0" />
+</Solution>

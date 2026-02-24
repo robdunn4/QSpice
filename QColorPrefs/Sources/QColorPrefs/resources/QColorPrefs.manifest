@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<assembly xmlns="urn:schemas-microsoft-com:asm.v1"
+          manifestVersion="1.0"
+          xmlns:asmv3="urn:schemas-microsoft-com:asm.v3">
+
+  <assemblyIdentity
+      type="win32"
+      name="QColorPrefs"
+      version="1.7.0.0"
+      processorArchitecture="*" />
+
+  <description>QSpice Color Preferences Utility</description>
+
+  <!--
+    Per-Monitor DPI Aware v2  (Windows 10 version 1703 / RS2 and later).
+    Falls back to System DPI Aware on older systems.
+    This declaration ensures that Windows selects the correct icon sizes
+    from the ICO resource rather than upscaling a smaller image.
+  -->
+  <asmv3:application>
+    <asmv3:windowsSettings>
+      <dpiAware xmlns="http://schemas.microsoft.com/SMI/2005/WindowsSettings"
+        >True/PM</dpiAware>
+      <dpiAwareness xmlns="http://schemas.microsoft.com/SMI/2016/WindowsSettings"
+        >PerMonitorV2, PerMonitor, System</dpiAwareness>
+    </asmv3:windowsSettings>
+  </asmv3:application>
+
+  <!-- Opt in to Windows visual styles (Common Controls v6) -->
+  <dependency>
+    <dependentAssembly>
+      <assemblyIdentity
+          type="win32"
+          name="Microsoft.Windows.Common-Controls"
+          version="6.0.0.0"
+          processorArchitecture="*"
+          publicKeyToken="6595b64144ccf1df"
+          language="*" />
+    </dependentAssembly>
+  </dependency>
+
+  <!-- Execution level: no elevation required -->
+  <trustInfo xmlns="urn:schemas-microsoft-com:asm.v3">
+    <security>
+      <requestedPrivileges>
+        <requestedExecutionLevel level="asInvoker" uiAccess="false" />
+      </requestedPrivileges>
+    </security>
+  </trustInfo>
+
+</assembly>
