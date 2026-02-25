@@ -201,7 +201,37 @@ std::string ArgString::parse(const std::string &str) { return str; }
 
 std::string ArgString::toString() const { return value; }
 
-std::string ArgString::toString(const std::string &value) { return value; }
+// std::string ArgString::toString(const std::string &value) { return value; }
+
+//// clean string by stripping UTF-8 BOM and overbar codes
+// std::string ArgString::toAsciiString() const {
+//   std::string cleaned = value;
+//   // Strip UTF-8 BOM if present
+//   const std::string utf8BOM = "\xEF\xBB\xBF";
+//   if (cleaned.compare(0, utf8BOM.size(), utf8BOM) == 0) {
+//     cleaned.erase(0, utf8BOM.size());
+//   }
+//   // Remove overbar codes (0xC2 0xAC in UTF-8)
+//   const std::string overbarCode = "\xC2\xAC";
+//   size_t pos = 0;
+//   while ((pos = cleaned.find(overbarCode, pos)) != std::string::npos) {
+//     cleaned.erase(pos, overbarCode.size());
+//   }
+//   return cleaned;
+// }
+
+//  clean string by stripping high-order UTF-8 characters (e.g., BOM, overbar
+//  codes, other Unicode bytes) -- slow but should be fine for short strings
+//  like text and comment values
+std::string ArgString::toAsciiString() const {
+  std::string ascii;
+
+  for (size_t i = 0; i < value.size();) {
+    if (value[i] > 0x7F) continue;
+    ascii += value[i];
+  }
+  return ascii;
+}
 
 // ============================================================================
 // ArgPoint implementation

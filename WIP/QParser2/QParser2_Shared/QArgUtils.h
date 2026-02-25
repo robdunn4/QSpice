@@ -164,6 +164,31 @@ public:
 //        instead QSpice appears to add "overbar codes" in front of each
 //        character that should have an overbar.  (This can be done manually
 //        character by character in the GUI IIRC.)
+//
+// Note:  Consider the following:
+//
+//          «text (4714,13230) 1 15 1 0x1000000 -1 -1 "ï»¿BOOST CURRENT"»
+//
+//        The "ï»¿" at the beginning of the text string is 0xEF 0xBB 0xBF in
+//        hexadecimal which is the UTF-8 byte order mark (BOM).  This indicates
+//        that the text string is encoded in UTF-8.  The presence of the BOM
+//        allows for proper handling of special characters and formatting within
+//        the text string. When parsing such strings, it's important to
+//        recognize and handle the UTF-8 encoding correctly to ensure that the
+//        text is interpreted as intended.
+//
+// Note:  Consider the following text string with overbar codes:
+//
+//          «text (200,-850) 1 7 1 0x1000000 -1 -1 "ï»¿Â¬OÂ¬vÂ¬eÂ¬rÂ¬bÂ¬aÂ¬rÂ¬
+//          Â¬TÂ¬eÂ¬xÂ¬t"»
+//
+// 	      In this example, the text string contains overbar codes
+//        represented by the "Â¬" character (0xC2 0xAC in UTF-8). Each
+//        occurrence of "Â¬" indicates that the following character should be
+//        displayed with an overbar.
+//
+// I presume that we may need to strip these codes for some purposes....
+//
 // ============================================================================
 class ArgString {
 protected:
@@ -185,11 +210,14 @@ public:
   operator std::string() const;
 
   // Static parse method
-  static std::string parse(const std::string &str);
+  static std::string parse(const std::string &str); // why?
 
   // toString methods
   std::string toString() const;
-  static std::string toString(const std::string &value);
+  static std::string toString(const std::string &value); // why?
+
+  // convert to basic ASCII
+  std::string toAsciiString() const;
 };
 
 // ============================================================================
