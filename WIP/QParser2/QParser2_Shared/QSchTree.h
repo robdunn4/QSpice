@@ -75,6 +75,8 @@ public:
   QSchTreePtr getLastChild() const;
   QSchTreePtr getChild(size_t index) const;
   QSchTreePtr getNextSibling() const;
+  QSchTreePtr getNextSibling(
+      QPI type) const; // let's us skip to next sibling of a specific type
   QSchTreePtr getPrevSibling() const;
 
   // Query methods

@@ -19,7 +19,8 @@
 //
 // we expect the following children in the following order:
 //   * QItemType
-//   * QItemDesc
+//   * QItemDesc (optional?)
+//   * QItemLib (optional)
 //   * QItemShort
 //   * QItemText (first one = reference ID)
 //   * QItemText (second one is component value)
@@ -32,28 +33,27 @@ bool QBomData::parseData(const QSchTreePtr symItem) {
     name = symPtr->text;
     if (!name.length()) return false;
 
-    // find type record
+    // find type record (should be first child)
     QSchTreePtr childPtr = symItem->getFirstChild();
     if (childPtr->enumID != QPI::TYPE) return false;
     type = std::dynamic_pointer_cast<QItemType>(childPtr->itemPtr)->text;
 
     // find description record (optional)
-    childPtr = childPtr->getNextSibling();
-    if (childPtr->enumID == QPI::DESC) {
-      desc = std::dynamic_pointer_cast<QItemDesc>(childPtr->itemPtr)->text;
-      childPtr = childPtr->getNextSibling();
-    }
+    childPtr = childPtr->getNextSibling(QPI::DESC);
+    // if (childPtr->enumID == QPI::DESC) {
+    if (!childPtr) return false;
+    desc = std::dynamic_pointer_cast<QItemDesc>(childPtr->itemPtr)->text;
 
     // find shorted record
-    if (childPtr->enumID != QPI::SHORTED) return false;
+    childPtr = childPtr->getNextSibling(QPI::SHORTED);
+    if (!childPtr) return false;
     shorted = std::dynamic_pointer_cast<QItemShort>(childPtr->itemPtr)->bShorted
                   ? "true"
                   : "false";
 
     // find first text record
-    childPtr = childPtr->getNextSibling();
-    while (childPtr->enumID != QPI::TEXT)
-      childPtr = childPtr->getNextSibling();
+    childPtr = childPtr->getNextSibling(QPI::TEXT);
+    if (!childPtr) return false;
     refID = std::dynamic_pointer_cast<QItemText>(childPtr->itemPtr)->text;
 
     // find second text record

@@ -26,7 +26,7 @@
 
 enum class QPI
 {
-  UNKNOWN,  // invalid
+  UNKNOWN,  // invalid (or any)
   SCH,      // "schematic"
   COMP,     // "component"
   SYM,      // "symbol"

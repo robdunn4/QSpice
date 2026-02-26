@@ -123,6 +123,18 @@ QSchTreePtr QSchTree::getNextSibling() const {
   return parentPtr->children[myIndex + 1];
 }
 
+QSchTreePtr QSchTree::getNextSibling(QPI type) const {
+  QSchTreePtr sibling = getNextSibling();
+
+  if (type == QPI::UNKNOWN)
+    return sibling; // if UNKNOWN, just return next sibling
+
+  while (sibling != nullptr && sibling->enumID != type)
+    sibling = sibling->getNextSibling();
+
+  return sibling;
+}
+
 QSchTreePtr QSchTree::getPrevSibling() const {
   auto parentPtr = parent.lock();
   if (!parentPtr) return nullptr;
