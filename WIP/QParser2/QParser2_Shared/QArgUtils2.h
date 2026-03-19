@@ -13,13 +13,13 @@
 // TODO:  Revisit This!  Extract these notes (once confirmed) to an overview
 // document....
 //
-// The order of QItem* elements within a QItemSym matters.  It's complicated....
+// The order of Item* elements within a ItemSym matters.  It's complicated....
 //
-// Within a container (e.g., QItemSch, QItemCmp, QItemSym), all QItem* elements
+// Within a container (e.g., ItemSch, ItemCmp, ItemSym), all Item* elements
 // of a given type occur as a group without interceding elements of other types.
-// That is, all QItemText records are grouped, all QItemPin records are grouped,
-// all QItemRect records are grouped, etc.  The order of groups of QItem* types
-// also appears to be important (see QItemTypes.* for sorting order).
+// That is, all ItemText records are grouped, all ItemPin records are grouped,
+// all ItemRect records are grouped, etc.  The order of groups of Item* types
+// also appears to be important (see ItemTypes.* for sorting order).
 //
 // Within a group, the first element of that type is at index 0.  The index
 // position is used in ArgLookupNdx and ArgPinNdx fields to refer to the
@@ -27,9 +27,9 @@
 // take care to adjust any Arg*Ndx records.
 //
 // As a contrived (and possibly incorrect) example, graphical elements such as a
-// QItemRect or QItemText may be associated with a QItemPin record in the
+// ItemRect or ItemText may be associated with a ItemPin record in the
 // ArgPinNdx argument.  The index value of ArgPinNdx points to the index within
-// the group of QItemPin records.  If the QItemPin is disabled (tied to the
+// the group of ItemPin records.  If the ItemPin is disabled (tied to the
 // special net "¥" (0xA5)), then both the pin and the graphical element are
 // hidden.
 // ============================================================================
@@ -61,7 +61,7 @@ public:
 // ============================================================================
 // ArgLookupNdx -- Used with the LOOKUP programmable symbol attribute.
 //
-// A first thing to note is that the QItemSym symbol name is the name of the
+// A first thing to note is that the ItemSym symbol name is the name of the
 // symbol file (without the extension).  This becomes the first level subfolder
 // under [QSpice Folder]\Repository\SYMBOLNAME\...
 //
@@ -74,19 +74,19 @@ public:
 //
 // =====
 //
-// The ArgLookupNdx value is an index into the QItemText record group if not
-// set to -1.  This indicates that the QItem* was merged from a symbol file
+// The ArgLookupNdx value is an index into the ItemText record group if not
+// set to -1.  This indicates that the Item* was merged from a symbol file
 // using the LOOKUP programmable attribute.  The ArgLookupNdx is an index into
-// the QItemText group for the QItemText record that contains the LOOKUP
+// the ItemText group for the ItemText record that contains the LOOKUP
 // attribute text.
 //
-// That QItemText record is expected to contain a programmable attribute
+// That ItemText record is expected to contain a programmable attribute
 // ("LOOKUP") that ultimately loaded the record from a symbol file found in
 // [QSpice]\Repository\SYMNAME.
 //
-// Therefore, if QItemText records are added, deleted, or reordered, special
+// Therefore, if ItemText records are added, deleted, or reordered, special
 // care should be taken to ensure that the QLookupNdx value is updated to match
-// the related QItemText record containing the LOOKUP attribute.
+// the related ItemText record containing the LOOKUP attribute.
 //
 // TODO:  Need to document LOOKUP and explain more clearly.
 //
@@ -110,12 +110,12 @@ public:
 };
 
 // ============================================================================
-// ArgPinNdx -- An index into a group of QItemPin records if used.  Set to -1 if
+// ArgPinNdx -- An index into a group of ItemPin records if used.  Set to -1 if
 // not used.
 //
 // Graphical elements (rectangles, triangles, text, etc.) can set this parameter
-// to a pin index.  This is the zero-based index of the QItemPin record within
-// the enclosing symbol.  If this index is not -1 and the QItemPin net name is
+// to a pin index.  This is the zero-based index of the ItemPin record within
+// the enclosing symbol.  If this index is not -1 and the ItemPin net name is
 // "¥" (0xA5) then the graphic element is rendered invisible and the pin is
 // disabled.
 //
@@ -303,13 +303,13 @@ public:
   using ArgInt::ArgInt;
 
   // Vertical alignment values (bits 0-1)
-  static constexpr unsigned char NORTH = 0b01;
-  static constexpr unsigned char SOUTH = 0b10;
+  static constexpr unsigned char NORTH    = 0b01;
+  static constexpr unsigned char SOUTH    = 0b10;
   static constexpr unsigned char CENTER_V = 0b11;
 
   // Horizontal alignment values (bits 2-3, shifted)
-  static constexpr unsigned char WEST = 0b0100;
-  static constexpr unsigned char EAST = 0b1000;
+  static constexpr unsigned char WEST     = 0b0100;
+  static constexpr unsigned char EAST     = 0b1000;
   static constexpr unsigned char CENTER_H = 0b1100;
 
   // Extract vertical alignment (bits 0-1)
@@ -368,22 +368,22 @@ public:
   using ArgInt::ArgInt;
 
   // port types (low nibble of LSB) -- zero is invalid?
-  static constexpr unsigned char TYPE_INPORT = 0x01;
+  static constexpr unsigned char TYPE_INPORT  = 0x01;
   static constexpr unsigned char TYPE_OUTPORT = 0x02;
-  static constexpr unsigned char TYPE_DLLGND = 0x03;
+  static constexpr unsigned char TYPE_DLLGND  = 0x03;
 
   // data types (high nibble of LSB) -- zero is invalid?
-  static constexpr unsigned char DATA_BOOL = 0x01;
-  static constexpr unsigned char DATA_CHAR = 0x02;
-  static constexpr unsigned char DATA_UCHAR = 0x03;
-  static constexpr unsigned char DATA_SHORT = 0x04;
-  static constexpr unsigned char DATA_USHORT = 0x05;
-  static constexpr unsigned char DATA_INT = 0x06;
-  static constexpr unsigned char DATA_UINT = 0x07;
-  static constexpr unsigned char DATA_SFLOAT = 0x08;
-  static constexpr unsigned char DATA_FLOAT = 0x09;
-  static constexpr unsigned char DATA_INT64 = 0x0A;
-  static constexpr unsigned char DATA_UINT64 = 0x0B;
+  static constexpr unsigned char DATA_BOOL      = 0x01;
+  static constexpr unsigned char DATA_CHAR      = 0x02;
+  static constexpr unsigned char DATA_UCHAR     = 0x03;
+  static constexpr unsigned char DATA_SHORT     = 0x04;
+  static constexpr unsigned char DATA_USHORT    = 0x05;
+  static constexpr unsigned char DATA_INT       = 0x06;
+  static constexpr unsigned char DATA_UINT      = 0x07;
+  static constexpr unsigned char DATA_SFLOAT    = 0x08;
+  static constexpr unsigned char DATA_FLOAT     = 0x09;
+  static constexpr unsigned char DATA_INT64     = 0x0A;
+  static constexpr unsigned char DATA_UINT64    = 0x0B;
   static constexpr unsigned char DATA_BITVECTOR = 0x0C;
 
   // return false if port or data type is zero (invalid)
@@ -391,8 +391,8 @@ public:
                unsigned char &bvec1, unsigned char &bvec2) const {
     portType = value & 0x0F;
     dataType = (value >> 4) & 0x0F;
-    bvec1 = (value >> 8) & 0x00FF;
-    bvec2 = (value >> 16) & 0x00FF;
+    bvec1    = (value >> 8) & 0x00FF;
+    bvec2    = (value >> 16) & 0x00FF;
     return dataType && portType;
   }
 

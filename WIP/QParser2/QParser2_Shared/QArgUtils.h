@@ -20,14 +20,17 @@ struct Point {
   int x;
   int y;
 
-  Point();
-  Point(int x_, int y_);
+  // Point();
+  // Point(int x_, int y_);
+  constexpr Point() : x(0), y(0) {}
+  constexpr Point(int x_, int y_) : x(x_), y(y_) {}
 
   // Add another point to this point and return result
   Point add(const Point &other) const;
 
-  // Operator overload for addition
+  // Operator overload for addition/subtraction
   Point operator+(const Point &other) const;
+  Point operator-(const Point &other) const;
 
   // Add another point to this point (modifies this point)
   Point &operator+=(const Point &other);
@@ -59,7 +62,7 @@ public:
   static int parse(const std::string &str);
 
   // toString methods
-  std::string toString() const;
+  std::string        toString() const;
   static std::string toString(int value);
 };
 
@@ -90,7 +93,7 @@ public:
   static float parse(const std::string &str);
 
   // toString methods
-  std::string toString(int precision = 0) const;
+  std::string        toString(int precision = 0) const;
   static std::string toString(float value, int precision = 0);
 };
 
@@ -121,7 +124,7 @@ public:
   static int parse(const std::string &str);
 
   // toString methods
-  std::string toString(int width = 0) const;
+  std::string        toString(int width = 0) const;
   static std::string toString(int value, int width = 0);
 };
 
@@ -152,7 +155,7 @@ public:
   static bool parse(const std::string &str);
 
   // toString methods
-  std::string toString() const;
+  std::string        toString() const;
   static std::string toString(bool value);
 };
 
@@ -213,7 +216,7 @@ public:
   static std::string parse(const std::string &str); // why?
 
   // toString methods
-  std::string toString() const;
+  std::string        toString() const;
   static std::string toString(const std::string &value); // why?
 
   // convert to basic ASCII
@@ -248,6 +251,6 @@ public:
   static Point parse(const std::string &str);
 
   // toString methods
-  std::string toString() const;
+  std::string        toString() const;
   static std::string toString(const Point &point);
 };

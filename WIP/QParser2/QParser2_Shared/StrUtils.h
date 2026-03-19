@@ -11,9 +11,9 @@
 
 namespace StrUtils {
 
-int strToInt(const std::string &str);
-long strToLong(const std::string &str);
-float strToFloat(const std::string &str);
+int    strToInt(const std::string &str);
+long   strToLong(const std::string &str);
+float  strToFloat(const std::string &str);
 double strToDouble(const std::string &str);
 
 std::string intToStr(int value);
@@ -28,7 +28,7 @@ std::string trimRight(const std::string &str);
 
 // parse into elements
 typedef std::vector<std::string> StrList;
-StrList tokenize(const std::string &input);
+StrList                          tokenize(const std::string &input);
 
 std::string forceQuotes(std::string str);
 

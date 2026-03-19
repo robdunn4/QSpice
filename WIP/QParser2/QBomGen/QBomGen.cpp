@@ -46,8 +46,8 @@ int main(int argc, char *argv[]) {
   std::string inputFilename = argv[1];
 
   // Generate output filename with "_out.csv" suffix
-  std::string baseFilename = getFilenameWithoutExtension(inputFilename);
-  std::string extension = getFileExtension(inputFilename);
+  std::string baseFilename   = getFilenameWithoutExtension(inputFilename);
+  std::string extension      = getFileExtension(inputFilename);
   std::string outputFilename = baseFilename + "_out.csv";
 
   std::cout << "=== Parsing Input File ===" << std::endl;
@@ -74,11 +74,11 @@ int main(int argc, char *argv[]) {
     std::cout << "\n=== Generating BOM ===" << std::endl;
     QBomList bomList;
 
-    // parse first-level QItemCmp elements (skip others)
+    // parse first-level ItemCmp elements (skip others)
     QSchTreePtr cmpItem = parsedTree->getFirstChild();
     while (cmpItem) {
       if (cmpItem->enumID == QPI::COMP) {
-        // next down should be QItemSym
+        // next down should be ItemSym
         QSchTreePtr symItem = cmpItem->getFirstChild();
         if (symItem && symItem->enumID != QPI::SYM) break;
 

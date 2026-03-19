@@ -76,8 +76,8 @@ int main(int argc, char *argv[]) {
   std::string inputFilename = argv[1];
 
   // Generate output filename with "_out" suffix before extension
-  std::string baseFilename = getFilenameWithoutExtension(inputFilename);
-  std::string extension = getFileExtension(inputFilename);
+  std::string baseFilename   = getFilenameWithoutExtension(inputFilename);
+  std::string extension      = getFileExtension(inputFilename);
   std::string outputFilename = baseFilename + "_out" + extension;
 
   std::cout << "=== Parsing Input File ===\n";

@@ -12,9 +12,9 @@
 // Point implementation
 // ============================================================================
 
-Point::Point() : x(0), y(0) {}
-
-Point::Point(int x_, int y_) : x(x_), y(y_) {}
+// Point::Point() : x(0), y(0) {}
+//
+// Point::Point(int x_, int y_) : x(x_), y(y_) {}
 
 Point Point::add(const Point &other) const {
   return Point(x + other.x, y + other.y);
@@ -24,6 +24,11 @@ Point Point::operator+(const Point &other) const {
   return Point(x + other.x, y + other.y);
 }
 
+Point Point::operator-(const Point &other) const {
+  return Point(x - other.x, y - other.y);
+}
+
+// do we use this?  if so, do we need an operator-= as well?
 Point &Point::operator+=(const Point &other) {
   x += other.x;
   y += other.y;
@@ -49,7 +54,7 @@ ArgInt::operator int() const { return value; }
 int ArgInt::parse(const std::string &str) {
   try {
     size_t pos;
-    int value = std::stoi(str, &pos);
+    int    value = std::stoi(str, &pos);
     // Check if entire string was consumed
     if (pos != str.length()) {
       throw std::invalid_argument("Invalid integer format");
@@ -83,7 +88,7 @@ ArgFloat::operator float() const { return value; }
 float ArgFloat::parse(const std::string &str) {
   try {
     size_t pos;
-    float value = std::stof(str, &pos);
+    float  value = std::stof(str, &pos);
     if (pos != str.length()) {
       throw std::invalid_argument("Invalid float format");
     }
@@ -133,7 +138,7 @@ int ArgHex::parse(const std::string &str) {
     }
 
     size_t pos;
-    int value = std::stoi(str, &pos, 16);
+    int    value = std::stoi(str, &pos, 16);
     if (pos != str.length()) {
       throw std::invalid_argument("Invalid hex format");
     }
@@ -226,10 +231,11 @@ std::string ArgString::toString() const { return value; }
 std::string ArgString::toAsciiString() const {
   std::string ascii;
 
-  for (size_t i = 0; i < value.size();) {
-    if (value[i] > 0x7F) continue;
+  for (size_t i = 0; i < value.size(); ++i) {
+    if (static_cast<unsigned char>(value[i]) > 0x7F) continue;
     ascii += value[i];
   }
+
   return ascii;
 }
 
@@ -255,7 +261,7 @@ Point ArgPoint::parse(const std::string &str) {
   // Pattern matches: '(', integer (with optional sign), ',',
   // integer (with optional sign), ')' - NO whitespace allowed
   static const std::regex pattern(R"(\((-?\d+),(-?\d+)\))");
-  std::smatch matches;
+  std::smatch             matches;
 
   if (!std::regex_match(str, matches, pattern)) {
     throw std::invalid_argument("Invalid point format: " + str);

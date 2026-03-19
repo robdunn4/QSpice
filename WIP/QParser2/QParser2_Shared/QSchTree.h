@@ -6,7 +6,7 @@
  * QSchTree.h -- Schematic or symbol tree.
  */
 #pragma once
-#include "QItemBase.h"
+#include "ItemBase.h"
 #include <memory>
 #include <string>
 #include <vector>
@@ -18,19 +18,19 @@ typedef std::shared_ptr<QSchTree> QSchTreePtr;
 class QSchTree {
 public:
   static const unsigned char BEGIN_NODE = 0xAB;
-  static const unsigned char END_NODE = 0xBB;
+  static const unsigned char END_NODE   = 0xBB;
 
   // File identifier bytes
   static constexpr unsigned char FILE_ID[4] = {0xFF, 0xD8, 0xFF, 0xDB};
 
-  std::string data;
+  std::string              data;
   std::vector<QSchTreePtr> children;
-  int lineNbr;
+  int                      lineNbr;
 
-  std::string typeStr;
-  std::string dataStr;
-  QPI enumID;
-  QItemBasePtr itemPtr;
+  std::string  typeStr;
+  std::string  dataStr;
+  QPI          enumID;
+  ItemBasePtr itemPtr;
 
 private:
   std::weak_ptr<QSchTree> parent; // Parent node (weak to avoid circular refs)
@@ -75,13 +75,12 @@ public:
   QSchTreePtr getLastChild() const;
   QSchTreePtr getChild(size_t index) const;
   QSchTreePtr getNextSibling() const;
-  QSchTreePtr getNextSibling(
-      QPI type) const; // let's us skip to next sibling of a specific type
+  QSchTreePtr getNextSibling(QPI type) const;
   QSchTreePtr getPrevSibling() const;
 
   // Query methods
-  bool isRoot() const;
-  bool isLeaf() const;
+  bool   isRoot() const;
+  bool   isLeaf() const;
   size_t getChildCount() const;
   size_t getSiblingIndex() const;
 
@@ -99,7 +98,7 @@ public:
 
   // Print with custom prefix using ASCII characters
   void printWithPrefix(const std::string &prefix = "",
-                       bool isLast = true) const;
+                       bool               isLast = true) const;
 
   // Write tree to stream
   void writeToStream(std::ostream &stream) const;

@@ -98,8 +98,8 @@ std::string trimRight(const std::string &str) {
 //
 StrList tokenize(const std::string &input) {
   std::istringstream iss(input);
-  std::string curToken;
-  StrList tokens;
+  std::string        curToken;
+  StrList            tokens;
 
   while (iss.good()) {
     iss >> curToken;

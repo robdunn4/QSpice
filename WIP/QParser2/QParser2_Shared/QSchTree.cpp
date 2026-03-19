@@ -35,11 +35,11 @@ QSchTree::QSchTree(const QSchTree &other)
 QSchTree &QSchTree::operator=(const QSchTree &other) {
   if (this != &other) {
     // Copy all simple members
-    data = other.data;
+    data    = other.data;
     lineNbr = other.lineNbr;
     typeStr = other.typeStr;
     dataStr = other.dataStr;
-    enumID = other.enumID;
+    enumID  = other.enumID;
 
     // Deep copy itemPtr
     itemPtr = other.itemPtr ? other.itemPtr->clone() : nullptr;
@@ -175,7 +175,7 @@ void QSchTree::setParent(std::weak_ptr<QSchTree> parentPtr) {
 
 void QSchTree::parseData() {
   std::istringstream iss(data);
-  std::string secondWord, remainder;
+  std::string        secondWord, remainder;
 
   // Extract first two words
   iss >> typeStr;
@@ -197,9 +197,9 @@ void QSchTree::parseData() {
   // for some reason, still have trailing space on some nodeData -- I'm
   // missing something... this works for now...
   dataStr = trim(dataStr);
-  enumID = QItemTypes::getEnum(typeStr);
+  enumID  = ItemTypes::getEnum(typeStr);
 
-  itemPtr = QItemBase::makeItem(typeStr, dataStr);
+  itemPtr = ItemBase::makeItem(typeStr, dataStr);
 }
 
 // Deep clone method - uses copy constructor
@@ -272,7 +272,7 @@ void QSchTree::printWithPrefix(const std::string &prefix, bool isLast) const {
   std::cout << toString() << std::endl;
 
   for (size_t i = 0; i < children.size(); ++i) {
-    bool last = (i == children.size() - 1);
+    bool        last      = (i == children.size() - 1);
     std::string newPrefix = prefix + (isLast ? "    " : "|   ");
     children[i]->printWithPrefix(newPrefix, last);
   }
@@ -324,7 +324,7 @@ void QSchTree::writeNodeRecursive(std::ostream &stream, int indent) const {
 }
 
 QSchTreePtr QSchTree::parseNodeRecursive(std::istream &stream,
-                                         int &currentLine) {
+                                         int          &currentLine) {
   std::string line;
 
   // Read the next non-empty line
@@ -355,7 +355,7 @@ QSchTreePtr QSchTree::parseNodeRecursive(std::istream &stream,
   // Parse parent node: BEGIN_NODE + name (no END_NODE)
   if (!line.empty() && static_cast<unsigned char>(line[0]) == BEGIN_NODE) {
     std::string nodeName = trim(line.substr(1));
-    auto node = std::make_shared<QSchTree>(nodeName, currentLine);
+    auto        node     = std::make_shared<QSchTree>(nodeName, currentLine);
 
     // Recursively parse children until we hit END_NODE
     while (true) {
@@ -396,8 +396,8 @@ QSchTreePtr QSchTree::parseFromStream(std::istream &stream) {
   }
 
   // Parse the tree recursively
-  int currentLine = 0;
-  auto root = parseNodeRecursive(stream, currentLine);
+  int  currentLine = 0;
+  auto root        = parseNodeRecursive(stream, currentLine);
 
   if (root == nullptr) {
     throw std::runtime_error("Parse error: empty file or no valid root node");

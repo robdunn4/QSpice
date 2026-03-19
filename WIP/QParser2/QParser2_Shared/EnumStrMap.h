@@ -29,7 +29,7 @@ public:
 
   void addMapping(EnumID enumID, const EnumStr &enumStr) {
     EnumStrToID[enumStr] = enumID;
-    EnumIDToStr[enumID] = enumStr;
+    EnumIDToStr[enumID]  = enumStr;
   }
 
   void addMappings(std::initializer_list<std::pair<EnumID, EnumStr>> mappings) {

@@ -1,0 +1,43 @@
+//-----------------------------------------------------------------------------
+// This file is part of the the QParser2 project.  You can find the complete
+// project here:  https://github.com/robdunn4/QSpice/
+//-----------------------------------------------------------------------------
+/*
+ * ItemLine.h -- Line item class.
+ *
+ * Expecting: "line" (P1) (P2) P3 P4 P5 P6 P7
+ * Example:   "line (0,-130) (0,-200) 0 0 0x1000000 -1 -1"
+ *
+ * Analysis:
+ *   P1 -- Endpoint coordinate
+ *   P2 -- Endpoint coordinate
+ *   P3 -- Line width
+ *   P4 -- Line type
+ *   P5 -- Line color
+ *   P6 -- Lookup index
+ *   P7 -- Pin index
+ */
+#pragma once
+#include "QArgUtils2.h"
+#include "ItemBase.h"
+
+class ItemLine : public ItemBase {
+public:
+  ItemLine(std::string typeStr, std::string argStr);
+  ItemLine(const ItemLine &other);
+  ItemBasePtr clone() const override;
+
+  void        parseItem() override;
+  std::string toString() const override;
+
+  ArgPoint     pt1;
+  ArgPoint     pt2;
+  ArgLineWidth lineWidth;
+  ArgLineType  lineType;
+  ArgColor     lineColor;
+  ArgLookupNdx lookupNdx;
+  ArgPinNdx    pinNdx;
+};
+
+typedef std::shared_ptr<ItemLine> ItemLinePtr;
+

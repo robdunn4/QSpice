@@ -18,15 +18,15 @@ public:
   bool parseData(const QSchTreePtr symItem);
 
   static void writeHeader(std::ostream &ostrm);
-  void writeData(std::ostream &ostrm) const;
+  void        writeData(std::ostream &ostrm) const;
 
 public:
-  std::string name;    // from QItemSym
-  std::string type;    // from QItemType
-  std::string shorted; // from QItemShort
-  std::string desc;    // from QItemDesc
-  std::string refID;   // from QItemText
-  std::string value;   // from QItemText
+  std::string name;    // from ItemSym
+  std::string type;    // from ItemType
+  std::string shorted; // from ItemShort
+  std::string desc;    // from ItemDesc
+  std::string refID;   // from ItemText
+  std::string value;   // from ItemText
 };
 
 class QBomList : public std::vector<QBomData> {
@@ -35,3 +35,4 @@ public:
 
   void sort1();
 };
+
