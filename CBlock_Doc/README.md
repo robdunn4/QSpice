@@ -209,7 +209,7 @@ Provides a simple technique to create a QSpice symbol file from a C-Block compon
 Demonstrates using the Lookup Programmable Attribute to create "self-modifying symbols" for DLL components.
 
 ### Files
-* CBlockBasics15.pdf ("Programmable Attributes – Lookup Symbols") &mdash; TBD
+* CBlockBasics15.pdf ("Programmable Attributes – Lookup Symbols")
 * CB15_Demo.qsch &mdash; Demonstration schematic.
 * CB15_DLL.cpp &mdash; Example component DLL code.
 * CB15_Filter.qsym &mdash; Top-level symbol.
@@ -219,3 +219,4 @@ Demonstrates using the Lookup Programmable Attribute to create "self-modifying s
 * CB15_BPEN.qsym &mdash; Second-level symbol.
 * CB15_HPEN.qsym &mdash; Second-level symbol.
 * CB15_LPEN.qsym &mdash; Second-level symbol.
+* CB15_make_junction.bat &mdash; Batch file to "redirect" QSpice Repository.
