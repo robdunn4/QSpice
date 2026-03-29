@@ -203,3 +203,19 @@ Provides a simple technique to create a QSpice symbol file from a C-Block compon
 * CB14_Test_Symbol1.qsch &mdash; Test schematic for symbol #1.
 * CB14_Symbol2.qsym &mdash; Adds Programmable Attributes to symbol #1.
 * CB14_Test_Symbol2.qsch &mdash; Test schematic for symbol #2.
+
+## C-Block Basics #15
+
+Demonstrates using the Lookup Programmable Attribute to create "self-modifying symbols" for DLL components.
+
+### Files
+* CBlockBasics15.pdf ("Programmable Attributes – Lookup Symbols") &mdash; TBD
+* CB15_Demo.qsch &mdash; Demonstration schematic.
+* CB15_DLL.cpp &mdash; Example component DLL code.
+* CB15_Filter.qsym &mdash; Top-level symbol.
+* CB15_BP.qsym &mdash; Second-level symbol.
+* CB15_HP.qsym &mdash; Second-level symbol.
+* CB15_LP.qsym &mdash; Second-level symbol.
+* CB15_BPEN.qsym &mdash; Second-level symbol.
+* CB15_HPEN.qsym &mdash; Second-level symbol.
+* CB15_LPEN.qsym &mdash; Second-level symbol.
