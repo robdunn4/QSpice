@@ -1,0 +1,14 @@
+ÿØÿÛ«symbol CB15_Filter
+  «type: Ø(.DLL)»
+  «description: CBlockBasics15 Demo»
+  «shorted pins: false»
+  «rect (-400,300) (400,-300) 0 0 0 0x1000000 0x1000000 -1 0 -1»
+  «rect (-350,250) (350,-50) 0 0 0 0x1000000 0x1000000 -1 0 -1»
+  «text (0,400) 1 0 0 0x0 -1 -1 "X1"»
+  «text (0,550) 1 0 2 0x1000000 -1 -1 "CB15_DLL"»
+  «text (0,-460) 1 15 2 0x1000000 -1 -1 "char* FilterType=<(LP),HP,BP>;Filter type"»
+  «text (0,-650) 1 0 2 0x1000000 -1 -1 "bool EnablePin=<(false),true>;Add/remove Enable pin"»
+  «text (0,-900) 1 0 2 0x1000000 -1 -1 "Lookup<bool EnablePin,char* FilterType;CB15_LP,CB15_HP,CB15_BP,CB15_LPEN,CB15_HPEN,CB15_BPEN>"»
+  «pin (-400,-200) (0,0) 1 7 145 0x0 -1 "In"»
+  «pin (400,-200) (0,0) 1 11 146 0x0 -1 "Out"»
+»
