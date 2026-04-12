@@ -14,16 +14,21 @@
  *   P3 -- Stuff/short
  */
 #pragma once
-#include "QArgUtils2.h"
 #include "ItemBase.h"
+#include "QArgUtils2.h"
 
 class ItemCmp : public ItemBase {
 public:
-  ItemCmp(std::string typeStr, std::string argStr);
-  ItemCmp(const ItemCmp &other);
+  ItemCmp() : ItemBase(QPI::COMP) {}
+  ItemCmp(const ItemCmp &other) = default;
+
+  // Construct with explicit member values
+  ItemCmp(const ArgPoint &pt1, const ArgRot &rotate, const ArgStuff &stuff)
+      : ItemBase(QPI::COMP), pt1(pt1), rotate(rotate), stuffShort(stuff) {}
+
   ItemBasePtr clone() const override;
 
-  void        parseItem() override;
+  bool        parseItem(const std::string &argStr) override;
   std::string toString() const override;
 
   ArgPoint pt1;
@@ -32,4 +37,3 @@ public:
 };
 
 typedef std::shared_ptr<ItemCmp> ItemCmpPtr;
-

@@ -5,29 +5,23 @@
 #include "ItemJunction.h"
 #include "StrUtils.h"
 
-ItemJunction::ItemJunction(std::string typeStr, std::string argStr)
-    : ItemBase(typeStr, argStr) {}
-
-ItemJunction::ItemJunction(const ItemJunction &other)
-    : ItemBase(other), pt1(other.pt1) {}
-
 ItemBasePtr ItemJunction::clone() const {
   return std::make_shared<ItemJunction>(*this);
 }
 
-void ItemJunction::parseItem() {
+bool ItemJunction::parseItem(const std::string &argStr) {
   StrUtils::StrList strList = StrUtils::tokenize(argStr);
 
-  if (strList.size() != 1) {
-    std::string str = "Unexpected content in " + typeStr + " " + argStr;
-    throw std::invalid_argument(str);
-  }
+  if (strList.size() != 1) return false;
 
-  pt1 = ArgPoint(strList[0]);
+  try {
+    pt1 = ArgPoint(strList[0]);
+  } catch (...) {
+    return false;
+  }
+  return true;
 }
 
 std::string ItemJunction::toString() const {
-  std::string str = typeStr + " " + pt1.toString();
-  return str;
+  return std::string(getTypeStr()) + " " + pt1.toString();
 }
-

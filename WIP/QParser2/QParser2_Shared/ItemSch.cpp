@@ -4,21 +4,11 @@
 //-----------------------------------------------------------------------------
 #include "ItemSch.h"
 
-ItemSch::ItemSch(std::string typeStr, std::string argStr)
-    : ItemBase(typeStr, argStr) {}
+ItemBasePtr ItemSch::clone() const { return std::make_shared<ItemSch>(*this); }
 
-ItemSch::ItemSch(const ItemSch &other) : ItemBase(other) {}
-
-ItemBasePtr ItemSch::clone() const {
-  return std::make_shared<ItemSch>(*this);
+bool ItemSch::parseItem(const std::string &argStr) {
+  // schematic line takes no arguments
+  return argStr.empty();
 }
 
-void ItemSch::parseItem() {
-  if (!argStr.empty()) {
-    std::string str = "Unexpected content in " + typeStr + " " + argStr;
-    throw std::invalid_argument(str);
-  }
-}
-
-std::string ItemSch::toString() const { return typeStr; }
-
+std::string ItemSch::toString() const { return std::string(getTypeStr()); }

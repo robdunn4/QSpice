@@ -12,20 +12,22 @@
  *   P1 --  String value.  Optional?  Non-quoted?
  */
 #pragma once
-#include "QArgUtils.h"
 #include "ItemBase.h"
+#include "QArgUtils.h"
+#include <memory>
 
 class ItemLib : public ItemBase {
 public:
-  ItemLib(std::string typeStr, std::string argStr);
-  ItemLib(const ItemLib &other);
+  ItemLib() : ItemBase(QPI::LIB) {}
+  ItemLib(const ItemLib &other) = default;
+  ItemLib(const ArgString &libText) : ItemBase(QPI::LIB), libText(libText) {}
+
   ItemBasePtr clone() const override;
 
-  void        parseItem() override;
+  bool        parseItem(const std::string &argStr) override;
   std::string toString() const override;
 
   ArgString libText;
 };
 
 typedef std::shared_ptr<ItemLib> ItemLibPtr;
-

@@ -24,9 +24,9 @@ public:
   // ── Spatial ──────────────────────────────────────────────────────────────
 
   /// Axis-aligned bounding box in schematic (canvas) coordinates.
-  [[nodiscard]] virtual Rect getBounds() const noexcept = 0;
+  [[nodiscard]] virtual Rect getRect() const noexcept = 0;
 
-  /// Centre of bounding box. Default derives from getBounds().
+  /// Centre of bounding box. Default derives from getRect().
   [[nodiscard]] virtual Point getCenter() const noexcept;
 
   /// True if bounding box contains p. Override for non-rectangular shapes.
@@ -42,10 +42,10 @@ public:
 
   /// Reposition the item. Concrete class updates its ArgPoint members.
   /// Implementations should preserve shape size (move pt1 and pt2 together).
-  virtual void setPosition(Point p) noexcept = 0;
+  virtual void moveTo(Point p) noexcept = 0;
 
-  /// Shift by delta. Default calls setPosition(getPosition() + delta).
-  virtual void move(Point delta) noexcept;
+  /// Shift by delta. Default calls moveTo(getPosition() + delta).
+  virtual void moveBy(Point delta) noexcept;
 
   // ── Hit testing ──────────────────────────────────────────────────────────
 

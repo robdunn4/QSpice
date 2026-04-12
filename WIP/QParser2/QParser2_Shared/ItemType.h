@@ -12,16 +12,18 @@
  *   P1 --  Type string.  Optional?  Unquoted?
  */
 #pragma once
-#include "QArgUtils.h"
 #include "ItemBase.h"
+#include "QArgUtils.h"
 
 class ItemType : public ItemBase {
 public:
-  ItemType(std::string typeStr, std::string argStr);
-  ItemType(const ItemType &other);
+  ItemType() : ItemBase(QPI::TYPE) {}
+  ItemType(const ItemType &other) = default;
+  ItemType(const ArgString &text) : ItemBase(QPI::TYPE), text(text) {}
+
   ItemBasePtr clone() const override;
 
-  void        parseItem() override;
+  bool        parseItem(const std::string &argStr) override;
   std::string toString() const override;
 
   ArgString text;

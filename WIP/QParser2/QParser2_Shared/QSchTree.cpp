@@ -199,7 +199,9 @@ void QSchTree::parseData() {
   dataStr = trim(dataStr);
   enumID  = ItemTypes::getEnum(typeStr);
 
-  itemPtr = ItemBase::makeItem(typeStr, dataStr);
+  // itemPtr = ItemBase::makeItem(typeStr, dataStr);
+  itemPtr = ItemBase::makeItem(enumID);
+  itemPtr->parseItem(dataStr);
 }
 
 // Deep clone method - uses copy constructor
@@ -268,7 +270,7 @@ void QSchTree::printBreadthFirst() const {
 void QSchTree::printWithPrefix(const std::string &prefix, bool isLast) const {
   std::cout << "[" << std::setw(4) << lineNbr << "] ";
   std::cout << prefix;
-  std::cout << (isLast ? "+-- " : "+-- ");
+  std::cout << (isLast ? "`-- " : "+-- ");
   std::cout << toString() << std::endl;
 
   for (size_t i = 0; i < children.size(); ++i) {

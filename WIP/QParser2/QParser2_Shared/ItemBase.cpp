@@ -25,107 +25,34 @@
 #include "ItemWire.h"
 #include "ItemZigzag.h"
 
-// Constructor: sets basic fields only, NO parsing
-ItemBase::ItemBase(std::string typeStr, std::string argStr)
-    : typeStr(typeStr), argStr(argStr) {
-  enumID = ItemTypes::getEnum(typeStr);
+ItemBasePtr ItemBase::makeItem(QPI enumID) {
+  switch (enumID) {
+  case QPI::SCH:      return std::make_shared<ItemSch>();
+  case QPI::COMP:     return std::make_shared<ItemCmp>();
+  case QPI::SYM:      return std::make_shared<ItemSym>();
+  case QPI::TYPE:     return std::make_shared<ItemType>();
+  case QPI::DESC:     return std::make_shared<ItemDesc>();
+  case QPI::LIB:      return std::make_shared<ItemLib>();
+  case QPI::SHORTED:  return std::make_shared<ItemShort>();
+  case QPI::NET:      return std::make_shared<ItemNet>();
+  case QPI::JUNCTION: return std::make_shared<ItemJunction>();
+  case QPI::WIRE:     return std::make_shared<ItemWire>();
+  case QPI::TAP:      return std::make_shared<ItemTap>();
+  case QPI::LINE:     return std::make_shared<ItemLine>();
+  case QPI::RECT:     return std::make_shared<ItemRect>();
+  case QPI::ELLIPSE:  return std::make_shared<ItemEllipse>();
+  case QPI::ARC3P:    return std::make_shared<ItemArc>();
+  case QPI::TRIANGLE: return std::make_shared<ItemTriangle>();
+  case QPI::COIL:     return std::make_shared<ItemCoil>();
+  case QPI::ZIGZAG:   return std::make_shared<ItemZigzag>();
+  case QPI::TEXT:     return std::make_shared<ItemText>();
+  case QPI::PIN:      return std::make_shared<ItemPin>();
+  default:            return std::make_shared<ItemDbg>();
+  }
 }
 
-// Copy constructor: copies all base class members
-ItemBase::ItemBase(const ItemBase &other)
-    : typeStr(other.typeStr), argStr(other.argStr), enumID(other.enumID) {}
-
-ItemBasePtr ItemBase::makeItem(std::string typeStr, std::string argStr) {
-  ItemBasePtr item;
-
-  switch (ItemTypes::getEnum(typeStr)) {
-  case QPI::SCH:
-    item = std::make_shared<ItemSch>(typeStr, argStr);
-    break;
-
-  case QPI::COMP:
-    item = std::make_shared<ItemCmp>(typeStr, argStr);
-    break;
-
-  case QPI::SYM:
-    item = std::make_shared<ItemSym>(typeStr, argStr);
-    break;
-
-  case QPI::TYPE:
-    item = std::make_shared<ItemType>(typeStr, argStr);
-    break;
-
-  case QPI::DESC:
-    item = std::make_shared<ItemDesc>(typeStr, argStr);
-    break;
-
-  case QPI::LIB:
-    item = std::make_shared<ItemLib>(typeStr, argStr);
-    break;
-
-  case QPI::SHORTED:
-    item = std::make_shared<ItemShort>(typeStr, argStr);
-    break;
-
-  case QPI::LINE:
-    item = std::make_shared<ItemLine>(typeStr, argStr);
-    break;
-
-  case QPI::RECT:
-    item = std::make_shared<ItemRect>(typeStr, argStr);
-    break;
-
-  case QPI::ELLIPSE:
-    item = std::make_shared<ItemEllipse>(typeStr, argStr);
-    break;
-
-  case QPI::ARC3P:
-    item = std::make_shared<ItemArc>(typeStr, argStr);
-    break;
-
-  case QPI::TEXT:
-    item = std::make_shared<ItemText>(typeStr, argStr);
-    break;
-
-  case QPI::PIN:
-    item = std::make_shared<ItemPin>(typeStr, argStr);
-    break;
-
-  case QPI::ZIGZAG:
-    item = std::make_shared<ItemZigzag>(typeStr, argStr);
-    break;
-
-  case QPI::NET:
-    item = std::make_shared<ItemNet>(typeStr, argStr);
-    break;
-
-  case QPI::JUNCTION:
-    item = std::make_shared<ItemJunction>(typeStr, argStr);
-    break;
-
-  case QPI::WIRE:
-    item = std::make_shared<ItemWire>(typeStr, argStr);
-    break;
-
-  case QPI::COIL:
-    item = std::make_shared<ItemCoil>(typeStr, argStr);
-    break;
-
-  case QPI::TRIANGLE:
-    item = std::make_shared<ItemTriangle>(typeStr, argStr);
-    break;
-
-  case QPI::TAP:
-    item = std::make_shared<ItemTap>(typeStr, argStr);
-    break;
-
-  default:
-    item = std::make_shared<ItemDbg>(typeStr, argStr);
-    break;
-  }
-
-  // Parse AFTER construction
-  item->parseItem();
-
-  return item;
+ItemBasePtr ItemBase::makeItem(const std::string &typeStr) {
+  QPI enumID = ItemTypes::getEnum(typeStr);
+  if (enumID == QPI::UNKNOWN) return nullptr;
+  return makeItem(enumID);
 }

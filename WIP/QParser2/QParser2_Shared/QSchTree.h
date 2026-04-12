@@ -27,9 +27,9 @@ public:
   std::vector<QSchTreePtr> children;
   int                      lineNbr;
 
-  std::string  typeStr;
-  std::string  dataStr;
-  QPI          enumID;
+  std::string typeStr;
+  std::string dataStr;
+  QPI         enumID;
   ItemBasePtr itemPtr;
 
 private:

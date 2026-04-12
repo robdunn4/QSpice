@@ -4,19 +4,19 @@
 //-----------------------------------------------------------------------------
 #include "ItemShort.h"
 
-ItemShort::ItemShort(std::string typeStr, std::string argStr)
-    : ItemBase(typeStr, argStr) {}
-
-ItemShort::ItemShort(const ItemShort &other)
-    : ItemBase(other), bShorted(other.bShorted) {}
-
 ItemBasePtr ItemShort::clone() const {
   return std::make_shared<ItemShort>(*this);
 }
 
-void ItemShort::parseItem() { bShorted = ArgBool(argStr); }
-
-std::string ItemShort::toString() const {
-  return typeStr + " " + bShorted.toString();
+bool ItemShort::parseItem(const std::string &argStr) {
+  try {
+    bShorted = ArgBool(argStr);
+  } catch (...) {
+    return false;
+  }
+  return true;
 }
 
+std::string ItemShort::toString() const {
+  return std::string(getTypeStr()) + " " + bShorted.toString();
+}

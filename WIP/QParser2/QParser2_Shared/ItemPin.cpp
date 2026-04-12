@@ -5,45 +5,35 @@
 #include "ItemPin.h"
 #include "StrUtils.h"
 
-ItemPin::ItemPin(std::string typeStr, std::string argStr)
-    : ItemBase(typeStr, argStr) {}
+ItemBasePtr ItemPin::clone() const { return std::make_shared<ItemPin>(*this); }
 
-ItemPin::ItemPin(const ItemPin &other)
-    : ItemBase(other), pt1(other.pt1), pt2(other.pt2),
-      fontSize(other.fontSize), rotateAlign(other.rotateAlign),
-      pinInfo(other.pinInfo), textColor(other.textColor),
-      lookupNdx(other.lookupNdx), pinLabel(other.pinLabel) {}
-
-ItemBasePtr ItemPin::clone() const {
-  return std::make_shared<ItemPin>(*this);
-}
-
-void ItemPin::parseItem() {
+bool ItemPin::parseItem(const std::string &argStr) {
   StrUtils::StrList strList = StrUtils::tokenize(argStr);
 
-  // we expect three subStrings
-  if (strList.size() < 8 || strList.size() > 9) {
-    std::string str = "Unexpected content in " + typeStr + " " + argStr;
-    throw std::invalid_argument(str);
-  }
+  if (strList.size() < 8 || strList.size() > 9) return false;
 
-  pt1         = ArgPoint(strList[0]);
-  pt2         = ArgPoint(strList[1]);
-  fontSize    = ArgFontSize(strList[2]);
-  rotateAlign = ArgRotAlign(strList[3]);
-  pinInfo     = ArgPinInfo(strList[4]);
-  textColor   = ArgColor(strList[5]);
-  lookupNdx   = ArgLookupNdx(strList[6]);
-  pinLabel    = ArgString(strList[7]);
-  netName     = strList.size() < 9 ? std::string() : strList[8];
+  try {
+    pt1         = ArgPoint(strList[0]);
+    pt2         = ArgPoint(strList[1]);
+    fontSize    = ArgFontSize(strList[2]);
+    rotateAlign = ArgRotAlign(strList[3]);
+    pinInfo     = ArgPinInfo(strList[4]);
+    textColor   = ArgColor(strList[5]);
+    lookupNdx   = ArgLookupNdx(strList[6]);
+    pinLabel    = ArgString(strList[7]);
+    netName     = strList.size() < 9 ? std::string() : strList[8];
+  } catch (...) {
+    return false;
+  }
+  return true;
 }
 
 std::string ItemPin::toString() const {
-  std::string str = typeStr + " " + pt1.toString() + " " + pt2.toString() +
-                    " " + fontSize.toString() + " " + rotateAlign.toString() +
-                    " " + pinInfo.toString() + " " + textColor.toString() +
-                    " " + lookupNdx.toString() + " " + pinLabel.toString();
+  std::string str = std::string(getTypeStr()) + " " + pt1.toString() + " " +
+                    pt2.toString() + " " + fontSize.toString() + " " +
+                    rotateAlign.toString() + " " + pinInfo.toString() + " " +
+                    textColor.toString() + " " + lookupNdx.toString() + " " +
+                    pinLabel.toString();
   if (netName.getValue().length()) str += " " + netName.toString();
   return str;
 }
-

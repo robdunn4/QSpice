@@ -4,18 +4,18 @@
 //-----------------------------------------------------------------------------
 #include "DrawIntf.h"
 
-Point DrawIntf::getCenter() const noexcept { return getBounds().center(); }
+Point DrawIntf::getCenter() const noexcept { return getRect().getCenter(); }
 
 bool DrawIntf::contains(Point p) const noexcept {
-  return getBounds().contains(p);
+  return getRect().contains(p);
 }
 
 bool DrawIntf::intersects(Rect r) const noexcept {
-  return getBounds().intersects(r);
+  return getRect().intersects(r);
 }
 
-void DrawIntf::move(Point delta) noexcept {
-  setPosition(getPosition() + delta);
+void DrawIntf::moveBy(Point delta) noexcept {
+  moveTo(getPosition() + delta);
 }
 
 bool DrawIntf::hitTest(Point p) const noexcept {

@@ -28,51 +28,32 @@
  *          with no embedded spaces/newlines.  Not included if no graphic.  Given 
  *          that this may be a very long block of text without embedded spaces, it
  *          overrun default buffers....
- * 
- * Some testing:
- *   Default box:            rect (-1550,-150) (-1000,-700) 0 0 2 0x4000000 0x1000000 -1 0 -1
- *   Line Type Change:       rect (-1550,-150) (-1000,-700) 0 0 4 0x4000000 0x1000000 -1 0 -1
- *   Line Width Change:      rect (-1550,-150) (-1000,-700) 0 7 4 0x4000000 0x1000000 -1 0 -1
- *   Line Color Change:      rect (-1550,-150) (-1000,-700) 0 7 4 0xff 0x1000000 -1 0 -1
- *   Fill Color Change1:     rect (-1550,-150) (-1000,-700) 0 7 4 0xff 0x2e9ffff -1 0 -1
- *   Fill Color Change2:     rect (-1550,-150) (-1000,-700) 0 7 4 0xff 0x3ff0000 -1 0 -1
- *   Fill Color Change3:     rect (-1550,-150) (-1000,-700) 0 7 4 0xff 0x400ffff -1 0 -1
- *   Fill Color Change4:     rect (-1550,-150) (-1000,-700) 0 7 4 0xff 0xffff -1 0 -1
- *   In hierarchical block:  rect (-500,400) (500,-400) 0 0 0 0x4000000 0x4000000 -1 1 -1
- * 
- * 
- * Fill        :  Default color    -- 0x01 + cad background color from registry
- * Fill Change1:  Background color -- 0x02 + cad background color from registry
- * Fill Change2:  Foreground color -- 0x03 + one of several possible cad colors from registry
- * Fill Change3:  Solid fill color -- 0x04 + ???
- * Fill Change4:  Custom color     -- 0x00 + custom color
- * Image type:    Use background image  -- 0x05
- * 
- * New Image Info:
- *   SRCCOPY:     rect (-97,-6844)  (97,-6656)   0 0 2 0x4000000 0x5000000 -1 0 -1 [Image Data] 
- *   SRCPAINT:    rect (-347,-7144) (-153,-6956) 0 0 2 0x4000000 0x6000000 -1 0 -1 [Image Data]
- *   SRCAND:      rect (-297,-7594) (-103,-7406) 0 0 2 0x4000000 0x7000000 -1 0 -1 [Image Data]
- *   SRCINVERT:   rect (203,-8094)  (397,-7906)  0 0 2 0x4000000 0x8000000 -1 0 -1 [Image Data]
- *   SRCERASE:    rect (-97,-8294)  (97,-8106)   0 0 2 0x4000000 0x9000000 -1 0 -1 [Image Data]
- *   NOTSRCERASE: rect (-147,-8794) (47,-8606)   0 0 2 0x4000000 0xa000000 -1 0 -1 [Image Data]
- *   MERGEPAINT:  rect (53,-9044)   (247,-8856)  0 0 2 0x4000000 0xb000000 -1 0 -1 [Image Data]
- * 
- * OK, fillColor/P7 high bits are used for image BLT mode....
- * 
- * 
  */
 // clang-format on
 #pragma once
-#include "QArgUtils2.h"
 #include "ItemBase.h"
+#include "QArgUtils2.h"
 
 class ItemRect : public ItemBase {
 public:
-  ItemRect(std::string typeStr, std::string argStr);
-  ItemRect(const ItemRect &other);
+  ItemRect() : ItemBase(QPI::RECT) {}
+  ItemRect(const ItemRect &other) = default;
+
+  // Construct with explicit member values
+  ItemRect(const ArgPoint &pt1, const ArgPoint &pt2, const ArgRot &rotate,
+           const ArgLineWidth &lineWidth, const ArgLineType &lineType,
+           const ArgColor &lineColor, const ArgColor &fillColor,
+           const ArgLookupNdx &lookupNdx, const ArgInt &isHierarchicalBlock,
+           const ArgPinNdx &pinNdx, const ArgImage &imageData)
+      : ItemBase(QPI::RECT), pt1(pt1), pt2(pt2), rotate(rotate),
+        lineWidth(lineWidth), lineType(lineType), lineColor(lineColor),
+        fillColor(fillColor), lookupNdx(lookupNdx),
+        isHierarchicalBlock(isHierarchicalBlock), pinNdx(pinNdx),
+        imageData(imageData) {}
+
   ItemBasePtr clone() const override;
 
-  void        parseItem() override;
+  bool        parseItem(const std::string &argStr) override;
   std::string toString() const override;
 
   ArgPoint     pt1;
@@ -89,4 +70,3 @@ public:
 };
 
 typedef std::shared_ptr<ItemRect> ItemRectPtr;
-

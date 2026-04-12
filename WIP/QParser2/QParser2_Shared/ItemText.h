@@ -21,16 +21,26 @@
  *         special characters.
  */
 #pragma once
-#include "QArgUtils2.h"
 #include "ItemBase.h"
+#include "QArgUtils2.h"
 
 class ItemText : public ItemBase {
 public:
-  ItemText(std::string typeStr, std::string argStr);
-  ItemText(const ItemText &other);
+  ItemText() : ItemBase(QPI::TEXT) {}
+  ItemText(const ItemText &other) = default;
+
+  // Construct with explicit member values
+  ItemText(const ArgPoint &pt1, const ArgFontSize &fontSize,
+           const ArgRotAlign &rotateAlign, const ArgTextFlags &textFlags,
+           const ArgColor &textColor, const ArgLookupNdx &lookupNdx,
+           const ArgPinNdx &pinNdx, const ArgString &text)
+      : ItemBase(QPI::TEXT), pt1(pt1), fontSize(fontSize),
+        rotateAlign(rotateAlign), textFlags(textFlags), textColor(textColor),
+        lookupNdx(lookupNdx), pinNdx(pinNdx), text(text) {}
+
   ItemBasePtr clone() const override;
 
-  void        parseItem() override;
+  bool        parseItem(const std::string &argStr) override;
   std::string toString() const override;
 
   ArgPoint     pt1;
@@ -44,4 +54,3 @@ public:
 };
 
 typedef std::shared_ptr<ItemText> ItemTextPtr;
-

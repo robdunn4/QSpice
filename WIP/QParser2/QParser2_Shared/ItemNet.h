@@ -17,16 +17,25 @@
  *   P6 -- Descriptive text (optional)
  */
 #pragma once
-#include "QArgUtils2.h"
 #include "ItemBase.h"
+#include "QArgUtils2.h"
 
 class ItemNet : public ItemBase {
 public:
-  ItemNet(std::string typeStr, std::string argStr);
-  ItemNet(const ItemNet &other);
+  ItemNet() : ItemBase(QPI::NET) {}
+  ItemNet(const ItemNet &other) = default;
+
+  // Construct with explicit member values
+  ItemNet(const ArgPoint &pt1, const ArgFontSize &fontSize,
+          const ArgRotAlign &rotateAlign, const ArgInt &netType,
+          const ArgString &netName, const ArgString &netDesc)
+      : ItemBase(QPI::NET), pt1(pt1), fontSize(fontSize),
+        rotateAlign(rotateAlign), netType(netType), netName(netName),
+        netDesc(netDesc) {}
+
   ItemBasePtr clone() const override;
 
-  void        parseItem() override;
+  bool        parseItem(const std::string &argStr) override;
   std::string toString() const override;
 
   ArgPoint    pt1;
@@ -38,4 +47,3 @@ public:
 };
 
 typedef std::shared_ptr<ItemNet> ItemNetPtr;
-

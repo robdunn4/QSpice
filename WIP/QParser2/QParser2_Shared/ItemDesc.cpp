@@ -5,21 +5,21 @@
 #include "ItemDesc.h"
 #include "StrUtils.h"
 
-ItemDesc::ItemDesc(std::string typeStr, std::string argStr)
-    : ItemBase(typeStr, argStr) {}
-
-ItemDesc::ItemDesc(const ItemDesc &other)
-    : ItemBase(other), text(other.text) {}
-
 ItemBasePtr ItemDesc::clone() const {
   return std::make_shared<ItemDesc>(*this);
 }
 
-void ItemDesc::parseItem() { text = ArgString(argStr); }
+bool ItemDesc::parseItem(const std::string &argStr) {
+  try {
+    text = ArgString(argStr);
+  } catch (...) {
+    return false;
+  }
+  return true;
+}
 
 std::string ItemDesc::toString() const {
-  std::string str = typeStr + " " + text.toString();
+  std::string str = std::string(getTypeStr()) + " " + text.toString();
   StrUtils::trim(str);
   return str;
 }
-

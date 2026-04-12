@@ -12,20 +12,23 @@
  *   P1 -- Optional string.
  */
 #pragma once
-#include "QArgUtils.h"
 #include "ItemBase.h"
+#include "QArgUtils.h"
 
 class ItemSym : public ItemBase {
 public:
-  ItemSym(std::string typeStr, std::string argStr);
-  ItemSym(const ItemSym &other);
+  ItemSym() : ItemBase(QPI::SYM) {}
+  ItemSym(const ItemSym &other) = default;
+
+  // Construct with explicit member values
+  ItemSym(const ArgString &text) : ItemBase(QPI::SYM), text(text) {}
+
   ItemBasePtr clone() const override;
 
-  void        parseItem() override;
+  bool        parseItem(const std::string &argStr) override;
   std::string toString() const override;
 
   ArgString text;
 };
 
 typedef std::shared_ptr<ItemSym> ItemSymPtr;
-

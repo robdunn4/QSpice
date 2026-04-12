@@ -19,19 +19,29 @@
  *   P8 -- Pin index
  */
 #pragma once
-#include "QArgUtils2.h"
 #include "ItemBase.h"
+#include "QArgUtils2.h"
 
 class ItemArc;
 typedef std::shared_ptr<ItemArc> ItemArcPtr;
 
 class ItemArc : public ItemBase {
 public:
-  ItemArc(std::string typeStr, std::string argStr);
-  ItemArc(const ItemArc &other);
+  ItemArc() : ItemBase(QPI::ARC3P) {}
+  ItemArc(const ItemArc &other) = default;
+
+  // Construct with explicit member values
+  ItemArc(const ArgPoint &pt1, const ArgPoint &pt2, const ArgPoint &pt3,
+          const ArgLineWidth &lineWidth, const ArgLineType &lineType,
+          const ArgColor &lineColor, const ArgLookupNdx &lookupNdx,
+          const ArgPinNdx &pinNdx)
+      : ItemBase(QPI::ARC3P), pt1(pt1), pt2(pt2), pt3(pt3),
+        lineWidth(lineWidth), lineType(lineType), lineColor(lineColor),
+        lookupNdx(lookupNdx), pinNdx(pinNdx) {}
+
   ItemBasePtr clone() const override;
 
-  void        parseItem() override;
+  bool        parseItem(const std::string &argStr) override;
   std::string toString() const override;
 
   ArgPoint     pt1;

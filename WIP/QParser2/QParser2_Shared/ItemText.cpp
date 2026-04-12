@@ -6,56 +6,44 @@
 #include "StrUtils.h"
 #include <iostream>
 
-ItemText::ItemText(std::string typeStr, std::string argStr)
-    : ItemBase(typeStr, argStr) {}
-
-ItemText::ItemText(const ItemText &other)
-    : ItemBase(other), pt1(other.pt1), fontSize(other.fontSize),
-      rotateAlign(other.rotateAlign), textFlags(other.textFlags),
-      textColor(other.textColor), lookupNdx(other.lookupNdx),
-      pinNdx(other.pinNdx), text(other.text) {}
-
 ItemBasePtr ItemText::clone() const {
   return std::make_shared<ItemText>(*this);
 }
 
-void ItemText::parseItem() {
+bool ItemText::parseItem(const std::string &argStr) {
   StrUtils::StrList strList = StrUtils::tokenize(argStr);
 
-  if (strList.size() != 8) {
-    std::string str = "Unexpected content in " + typeStr + " " + argStr;
-    throw std::invalid_argument(str);
-  }
+  if (strList.size() != 8) return false;
 
-  pt1         = ArgPoint(strList[0]);
-  fontSize    = ArgFontSize(strList[1]);
-  rotateAlign = ArgRotAlign(strList[2]);
-  textFlags   = ArgTextFlags(strList[3]);
-  textColor   = ArgColor(strList[4]);
-  lookupNdx   = ArgLookupNdx(strList[5]);
-  pinNdx      = ArgPinNdx(strList[6]);
-  text        = ArgString(strList[7]);
+  try {
+    pt1         = ArgPoint(strList[0]);
+    fontSize    = ArgFontSize(strList[1]);
+    rotateAlign = ArgRotAlign(strList[2]);
+    textFlags   = ArgTextFlags(strList[3]);
+    textColor   = ArgColor(strList[4]);
+    lookupNdx   = ArgLookupNdx(strList[5]);
+    pinNdx      = ArgPinNdx(strList[6]);
+    text        = ArgString(strList[7]);
+  } catch (...) {
+    return false;
+  }
 
   // debugging/reverse-engineering... expecting only bits 0-1 used in p4
   // TODO:  Revisit...
-  if (textFlags & ~0x03) {
-    std::string str =
-        "Unexpected content in parameter p4: " + typeStr + " " + argStr;
-    throw std::invalid_argument(str);
-  }
+  if (textFlags & ~0x03) return false;
 
   // reverse-engineering...
   if (pinNdx.getValue() != -1) {
     std::cout << "*** Parameter p7 has undecoded value (lookup index?): "
-              << typeStr << " " << argStr << std::endl;
+              << toString() << std::endl;
   }
+
+  return true;
 }
 
 std::string ItemText::toString() const {
-  std::string str = typeStr + " " + pt1.toString() + " " + fontSize.toString() +
-                    " " + rotateAlign.toString() + " " + textFlags.toString() +
-                    " " + textColor.toString() + " " + lookupNdx.toString() +
-                    " " + pinNdx.toString() + " " + text.toString();
-  return str;
+  return std::string(getTypeStr()) + " " + pt1.toString() + " " +
+         fontSize.toString() + " " + rotateAlign.toString() + " " +
+         textFlags.toString() + " " + textColor.toString() + " " +
+         lookupNdx.toString() + " " + pinNdx.toString() + " " + text.toString();
 }
-

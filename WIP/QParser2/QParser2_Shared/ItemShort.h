@@ -12,20 +12,23 @@
  *   P1 --  boolean shorted pin state ("true" or "false")
  */
 #pragma once
-#include "QArgUtils.h"
 #include "ItemBase.h"
+#include "QArgUtils.h"
 
 class ItemShort : public ItemBase {
 public:
-  ItemShort(std::string typeStr, std::string argStr);
-  ItemShort(const ItemShort &other);
+  ItemShort() : ItemBase(QPI::SHORTED) {}
+  ItemShort(const ItemShort &other) = default;
+
+  ItemShort(const ArgBool &bShorted)
+      : ItemBase(QPI::SHORTED), bShorted(bShorted) {}
+
   ItemBasePtr clone() const override;
 
-  void        parseItem() override;
+  bool        parseItem(const std::string &argStr) override;
   std::string toString() const override;
 
   ArgBool bShorted;
 };
 
 typedef std::shared_ptr<ItemShort> ItemShortPtr;
-

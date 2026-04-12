@@ -13,16 +13,19 @@
  *   P2 -- Endpoint coordinate
  */
 #pragma once
-#include "QArgUtils.h"
 #include "ItemBase.h"
+#include "QArgUtils.h"
 
 class ItemTap : public ItemBase {
 public:
-  ItemTap(std::string typeStr, std::string argStr);
-  ItemTap(const ItemTap &other);
+  ItemTap() : ItemBase(QPI::TAP) {}
+  ItemTap(const ItemTap &other) = default;
+  ItemTap(const ArgPoint &pt1, const ArgPoint &pt2)
+      : ItemBase(QPI::TAP), pt1(pt1), pt2(pt2) {}
+
   ItemBasePtr clone() const override;
 
-  void        parseItem() override;
+  bool        parseItem(const std::string &argStr) override;
   std::string toString() const override;
 
   ArgPoint pt1;
@@ -30,4 +33,3 @@ public:
 };
 
 typedef std::shared_ptr<ItemTap> ItemTapPtr;
-

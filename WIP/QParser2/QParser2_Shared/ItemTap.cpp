@@ -5,30 +5,23 @@
 #include "ItemTap.h"
 #include "StrUtils.h"
 
-ItemTap::ItemTap(std::string typeStr, std::string argStr)
-    : ItemBase(typeStr, argStr) {}
+ItemBasePtr ItemTap::clone() const { return std::make_shared<ItemTap>(*this); }
 
-ItemTap::ItemTap(const ItemTap &other)
-    : ItemBase(other), pt1(other.pt1), pt2(other.pt2) {}
-
-ItemBasePtr ItemTap::clone() const {
-  return std::make_shared<ItemTap>(*this);
-}
-
-void ItemTap::parseItem() {
+bool ItemTap::parseItem(const std::string &argStr) {
   StrUtils::StrList strList = StrUtils::tokenize(argStr);
 
-  if (strList.size() != 2) {
-    std::string str = "Unexpected content in " + typeStr + " " + argStr;
-    throw std::invalid_argument(str);
-  }
+  if (strList.size() != 2) return false;
 
-  pt1 = ArgPoint(strList[0]);
-  pt2 = ArgPoint(strList[1]);
+  try {
+    pt1 = ArgPoint(strList[0]);
+    pt2 = ArgPoint(strList[1]);
+  } catch (...) {
+    return false;
+  }
+  return true;
 }
 
 std::string ItemTap::toString() const {
-  std::string str = typeStr + " " + pt1.toString() + " " + pt2.toString();
-  return str;
+  return std::string(getTypeStr()) + " " + pt1.toString() + " " +
+         pt2.toString();
 }
-

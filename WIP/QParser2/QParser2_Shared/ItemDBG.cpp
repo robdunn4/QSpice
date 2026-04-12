@@ -3,29 +3,22 @@
 // project here:  https://github.com/robdunn4/QSpice/
 //-----------------------------------------------------------------------------
 #include "ItemDBG.h"
-#include "iostream"
+#include <iostream>
 
 // this is a dummy class to use during development -- it does no actual parsing
-// and throws no execptions
+// and returns true so parsing proceeds past unknown lines.
 
-ItemDbg::ItemDbg(std::string typeStr, std::string argStr)
-    : ItemBase(typeStr, argStr) {}
+ItemBasePtr ItemDbg::clone() const { return std::make_shared<ItemDbg>(*this); }
 
-ItemDbg::ItemDbg(const ItemDbg &other) : ItemBase(other) {}
-
-ItemBasePtr ItemDbg::clone() const {
-  return std::make_shared<ItemDbg>(*this);
-}
-
-void ItemDbg::parseItem() {
-  // show error message for debugging
+bool ItemDbg::parseItem(const std::string &argStr) {
+  this->argStr = argStr;
   std::cout << "*** Unhandled record type in ItemDBG: " << toString()
             << std::endl;
+  return true;
 }
 
 std::string ItemDbg::toString() const {
-  std::string str = typeStr;
-  if (argStr.length()) str += " " + argStr;
+  std::string str = "dbg";
+  if (!argStr.empty()) str += " " + argStr;
   return str;
 }
-

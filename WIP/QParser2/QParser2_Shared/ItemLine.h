@@ -18,16 +18,26 @@
  *   P7 -- Pin index
  */
 #pragma once
-#include "QArgUtils2.h"
 #include "ItemBase.h"
+#include "QArgUtils2.h"
 
 class ItemLine : public ItemBase {
 public:
-  ItemLine(std::string typeStr, std::string argStr);
-  ItemLine(const ItemLine &other);
+  ItemLine() : ItemBase(QPI::LINE) {}
+  ItemLine(const ItemLine &other) = default;
+
+  // Construct with explicit member values
+  ItemLine(const ArgPoint &pt1, const ArgPoint &pt2,
+           const ArgLineWidth &lineWidth, const ArgLineType &lineType,
+           const ArgColor &lineColor, const ArgLookupNdx &lookupNdx,
+           const ArgPinNdx &pinNdx)
+      : ItemBase(QPI::LINE), pt1(pt1), pt2(pt2), lineWidth(lineWidth),
+        lineType(lineType), lineColor(lineColor), lookupNdx(lookupNdx),
+        pinNdx(pinNdx) {}
+
   ItemBasePtr clone() const override;
 
-  void        parseItem() override;
+  bool        parseItem(const std::string &argStr) override;
   std::string toString() const override;
 
   ArgPoint     pt1;
@@ -40,4 +50,3 @@ public:
 };
 
 typedef std::shared_ptr<ItemLine> ItemLinePtr;
-

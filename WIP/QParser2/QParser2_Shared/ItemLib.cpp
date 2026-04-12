@@ -5,21 +5,19 @@
 #include "ItemLib.h"
 #include "StrUtils.h"
 
-ItemLib::ItemLib(std::string typeStr, std::string argStr)
-    : ItemBase(typeStr, argStr) {}
+ItemBasePtr ItemLib::clone() const { return std::make_shared<ItemLib>(*this); }
 
-ItemLib::ItemLib(const ItemLib &other)
-    : ItemBase(other), libText(other.libText) {}
-
-ItemBasePtr ItemLib::clone() const {
-  return std::make_shared<ItemLib>(*this);
+bool ItemLib::parseItem(const std::string &argStr) {
+  try {
+    libText = ArgString(argStr);
+  } catch (...) {
+    return false;
+  }
+  return true;
 }
 
-void ItemLib::parseItem() { libText = ArgString(argStr); }
-
 std::string ItemLib::toString() const {
-  std::string str = typeStr + " " + libText.toString();
+  std::string str = std::string(getTypeStr()) + " " + libText.toString();
   StrUtils::trim(str);
   return str;
 }
-

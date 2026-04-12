@@ -15,13 +15,13 @@
 
 class ItemSch : public ItemBase {
 public:
-  ItemSch(std::string typeStr, std::string argStr);
-  ItemSch(const ItemSch &other);
+  ItemSch() : ItemBase(QPI::SCH) {}
+  ItemSch(const ItemSch &other) = default;
+
   ItemBasePtr clone() const override;
 
-  void        parseItem() override;
+  bool        parseItem(const std::string &argStr) override;
   std::string toString() const override;
 };
 
 typedef std::shared_ptr<ItemSch> ItemSchPtr;
-

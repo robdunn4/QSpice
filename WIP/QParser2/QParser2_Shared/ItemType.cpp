@@ -5,21 +5,21 @@
 #include "ItemType.h"
 #include "StrUtils.h"
 
-ItemType::ItemType(std::string typeStr, std::string argStr)
-    : ItemBase(typeStr, argStr) {}
-
-ItemType::ItemType(const ItemType &other)
-    : ItemBase(other), text(other.text) {}
-
 ItemBasePtr ItemType::clone() const {
   return std::make_shared<ItemType>(*this);
 }
 
-void ItemType::parseItem() { text = ArgString(argStr); }
+bool ItemType::parseItem(const std::string &argStr) {
+  try {
+    text = ArgString(argStr);
+  } catch (...) {
+    return false;
+  }
+  return true;
+}
 
 std::string ItemType::toString() const {
-  std::string str = typeStr + " " + text.toString();
+  std::string str = std::string(getTypeStr()) + " " + text.toString();
   StrUtils::trim(str);
   return str;
 }
-

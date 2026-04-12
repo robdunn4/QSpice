@@ -21,22 +21,33 @@
  */
 #pragma once
 #include "DrawIntf.h"
-#include "QArgUtils2.h"
 #include "ItemBase.h"
+#include "QArgUtils2.h"
 
 class ItemEllipse : public ItemBase, public DrawIntf {
 public:
-  ItemEllipse(std::string typeStr, std::string argStr);
-  ItemEllipse(const ItemEllipse &other);
+  ItemEllipse() : ItemBase(QPI::ELLIPSE) {}
+  ItemEllipse(const ItemEllipse &other) = default;
+
+  // Construct with explicit member values
+  ItemEllipse(const ArgPoint &pt1, const ArgPoint &pt2, const ArgRot &rotate,
+              const ArgLineWidth &lineWidth, const ArgLineType &lineType,
+              const ArgColor &lineColor, const ArgColor &fillColor,
+              const ArgLookupNdx &lookupNdx, const ArgPinNdx &pinNdx)
+      : ItemBase(QPI::ELLIPSE), pt1(pt1), pt2(pt2), rotate(rotate),
+        lineWidth(lineWidth), lineType(lineType), lineColor(lineColor),
+        fillColor(fillColor), lookupNdx(lookupNdx), pinNdx(pinNdx) {}
+
   ItemBasePtr clone() const override;
 
-  void        parseItem() override;
+  bool        parseItem(const std::string &argStr) override;
   std::string toString() const override;
 
   // DrawIntf overrides
-  [[nodiscard]] Rect  getBounds() const noexcept override;
+  [[nodiscard]] Rect  getRect() const noexcept override;
   [[nodiscard]] Point getPosition() const noexcept override;
-  void                setPosition(Point p) noexcept override;
+  void                moveTo(Point p) noexcept override;
+  void                moveBy(Point p) noexcept override;
 
   ArgPoint     pt1;
   ArgPoint     pt2;

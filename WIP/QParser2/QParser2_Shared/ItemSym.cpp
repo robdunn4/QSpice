@@ -5,28 +5,21 @@
 #include "ItemSym.h"
 #include "StrUtils.h"
 
-ItemSym::ItemSym(std::string typeStr, std::string argStr)
-    : ItemBase(typeStr, argStr) {}
+ItemBasePtr ItemSym::clone() const { return std::make_shared<ItemSym>(*this); }
 
-ItemSym::ItemSym(const ItemSym &other)
-    : ItemBase(other), text(other.text) {}
-
-ItemBasePtr ItemSym::clone() const {
-  return std::make_shared<ItemSym>(*this);
-}
-
-void ItemSym::parseItem() {
+bool ItemSym::parseItem(const std::string &argStr) {
   StrUtils::StrList strList = StrUtils::tokenize(argStr);
-  if (strList.size() > 1) {
-    std::string str = "Unexpected content in " + typeStr + " " + argStr;
-    throw std::invalid_argument(str);
-  }
+  if (strList.size() > 1) return false;
 
-  if (strList.size()) text = ArgString(strList[0]);
+  try {
+    if (strList.size()) text = ArgString(strList[0]);
+  } catch (...) {
+    return false;
+  }
+  return true;
 }
 
 std::string ItemSym::toString() const {
-  std::string str = StrUtils::trim(typeStr + " " + text.toString());
-  return str;
+  std::string str = std::string(getTypeStr()) + " " + text.toString();
+  return StrUtils::trim(str);
 }
-

@@ -19,16 +19,26 @@
  *   P8 -- Pin index
  */
 #pragma once
-#include "QArgUtils2.h"
 #include "ItemBase.h"
+#include "QArgUtils2.h"
 
 class ItemCoil : public ItemBase {
 public:
-  ItemCoil(std::string typeStr, std::string argStr);
-  ItemCoil(const ItemCoil &other);
+  ItemCoil() : ItemBase(QPI::COIL) {}
+  ItemCoil(const ItemCoil &other) = default;
+
+  // Construct with explicit member values
+  ItemCoil(const ArgPoint &pt1, const ArgPoint &pt2, const ArgRot &rotate,
+           const ArgLineWidth &lineWidth, const ArgLineType &lineType,
+           const ArgColor &lineColor, const ArgLookupNdx &lookupNdx,
+           const ArgPinNdx &pinNdx)
+      : ItemBase(QPI::COIL), pt1(pt1), pt2(pt2), rotate(rotate),
+        lineWidth(lineWidth), lineType(lineType), lineColor(lineColor),
+        lookupNdx(lookupNdx), pinNdx(pinNdx) {}
+
   ItemBasePtr clone() const override;
 
-  void        parseItem() override;
+  bool        parseItem(const std::string &argStr) override;
   std::string toString() const override;
 
   ArgPoint     pt1;
@@ -42,4 +52,3 @@ public:
 };
 
 typedef std::shared_ptr<ItemCoil> ItemCoilPtr;
-

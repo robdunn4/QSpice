@@ -5,32 +5,41 @@
 /*
  * ItemTriangle.h -- Triangle item class.
  *
- * Expecting: "arc3p" (P1) (P2) (P3) P4 P5 P6 P7 P8 P9
+ * Expecting: "triangle" (P1) (P2) (P3) P4 P5 P6 P7 P8 P9
  * Example:   "triangle (0,0) (60,0) (30,0) 0 2 0xff0000 0x2000000 -1 -1"
  *
  * Analysis:
  *   P1 -- Endpoint coordinate
  *   P2 -- Endpoint coordinate
  *   P3 -- Endpoint coordinate
- *   P4 -- Line widtth
+ *   P4 -- Line width
  *   P5 -- Line type
  *   P6 -- Line color
  *   P7 -- Fill color
  *   P8 -- Lookup index
  *   P9 -- Pin index
  */
-
 #pragma once
-#include "QArgUtils2.h"
 #include "ItemBase.h"
+#include "QArgUtils2.h"
 
 class ItemTriangle : public ItemBase {
 public:
-  ItemTriangle(std::string typeStr, std::string argStr);
-  ItemTriangle(const ItemTriangle &other);
+  ItemTriangle() : ItemBase(QPI::TRIANGLE) {}
+  ItemTriangle(const ItemTriangle &other) = default;
+
+  // Construct with explicit member values
+  ItemTriangle(const ArgPoint &pt1, const ArgPoint &pt2, const ArgPoint &pt3,
+               const ArgLineWidth &lineWidth, const ArgLineType &lineType,
+               const ArgColor &lineColor, const ArgColor &fillColor,
+               const ArgLookupNdx &lookupNdx, const ArgPinNdx &pinNdx)
+      : ItemBase(QPI::TRIANGLE), pt1(pt1), pt2(pt2), pt3(pt3),
+        lineWidth(lineWidth), lineType(lineType), lineColor(lineColor),
+        fillColor(fillColor), lookupNdx(lookupNdx), pinNdx(pinNdx) {}
+
   ItemBasePtr clone() const override;
 
-  void        parseItem() override;
+  bool        parseItem(const std::string &argStr) override;
   std::string toString() const override;
 
   ArgPoint     pt1;
