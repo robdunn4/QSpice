@@ -2,11 +2,8 @@
 // This file is part of the the QParser2 project.  You can find the complete
 // project here:  https://github.com/robdunn4/QSpice/
 //-----------------------------------------------------------------------------
-/*
- * QBomData.h -- BOM class and vector.
- */
 #pragma once
-#include "QSchTree.h"
+#include <ItemTreeIO.h>
 #include <ostream>
 #include <string>
 #include <vector>
@@ -15,7 +12,7 @@ class QBomData {
 public:
   QBomData() {}
 
-  bool parseData(const QSchTreePtr symItem);
+  bool parseData(const NodePtr &symNode);
 
   static void writeHeader(std::ostream &ostrm);
   void        writeData(std::ostream &ostrm) const;
@@ -35,4 +32,3 @@ public:
 
   void sort1();
 };
-

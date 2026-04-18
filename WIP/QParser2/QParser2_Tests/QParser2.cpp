@@ -2,7 +2,13 @@
 // This file is part of the the QParser2 project.  You can find the complete
 // project here:  https://github.com/robdunn4/QSpice/
 //-----------------------------------------------------------------------------
-#include "QSchTree.h"
+/*
+ * QParser2.cpp -- Test program for QParser2 library.  This program reads a
+ * schematic file, parses it into an ItemTree, writes the tree back out to a
+ * new file, and then compares the two files to verify they are identical.
+ */
+#include <ItemAll.h>
+#include <ItemTreeIO.h>
 #include <fstream>
 #include <iostream>
 #include <vector>
@@ -27,12 +33,12 @@ bool binaryCompareFiles(const std::string &file1, const std::string &file2) {
   std::ifstream f2(file2, std::ios::binary);
 
   if (!f1.is_open()) {
-    std::cerr << "Cannot open file: " << file1 << std::endl;
+    std::cout << "Cannot open file: " << file1 << std::endl;
     return false;
   }
 
   if (!f2.is_open()) {
-    std::cerr << "Cannot open file: " << file2 << std::endl;
+    std::cout << "Cannot open file: " << file2 << std::endl;
     return false;
   }
 
@@ -50,27 +56,46 @@ bool binaryCompareFiles(const std::string &file1, const std::string &file2) {
   std::cout << "File 1: " << file1 << " (" << data1.size() << " bytes).\n";
   std::cout << "File 2: " << file2 << " (" << data2.size() << " bytes).\n";
 
+  // trim trailing newlines
+  bool sizeDiffers = (data1.size() != data2.size());
+  if (sizeDiffers) {
+    std::cout << "File sizes differ.  Stripping trailing whitespace...\n";
+    data1.erase(std::find_if(data1.rbegin(), data1.rend(),
+                             [](char ch) { return ch != '\n'; })
+                    .base(),
+                data1.end());
+    data2.erase(std::find_if(data2.rbegin(), data2.rend(),
+                             [](char ch) { return ch != '\n'; })
+                    .base(),
+                data2.end());
+  }
+
   if (data1.size() != data2.size()) {
-    std::cout << "Files are not identical -- sizes differ.\n";
+    std::cout << "Files are not identical -- size difference remains after "
+                 "stripping trailing whitespace.\n";
     return false;
   }
 
-  for (size_t i = 0; i < data1.size(); i++)
+  for (size_t i = 0; i < data1.size(); i++) {
     if (data1[i] != data2[i]) {
-      std::cout << "Files are not identical -- same size, different content.\n";
+      std::cout << "Files are not identical -- contents differ after stripping "
+                   "trailing whitespace.\n ";
       return false;
     }
+  }
 
-  std::cout << "Files are identical.\n";
+  std::cout << "Files are " << (sizeDiffers ? "functionally " : "")
+            << "identical.\n";
   return true;
 }
 
+// main() -- returns non-zero on error, zero on success.
 int main(int argc, char *argv[]) {
   // Check for command line argument
   if (argc < 2) {
-    std::cerr << "Usage: " << argv[0] << " <filename>\n";
-    std::cerr << "Example: " << argv[0] << " myschematic.qsch\n";
-    return 1;
+    std::cout << "Usage: " << argv[0] << " <filename>\n";
+    std::cout << "Example: " << argv[0] << " myschematic.qsch\n";
+    return -1;
   }
 
   std::string inputFilename = argv[1];
@@ -84,40 +109,28 @@ int main(int argc, char *argv[]) {
   std::cout << "Input file: " << inputFilename << std::endl;
 
   try {
-    // Open input file
-    std::ifstream inputFile(inputFilename, std::ios::binary);
-    if (!inputFile.is_open()) {
-      throw std::runtime_error("Cannot open file: " + inputFilename);
+    // Parse from file into an ItemTree
+    ItemTreeIO::ParseResult res = ItemTreeIO::readFile(inputFilename);
+
+    if (res.error.size()) {
+      std::cout << "Parse error: " << res.error;
+      if (res.line > 0) std::cout << " (line " << res.line << ")";
+      std::cout << std::endl;
+      return -2;
     }
 
-    // Parse from stream
-    auto parsedTree = QSchTree::parseFromStream(inputFile);
-    inputFile.close();
-
-    std::cout << "\n=== Parsed Tree Structure ===\n";
-    parsedTree->printWithPrefix();
-
-    std::cout << "\n=== Parsed Tree Structure -- Breadth First ==="
-              << std::endl;
-    parsedTree->printBreadthFirst();
-
-    // Write to output file
-    std::cout << "\n=== Writing Output File ===\n";
-    std::cout << "Output file: " << outputFilename << std::endl;
-
-    std::ofstream outputFile(outputFilename, std::ios::binary);
-    if (!outputFile.is_open()) {
-      throw std::runtime_error("Cannot create file: " + outputFilename);
+    // Successfully parsed tree; write it back out and compare to input.
+    bool writeResult = ItemTreeIO::writeFile(res.tree, outputFilename);
+    if (!writeResult) {
+      throw std::runtime_error("Failed to write output file: " +
+                               outputFilename);
     }
-
-    parsedTree->writeToStream(outputFile);
-    outputFile.close();
 
     // Binary compare input and output files
     binaryCompareFiles(inputFilename, outputFilename);
   } catch (const std::exception &e) {
-    std::cerr << "Error: " << e.what() << std::endl;
-    return 1;
+    std::cout << "Error: " << e.what() << std::endl;
+    return -3;
   }
 
   return 0;

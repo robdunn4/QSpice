@@ -3,18 +3,18 @@
 // project here:  https://github.com/robdunn4/QSpice/
 //-----------------------------------------------------------------------------
 #include "QBomData.h"
-#include "ItemBase.h"
-#include "ItemDesc.h"
-#include "ItemShort.h"
-#include "ItemSym.h"
-#include "ItemText.h"
-#include "ItemType.h"
+#include <ItemBase.h>
+#include <ItemDesc.h>
+#include <ItemShort.h>
+#include <ItemText.h>
+#include <ItemTree.h>
+#include <ItemType.h>
 #include <StrUtils.h>
 #include <algorithm>
 #include <exception>
 #include <tuple>
 
-// symDataPtr must be valid SYM record upon entry; return true if required
+// symNode must be valid SYM record upon entry; return true if required
 // elements are present or false otherwise
 //
 // we expect the following children in the following order:
@@ -25,42 +25,59 @@
 //   * ItemText (first one = reference ID)
 //   * ItemText (second one is component value)
 //
-bool QBomData::parseData(const QSchTreePtr symItem) {
-  // that is, rather than testing for invalid pointers, just let C++ throw
-  // exceptions for simplicity during development
+// for simplicity, we use try/catch to handle any unexpected conditions (missing
+// records, wrong types, etc.) -- if any of those occur, we return false to
+// indicate this record should be skipped.  We could be more specific about
+// error handling, but this is probably good enough for now.
+
+bool QBomData::parseData(const NodePtr &symNode) {
+  // get iterator for child nodes of the symbol node
+  NodeList::const_iterator iter = symNode->children().begin();
+
   try {
-    ItemSymPtr symPtr = std::dynamic_pointer_cast<ItemSym>(symItem->itemPtr);
-    name               = symPtr->text;
-    if (!name.length()) return false;
+    // first should be ItemType (not optional)
+    ItemTypePtr typePtr = std::dynamic_pointer_cast<ItemType>((*iter)->item());
+    type                = typePtr->text;
 
-    // find type record (should be first child)
-    QSchTreePtr childPtr = symItem->getFirstChild();
-    if (childPtr->enumID != QPI::TYPE) return false;
-    type = std::dynamic_pointer_cast<ItemType>(childPtr->itemPtr)->text;
+    // next should be ItemDesc -- not present for DLL blocks so we need to be
+    // able to handle missing description records.  may decide later to omit DLL
+    // blocks from the BOM...
+    iter++;
+    ItemBasePtr basePtr = (*iter)->item();
+    if (basePtr->getEnumID() == QPI::DESC) {
+      ItemDescPtr descPtr =
+          std::dynamic_pointer_cast<ItemDesc>((*iter)->item());
+      desc = descPtr->text.getValue();
+      // advance to next item
+      iter++;
+    } else desc = "[None]";
 
-    // find description record (optional)
-    childPtr = childPtr->getNextSibling(QPI::DESC);
-    // if (childPtr->enumID == QPI::DESC) {
-    if (!childPtr) return false;
-    desc = std::dynamic_pointer_cast<ItemDesc>(childPtr->itemPtr)->text;
+    // next should be ItemShorted (not optional)
+    ItemShortPtr shortPtr =
+        std::dynamic_pointer_cast<ItemShort>((*iter)->item());
+    shorted = shortPtr->bShorted ? "true" : "false"; // maybe change to bool?
 
-    // find shorted record
-    childPtr = childPtr->getNextSibling(QPI::SHORTED);
-    if (!childPtr) return false;
-    shorted = std::dynamic_pointer_cast<ItemShort>(childPtr->itemPtr)->bShorted
-                  ? "true"
-                  : "false";
+    // skip until we find first ItemText (reference ID)
+    while (iter != symNode->children().end() &&
+           (*iter)->getEnumID() != QPI::TEXT) {
+      iter++;
+    }
 
-    // find first text record
-    childPtr = childPtr->getNextSibling(QPI::TEXT);
-    if (!childPtr) return false;
-    refID = std::dynamic_pointer_cast<ItemText>(childPtr->itemPtr)->text;
+    // if eol, no text record found -- skip this symbol
+    if (iter == symNode->children().end()) return false;
 
-    // find second text record
-    childPtr = childPtr->getNextSibling();
-    if (childPtr->enumID != QPI::TEXT) return false;
-    value = std::dynamic_pointer_cast<ItemText>(childPtr->itemPtr)->text;
+    // first text record should be reference ID
+    refID =
+        std::dynamic_pointer_cast<ItemText>((*iter)->item())->text.getValue();
+
+    // second text record should be value
+    iter++;
+    if (iter == symNode->children().end() || (*iter)->getEnumID() != QPI::TEXT)
+      return false;
+    value =
+        std::dynamic_pointer_cast<ItemText>((*iter)->item())->text.getValue();
   } catch (std::exception e) {
+    // for now, just suppress errors...
     return false;
   }
   return true;

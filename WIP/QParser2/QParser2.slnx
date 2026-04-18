@@ -11,7 +11,24 @@
   <Project Path="QBomGen/QBomGen.vcxproj" Id="5b0ebe21-8c23-4e74-ae5e-34391bb5e328">
     <BuildType Solution="Debug QSCH|*" Project="Debug" />
     <BuildType Solution="Debug QSYM|*" Project="Debug" />
+    <Build Solution="Debug QSCH|x64" Project="false" />
+    <Build Solution="Debug QSYM|x64" Project="false" />
   </Project>
-  <Project Path="QParser2_Shared/QParser2_Shared.vcxitems" Id="1962edfd-3156-4afc-a11d-8ba0c2994d82" />
-  <Project Path="QParser2_Tests/QParser2_Tests.vcxproj" Id="4dcff4b7-ef67-4254-a3a5-e586aef4bb01" />
+  <Project Path="QParser2_Shared_Lib/QParser2_Shared_Lib.vcxproj" Id="0e4b880d-e33d-40d8-bb71-81889e1861d5">
+    <BuildType Solution="Debug BOM|*" Project="Debug" />
+    <BuildType Solution="Debug QSCH|*" Project="Debug" />
+    <BuildType Solution="Debug QSYM|*" Project="Debug" />
+  </Project>
+  <Project Path="QParser2_Tests/QParser2_Tests.vcxproj" Id="4dcff4b7-ef67-4254-a3a5-e586aef4bb01">
+    <BuildType Solution="Debug BOM|x64" Project="Debug QSCH" />
+    <Build Solution="Debug BOM|x64" Project="false" />
+  </Project>
+  <Project Path="QSymGen/QSymGen.vcxproj" Id="bb1df6af-4647-449f-99a1-8f82cf3c2dfa">
+    <BuildType Solution="Debug BOM|*" Project="Debug" />
+    <BuildType Solution="Debug QSCH|*" Project="Debug" />
+    <BuildType Solution="Debug QSYM|*" Project="Debug" />
+    <Build Solution="Debug BOM|x64" Project="false" />
+    <Build Solution="Debug QSCH|x64" Project="false" />
+    <Build Solution="Debug QSYM|x64" Project="false" />
+  </Project>
 </Solution>

@@ -4,18 +4,17 @@
 //-----------------------------------------------------------------------------
 /*
  * QBomGen.cpp -- Bill of materials generator for QSpice schematic files.
- *
- * This program is part of the the QParser2 project.  You can find the complete
- * project here:  https://github.com/robdunn4/QSpice/
  */
 #include "QBomData.h"
-#include "QSchTree.h"
+#include <ItemAll.h>
+#include <ItemTree.h>
+#include <ItemTreeIO.h>
 #include <fstream>
 #include <iostream>
 #include <memory>
 #include <string>
 
-const std::string verIdStr = std::string("QBomGen v0.1 ") +
+const std::string verIdStr = std::string("QBomGen v0.5 ") +
                              std::string(__DATE__) + std::string(" ") +
                              std::string(__TIME__);
 
@@ -33,14 +32,16 @@ std::string getFileExtension(const std::string &filename) {
   return filename.substr(lastDot);
 }
 
+// main() -- returns non-zero on error, zero on success.
 int main(int argc, char *argv[]) {
-  std::cerr << verIdStr << std::endl << std::endl;
+  // display version info
+  std::cout << verIdStr << std::endl << std::endl;
 
   // Check for command line argument
   if (argc < 2) {
-    std::cerr << "Usage: " << argv[0] << " <filename>" << std::endl;
-    std::cerr << "Example: " << argv[0] << " myschematic.qsch" << std::endl;
-    return 1;
+    std::cout << "Usage: " << argv[0] << " <filename>" << std::endl;
+    std::cout << "Example: " << argv[0] << " myschematic.qsch" << std::endl;
+    return -1;
   }
 
   std::string inputFilename = argv[1];
@@ -54,20 +55,25 @@ int main(int argc, char *argv[]) {
   std::cout << "Input file: " << inputFilename << std::endl;
 
   try {
-    // Open input file
-    std::ifstream inputFile(inputFilename, std::ios::binary);
-    if (!inputFile.is_open()) {
-      throw std::runtime_error("Cannot open file: " + inputFilename);
+    // parse input file into an ItemTree
+    ItemTreeIO::ParseResult res = ItemTreeIO::readFile(inputFilename);
+    if (res.error.length()) {
+      std::cout << "Error parsing file: " << res.error;
+      if (res.line) std::cout << " (line " << res.line << ")";
+      std::cout << std::endl;
+      return -2;
+    }
+    ItemTree &tree = res.tree;
+
+    if (tree.empty()) {
+      std::cout << "Parsed tree is empty.\n";
+      return -2;
     }
 
-    // Parse from stream
-    QSchTreePtr parsedTree = QSchTree::parseFromStream(inputFile);
-    inputFile.close();
-
     // if not a schematic, quick out
-    if (parsedTree->enumID != QPI::SCH) {
+    if (tree.root()->getEnumID() != QPI::SCH) {
       std::cout << "Input file is not a schematic.\n";
-      return -1;
+      return -3;
     }
 
     // get BOM data
@@ -75,28 +81,35 @@ int main(int argc, char *argv[]) {
     QBomList bomList;
 
     // parse first-level ItemCmp elements (skip others)
-    QSchTreePtr cmpItem = parsedTree->getFirstChild();
-    while (cmpItem) {
-      if (cmpItem->enumID == QPI::COMP) {
-        // next down should be ItemSym
-        QSchTreePtr symItem = cmpItem->getFirstChild();
-        if (symItem && symItem->enumID != QPI::SYM) break;
+    NodeList cmpNodes = tree.root()->children();
+    for (NodePtr cmpNode : cmpNodes) {
+      if (cmpNode->getEnumID() != QPI::COMP) continue;
 
-        // parse and add to BOM list if valid
-        QBomData bomData;
-        if (bomData.parseData(symItem)) bomList.push_back(bomData);
-      }
+      // next down should be ItemSym; we expect only one symbol per component
+      NodePtr symNode = cmpNode->firstChild();
+      if (!symNode || symNode->getEnumID() != QPI::SYM) continue;
 
-      cmpItem = cmpItem->getNextSibling();
+      QBomData bomData;
+
+      ItemSymPtr symPtr = std::dynamic_pointer_cast<ItemSym>(symNode->item());
+      bomData.name      = symPtr->text;
+
+      // some symbols (e.g. DLL components) may not have a name
+      if (!bomData.name.length()) bomData.name = "[Unnamed]";
+
+      // parse and add to BOM list if valid
+      if (bomData.parseData(symNode)) bomList.push_back(bomData);
     }
 
+    // handle empty BOM list
     if (!bomList.size()) {
       std::cout << "BOM list is empty.\n";
-      return 0;
+      return -4;
     }
+
     std::cout << "Found " << bomList.size() << " BOM items.\n";
 
-    // sort BOM...
+    // sort BOM... other sorting methods could be implemented...
     bomList.sort1();
 
     // Open output file
@@ -105,17 +118,18 @@ int main(int argc, char *argv[]) {
       throw std::runtime_error("Cannot open file: " + outputFilename);
     }
 
+    // write BOM to output file
     std::cout << "Writing BOM to " << outputFilename << "...";
     QBomData::writeHeader(outputFile);
     for (QBomData bomItem : bomList)
       bomItem.writeData(outputFile);
     outputFile.close();
-    std::cout << "  Done.\n";
-
   } catch (const std::exception &e) {
     std::cerr << "Error: " << e.what() << std::endl;
-    return 1;
+    return -5;
   }
 
+  // we're done
+  std::cout << "  Done.\n";
   return 0;
 }
