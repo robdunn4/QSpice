@@ -16,8 +16,4 @@ I've partially parsed QSpice \*.sch/\*.sym files for other projects in the past 
 
 The folders contain MSVS 2026 project/solution files.  This is C++20 code and will not compile using the QSpice DMC compiler.
 
-### QParser2 Project Folders
-
-* [QParser2_Shared](./QParser2/QParser2_Shared/) &mdash; The parser code library.
-* [QParser2_Tests](./QParser2/QParser2_Tests/) &mdash; Test code to ensure read/parse/write round-tripping is correct.
-* [QBomGen](./QParser2/QBomGen/) &mdash; A simple QParser2 command-line tool to generate a Bill of Materials list.
+The QParser2 project is [here](./QParser2/).
