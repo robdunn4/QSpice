@@ -1,0 +1,34 @@
+* ------------------------------------------------------------------
+* Example Pin Definition File for QSymGen
+* ------------------------------------------------------------------
+*
+* Pin Definitions:  DIR NAME [NET] [* COMMENT]
+*
+* Where: DIR = Pin direction: I (input) or O (output).  (Not case-sensitive.)
+*        NAME = Pin name.  (Duplicates are allowed.)
+*        NET = Optional net name.  (If supplied, the pin will be present but hidden.)
+*        COMMENT = Optional comment.  (Space required before '*'.)
+*
+* ---------------------------------
+*
+* Notes:
+*   Lines beginning with '*' are comments and are ignored.
+*   Blank lines are ignored.
+*
+* ---------------------------------
+*
+* Example Pin Definitions:
+*
+* I VREF VREFNET * A reference voltage input net
+I VREF
+I ADC
+I RA0
+I RA1
+I RA2
+O DAC
+O RB0
+O RB1
+O RB2
+O RB3
+*
+*** EOF ***

@@ -33,6 +33,7 @@ std::string ItemPin::toString() const {
                     rotateAlign.toString() + " " + pinInfo.toString() + " " +
                     textColor.toString() + " " + lookupNdx.toString() + " " +
                     pinLabel.toString();
-  if (netName.getValue().length()) str += " " + netName.toString();
+  // default net mame is double-quotes (empty string); only include if non-empty
+  if (netName.getValue().length() > 2) str += " " + netName.toString();
   return str;
 }

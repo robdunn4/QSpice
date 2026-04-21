@@ -30,7 +30,8 @@ void stripCR(std::string &s) {
 // Count and strip leading spaces.  Returns the stripped view.
 std::string_view stripLeadingSpaces(std::string_view s) {
   size_t i = 0;
-  while (i < s.size() && s[i] == ' ') ++i;
+  while (i < s.size() && s[i] == ' ')
+    ++i;
   return s.substr(i);
 }
 
@@ -38,7 +39,8 @@ std::string_view stripLeadingSpaces(std::string_view s) {
 bool writeNode(const NodePtr &n, int depth, std::ostream &out) {
   if (!n) return true;
   // indent
-  for (int i = 0; i < depth * 2; ++i) out.put(' ');
+  for (int i = 0; i < depth * 2; ++i)
+    out.put(' ');
   out.put(static_cast<char>(BEGIN_NODE));
   // toString() returns the full type+args string (no framing, no indent).
   std::string body = n->item()->toString();
@@ -50,7 +52,8 @@ bool writeNode(const NodePtr &n, int depth, std::ostream &out) {
     for (const auto &c : n->children()) {
       if (!writeNode(c, depth + 1, out)) return false;
     }
-    for (int i = 0; i < depth * 2; ++i) out.put(' ');
+    for (int i = 0; i < depth * 2; ++i)
+      out.put(' ');
     out.put(static_cast<char>(END_NODE));
     out.put('\n');
   } else {
@@ -92,26 +95,23 @@ ParseResult read(std::istream &in) {
 
     if (first == END_NODE) {
       // Container close.
-      if (stack.empty())
-        return fail("unexpected container close", lineNo);
+      if (stack.empty()) return fail("unexpected container close", lineNo);
       stack.pop_back();
       continue;
     }
 
-    if (first != BEGIN_NODE)
-      return fail("expected BEGIN_NODE", lineNo);
+    if (first != BEGIN_NODE) return fail("expected BEGIN_NODE", lineNo);
 
     // Strip leading BEGIN_NODE.
     line.remove_prefix(1);
 
     // Leaf if last byte is END_NODE, else container opener.
-    bool isLeaf = !line.empty() &&
-                  static_cast<unsigned char>(line.back()) == END_NODE;
+    bool isLeaf =
+        !line.empty() && static_cast<unsigned char>(line.back()) == END_NODE;
     if (isLeaf) line.remove_suffix(1);
 
     auto [qpi, args] = ItemTypes::splitTypeAndArgs(line);
-    if (qpi == QPI::UNKNOWN)
-      return fail("unknown item type", lineNo);
+    if (qpi == QPI::UNKNOWN) return fail("unknown item type", lineNo);
 
     ItemBasePtr item = ItemBase::makeItem(qpi);
     if (!item) return fail("makeItem failed", lineNo);
@@ -134,10 +134,8 @@ ParseResult read(std::istream &in) {
     }
   }
 
-  if (!stack.empty())
-    return fail("unterminated container at EOF", lineNo);
-  if (result.tree.empty())
-    return fail("empty file: no root item");
+  if (!stack.empty()) return fail("unterminated container at EOF", lineNo);
+  if (result.tree.empty()) return fail("empty file: no root item");
 
   result.ok = true;
   return result;
@@ -163,8 +161,8 @@ bool write(const ItemTree &tree, std::ostream &out) {
   out.write(reinterpret_cast<const char *>(FILE_ID), 4);
   if (!out) return false;
   if (!writeNode(tree.root(), 0, out)) return false;
-  // Trailing blank line, matching the sample file.
-  out.put('\n');
+  //// Trailing blank line, matching the sample file.
+  // out.put('\n');
   return static_cast<bool>(out);
 }
 
