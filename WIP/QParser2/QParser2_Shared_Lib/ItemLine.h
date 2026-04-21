@@ -20,22 +20,21 @@
  * Construction: use ItemLine::makePtr(...).  Constructors are protected.
  */
 #pragma once
+#include "ArgUtils2.h"
 #include "ItemBase.h"
-#include "QArgUtils2.h"
 
 class ItemLine;
 typedef std::shared_ptr<ItemLine> ItemLinePtr;
 
 class ItemLine : public ItemBaseT<ItemLine> {
 public:
-  static ItemLinePtr makePtr() {
-    return ItemLinePtr(new ItemLine());
-  }
-  static ItemLinePtr
-  makePtr(const ArgPoint &pt1, const ArgPoint &pt2,
-          const ArgLineWidth &lineWidth, const ArgLineType &lineType,
-          const ArgColor &lineColor, const ArgLookupNdx &lookupNdx,
-          const ArgPinNdx &pinNdx) {
+  static ItemLinePtr makePtr() { return ItemLinePtr(new ItemLine()); }
+  static ItemLinePtr makePtr(const ArgPoint &pt1, const ArgPoint &pt2,
+                             const ArgLineWidth &lineWidth,
+                             const ArgLineType  &lineType,
+                             const ArgColor     &lineColor,
+                             const ArgLookupNdx &lookupNdx,
+                             const ArgPinNdx    &pinNdx) {
     return ItemLinePtr(new ItemLine(pt1, pt2, lineWidth, lineType, lineColor,
                                     lookupNdx, pinNdx));
   }

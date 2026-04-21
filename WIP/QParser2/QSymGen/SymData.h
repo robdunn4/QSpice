@@ -5,7 +5,7 @@
 #pragma once
 #include "PinItems.h"
 #include <ItemPin.h>
-#include <QArgUtils.h>
+#include <ArgUtils.h>
 #include <cassert>
 
 /*

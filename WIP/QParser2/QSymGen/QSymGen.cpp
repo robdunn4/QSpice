@@ -2,10 +2,10 @@
 // This file is part of the the QParser2 project.  You can find the complete
 // project here:  https://github.com/robdunn4/QSpice/
 //-----------------------------------------------------------------------------
-#include "ItemTreeIO.h"
 #include "PinItems.h"
 #include "SymData.h"
 #include <ItemAll.h>
+#include <ItemTreeIO.h>
 #include <iostream>
 
 const char *ProgName = "QSymGen";

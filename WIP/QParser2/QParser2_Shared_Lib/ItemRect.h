@@ -33,8 +33,8 @@
  */
 // clang-format on
 #pragma once
+#include "ArgUtils2.h"
 #include "ItemBase.h"
-#include "QArgUtils2.h"
 
 class ItemRect;
 typedef std::shared_ptr<ItemRect> ItemRectPtr;

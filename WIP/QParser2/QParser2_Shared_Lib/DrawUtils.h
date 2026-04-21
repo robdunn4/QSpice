@@ -15,13 +15,13 @@
 /*
  * DrawUtils.height -- Supporting types for drawable schematic items.
  *
- * Depends on Point (from QArgUtils.height) since schematic coordinates are
+ * Depends on Point (from ArgUtils.height) since schematic coordinates are
  * already expressed as Point throughout the parsing layer.
  */
 #pragma once
 #include <algorithm>
 #include <optional>
-#include "QArgUtils.h" // for Point
+#include "ArgUtils.h" // for Point
 
 // ============================================================================
 // Rect

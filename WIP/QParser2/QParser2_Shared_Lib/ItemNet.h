@@ -19,8 +19,8 @@
  * Construction: use ItemNet::makePtr(...).  Constructors are protected.
  */
 #pragma once
+#include "ArgUtils2.h"
 #include "ItemBase.h"
-#include "QArgUtils2.h"
 
 class ItemNet;
 typedef std::shared_ptr<ItemNet> ItemNetPtr;
@@ -53,8 +53,8 @@ protected:
           const ArgRotAlign &rotateAlign, const ArgInt &netType,
           const ArgString &netName, const ArgString &netDesc)
       : ItemBaseT(QPI::NET), pt1(pt1), fontSize(fontSize),
-        rotateAlign(rotateAlign), netType(netType),
-        netName(netName.quote()), netDesc(netDesc.quote()) {}
+        rotateAlign(rotateAlign), netType(netType), netName(netName.quote()),
+        netDesc(netDesc.quote()) {}
 
   friend class ItemBaseT<ItemNet>;
 };

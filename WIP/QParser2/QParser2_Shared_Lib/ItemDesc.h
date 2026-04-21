@@ -15,7 +15,7 @@
  */
 #pragma once
 #include "ItemBase.h"
-#include "QArgUtils.h"
+#include "ArgUtils.h"
 
 class ItemDesc;
 typedef std::shared_ptr<ItemDesc> ItemDescPtr;

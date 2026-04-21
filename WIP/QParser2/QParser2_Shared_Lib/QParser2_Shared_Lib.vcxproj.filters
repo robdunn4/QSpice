@@ -93,10 +93,10 @@
     <ClInclude Include="ItemZigzag.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="QArgUtils.h">
+    <ClInclude Include="ArgUtils.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="QArgUtils2.h">
+    <ClInclude Include="ArgUtils2.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="StrUtils.h">
@@ -179,10 +179,10 @@
     <ClCompile Include="ItemZigzag.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="QArgUtils.cpp">
+    <ClCompile Include="ArgUtils.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="QArgUtils2.cpp">
+    <ClCompile Include="ArgUtils2.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="StrUtils.cpp">

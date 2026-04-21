@@ -21,17 +21,15 @@
  * Construction: use ItemCoil::makePtr(...).  Constructors are protected.
  */
 #pragma once
+#include "ArgUtils2.h"
 #include "ItemBase.h"
-#include "QArgUtils2.h"
 
 class ItemCoil;
 typedef std::shared_ptr<ItemCoil> ItemCoilPtr;
 
 class ItemCoil : public ItemBaseT<ItemCoil> {
 public:
-  static ItemCoilPtr makePtr() {
-    return ItemCoilPtr(new ItemCoil());
-  }
+  static ItemCoilPtr makePtr() { return ItemCoilPtr(new ItemCoil()); }
   static ItemCoilPtr
   makePtr(const ArgPoint &pt1, const ArgPoint &pt2, const ArgRot &rotate,
           const ArgLineWidth &lineWidth, const ArgLineType &lineType,

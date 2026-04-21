@@ -21,24 +21,23 @@
  * Construction: use ItemArc::makePtr(...).  Constructors are protected.
  */
 #pragma once
+#include "ArgUtils2.h"
 #include "ItemBase.h"
-#include "QArgUtils2.h"
 
 class ItemArc;
 typedef std::shared_ptr<ItemArc> ItemArcPtr;
 
 class ItemArc : public ItemBaseT<ItemArc> {
 public:
-  static ItemArcPtr makePtr() {
-    return ItemArcPtr(new ItemArc());
-  }
-  static ItemArcPtr
-  makePtr(const ArgPoint &pt1, const ArgPoint &pt2, const ArgPoint &pt3,
-          const ArgLineWidth &lineWidth, const ArgLineType &lineType,
-          const ArgColor &lineColor, const ArgLookupNdx &lookupNdx,
-          const ArgPinNdx &pinNdx) {
-    return ItemArcPtr(new ItemArc(pt1, pt2, pt3, lineWidth, lineType,
-                                  lineColor, lookupNdx, pinNdx));
+  static ItemArcPtr makePtr() { return ItemArcPtr(new ItemArc()); }
+  static ItemArcPtr makePtr(const ArgPoint &pt1, const ArgPoint &pt2,
+                            const ArgPoint &pt3, const ArgLineWidth &lineWidth,
+                            const ArgLineType  &lineType,
+                            const ArgColor     &lineColor,
+                            const ArgLookupNdx &lookupNdx,
+                            const ArgPinNdx    &pinNdx) {
+    return ItemArcPtr(new ItemArc(pt1, pt2, pt3, lineWidth, lineType, lineColor,
+                                  lookupNdx, pinNdx));
   }
 
   bool        parseItem(const std::string &argStr) override;

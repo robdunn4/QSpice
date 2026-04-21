@@ -22,18 +22,16 @@
  * Construction: use ItemEllipse::makePtr(...).  Constructors are protected.
  */
 #pragma once
+#include "ArgUtils2.h"
 #include "DrawIntf.h"
 #include "ItemBase.h"
-#include "QArgUtils2.h"
 
 class ItemEllipse;
 typedef std::shared_ptr<ItemEllipse> ItemEllipsePtr;
 
 class ItemEllipse : public ItemBaseT<ItemEllipse>, public DrawIntf {
 public:
-  static ItemEllipsePtr makePtr() {
-    return ItemEllipsePtr(new ItemEllipse());
-  }
+  static ItemEllipsePtr makePtr() { return ItemEllipsePtr(new ItemEllipse()); }
   static ItemEllipsePtr
   makePtr(const ArgPoint &pt1, const ArgPoint &pt2, const ArgRot &rotate,
           const ArgLineWidth &lineWidth, const ArgLineType &lineType,

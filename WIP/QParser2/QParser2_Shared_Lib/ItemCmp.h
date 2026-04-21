@@ -16,17 +16,15 @@
  * Construction: use ItemCmp::makePtr(...).  Constructors are protected.
  */
 #pragma once
+#include "ArgUtils2.h"
 #include "ItemBase.h"
-#include "QArgUtils2.h"
 
 class ItemCmp;
 typedef std::shared_ptr<ItemCmp> ItemCmpPtr;
 
 class ItemCmp : public ItemBaseT<ItemCmp> {
 public:
-  static ItemCmpPtr makePtr() {
-    return ItemCmpPtr(new ItemCmp());
-  }
+  static ItemCmpPtr makePtr() { return ItemCmpPtr(new ItemCmp()); }
   static ItemCmpPtr makePtr(const ArgPoint &pt1, const ArgRot &rotate,
                             const ArgStuff &stuff) {
     return ItemCmpPtr(new ItemCmp(pt1, rotate, stuff));

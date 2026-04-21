@@ -17,7 +17,7 @@
  */
 #pragma once
 #include "ItemBase.h"
-#include "QArgUtils.h"
+#include "ArgUtils.h"
 
 class ItemWire;
 typedef std::shared_ptr<ItemWire> ItemWirePtr;

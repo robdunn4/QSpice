@@ -26,8 +26,8 @@
  * Construction: use ItemPin::makePtr(...).  Constructors are protected.
  */
 #pragma once
+#include "ArgUtils2.h"
 #include "ItemBase.h"
-#include "QArgUtils2.h"
 
 class ItemPin;
 typedef std::shared_ptr<ItemPin> ItemPinPtr;

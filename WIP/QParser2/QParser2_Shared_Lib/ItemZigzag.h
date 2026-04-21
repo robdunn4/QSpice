@@ -21,17 +21,15 @@
  * Construction: use ItemZigzag::makePtr(...).  Constructors are protected.
  */
 #pragma once
+#include "ArgUtils2.h"
 #include "ItemBase.h"
-#include "QArgUtils2.h"
 
 class ItemZigzag;
 typedef std::shared_ptr<ItemZigzag> ItemZigzagPtr;
 
 class ItemZigzag : public ItemBaseT<ItemZigzag> {
 public:
-  static ItemZigzagPtr makePtr() {
-    return ItemZigzagPtr(new ItemZigzag());
-  }
+  static ItemZigzagPtr makePtr() { return ItemZigzagPtr(new ItemZigzag()); }
   static ItemZigzagPtr
   makePtr(const ArgPoint &pt1, const ArgPoint &pt2, const ArgRot &rotation,
           const ArgLineWidth &lineWidth, const ArgLineType &lineType,
