@@ -8,6 +8,7 @@ QSymGen is a command-line utility to generate a QSpice symbol (*.qsym) from a te
 
 ## Files
 
+* QSymGen.pdf &mdash; Basic documentation, just enough to get you started.
 * QSymGen.exe &mdash; Pre-compiled stand-alone executable.  (Sources and libraries not required to run.)
 * PinDefs.txt &mdash; Example pin definitions file.
 * QSymGen.cpp, PinItems.cpp/.h, SymData.cpp/.h &mdash; Source code.
