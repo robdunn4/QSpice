@@ -2,7 +2,7 @@
 
 | Create Pin Definitions Text File &mdash;&mdash;> | Run QSymGen &mdash;&mdash;> | Open QSpice Symbol File |
 | --- | --- | --- |
-| <img src="./images/Example_Pin_Definitions.png" width=300>  | <img src="./Images/Example_Cmd_Prompt.png" width=300> | <img src="./Images/Example_Symbol.png" width=300> | 
+| <img src="./images/Pin_Defs.png" width=300>  | <img src="./Images/Cmd_Prompt.png" width=300> | <img src="./Images/Symbol.png" width=300> | 
 
 QSymGen is a command-line utility to generate a QSpice symbol (*.qsym) from a text file containing pin definitions.  It is a first step towards a much larger goal to generate symbols and DLL code that supports tri-state/GPIO pins for my micro-controller project (QMdbSym).  No GPIO pin support in this release but it does simplify generating large pin-count symbols.
 
