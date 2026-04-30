@@ -18,3 +18,4 @@ The prior code was sufficient for parsing an existing QSpice schematic or symbol
 * [QParser2_Tests](./QParser2_Tests/) &mdash; Test code to ensure read/parse/write round-tripping is correct.
 * [QBomGen](./QBomGen/) &mdash; A simple QParser2 command-line tool to generate a Bill of Materials list.
 * [QSymGen](./QSymGen/) &mdash; A QSpice symbol generator for the *QMdbSim* micro-controller simulator project.
+* [QtDemo](./QtDemo/) &mdash; Using MSVS with Qt Extension for GUI interface to the QParser2 Project shared libraries.
