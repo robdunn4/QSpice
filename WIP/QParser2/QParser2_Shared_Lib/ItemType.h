@@ -6,16 +6,22 @@
  * ItemType.h -- Type item class.
  *
  * Expecting: "type:" P1
- * Example:   "type: V"
+ * Example:   "type: V" -- a voltage source
+ *            "type: "   -- a hierarchical block
  *
  * Analysis:
- *   P1 --  Type string.  Optional?  Unquoted?
+ *   P1 --  Type string.  (Optional, can be empty.  See note below.)
+ *
+ * Note:  The type record is optional.  If missing, the type is a hierarchical
+ *        schematic block.  It can also be present with no value (not a blank,
+ *        simply empty) which can happen after editing the symbol type in Symbol
+ *        Properties.
  *
  * Construction: use ItemType::makePtr(...).  Constructors are protected.
  */
 #pragma once
-#include "ItemBase.h"
 #include "ArgUtils.h"
+#include "ItemBase.h"
 
 class ItemType;
 typedef std::shared_ptr<ItemType> ItemTypePtr;

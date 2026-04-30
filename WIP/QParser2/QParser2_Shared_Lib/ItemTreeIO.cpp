@@ -3,9 +3,9 @@
 // project here:  https://github.com/robdunn4/QSpice/
 //-----------------------------------------------------------------------------
 #include "ItemTreeIO.h"
+#include "FileUtil.h"
 #include "ItemBase.h"
 #include "ItemTypes.h"
-#include <fstream>
 #include <sstream>
 #include <vector>
 
@@ -142,9 +142,12 @@ ParseResult read(std::istream &in) {
 }
 
 ParseResult readFile(const std::string &path) {
-  std::ifstream f(path, std::ios::binary);
-  if (!f) return fail("cannot open file: " + path);
-  return read(f);
+  try {
+    std::ifstream f = FileUtil::openInput(path);
+    return read(f);
+  } catch (const std::exception &e) {
+    return fail(e.what());
+  }
 }
 
 ParseResult readString(std::string_view text) {
@@ -167,9 +170,12 @@ bool write(const ItemTree &tree, std::ostream &out) {
 }
 
 bool writeFile(const ItemTree &tree, const std::string &path) {
-  std::ofstream f(path, std::ios::binary | std::ios::trunc);
-  if (!f) return false;
-  return write(tree, f);
+  try {
+    std::ofstream f = FileUtil::openOutput(path);
+    return write(tree, f);
+  } catch (...) {
+    return false;
+  }
 }
 
 std::string writeString(const ItemTree &tree) {

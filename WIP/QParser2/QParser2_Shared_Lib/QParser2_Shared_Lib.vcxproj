@@ -163,6 +163,7 @@
   <ItemGroup>
     <ClInclude Include="DrawIntf.h" />
     <ClInclude Include="DrawUtils.h" />
+    <ClInclude Include="FileUtil.h" />
     <ClInclude Include="ItemAll.h" />
     <ClInclude Include="ItemArc3P.h" />
     <ClInclude Include="ItemBase.h" />
@@ -194,6 +195,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DrawIntf.cpp" />
+    <ClCompile Include="FileUtil.cpp" />
     <ClCompile Include="ItemArc3P.cpp" />
     <ClCompile Include="ItemBase.cpp" />
     <ClCompile Include="ItemCmp.cpp" />

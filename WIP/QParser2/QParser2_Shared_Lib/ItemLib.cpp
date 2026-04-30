@@ -7,7 +7,7 @@
 
 bool ItemLib::parseItem(const std::string &argStr) {
   try {
-    libText = ArgString(argStr);
+    libText = ArgLibString(argStr);
   } catch (...) {
     return false;
   }
