@@ -9,4 +9,8 @@
     <QtTouchProperty>
     </QtTouchProperty>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='QtDeploy|x64'" Label="QtSettings">
+    <QtTouchProperty>
+    </QtTouchProperty>
+  </PropertyGroup>
 </Project>
