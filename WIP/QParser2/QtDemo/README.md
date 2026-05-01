@@ -12,7 +12,7 @@ Note that this code is not a fully complete tool and does not contain significan
 
 <s>You will need to compile the code yourself.  I have not provided an executable because, well frankly, I'm lazy.  Sharing Qt binaries requires either (1) compiling the Qt toolset source for static libraries or (2) a tedious packaging/distribution of Qt DLLs.</s>
 
-OK, the Qt Extensions for MSVS make deploying binaries easier than I thought.  QtDemo.x64.zip contains the required files &mdash; just unzip and click on QtDemo.exe.  See the QtDeploy configuration for how it's done.
+OK, the Qt Extensions for MSVS make deploying binaries easier than I thought.  QtDemo.x64.zip contains the required files &mdash; just unzip and click on QtDemo.exe.  See the QtDeploy configuration for how it's done. 
 
 ### Notes:
 
