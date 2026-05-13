@@ -3,10 +3,10 @@
 // project here:  https://github.com/robdunn4/QSpice/
 //-----------------------------------------------------------------------------
 #include "ItemRect.h"
-#include "StrUtils.h"
+#include "StrUtil.h"
 
 bool ItemRect::parseItem(const std::string &argStr) {
-  StrUtils::StrList strList = StrUtils::tokenize(argStr);
+  StrList strList = StrUtil::tokenize(argStr);
 
   // we expect ten or eleven subStrings
   if (strList.size() < 10 || strList.size() > 11) return false;

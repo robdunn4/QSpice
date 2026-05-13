@@ -3,13 +3,14 @@
 // project here:  https://github.com/robdunn4/QSpice/
 //-----------------------------------------------------------------------------
 /*
- * StrUtils.h -- Utility methods for string/number conversion.
+ * StrUtil.h -- Utility methods for string/number conversion.
  */
 #pragma once
-#include <string>
-#include <vector>
+#include "StrList.h"
+#include <istream>
+#include <ostream>
 
-namespace StrUtils {
+namespace StrUtil {
 
 int    strToInt(const std::string &str);
 long   strToLong(const std::string &str);
@@ -26,10 +27,22 @@ std::string trim(const std::string &str);
 std::string trimLeft(const std::string &str);
 std::string trimRight(const std::string &str);
 
-// parse into elements
-typedef std::vector<std::string> StrList;
-StrList                          tokenize(const std::string &input);
+// parse a string into space-delimited elements with possible quotes
+StrList tokenize(const std::string &input);
 
 std::string forceQuotes(std::string str);
 
-} // namespace StrUtils
+// Split a string with embedded \n or \r\n into a StrList
+StrList fromString(const std::string &input);
+
+// Read lines from an istream into a StrList
+StrList fromStream(std::istream &input);
+
+// Join a StrList into a single string with a given delimiter (default: \n)
+std::string toString(const StrList &lines, const std::string &delimiter = "\n");
+
+// Write a StrList to an ostream
+void toStream(const StrList &lines, std::ostream &output,
+              const std::string &delimiter = "\n");
+
+} // namespace StrUtil

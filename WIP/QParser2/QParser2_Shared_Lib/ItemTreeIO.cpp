@@ -6,8 +6,8 @@
 #include "FileUtil.h"
 #include "ItemBase.h"
 #include "ItemTypes.h"
+#include "StrUtil.h"
 #include <sstream>
-#include <vector>
 
 namespace ItemTreeIO {
 
@@ -30,8 +30,7 @@ void stripCR(std::string &s) {
 // Count and strip leading spaces.  Returns the stripped view.
 std::string_view stripLeadingSpaces(std::string_view s) {
   size_t i = 0;
-  while (i < s.size() && s[i] == ' ')
-    ++i;
+  while (i < s.size() && s[i] == ' ') ++i;
   return s.substr(i);
 }
 
@@ -39,8 +38,7 @@ std::string_view stripLeadingSpaces(std::string_view s) {
 bool writeNode(const NodePtr &n, int depth, std::ostream &out) {
   if (!n) return true;
   // indent
-  for (int i = 0; i < depth * 2; ++i)
-    out.put(' ');
+  for (int i = 0; i < depth * 2; ++i) out.put(' ');
   out.put(static_cast<char>(BEGIN_NODE));
   // toString() returns the full type+args string (no framing, no indent).
   std::string body = n->item()->toString();
@@ -52,8 +50,7 @@ bool writeNode(const NodePtr &n, int depth, std::ostream &out) {
     for (const auto &c : n->children()) {
       if (!writeNode(c, depth + 1, out)) return false;
     }
-    for (int i = 0; i < depth * 2; ++i)
-      out.put(' ');
+    for (int i = 0; i < depth * 2; ++i) out.put(' ');
     out.put(static_cast<char>(END_NODE));
     out.put('\n');
   } else {
@@ -164,8 +161,6 @@ bool write(const ItemTree &tree, std::ostream &out) {
   out.write(reinterpret_cast<const char *>(FILE_ID), 4);
   if (!out) return false;
   if (!writeNode(tree.root(), 0, out)) return false;
-  //// Trailing blank line, matching the sample file.
-  // out.put('\n');
   return static_cast<bool>(out);
 }
 
@@ -182,6 +177,11 @@ std::string writeString(const ItemTree &tree) {
   std::ostringstream s;
   if (!write(tree, s)) return {};
   return s.str();
+}
+
+// TODO: could optimize some of the string/IO conversions???
+StrList writeStrList(const ItemTree &tree) {
+  return StrUtil::fromString(writeString(tree));
 }
 
 } // namespace ItemTreeIO

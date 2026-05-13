@@ -3,11 +3,11 @@
 // project here:  https://github.com/robdunn4/QSpice/
 //-----------------------------------------------------------------------------
 #include "ItemText.h"
-#include "StrUtils.h"
+#include "StrUtil.h"
 #include <iostream>
 
 bool ItemText::parseItem(const std::string &argStr) {
-  StrUtils::StrList strList = StrUtils::tokenize(argStr);
+  StrList strList = StrUtil::tokenize(argStr);
 
   if (strList.size() != 8) return false;
 

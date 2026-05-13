@@ -3,10 +3,10 @@
 // project here:  https://github.com/robdunn4/QSpice/
 //-----------------------------------------------------------------------------
 #include "ItemJunction.h"
-#include "StrUtils.h"
+#include "StrUtil.h"
 
 bool ItemJunction::parseItem(const std::string &argStr) {
-  StrUtils::StrList strList = StrUtils::tokenize(argStr);
+  StrList strList = StrUtil::tokenize(argStr);
 
   if (strList.size() != 1) return false;
 

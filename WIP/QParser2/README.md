@@ -19,3 +19,4 @@ The prior code was sufficient for parsing an existing QSpice schematic or symbol
 * [QBomGen](./QBomGen/) &mdash; A simple QParser2 command-line tool to generate a Bill of Materials list.
 * [QSymGen](./QSymGen/) &mdash; A QSpice symbol generator for the *QMdbSim* micro-controller simulator project.
 * [QtDemo](./QtDemo/) &mdash; Using MSVS with Qt Extension for GUI interface to the QParser2 Project shared libraries.
+* [QSymGen2](./QSymGen2/) &mdash; Test version of QSpice symbol generator for the *QMdbSim* micro-controller simulator project.  Similar to QSymGen but recoded from scratch.  Adds support for GPIO pins. **Not Complete**

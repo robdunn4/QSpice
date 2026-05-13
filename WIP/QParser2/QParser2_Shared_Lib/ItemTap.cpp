@@ -3,10 +3,10 @@
 // project here:  https://github.com/robdunn4/QSpice/
 //-----------------------------------------------------------------------------
 #include "ItemTap.h"
-#include "StrUtils.h"
+#include "StrUtil.h"
 
 bool ItemTap::parseItem(const std::string &argStr) {
-  StrUtils::StrList strList = StrUtils::tokenize(argStr);
+  StrList strList = StrUtil::tokenize(argStr);
 
   if (strList.size() != 2) return false;
 

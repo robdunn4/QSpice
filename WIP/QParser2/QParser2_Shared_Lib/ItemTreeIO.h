@@ -18,19 +18,18 @@
  */
 #pragma once
 #include "ItemTree.h"
-#include <iosfwd>
-#include <string>
+#include "StrList.h"
 #include <string_view>
 
 namespace ItemTreeIO {
 
-inline constexpr unsigned char BEGIN_NODE  = 0xAB;
-inline constexpr unsigned char END_NODE    = 0xBB;
-inline constexpr unsigned char FILE_ID[4]  = {0xFF, 0xD8, 0xFF, 0xDB};
+inline constexpr unsigned char BEGIN_NODE = 0xAB;
+inline constexpr unsigned char END_NODE   = 0xBB;
+inline constexpr unsigned char FILE_ID[4] = {0xFF, 0xD8, 0xFF, 0xDB};
 
 struct ParseResult {
   ItemTree    tree;
-  bool        ok   = false;
+  bool        ok = false;
   std::string error;
   int         line = 0; // 1-based; 0 if not line-specific
 };
@@ -44,5 +43,6 @@ ParseResult readString(std::string_view text);
 bool        write(const ItemTree &tree, std::ostream &out);
 bool        writeFile(const ItemTree &tree, const std::string &path);
 std::string writeString(const ItemTree &tree);
+StrList     writeStrList(const ItemTree &tree);
 
 } // namespace ItemTreeIO

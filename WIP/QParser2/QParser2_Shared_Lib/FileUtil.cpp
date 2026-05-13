@@ -3,6 +3,7 @@
 // project here:  https://github.com/robdunn4/QSpice/
 //-----------------------------------------------------------------------------
 #include "FileUtil.h"
+#include "StrList.h"
 #include <stdexcept>
 
 namespace FileUtil {
@@ -22,9 +23,9 @@ std::ofstream openOutput(const std::string &path) {
   return stream;
 }
 
-std::vector<std::string> readLines(std::istream &stream) {
-  std::vector<std::string> lines;
-  std::string              line;
+StrList readLines(std::istream &stream) {
+  StrList     lines;
+  std::string line;
 
   while (std::getline(stream, line)) {
     if (!line.empty() && line.back() == '\r') line.pop_back();
@@ -33,8 +34,7 @@ std::vector<std::string> readLines(std::istream &stream) {
   return lines;
 }
 
-void writeLines(std::ostream &stream, const std::vector<std::string> &strList,
-                bool useCRLF) {
+void writeLines(std::ostream &stream, const StrList &strList, bool useCRLF) {
   for (const auto &line : strList) {
     stream << line;
     if (useCRLF) stream.put('\r');
@@ -42,13 +42,12 @@ void writeLines(std::ostream &stream, const std::vector<std::string> &strList,
   }
 }
 
-std::vector<std::string> readLines(const std::string &path) {
+StrList readLines(const std::string &path) {
   std::ifstream stream = openInput(path);
   return readLines(stream);
 }
 
-void writeLines(const std::string              &path,
-                const std::vector<std::string> &strList, bool useCRLF) {
+void writeLines(const std::string &path, const StrList &strList, bool useCRLF) {
   std::ofstream stream = openOutput(path);
   writeLines(stream, strList, useCRLF);
 }

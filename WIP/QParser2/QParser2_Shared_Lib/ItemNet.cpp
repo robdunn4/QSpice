@@ -3,10 +3,10 @@
 // project here:  https://github.com/robdunn4/QSpice/
 //-----------------------------------------------------------------------------
 #include "ItemNet.h"
-#include "StrUtils.h"
+#include "StrUtil.h"
 
 bool ItemNet::parseItem(const std::string &argStr) {
-  StrUtils::StrList strList = StrUtils::tokenize(argStr);
+  StrList strList = StrUtil::tokenize(argStr);
 
   if (strList.size() != 5) return false;
 
@@ -25,10 +25,12 @@ bool ItemNet::parseItem(const std::string &argStr) {
   return true;
 }
 
+// TODO: Really need to revisit the business of storing stuff (even if empty)
+// with forced quotes...
 std::string ItemNet::toString() const {
   std::string str = std::string(getTypeStr()) + " " + pt1.toString() + " " +
                     fontSize.toString() + " " + rotateAlign.toString() + " " +
                     netType.toString() + " " + netName.toString();
-  if (netDesc.getValue().length()) str += " " + netDesc.toString();
+  if (netDesc.getValue().length() > 2) str += " " + netDesc.toString();
   return str;
 }

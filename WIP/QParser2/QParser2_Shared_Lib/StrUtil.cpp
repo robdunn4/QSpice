@@ -2,11 +2,10 @@
 // This file is part of the the QParser2 project.  You can find the complete
 // project here:  https://github.com/robdunn4/QSpice/
 //-----------------------------------------------------------------------------
-#include "StrUtils.h"
-#include <iostream>
+#include "StrUtil.h"
 #include <sstream>
 
-namespace StrUtils {
+namespace StrUtil {
 
 int strToInt(const std::string &str) {
   try {
@@ -122,4 +121,52 @@ std::string forceQuotes(std::string str) {
   return str;
 }
 
-} // namespace StrUtils
+// Split a string with embedded \n or \r\n into a StrList
+StrList fromString(const std::string &input) {
+  StrList            lines;
+  std::istringstream stream(input);
+  std::string        line;
+
+  while (std::getline(stream, line)) {
+    if (!line.empty() && line.back() == '\r') line.pop_back();
+    lines.push_back(std::move(line));
+  }
+
+  return lines;
+}
+
+// Read lines from an istream into a StrList
+StrList fromStream(std::istream &input) {
+  StrList     lines;
+  std::string line;
+
+  while (std::getline(input, line)) {
+    if (!line.empty() && line.back() == '\r') line.pop_back();
+    lines.push_back(std::move(line));
+  }
+
+  return lines;
+}
+
+// Join a StrList into a single string with a given delimiter (default: \n)
+std::string toString(const StrList &lines, const std::string &delimiter) {
+  std::ostringstream stream;
+
+  for (size_t i = 0; i < lines.size(); ++i) {
+    if (i > 0) stream << delimiter;
+    stream << lines[i];
+  }
+
+  return stream.str();
+}
+
+// Write a StrList to an ostream
+void toStream(const StrList &lines, std::ostream &output,
+              const std::string &delimiter) {
+  for (size_t i = 0; i < lines.size(); ++i) {
+    if (i > 0) output << delimiter;
+    output << lines[i];
+  }
+}
+
+} // namespace StrUtil

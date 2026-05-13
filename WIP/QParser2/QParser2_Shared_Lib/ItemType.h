@@ -38,6 +38,8 @@ public:
 
   ArgString text;
 
+  inline static const char DLL_TYPE[] = "\xD8(.DLL)";
+
 protected:
   ItemType() : ItemBaseT(QPI::TYPE) {}
   ItemType(const ItemType &other) = default;

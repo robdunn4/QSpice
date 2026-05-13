@@ -8,7 +8,8 @@
 #pragma once
 #include "ArgUtils.h"
 #include <iostream>
-#include <vector>
+// #include <vector>
+#include "StrList.h"
 
 // ============================================================================
 // TODO:  Revisit This!  Extract these notes (once confirmed) to an overview
@@ -94,12 +95,14 @@ public:
 // ============================================================================
 
 // for now, deriving from ArgUnknown to generate debugging messages if not -1...
-class ArgLookupNdx : public ArgUnknown {
+// class ArgLookupNdx : public ArgUnknown {
+class ArgLookupNdx : public ArgInt {
 public:
-  using ArgUnknown::ArgUnknown; // Inherit constructors
+  // using ArgUnknown::ArgUnknown; // Inherit constructors
+  ArgLookupNdx(int value = -1) : ArgInt(value) {}
 
   // Explicit conversion required
-  explicit ArgLookupNdx(const ArgUnknown &other) : ArgUnknown(other) {}
+  explicit ArgLookupNdx(const ArgInt &other) : ArgInt(other) {}
 };
 
 // ============================================================================
@@ -119,6 +122,7 @@ public:
 class ArgPinNdx : public ArgInt {
 public:
   using ArgInt::ArgInt; // Inherit constructors
+  ArgPinNdx(int value = -1) : ArgInt(value) {}
 
   // Explicit conversion required
   explicit ArgPinNdx(const ArgInt &other) : ArgInt(other) {}
@@ -177,6 +181,7 @@ public:
 class ArgFontSize : public ArgFloat {
 public:
   using ArgFloat::ArgFloat; // Inherit constructors
+  ArgFontSize() : ArgFloat(1.0) {}
 
   // Explicit conversion required
   explicit ArgFontSize(const ArgFloat &other) : ArgFloat(other) {}
@@ -214,6 +219,9 @@ public:
 class ArgColor : public ArgHex {
 public:
   using ArgHex::ArgHex; // Inherit constructors
+  // 2026.05.08 Change to default to "default color"
+  // TODO:  Revisit this
+  ArgColor() : ArgHex(0x01000000) {}
 
   // Explicit conversion required
   explicit ArgColor(const ArgHex &other) : ArgHex(other) {}
@@ -297,6 +305,7 @@ class ArgRotAlign : public ArgInt {
 public:
   // Inherit constructors
   using ArgInt::ArgInt;
+  ArgRotAlign() : ArgInt(CENTER_V | CENTER_H) {}
 
   // Vertical alignment values (bits 0-1)
   static constexpr unsigned char NORTH    = 0b01;
@@ -394,8 +403,6 @@ public:
 
   void setInfo(unsigned char portType, unsigned char dataType,
                unsigned char bvec1 = 0, unsigned bvec2 = 0) {
-
-    // if (!portType || !dataType) throw...;
     value = bvec2 << 16;
     value |= bvec1 << 8;
     value |= (dataType & 0x0F) << 4;
@@ -420,10 +427,10 @@ public:
 
   // Strips leading '|' if present, splits on '\'+'n'; caller should verify that
   // the string is a subckt string first (isSubckt())
-  std::vector<std::string> splitSubcktStrs() const;
+  StrList splitSubcktStrs() const;
 
   // Joins strings with '\'+'n' and prepends '|'
-  void mergeSubcktStrs(const std::vector<std::string> &strList);
+  void mergeSubcktStrs(const StrList &strList);
 
   static constexpr char pipeChar = '\x7c'; // '|'
 };

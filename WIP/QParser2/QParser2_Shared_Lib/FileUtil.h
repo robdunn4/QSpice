@@ -6,9 +6,8 @@
  * FileUtil.h -- Utility functions for text file I/O.
  */
 #pragma once
+#include "StrList.h"
 #include <fstream>
-#include <string>
-#include <vector>
 
 namespace FileUtil {
 
@@ -22,16 +21,16 @@ namespace FileUtil {
 
 // istream -> vector<string>
 // Reads line by line, strips CR & LF, each element has no line endings
-[[nodiscard]] std::vector<std::string> readLines(std::istream &stream);
+[[nodiscard]] StrList readLines(std::istream &stream);
 
 // ostream -> vector<string>
 // Writes line by line; uses CRLF if useCRLF is true, otherwise LF
-void writeLines(std::ostream &stream, const std::vector<std::string> &lines,
+void writeLines(std::ostream &stream, const StrList &lines,
                 bool useCRLF = true);
 
-[[nodiscard]] std::vector<std::string> readLines(const std::string &path);
+[[nodiscard]] StrList readLines(const std::string &path);
 
-void writeLines(const std::string &path, const std::vector<std::string> &lines,
+void writeLines(const std::string &path, const StrList &lines,
                 bool useCRLF = true);
 
 } // namespace FileUtil

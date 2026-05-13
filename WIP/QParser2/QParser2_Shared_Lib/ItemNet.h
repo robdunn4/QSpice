@@ -31,7 +31,7 @@ public:
   static ItemNetPtr makePtr(const ArgPoint &pt1, const ArgFontSize &fontSize,
                             const ArgRotAlign &rotateAlign,
                             const ArgInt &netType, const ArgString &netName,
-                            const ArgString &netDesc) {
+                            const ArgString &netDesc = "") {
     return ItemNetPtr(
         new ItemNet(pt1, fontSize, rotateAlign, netType, netName, netDesc));
   }

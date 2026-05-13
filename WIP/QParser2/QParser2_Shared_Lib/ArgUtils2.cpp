@@ -3,8 +3,8 @@
 // project here:  https://github.com/robdunn4/QSpice/
 //-----------------------------------------------------------------------------
 #include "ArgUtils2.h"
+#include "StrList.h"
 #include <stdexcept>
-#include <vector>
 
 // ============================================================================
 // ArgRotAlign implementation
@@ -61,9 +61,9 @@ ArgRotAlign ArgRotAlign::create(unsigned char vert, unsigned char horiz,
 // ============================================================================
 
 // TODO: revisit -- should this fail if not '|' lib entry?
-std::vector<std::string> ArgLibString::splitSubcktStrs() const {
-  std::vector<std::string> result;
-  std::string              current;
+StrList ArgLibString::splitSubcktStrs() const {
+  StrList     result;
+  std::string current;
 
   auto iter = value.cbegin();
   if (*iter == '|') iter++; // this isn't really right
@@ -83,7 +83,7 @@ std::vector<std::string> ArgLibString::splitSubcktStrs() const {
   return result;
 }
 
-void ArgLibString::mergeSubcktStrs(const std::vector<std::string> &strList) {
+void ArgLibString::mergeSubcktStrs(const StrList &strList) {
   value = "|";
   for (size_t i = 0; i < strList.size(); ++i) {
     if (i > 0) value += "\\n";

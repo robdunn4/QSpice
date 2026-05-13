@@ -99,13 +99,16 @@
     <ClInclude Include="ArgUtils2.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="StrUtils.h">
+    <ClInclude Include="StrUtil.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ItemAll.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="FileUtil.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="StrList.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -188,7 +191,7 @@
     <ClCompile Include="ArgUtils2.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="StrUtils.cpp">
+    <ClCompile Include="StrUtil.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="FileUtil.cpp">

@@ -3,7 +3,7 @@
 // project here:  https://github.com/robdunn4/QSpice/
 //-----------------------------------------------------------------------------
 #include "ItemLib.h"
-#include "StrUtils.h"
+#include "StrUtil.h"
 
 bool ItemLib::parseItem(const std::string &argStr) {
   try {
@@ -16,6 +16,6 @@ bool ItemLib::parseItem(const std::string &argStr) {
 
 std::string ItemLib::toString() const {
   std::string str = std::string(getTypeStr()) + " " + libText.toString();
-  StrUtils::trim(str);
+  StrUtil::trim(str);
   return str;
 }

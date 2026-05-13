@@ -3,10 +3,10 @@
 // project here:  https://github.com/robdunn4/QSpice/
 //-----------------------------------------------------------------------------
 #include "ItemSym.h"
-#include "StrUtils.h"
+#include "StrUtil.h"
 
 bool ItemSym::parseItem(const std::string &argStr) {
-  StrUtils::StrList strList = StrUtils::tokenize(argStr);
+  StrList strList = StrUtil::tokenize(argStr);
   if (strList.size() > 1) return false;
 
   try {
@@ -19,5 +19,5 @@ bool ItemSym::parseItem(const std::string &argStr) {
 
 std::string ItemSym::toString() const {
   std::string str = std::string(getTypeStr()) + " " + text.toString();
-  return StrUtils::trim(str);
+  return StrUtil::trim(str);
 }
