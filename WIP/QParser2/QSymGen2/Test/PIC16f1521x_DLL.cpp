@@ -56,16 +56,17 @@ extern "C" __declspec(dllexport) void pic16f1521x_dll(void **opaque, double t, u
    double  RA4_I = data[ 5].d; // input
    double  RA5_I = data[ 6].d; // input
    double  VSS   = data[ 7].d; // input
-   double &RA0_O = data[ 8].d; // output
-   double &RA0_C = data[ 9].d; // output
-   double &RA1_O = data[10].d; // output
-   double &RA1_C = data[11].d; // output
-   double &RA3_O = data[12].d; // output
-   double &RA3_C = data[13].d; // output
-   double &RA4_O = data[14].d; // output
-   double &RA4_C = data[15].d; // output
-   double &RA5_O = data[16].d; // output
-   double &RA5_C = data[17].d; // output
+   double  CLK   = data[ 8].d; // input
+   double &RA0_O = data[ 9].d; // output
+   double &RA0_C = data[10].d; // output
+   double &RA1_O = data[11].d; // output
+   double &RA1_C = data[12].d; // output
+   double &RA3_O = data[13].d; // output
+   double &RA3_C = data[14].d; // output
+   double &RA4_O = data[15].d; // output
+   double &RA4_C = data[16].d; // output
+   double &RA5_O = data[17].d; // output
+   double &RA5_C = data[18].d; // output
 
    // Implement module evaluation code here:
    RA0_C = 1; // input

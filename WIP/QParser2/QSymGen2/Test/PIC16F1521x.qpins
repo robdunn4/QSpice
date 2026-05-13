@@ -1,44 +1,24 @@
 * ------------------------------------------------------------------
-* Example Pin Definition File for QSymGen
-* ------------------------------------------------------------------
+* Example Pin Definition File for QSymGen2
 *
-* TODO:  Revise this after working through code
+* Implements: Microchip PIC16F15213/PIC16F15214 devices
+* Author:     Robert Dunn
+* Revised:    2026.05.13
+* ------------------------------------------------------------------
+* ---------------------------------
 *
 * Pin Definitions:  DIR NAME ALTTEXT [* COMMENT]
 *
-* Where: DIR = Pin direction: I (input), O (output), B (bi-directional, i.e, GPIO), or X (unused for spacing).
-*        NAME = Pin name.  (Duplicates are allowed.)
+* Where: DIR = Pin direction: I (input), O (output), B (bi-directional), or X (for spacing).
+*        NAME = Pin name.  Don't use duplicate names -- QSymGen2 doesn't warn you if you do.
 *        ALTTEXT = Additional text to include on symbol, e.g., alternate pin functions.
 *        COMMENT = Optional comment.  (Space required before '*'.)
 *
 * ---------------------------------
 *
-* Notes:
-*   Leading spaces are removed when parsing.
-*   Lines beginning with '*' are comments and are ignored.
-*   Blank lines are ignored.
-*
-* ---------------------------------
-*
-* Example:
-*
-
-*
-* M = Manufacturer [optional, will appear as text info in symbol/schematic]
-*
-M Microchip 
-
-*
-* P = Part #(s) [optional, will appear as text info in symbol/schematic]
-* TODO:  Default to stem file name (done).  Make alt part numbers separate item?  Add to symbol description?
-*
-P PIC16F1521x PIC16F15213/PIC16F15214 * Alt parts
-
-*
-* D = descriptive text for symbol and DLL block [optional]
+* D = descriptive text for symbol and DLL block [optional but recommended]
 *
 D Microchip PIC16F15213/PIC16F15214
-
 *
 * Pin Definitions
 *
@@ -46,10 +26,13 @@ I VDD
 B RA0 ICSPDAT 
 B RA1 ICSPCLK
 I RA2 MCLR/VPP
+X ---
+X ---
 B RA3 
 B RA4 
 B RA5 
 I VSS
-
+X ---
+I CLK
 *
 *** EOF ***

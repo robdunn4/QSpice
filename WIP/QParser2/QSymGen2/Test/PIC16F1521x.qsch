@@ -3,7 +3,6 @@
     «symbol GPIO_IMPL
       «type: »
       «description: GPIO Symbol for QSymGen2»
-      «library file: »
       «shorted pins: false»
       «rect (-300,0) (200,-200) 0 0 0 0x1000000 0xffff -1 1 -1»
       «text (-50,-50) 0.35 15 0 0x1000000 -1 -1 "G_RA0"»
@@ -18,7 +17,6 @@
     «symbol GPIO_IMPL
       «type: »
       «description: GPIO Symbol for QSymGen2»
-      «library file: »
       «shorted pins: false»
       «rect (-300,0) (200,-200) 0 0 0 0x1000000 0xffff -1 1 -1»
       «text (-50,-50) 0.35 15 0 0x1000000 -1 -1 "G_RA1"»
@@ -33,7 +31,6 @@
     «symbol GPIO_IMPL
       «type: »
       «description: GPIO Symbol for QSymGen2»
-      «library file: »
       «shorted pins: false»
       «rect (-300,0) (200,-200) 0 0 0 0x1000000 0xffff -1 1 -1»
       «text (-50,-50) 0.35 15 0 0x1000000 -1 -1 "G_RA3"»
@@ -48,7 +45,6 @@
     «symbol GPIO_IMPL
       «type: »
       «description: GPIO Symbol for QSymGen2»
-      «library file: »
       «shorted pins: false»
       «rect (-300,0) (200,-200) 0 0 0 0x1000000 0xffff -1 1 -1»
       «text (-50,-50) 0.35 15 0 0x1000000 -1 -1 "G_RA4"»
@@ -63,7 +59,6 @@
     «symbol GPIO_IMPL
       «type: »
       «description: GPIO Symbol for QSymGen2»
-      «library file: »
       «shorted pins: false»
       «rect (-300,0) (200,-200) 0 0 0 0x1000000 0xffff -1 1 -1»
       «text (-50,-50) 0.35 15 0 0x1000000 -1 -1 "G_RA5"»
@@ -78,9 +73,8 @@
     «symbol DLL
       «type: Ø(.DLL)»
       «description: DLL for Microchip PIC16F15213/PIC16F15214»
-      «library file: »
       «shorted pins: false»
-      «rect (0,-100) (2000,-3700) 0 0 0 0x1000000 0xffff -1 1 -1»
+      «rect (0,-100) (2000,-3900) 0 0 0 0x1000000 0xffff -1 1 -1»
       «text (1000,250) 1 15 0 0x1000000 -1 -1 "X1"»
       «text (1000,100) 1 15 0 0x1000000 -1 -1 "PIC16F1521x_DLL"»
       «pin (0,-200) (20,0) 1 7 145 0x1000000 -1 "VDD" "VDD"»
@@ -101,6 +95,7 @@
       «pin (0,-3200) (20,0) 1 7 146 0x1000000 -1 "RA5_O" "RA5_O"»
       «pin (0,-3400) (20,0) 1 7 146 0x1000000 -1 "RA5_C" "RA5_C"»
       «pin (0,-3600) (20,0) 1 7 145 0x1000000 -1 "VSS" "VSS"»
+      «pin (0,-3800) (20,0) 1 7 145 0x1000000 -1 "CLK" "CLK"»
     »
   »
   «net (0,0) 1 14 1 "VDD"»
@@ -111,4 +106,6 @@
   «net (0,-2200) 1 14 1 "RA4"»
   «net (0,-2800) 1 14 1 "RA5"»
   «net (0,-3400) 1 14 1 "VSS"»
+  «net (0,-3600) 1 14 1 "CLK"»
 »
+

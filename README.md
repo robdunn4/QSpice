@@ -101,4 +101,4 @@ A micro-controller simulation framework for QSpice for Microchip devices.
 ## QColorPrefs Project
 A command-line utility to switch between QSpice color themes.
 
-[To to QColorPrefs Project](./QColorPrefs/)
+[Go to QColorPrefs Project](./QColorPrefs/)
