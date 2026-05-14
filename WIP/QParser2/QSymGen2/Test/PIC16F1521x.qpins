@@ -3,20 +3,8 @@
 *
 * Implements: Microchip PIC16F15213/PIC16F15214 devices
 * Author:     Robert Dunn
-* Revised:    2026.05.13
+* Revised:    2026.05.14
 * ------------------------------------------------------------------
-* ---------------------------------
-*
-* Pin Definitions:  DIR NAME ALTTEXT [* COMMENT]
-*
-* Where: DIR = Pin direction: I (input), O (output), B (bi-directional), or X (for spacing).
-*        NAME = Pin name.  Don't use duplicate names -- QSymGen2 doesn't warn you if you do.
-*        ALTTEXT = Additional text to include on symbol, e.g., alternate pin functions.
-*        COMMENT = Optional comment.  (Space required before '*'.)
-*
-* ---------------------------------
-*
-* D = descriptive text for symbol and DLL block [optional but recommended]
 *
 D Microchip PIC16F15213/PIC16F15214
 *
@@ -26,13 +14,11 @@ I VDD
 B RA0 ICSPDAT 
 B RA1 ICSPCLK
 I RA2 MCLR/VPP
-X ---
-X ---
+X
 B RA3 
 B RA4 
 B RA5 
 I VSS
-X ---
-I CLK
+I CLK [Not A Device Pin]
 *
 *** EOF ***

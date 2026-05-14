@@ -75,9 +75,9 @@ bool SymList::makeSymbol(const PinDefList &pinList, std::ostream &errStrm) {
 
   // we can add the rectangle last because the library sorts items into required
   // order
-  nodePtr->addLast(
-      ItemRect::makePtr(topLeft, botRight, 0, 0, 0, 0x1000000, // 0xff0000,
-                        0x400FFFF, -1, 1 /* is hierarchical block */, -1));
+  nodePtr->addLast(ItemRect::makePtr(topLeft, botRight, 0, 0, 0, 0x1000000,
+                                     0xFFFF, -1, 1 /* is hierarchical block */,
+                                     -1));
 
   // TODO: this is a temporary bodge...
   StrList strList = ItemTreeIO::writeStrList(tree);
@@ -105,9 +105,8 @@ bool SymList::makeSymbol(const PinDefList &pinList, std::ostream &errStrm) {
 bool SymList::makeSchematic(const PinDefList &pinList, std::ostream &errStrm) {
   // root stuff
   ItemTree   tree;
-  ItemSchPtr sch = ItemSch::makePtr();
-  // add text notations here?
-  auto root = tree.setRoot(sch);
+  ItemSchPtr sch  = ItemSch::makePtr();
+  auto       root = tree.setRoot(sch);
 
   if (!root) {
     errStrm << "Failed to create root node.\n";
@@ -126,7 +125,6 @@ bool SymList::makeSchematic(const PinDefList &pinList, std::ostream &errStrm) {
 
   for (const PinDef &pinDef : pinList) {
     if (pinDef.type == 'X') {
-      // y += yInc;
       continue;
     }
     ItemNetPtr netPtr = ItemNet::makePtr(
@@ -156,8 +154,7 @@ bool SymList::makeSchematic(const PinDefList &pinList, std::ostream &errStrm) {
     ItemTypePtr typePtr = ItemType::makePtr(); // hierarchical block
     symNode->addLast(typePtr);
     symNode->addLast(ItemDesc::makePtr("GPIO Symbol for QSymGen2"));
-    // symNode->addLast(ItemLib::makePtr("GPIO_Cir.net"));
-    symNode->addLast(ItemLib::makePtr());
+    // symNode->addLast(ItemLib::makePtr()); // QSpice removes this???
     symNode->addLast(ItemShort::makePtr(false));
 
     symNode->addLast(ItemRect::makePtr(
@@ -167,18 +164,13 @@ bool SymList::makeSchematic(const PinDefList &pinList, std::ostream &errStrm) {
     symNode->addLast(ItemText::makePtr(
         Point(-50, -50), ArgFontSize(0.35f), ArgRotAlign(15), ArgTextFlags(),
         ArgColor(), ArgLookupNdx(), ArgPinNdx(), "G_" + pinDef.name));
-    // symNode->addLast(
-    //     ItemText::makePtr(Point(-50, -120), ArgFontSize(0.25f),
-    //     ArgRotAlign(15),
-    //                       ArgTextFlags(1 /*comment*/), ArgColor(),
-    //                       ArgLookupNdx(), ArgPinNdx(), pinDef.name));
+
     //  GPIO implementation schematic
     symNode->addLast(ItemText::makePtr(
         Point(-50, -120), ArgFontSize(0.25f), ArgRotAlign(15), ArgTextFlags(),
         ArgColor(), ArgLookupNdx(), ArgPinNdx(), ArgString("GPIO_IMPL")));
 
-    // pins
-    // Note:  I think that pins must be on 100 point boundaries...
+    // add pins
     symNode->addLast(ItemPin::makePtr(Point(-200, -150), Point(0, 20),
                                       ArgFontSize(0.2f), ArgRotAlign(14),
                                       ArgPinInfo(), ArgColor(), ArgLookupNdx(),
@@ -206,13 +198,7 @@ bool SymList::makeSchematic(const PinDefList &pinList, std::ostream &errStrm) {
   Point cmpOrg    = Point(1500, 300);
   int   rectWidth = 2000;
   int   rectCntrH = rectWidth / 2;
-  // Point rectTL    = Point(0, -50);
-  Point rectTL = Point(0, -100);
-  // Point rectBR    = Point(rectWidth, -2000);
-  //  x               = 1500;
-  //  y               = 200;
-  //  Point topLeft{-300, 200};
-  //  Point botRight{x + 200, y - 1000};
+  Point rectTL    = Point(0, -100);
 
   ItemCmpPtr  cmpPtr  = ItemCmp::makePtr(cmpOrg, ArgRot(), ArgStuff());
   NodePtr     cmpNode = nodePtr->addLast(cmpPtr);
@@ -221,12 +207,11 @@ bool SymList::makeSchematic(const PinDefList &pinList, std::ostream &errStrm) {
   ItemTypePtr typePtr = ItemType::makePtr(ItemType::DLL_TYPE);
   symNode->addLast(typePtr);
   symNode->addLast(ItemDesc::makePtr("DLL for " + pinList.description));
-  symNode->addLast(ItemLib::makePtr());
+  // symNode->addLast(ItemLib::makePtr()); // not needed, QSpice strips???
   symNode->addLast(ItemShort::makePtr(false));
 
   // instance name
   symNode->addLast(ItemText::makePtr(
-      // Point(-50, -50), ArgFontSize(0.35f), ArgRotAlign(15), ArgTextFlags(),
       Point(rectCntrH, 250), ArgFontSize(), ArgRotAlign(15), ArgTextFlags(),
       ArgColor(), ArgLookupNdx(), ArgPinNdx(), "X1"));
 
@@ -272,17 +257,18 @@ bool SymList::makeSchematic(const PinDefList &pinList, std::ostream &errStrm) {
       symNode->addLast(
           ItemPin::makePtr(Point(pinX, pinY), ptLbl, fntLbl, rotAlign, pinInfo,
                            pinClr, ArgLookupNdx(), pinDef.name, pinDef.name));
-      // pinY -= 200;
       break;
     case 'O':
       pinInfo.setInfo(ArgPinInfo::TYPE_OUTPORT, ArgPinInfo::DATA_FLOAT);
       symNode->addLast(
           ItemPin::makePtr(Point(pinX, pinY), ptLbl, fntLbl, rotAlign, pinInfo,
                            pinClr, ArgLookupNdx(), pinDef.name, pinDef.name));
-      // pinY -= 200;
       break;
-    default: // do nothing
-      continue;
+    case 'X':
+      break;
+    default:
+      // should not happen
+      return false;
     }
 
     pinY -= 200;
@@ -291,12 +277,10 @@ bool SymList::makeSchematic(const PinDefList &pinList, std::ostream &errStrm) {
   // rect (move later)
   Point rectBR(rectTL.x + rectWidth, rectTL.y + pinY + 200);
 
-  symNode->addLast(ItemRect::makePtr(
-      // Point(-300, 0), Point(200, -200), ArgRot(), ArgLineWidth(),
-      // ArgLineType(),
-      rectTL, rectBR, ArgRot(), ArgLineWidth(), ArgLineType(),
-      ArgColor(0x1000000), ArgColor(0xffff), ArgLookupNdx(),
-      ArgInt(1 /* hierarchical */), ArgPinNdx()));
+  symNode->addLast(
+      ItemRect::makePtr(rectTL, rectBR, ArgRot(), ArgLineWidth(), ArgLineType(),
+                        ArgColor(0x1000000), ArgColor(0xffff), ArgLookupNdx(),
+                        ArgInt(1 /* hierarchical */), ArgPinNdx()));
 
   // TODO: this is a temporary bodge...
   StrList strList = ItemTreeIO::writeStrList(tree);

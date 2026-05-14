@@ -71,9 +71,10 @@ public:
   int parseLines(const StrList strList, std::ostream &errStrm = nullStream);
 
 public:
-  std::string manufacturer{"[Manufacturer]"};
+  // std::string manufacturer{"[Manufacturer]"};
   std::string partNbr{"[PartNbr]"};
-  std::string altPartNbrs{""};
+  // std::string altPartNbrs{""}; // now expecting this info in description
+  // record
   std::string description{"Symbol generated with QSymGen2"};
   int         biDirPinCnt = 0;
   int         inPinCnt    = 0;

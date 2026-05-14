@@ -29,23 +29,6 @@ int PinDefList::parseLines(const StrList strList, std::ostream &errStrm) {
       continue;
     }
 
-    // handle manufacturer/part number/etc. here
-    if (tokenChar == 'M') {
-      manufacturer = line.substr(2);
-      continue;
-    }
-    if (tokenChar == 'P') {
-      ss >> token;
-      if (!token.length()) {
-        errStrm << format(" *** Malformed token @ line {}: {}\n", lineNbr,
-                          line);
-        continue;
-      }
-      partNbr = token;
-      // TODO: Revisit
-      altPartNbrs = parseRemainder(ss);
-      continue;
-    }
     if (tokenChar == 'D') {
       description = line.substr(2);
       continue;
@@ -55,18 +38,21 @@ int PinDefList::parseLines(const StrList strList, std::ostream &errStrm) {
       errStrm << format(" *** Invalid token @ line {}: {}\n", lineNbr, line);
       continue;
     }
-    char pinType = tokenChar;
+    char        pinType = tokenChar;
+    std::string pinName = "---"; // default for 'X' type (skip)
 
     if (!(ss >> token)) {
-      errStrm << format(" *** Pin token missing name @ line {}: {}\n", lineNbr,
-                        line);
-      continue;
-    }
-    std::string pinName = token;
+      if (pinType != 'X') {
+        errStrm << format(" *** Pin token missing name @ line {}: {}\n",
+                          lineNbr, line);
+        continue;
+      }
+    } else pinName = token;
 
     std::string pinAltText;
     while (ss >> token) {
       if (token[0] == '*') break;
+      if (pinAltText.length()) pinAltText += " ";
       pinAltText += token;
     }
 
@@ -123,7 +109,7 @@ bool PinDef::isValidType(char type) {
 }
 
 // returns -1 if the pin type isn't valid; otherwise, returns an index into
-// typeNames[]
+// typeNames[] -- do we need this?
 int PinDef::getTypeNdx(char type) {
   // sizeof(typeChars) includes trailing null byte -- exclude
   for (int i = 0; i < sizeof(typeChars) - 1; i++)
