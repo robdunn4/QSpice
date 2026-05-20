@@ -147,16 +147,26 @@ public:
   // the visible/hidden bit affects only symbol attribute visiblity, i.e.,
   // top-level text items are always visible as far as I can determine
   bool isComment() const { return value & COMMENT_BIT; }
-  // bool isDirective() const { return !isComment(); }
   bool isHidden() const { return value & VISIBLE_BIT; }
-  // bool isVisible() const { return !isHidden(); }
 
   // set/clear flags without altering other bits (just in case they are
   // used for something as yet unknown)
-  void setComment() { value |= COMMENT_BIT; }
-  void clearComment() { value &= ~COMMENT_BIT; }
-  void setHidden() { value |= VISIBLE_BIT; }
-  void clearHidden() { value &= ~VISIBLE_BIT; }
+  ArgTextFlags setComment() {
+    value |= COMMENT_BIT;
+    return *this;
+  }
+  ArgTextFlags clearComment() {
+    value &= ~COMMENT_BIT;
+    return *this;
+  }
+  ArgTextFlags setHidden() {
+    value |= VISIBLE_BIT;
+    return *this;
+  }
+  ArgTextFlags clearHidden() {
+    value &= ~VISIBLE_BIT;
+    return *this;
+  }
 };
 
 // ============================================================================
