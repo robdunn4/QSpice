@@ -137,6 +137,7 @@
   <ItemGroup>
     <ClCompile Include="CmdParser.cpp" />
     <ClCompile Include="FsUtil.cpp" />
+    <ClCompile Include="GraphicSymbols.cpp" />
     <ClCompile Include="PinDefs.cpp" />
     <ClCompile Include="QSymGen2.cpp" />
     <ClCompile Include="SymList.cpp" />
@@ -144,6 +145,7 @@
   <ItemGroup>
     <ClInclude Include="CmdParser.h" />
     <ClInclude Include="FsUtil.h" />
+    <ClInclude Include="GraphicSymbols.h" />
     <ClInclude Include="NullStream.h" />
     <ClInclude Include="PinDefs.h" />
     <ClInclude Include="SymList.h" />

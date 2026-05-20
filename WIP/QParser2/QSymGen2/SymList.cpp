@@ -3,11 +3,14 @@
 // project here:  https://github.com/robdunn4/QSpice/
 //-----------------------------------------------------------------------------
 #include "SymList.h"
+#include "GraphicSymbols.h"
 #include <ItemAll.h>
-#include <ItemTree.h>
 #include <ItemTreeIO.h>
 
-bool SymList::makeSymbol(const PinDefList &pinList, std::ostream &errStrm) {
+namespace GS = GraphicsSymbols;
+
+bool SymList::makeSymbol(const PinDefList &pinList, int rectWidth,
+                         std::ostream &errStrm) {
   ItemTree   tree;
   ItemSymPtr sym  = ItemSym::makePtr(pinList.partNbr);
   auto       root = tree.setRoot(sym);
@@ -22,8 +25,8 @@ bool SymList::makeSymbol(const PinDefList &pinList, std::ostream &errStrm) {
   const int pinRowHeight = 200;
   int       rectHeight   = pinRows * pinRowHeight;
 
-  Point topLeft{-500, 0};
-  Point botRight{+500, -rectHeight};
+  Point topLeft{-rectWidth / 2, 0};
+  Point botRight{rectWidth / 2, -rectHeight};
 
   NodePtr nodePtr = root;
   nodePtr->addLast(ItemType::makePtr()); // hierarchical entry
@@ -38,13 +41,47 @@ bool SymList::makeSymbol(const PinDefList &pinList, std::ostream &errStrm) {
                                      ArgFontSize(0.5), 15, 0, 0x1000000, -1, -1,
                                      pinList.partNbr));
 
+  // add the multiple-choice part number now; position isn't really important
+  std::string mcTxt;
+  for (const std::string &part : pinList.partList) {
+    std::string str = "\"" + part + "\"";
+    if (!mcTxt.length()) {
+      // if there is only one choice, we can't include the "()"
+      if (pinList.partList.size() > 1) str = "Device=<(" + str + ")";
+      else str = "Device=<" + str;
+    } else str = "," + str;
+    mcTxt += str;
+  }
+  mcTxt += ">";
+
+  nodePtr->addLast(ItemText::makePtr(
+      ArgPoint(0, topLeft.y + 250), ArgFontSize(0.5f), ArgRotAlign(),
+      ArgTextFlags().setHidden(), 0x1000000, -1, -1, mcTxt));
+
+  // note:  we could add the hierarchical rect now if we knew the final
+  // dimensions but we don't know them.  we have two alternatives:
+  //
+  // (1) create an ItemRectPtr here, save that pointer, and call
+  // nodePtr->addFirst(rectPtr) now; later we can fix the dimensions using the
+  // stored rectPtr
+  //
+  // (2) wait to add the ItemRect until we know the final dimensions, and then
+  // add using nodePtr->addFirst() to ensure the correct Z-ordering
+  //
+  // for now, we'll go with (2)...
+
   PinDefList::const_iterator iter = pinList.cbegin();
   for (int col = 0; col < 2; col++) {
-    int x = col == 0 ? -500 : 500;
-    int y = -pinRowHeight / 2;
+    int y    = topLeft.y - 100;
+    int x    = topLeft.x;
+    int xLbl = 170;
+    int xSym = topLeft.x + 90;
 
-    int   xLbl = col == 0 ? 20 : -20;
-    Point ptLbl(xLbl, 0);
+    if (col) {
+      x    = -x;
+      xLbl = -xLbl;
+      xSym = -xSym;
+    }
 
     ArgRotAlign rotAlign = ArgRotAlign::create(
         ArgRotAlign::CENTER_V, col ? ArgRotAlign::EAST : ArgRotAlign::WEST);
@@ -52,32 +89,50 @@ bool SymList::makeSymbol(const PinDefList &pinList, std::ostream &errStrm) {
     for (int row = 0; row < pinRows && iter != pinList.cend();
          row++, y -= pinRowHeight, iter++) {
       if (iter->type == 'X') continue;
-      Point      pt(x, y);
-      ItemPinPtr pinPtr =
-          ItemPin::makePtr(pt, ptLbl, ArgFontSize(1.0), rotAlign, ArgPinInfo(),
-                           ArgColor(), ArgLookupNdx(), ArgString(iter->name));
+
+      Point ptPin(x, y);
+      Point ptLbl(xLbl, 0);
+      Point ptSym(xSym, y);
+      Point ptAltText(ptPin.x + ptLbl.x, y - 100);
+
+      ItemPinPtr pinPtr = ItemPin::makePtr(
+          ptPin, ptLbl, ArgFontSize(1.0), rotAlign, ArgPinInfo(), ArgColor(),
+          ArgLookupNdx(), ArgString(iter->name));
       nodePtr->addLast(pinPtr);
 
       // add alternate text in tiny font
-      if (!iter->altText.length()) continue;
-      Point altTxtPt(x + 25, y - 100);
-      if (col) altTxtPt.x -= 50;
+      if (iter->altText.length()) {
+        ItemTextPtr txtPtr = ItemText::makePtr(
+            ptAltText, ArgFontSize(0.25), rotAlign, ArgTextFlags::COMMENT_BIT,
+            ArgColor(), ArgLookupNdx(), ArgPinNdx(), ArgString(iter->altText));
+        nodePtr->addLast(txtPtr);
+      }
 
-      ItemTextPtr txtPtr = ItemText::makePtr(
-          altTxtPt, ArgFontSize(0.25), rotAlign, ArgTextFlags::COMMENT_BIT,
-          ArgColor(), ArgLookupNdx(), ArgPinNdx(), ArgString(iter->altText));
-      nodePtr->addLast(txtPtr);
+      // add symbol
+      GraphicsSymbols::Type symType;
+      switch (iter->type) {
+      case 'B':
+        symType = GS::Type::CIRCLE;
+        break;
+      case 'I':
+        symType = col ? GS::Type::TRIANGLE_LEFT : GS::Type::TRIANGLE_RIGHT;
+        break;
+      case 'O':
+        symType = col ? GS::Type::TRIANGLE_RIGHT : GS::Type::TRIANGLE_LEFT;
+        break;
+      }
 
-      // expand rect?
+      GS::addSymbol(nodePtr, symType, ptSym, 100, 0xFF0000, 0xFFFFFF);
+
+      // expand rect
       if (row == pinRows - 1) botRight.y -= 50;
     }
   }
 
-  // we can add the rectangle last because the library sorts items into required
-  // order
-  nodePtr->addLast(ItemRect::makePtr(topLeft, botRight, 0, 0, 0, 0x1000000,
-                                     0xFFFF, -1, 1 /* is hierarchical block */,
-                                     -1));
+  // we add the rectangle using addFirst() to get the correct Z-order
+  nodePtr->addFirst(ItemRect::makePtr(topLeft, botRight, 0, 0, 0, 0x1000000,
+                                      0xFFFF, -1, 1 /* is hierarchical block */,
+                                      -1));
 
   // TODO: this is a temporary bodge...
   StrList strList = ItemTreeIO::writeStrList(tree);
@@ -86,27 +141,27 @@ bool SymList::makeSymbol(const PinDefList &pinList, std::ostream &errStrm) {
   return true;
 }
 
-// makeSchematic() is similar to makeSymbol() but a bit more complicated....  we
-// need to create a schematic which contains ports for each pin (whether GPIO or
-// not) and include a unique GPIO symbol instance for each actual GPIO pin....
-// for now, we'll tie the GPIO pins to nets (as opposed to connecting wires) so
-// we also don't need to lay the elements out in an orderly way -- just a column
-// of ports, a column of GPIO symbols, and the DLL block.  the DLL block will,
-// of course, require multiple pins for GPIO pins tied to the GPIO symbols.  for
-// now, we'll hard-code the GPIO symbol to use a net file, e.g., "GPIO.net" or
-// similar.
+// makeSchematic() is similar to makeSymbol() but a bit more complicated....
+// we need to create a schematic which contains ports for each pin (whether
+// GPIO or not) and include a unique GPIO symbol instance for each actual GPIO
+// pin.... for now, we'll tie the GPIO pins to nets (as opposed to connecting
+// wires) so we also don't need to lay the elements out in an orderly way --
+// just a column of ports, a column of GPIO symbols, and the DLL block.  the
+// DLL block will, of course, require multiple pins for GPIO pins tied to the
+// GPIO symbols.  for now, we'll hard-code the GPIO symbol to use a net file,
+// e.g., "GPIO.net" or similar.
 //
-// Note:  apparently some things -- pins in particular -- must land on 100 point
-// boundaries.  I assume this is to ensure that wires and pins match up exactly
-// in the coordinate system for GUI purposes....  I discovered this when trying
-// to make the GPIO symbol small with pins spaced 50 units apart; the GUI was
-// (AFAICT) moving the pins to be on 100-unit boundaries....
+// Note:  apparently some things -- pins in particular -- must land on 100
+// point boundaries.  I assume this is to ensure that wires and pins match up
+// exactly in the coordinate system for GUI purposes....  I discovered this
+// when trying to make the GPIO symbol small with pins spaced 50 units apart;
+// the GUI was (AFAICT) moving the pins to be on 100-unit boundaries....
 //
 bool SymList::makeSchematic(const PinDefList &pinList, std::ostream &errStrm) {
   // root stuff
   ItemTree   tree;
   ItemSchPtr sch  = ItemSch::makePtr();
-  auto       root = tree.setRoot(sch);
+  NodePtr    root = tree.setRoot(sch);
 
   if (!root) {
     errStrm << "Failed to create root node.\n";
@@ -154,7 +209,6 @@ bool SymList::makeSchematic(const PinDefList &pinList, std::ostream &errStrm) {
     ItemTypePtr typePtr = ItemType::makePtr(); // hierarchical block
     symNode->addLast(typePtr);
     symNode->addLast(ItemDesc::makePtr("GPIO Symbol for QSymGen2"));
-    // symNode->addLast(ItemLib::makePtr()); // QSpice removes this???
     symNode->addLast(ItemShort::makePtr(false));
 
     symNode->addLast(ItemRect::makePtr(
@@ -207,7 +261,6 @@ bool SymList::makeSchematic(const PinDefList &pinList, std::ostream &errStrm) {
   ItemTypePtr typePtr = ItemType::makePtr(ItemType::DLL_TYPE);
   symNode->addLast(typePtr);
   symNode->addLast(ItemDesc::makePtr("DLL for " + pinList.description));
-  // symNode->addLast(ItemLib::makePtr()); // not needed, QSpice strips???
   symNode->addLast(ItemShort::makePtr(false));
 
   // instance name
@@ -219,6 +272,12 @@ bool SymList::makeSchematic(const PinDefList &pinList, std::ostream &errStrm) {
   symNode->addLast(ItemText::makePtr(
       Point(rectCntrH, 100), ArgFontSize(), ArgRotAlign(15), ArgTextFlags(),
       ArgColor(), ArgLookupNdx(), ArgPinNdx(), pinList.partNbr + "_DLL"));
+
+  // create DevPart attribute
+  symNode->addLast(
+      ItemText::makePtr(Point(rectCntrH, 350), ArgFontSize(), ArgRotAlign(15),
+                        ArgTextFlags().setHidden(), ArgColor(), ArgLookupNdx(),
+                        ArgPinNdx(), ArgString("char* DevPart=Device")));
 
   // make a new PinList that contains all of the DLL pins
   PinDefList dllPinList;
@@ -265,7 +324,8 @@ bool SymList::makeSchematic(const PinDefList &pinList, std::ostream &errStrm) {
                            pinClr, ArgLookupNdx(), pinDef.name, pinDef.name));
       break;
     case 'X':
-      break;
+      // no extra space
+      continue;
     default:
       // should not happen
       return false;
@@ -274,7 +334,7 @@ bool SymList::makeSchematic(const PinDefList &pinList, std::ostream &errStrm) {
     pinY -= 200;
   }
 
-  // rect (move later)
+  // add the hierarchical block rect
   Point rectBR(rectTL.x + rectWidth, rectTL.y + pinY + 200);
 
   symNode->addLast(

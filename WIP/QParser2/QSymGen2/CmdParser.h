@@ -21,4 +21,10 @@ public:
   Fs::path    outPathSch;
   Fs::path    outPathSym;
   std::string baseName{"BaseName"};
+
+  // the symbol width should be a command-line parameter; for now, it's
+  // hard-coded; note that this must be a multiple of 200.  (QSpice will adjust
+  // things silently to put pins on 100x100 unit grid points.  you won't see
+  // this until you drop the symbol onto a schematic...)
+  int symbolWidth = 1400;
 };

@@ -6,16 +6,13 @@
 #include "NullStream.h"
 #include "PinDefs.h"
 #include "StrList.h"
-#include <ArgUtils.h>
-#include <ItemTree.h>
-#include <ostream>
 
 class SymList : public StrList {
 public:
   SymList() {}
 
-  bool makeSymbol(const PinDefList &pinList,
-                  std::ostream     &errStrm = nullStream);
+  bool makeSymbol(const PinDefList &pinList, int rectWidth,
+                  std::ostream &errStrm = nullStream);
 
   bool makeSchematic(const PinDefList &pinList,
                      std::ostream     &errStrm = nullStream);

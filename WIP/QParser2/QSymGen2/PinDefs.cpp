@@ -16,7 +16,7 @@ int PinDefList::parseLines(const StrList strList, std::ostream &errStrm) {
     // Skip blank lines and comments
     if (line.empty() || line.front() == '*') continue;
 
-    //  // --- Parse line fields ---
+    // parse line
     std::istringstream ss(line);
     std::string        token;
 
@@ -24,8 +24,10 @@ int PinDefList::parseLines(const StrList strList, std::ostream &errStrm) {
     char tokenChar = toupper(token[0]);
 
     if (tokenChar == '*') continue; // comment
+
     if (token.length() > 1) {
       errStrm << format(" *** Malformed token @ line {}: {}\n", lineNbr, line);
+      errState = true;
       continue;
     }
 
@@ -34,10 +36,26 @@ int PinDefList::parseLines(const StrList strList, std::ostream &errStrm) {
       continue;
     }
 
-    if (!PinDef::isValidType(tokenChar)) {
-      errStrm << format(" *** Invalid token @ line {}: {}\n", lineNbr, line);
+    if (tokenChar == 'P') {
+      std::string devName;
+      while (ss >> devName) {
+        if (devName[0] == '*') break;
+        partList.push_back(devName);
+      }
+      if (!partList.size()) {
+        errStrm << format(" *** Invalid part list token @ line {}: {}\n",
+                          lineNbr, line);
+        errState = true;
+      }
       continue;
     }
+
+    if (!PinDef::isValidType(tokenChar)) {
+      errStrm << format(" *** Invalid token @ line {}: {}\n", lineNbr, line);
+      errState = true;
+      continue;
+    }
+
     char        pinType = tokenChar;
     std::string pinName = "---"; // default for 'X' type (skip)
 
@@ -45,6 +63,7 @@ int PinDefList::parseLines(const StrList strList, std::ostream &errStrm) {
       if (pinType != 'X') {
         errStrm << format(" *** Pin token missing name @ line {}: {}\n",
                           lineNbr, line);
+        errState = true;
         continue;
       }
     } else pinName = token;
@@ -61,6 +80,7 @@ int PinDefList::parseLines(const StrList strList, std::ostream &errStrm) {
       errStrm << std::format(
           " *** Unexpected error after parsing pin definition @ line {}\n",
           lineNbr);
+      errState = true;
       continue;
     }
 
@@ -81,18 +101,23 @@ int PinDefList::parseLines(const StrList strList, std::ostream &errStrm) {
     push_back(pinDef);
   }
 
+  // as a last check, warn if no 'P' record found...
+  if (!partList.size()) {
+    errStrm << std::format(" *** Warning:  Part list record ('P') not found.  "
+                           "Using default part value=\"{}\".\n",
+                           partNbr);
+    partList.push_back(partNbr);
+  }
+
+  // finalize total pin count
   totPinCnt = inPinCnt + outPinCnt + biDirPinCnt + skipPinCnt;
-  return 0;
+
+  return errState == true;
 }
 
 // check if instance has valid type
 bool PinDef::isValidType() const {
   return isValidType(type); // call static version
-}
-
-// get instance type index
-int PinDef::getTypeNdx() const {
-  return getTypeNdx(type); // call static version
 }
 
 // get type name string
@@ -130,6 +155,7 @@ std::string_view PinDef::getTypeName(int ndx) {
   return typeNames[ndx];
 }
 
+// gets the remaining text up until '*' -- redundant spaces removed
 std::string PinDefList::parseRemainder(std::istringstream &ss) {
   std::string remainder;
   std::getline(ss, remainder);

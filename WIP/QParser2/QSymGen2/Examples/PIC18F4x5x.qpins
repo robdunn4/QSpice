@@ -1,0 +1,70 @@
+* ------------------------------------------------------------------
+* Example Pin Definition File for QSymGen2
+*
+* Implements: Microchip PIC18F4455/PIC18F4550 40-pindevices
+* Author:     Robert Dunn
+* Revised:    2026.05.20
+* Datasheet:  https://ww1.microchip.com/downloads/en/devicedoc/39632e.pdf
+*
+* Note:  Untested, from datasheet and pinout diagrams.  Please verify and report any errors.
+*
+* Note: OSCn pins are defined as input pins.  I don't think the simulator supports them....
+* 
+* Note: Power pins (VDD, VSS, VUSB) are defined as input pins.  Simulator support for
+* VDD has had bugs.  Uncertain about VUSB....
+* ------------------------------------------------------------------
+*
+D Microchip PIC18F4455/PIC18F4550
+*
+P PIC18F4455 PIC18F4550
+*
+* Pin Definitions
+*
+I VDD
+I VSS
+I VUSB
+X
+I OSC1 CLKI
+X
+B RA0 AN0
+B RA1 AN1
+B RA2 AN2/VREF-/CVREF
+B RA3 AN3/VREF+
+B RA4 T0CKI/C1OUT/RCV
+B RA5 AN4/SS/HLVDIN/C2OUT
+B RA6 OSC2/CLKO
+X
+B RB0 AN12/INT0/FLT0/SDI/SDA
+B RB1 AN10/INT1/SCK/SCL
+B RB2 AN8/INT2/VMO
+B RB3 AN9/CCP2/VPO
+B RB4 AN11/KBI0/CSSPP
+B RB5 KBI1/PGM
+B RB6 KBI2/PGC
+B RB7 KBI3/PGD
+X
+B RC0 T1OSO/T13CKI
+B RC1 T1OSI/CCP2/UOE
+B RC2 CCP1/P1A
+B RC4 D-/VM
+B RC5 D+/VP
+B RC6 TX/CK
+B RC7 RX/DT/SDO
+X
+B RD0 SPP0
+B RD1 SPP1
+B RD2 SPP2
+B RD3 SPP3
+B RD4 SPP4
+B RD5 SPP5/P1B
+B RD6 SPP6/P1C
+B RD7 SPP7/P1D
+X
+B RE0 AN5/CK1SPP
+B RE1 AN6/CK2SPP
+B RE2 AN7/OESPP
+I RE3 MCLR/VPP
+X
+I CLK [Not A Device Pin]
+*
+*** EOF ***

@@ -8,10 +8,6 @@
 #include "StrList.h"
 #include "SymList.h"
 #include "VersionInfo.h"
-#include <ItemAll.h>
-#include <ItemTree.h>
-#include <ItemTreeIO.h>
-#include <iostream>
 
 using std::cout;
 
@@ -30,7 +26,7 @@ int main(int argc, char **argv) {
   if (!Fs::exists(parser.inPath)) {
     cout << "File does not exist or cannot be read: "
          << parser.inPath.generic_string() << "\nOperation aborted.\n";
-    return -2; // TODO: value already used...
+    return -2;
   }
 
   if (Fs::exists(parser.outPathSch) || Fs::exists(parser.outPathSym)) {
@@ -68,9 +64,9 @@ int main(int argc, char **argv) {
   // here we start the QParser2 stuff...
   bool doDLL = pinList.biDirPinCnt;
 
-  // first, make symbol
+  // first, make the symbol
   SymList symList;
-  if (!symList.makeSymbol(pinList)) {
+  if (!symList.makeSymbol(pinList, parser.symbolWidth)) {
     cout << "Error constructing symbol from pinlist.  Operation aborted.\n";
     return -6;
   }

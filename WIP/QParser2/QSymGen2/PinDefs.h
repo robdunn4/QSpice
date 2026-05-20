@@ -13,6 +13,7 @@ public:
   // default constructor produces an invalid state; must set values after
   // construction
   PinDef() {};
+
   // this constructor may produce an invalid state -- check with isValid() after
   // construction if in doubt
   PinDef(char type, std::string name, std::string altText = "")
@@ -32,9 +33,6 @@ public:
 
   // check if instance has valid type
   bool isValidType() const;
-
-  // get instance type index
-  int getTypeNdx() const;
 
   // get type name string
   std::string_view getTypeName() const;
@@ -63,7 +61,7 @@ protected:
                                                 "Skip"};
 };
 
-// parser
+// parser/pin container
 class PinDefList : public std::vector<PinDef> {
 public:
   PinDefList() {};
@@ -71,16 +69,16 @@ public:
   int parseLines(const StrList strList, std::ostream &errStrm = nullStream);
 
 public:
-  // std::string manufacturer{"[Manufacturer]"};
   std::string partNbr{"[PartNbr]"};
-  // std::string altPartNbrs{""}; // now expecting this info in description
-  // record
+  StrList     partList; // for multiple choice selection to pass to DLL
   std::string description{"Symbol generated with QSymGen2"};
   int         biDirPinCnt = 0;
   int         inPinCnt    = 0;
   int         outPinCnt   = 0;
   int         skipPinCnt  = 0;
   int         totPinCnt   = 0;
+
+  bool errState = false;
 
 protected:
   std::string parseRemainder(std::istringstream &ss);
