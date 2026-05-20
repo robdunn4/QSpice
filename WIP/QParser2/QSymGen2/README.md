@@ -18,11 +18,15 @@ This project is under development and full of half-baked code and, undoubtably, 
 * QSymGen2.vxproj.* &mdash; MSVS 2026 project files.
 * QSymGen2.exe &mdash; Compiled binary.  Run without parameters to get syntax help.
 
-### Test Subfolder
+### Examples Subfolder
 
-* PIC16F1521x.qpins &mdash; Pin definitions for example PIC16F15213/PIC16F15214 micro-controller.
 * GPIO_IMPL.qsch &mdash; Circuit used for GPIO pin implementation.  (User can edit for a different GPIO implementation.)
+* PIC16F1521x.qpins &mdash; Pin definitions for example PIC16F15213/PIC16F15214 micro-controller.
 * PIC16F1521x.qsym &mdash; Example symbol generated from the PIC16F1521x.qpins file.  Not intended for user editing.
 * PIC16F1521x.qsch &mdash; Example DLL implementation schematic generated from the PIC16F1521x.qpins file.  Not intended for user editing.  However, user would generate the DLL template code from the DLL block in this file.
 * PIC16F1521x_DLL.cpp &mdash; Example DLL implementation code for demonstration only.
-* PIC16F1521x_TopLevel.qsch &mdash; Example schematic using the generated PIC16F1521x.qsym file.  Users would start with a new schematic, drop the PIC16F1521x.qsym file, and add circuitry to create their version of the micro-controller project.  This is what that might look like.
+* PIC16F1521x_TopLevel.qsch &mdash; Example schematic using the generated PIC16F1521x.qsym file.
+* PIC18F4x5x.qpins &mdash; Pin definitions for example PIC18F4455/PIC18F4550 micro-controller.
+* PIC18F4x5x.qsym &mdash; Example symbol generated from the PIC18F4x5x.qpins file.
+* PIC18F4x5x.qsch &mdash; Example DLL implementation schematic generated from the PIC18F4x5x.qpins file.  Not intended for user editing.  However, user would generate the DLL template code from the DLL block in this file.
+
