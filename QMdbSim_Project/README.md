@@ -26,6 +26,7 @@ The QMdbSim.cpp/.h code is shared across devices.  Once we get through the initi
 
 * 2025.02.26 - Initial release.  Core code v0.3.0.
 * 2025.02.28 - Core code v0.3.1. Small change to accomodate AVR/PIC supply pin naming difference.
+* 2026.05.26 - Verified that the project continues to work with MPLabX 6.30 after changing the path to MDB.bat in implementation schematics.  No additional changes are required.
 
 ## Implemented Devices
 
