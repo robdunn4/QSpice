@@ -81,7 +81,7 @@ public:
   int         gndPinCnt   = 0;
   int         clockPinCnt = 0;
   int         totPinCnt   = 0; // I + O + B + V + G + C (X excluded)
-  int         rout        = 1000; // R record value; default 1000
+  int         rout        = 1; // R record value; default 1
 
   std::string vddPinName{""};   // name of the single V pin; set during parse
   std::string gndPinName{""};   // name of the single G pin; set during parse
