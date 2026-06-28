@@ -9,12 +9,12 @@
 namespace Config {
 
 // input file extension
-constexpr std::string_view inputExtension = ".qpins";
+constexpr std::string_view inputExtension = ".qpindef";
 
 // QSpice registry keys for installation directory.
 // Full path: HKCU\Software\Marcus Aurelius Software LLC\InstallDir
 // The default value under the InstallDir subkey holds the install path.
-constexpr std::string_view qspiceRegKey    =
+constexpr std::string_view qspiceRegKey =
     "Software\\Marcus Aurelius Software LLC";
 constexpr std::string_view qspiceRegSubKey = "InstallDir";
 

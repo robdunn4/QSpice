@@ -170,6 +170,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CmdParser.h" />
+    <ClInclude Include="Config.h" />
     <ClInclude Include="FsUtil.h" />
     <ClInclude Include="GraphicSymbols.h" />
     <ClInclude Include="NullStream.h" />

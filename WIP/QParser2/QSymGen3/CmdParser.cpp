@@ -31,6 +31,10 @@ int CmdParser::parse(int argc, char **argv) {
 
   inPath = Fs::absolute(argv[1]);
 
+  // apply default extension if none supplied
+  if (inPath.extension().empty())
+    inPath.replace_extension(Config::inputExtension);
+
   // validate input file extension
   if (inPath.extension().string() != Config::inputExtension) {
     cout << std::format(
@@ -49,9 +53,9 @@ int CmdParser::parse(int argc, char **argv) {
 }
 
 std::string_view CmdParser::getSyntax() {
-  static const std::string syntax = std::format(
-      "Syntax: {} PinDefsPath\n"
-      "Where PinDefsPath is a path to the input \"{}\" file.",
-      VersionInfo::progName, Config::inputExtension);
+  static const std::string syntax =
+      std::format("Syntax: {} PinDefsPath\n"
+                  "Where PinDefsPath is a path to the input \"{}\" file.",
+                  VersionInfo::progName, Config::inputExtension);
   return syntax;
 }
