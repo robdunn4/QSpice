@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ivy-settings>
+    <property name="artifactory.root.url" value="https://artifacts.microchip.com/artifactory" />
+    <settings defaultResolver="ivy-local" />
+    <!-- posssible locations on artifactory to publish -->
+    <resolvers>
+        <url name="ivy-local" m2compatible="true">
+          <artifact pattern="${artifactory.root.url}/ivy-local/[organisation]/[module]/[revision]/[artifact]-[revision](-[classifier]).[ext]"/>
+          <ivy pattern="${artifactory.root.url}/ivy-local/[organisation]/[module]/[revision]/ivy-[revision](-[classifier]).xml"/>
+        </url>
+        <url name="ivy-local-stable" m2compatible="true">
+          <artifact pattern="${artifactory.root.url}/ivy-local-stable/[organisation]/[module]/[revision]/[artifact]-[revision](-[classifier]).[ext]" />
+          <ivy pattern="${artifactory.root.url}/ivy-local-stable/[organisation]/[module]/[revision]/ivy-[revision](-[classifier]).xml"/>
+        </url>
+        <url name="ivy-local-release" m2compatible="true">
+          <artifact pattern="${artifactory.root.url}/ivy-local-release/[organisation]/[module]/[revision]/[artifact]-[revision](-[classifier]).[ext]" />
+          <ivy pattern="${artifactory.root.url}/ivy-local-release/[organisation]/[module]/[revision]/ivy-[revision](-[classifier]).xml"/>
+        </url>
+        <url name="ivy-local-external" m2compatible="true">
+          <artifact pattern="${artifactory.root.url}/ivy-local-external/[organisation]/[module]/[revision]/[artifact]-[revision](-[classifier]).[ext]" />
+          <ivy pattern="${artifactory.root.url}/ivy-local-external/[organisation]/[module]/[revision]/ivy-[revision](-[classifier]).xml"/>
+        </url>
+    </resolvers>
+</ivy-settings>

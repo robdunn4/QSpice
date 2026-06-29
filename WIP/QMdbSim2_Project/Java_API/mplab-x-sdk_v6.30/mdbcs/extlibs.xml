@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="mdbcs"
+         default="fetch-dependencies"
+         basedir="."
+         xmlns:ivy="antlib:org.apache.ivy.ant">
+
+    <description>
+    This project fetch dependencies from artifactory before we build mdbcs (using build.xml) and publish to artifactory
+    </description>
+
+	<target name="clean-extlibs" description="clean external dependencies.">
+        <delete dir="extlibs"/>
+        <delete file="resolved-ivy.xml"/>
+    </target>
+
+    <target name="extract-dependencies" description="copy dependencies" >
+        <untar src="extlibs/mplab-libs.tar.gz" dest="${basedir}/../../mplab-nbplatform/nbbuild/netbeans" compression="gzip"/>
+        <untar src="extlibs/mplab-core.tar.gz" dest="${basedir}/../../mplab-nbplatform/nbbuild/netbeans" compression="gzip"/>
+        <untar src="extlibs/mplab-ide.tar.gz" dest="${basedir}/../../mplab-nbplatform/nbbuild/netbeans" compression="gzip"/>
+    </target>
+
+ 	<target name="fetch-dependencies" depends="fetch-extlibs, extract-dependencies"/>
+
+    <target name="fetch-extlibs"  depends="resolve-extlibs">
+        <retrieve-project-extlibs projectdir="${basedir}"/>
+    </target>
+
+    <target name="resolve-extlibs" depends="ivy-configure">
+        <resolve-project-extlibs projectname="${ant.project.name}" projectdir="${basedir}"/>
+    </target>
+
+    <target name="ivy-configure">
+        <ivy:configure file="${basedir}/ivysettings.xml"/>
+    </target>
+
+    <macrodef name="resolve-project-extlibs">
+        <attribute name="projectname"/>
+        <attribute name="projectdir"/>
+        <sequential>
+            <condition property="@{projectname}.ivy.file"
+                       value="@{projectdir}/resolved-ivy.xml"
+                       else="@{projectdir}/ivy.xml">
+                <available file="@{projectdir}/resolved-ivy.xml" type="file"/>
+            </condition>
+            <ivy:resolve file="${@{projectname}.ivy.file}" showprogress="false"/>
+            <ivy:deliver deliverpattern="@{projectdir}/resolved-ivy.xml"/>
+        </sequential>
+    </macrodef>
+
+    <macrodef name="retrieve-project-extlibs">
+        <attribute name="projectdir"/>
+        <sequential>
+            <ivy:retrieve pattern="@{projectdir}/extlibs/[artifact](-[classifier]).[ext]"/>
+        </sequential>
+    </macrodef>
+
+    <target name="publish" description="Publish mdbcs">
+        <fail unless="version" message="Property 'version' not set."/>
+        <fail unless="pickup" message="Property 'pickup' not set."/>
+
+        <ivy:resolve file="ivy.xml"/>
+        <ivy:publish resolver="ivy-local" update="true" pubrevision="0.1.${version}">
+            <artifacts pattern="${pickup}/[artifact].[ext]"/>
+        </ivy:publish>
+    </target>
+
+</project>

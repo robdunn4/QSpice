@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="mdbcs" default="default" basedir=".">
+    <description>configure the project mdbcs.</description>
+    <import file="../../../mplab-buildtools/ant/extlibs.xml"/>
+
+    <target name="configure" description="Copy lib directory">
+        <exec executable="python2" dir="../utils">
+          <arg value="config.py"/>
+          <arg value="../../../mplab-nbplatform/nbbuild/netbeans"/>
+        </exec>
+    </target>
+</project>

@@ -1,0 +1,30 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup Label="Globals">
+    <MSBuildAllProjects Condition="'$(MSBuildVersion)' == '' Or '$(MSBuildVersion)' &lt; '16.0'">$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+    <HasSharedItems>true</HasSharedItems>
+    <ItemsProjectGuid>{1B28AEBE-0AED-1E9E-FA3E-A0346968E61E}</ItemsProjectGuid>
+  </PropertyGroup>
+  <ItemDefinitionGroup>
+    <ClCompile>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(MSBuildThisFileDirectory)</AdditionalIncludeDirectories>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ProjectCapability Include="SourceItemsFromImports" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="$(MSBuildThisFileDirectory)JvmHost.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)MdbConfig.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)MdbcsDebugger.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)MdbSim.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="$(MSBuildThisFileDirectory)JvmHost.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)MdbConfig.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)MdbcsDebugger.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)MdbSim.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)PerfTimer.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)PinState.h" />
+  </ItemGroup>
+</Project>

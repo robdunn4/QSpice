@@ -1,0 +1,48 @@
+* ------------------------------------------------------------------
+* Example Pin Definition File for QSymGen3
+*
+* Implements: Microchip PIC16F15213/PIC16F15214 devices
+* Author:     Robert Dunn
+* Revised:    2026.06.26
+* ------------------------------------------------------------------
+*
+*
+* D = Description for symbol
+*
+D Microchip PIC16F15213/PIC16F15214
+*
+*
+* P = Part names for (1) selection in symbol properties and (2) software
+* simulator initialization.  Note that the part numbers must match
+* in case as used in MDBCore.  (ATtiny85 works; ATTINY85 does not.)
+* 
+P PIC16F15213 PIC16F15214
+*
+*
+* R = DLL output pin internal resistance (ROUT) for generated Device Schematic
+* Recommended value=1; if omitted, defaults to 1000
+*
+R 1
+*
+*
+* Pin Definitions
+*   V = Supply voltage name (required; must match simulator name)
+*   G = Ground pin (required; not used in simulator but relevant to QSpice)
+*   I = Input-only pin
+*   O = Output-only pin
+*   B = Bi-directional (GPIO) pin
+*   K = Simulation clock input (required)
+*   X = Spacer for pretty symbols
+*
+V VDD
+B RA0 ICSPDAT 
+B RA1 ICSPCLK
+B RA2 
+X
+I RA3 MCLR/VPP
+B RA4 
+B RA5 
+G VSS
+K SIMCLK [Not A Device Pin]
+*
+*** EOF ***

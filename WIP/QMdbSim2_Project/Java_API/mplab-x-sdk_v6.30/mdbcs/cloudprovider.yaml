@@ -1,0 +1,19 @@
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: mplabx
+spec:
+  containers:
+  - name: mplabx
+    image: 'artifacts.microchip.com:7999/microchip/mplabx/base-zulu:8-zulu'
+    imagePullPolicy: Always
+    command: ['cat']
+    tty: true
+    resources:
+      requests:
+        cpu: 1
+        memory: 512Mi
+      limits:
+        cpu: 2
+        memory: 2Gi

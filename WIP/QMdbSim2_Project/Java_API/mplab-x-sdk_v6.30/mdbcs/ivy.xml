@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ivy-module version="2.0"
+            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+            xsi:noNamespaceSchemaLocation="http://ant.apache.org/ivy/schemas/ivy.xsd">
+    <info organisation="microchip" module="mdbcs"/>
+
+    <publications>
+        <artifact name="mdbcs" type="jar" />
+    </publications>
+
+    <dependencies>
+        <dependency org="microchip" name="mplab-libs" rev="latest.integration" transitive="false">
+            <artifact name="mplab-libs" type="tar.gz"/>
+        </dependency>
+        <dependency org="microchip" name="mplab-core" rev="latest.integration" transitive="false">
+            <artifact name="mplab-core" type="tar.gz"/>
+        </dependency>
+        <dependency org="microchip" name="mplab-ide" rev="latest.integration" transitive="false">
+            <artifact name="mplab-ide" type="tar.gz"/>
+        </dependency>
+    </dependencies>
+</ivy-module>
