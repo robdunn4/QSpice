@@ -89,14 +89,24 @@ A TCP-based client/server framework for QSpice C-Block components.
 ## QMcServer Project (On Hold)
 A micro-controller simulation framework for QSpice.  Currently a (working) Proof of Concept for Microchip devices.
 
-**Note:  This project is on hold.  See the QMdbSim Project below for the replacement.**
+**Note:  This project is on hold.  See the QMdbSim & QMdbSim2 Projects below for replacements.**
 
 [Go to QMcServer Project](./QMcServer_Project/)
 
 ## QMdbSim Project
-A micro-controller simulation framework for QSpice for Microchip devices.
+A micro-controller simulation framework for QSpice for Microchip devices.  (See QMdbSim2 Project below.)
 
 [Go to QMdbSim Project](./QMdbSim_Project/)
+
+## QMdbSim2 Project
+A micro-controller simulation framework for QSpice for Microchip devices.  (A complete rework of the QMdbSim Project.)
+
+[Go to QMdbSim2 Project](./QMdbSim2_Project/)
+
+## QParser2 Project
+A nearly framework for reading/writing QSpice symbol and schematic files.
+
+[Go to QParser2 Project](./QParser2_Project/)
 
 ## QColorPrefs Project
 A command-line utility to switch between QSpice color themes.
