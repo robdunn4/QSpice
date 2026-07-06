@@ -1,0 +1,25 @@
+* ATtiny25/45/85 Pin Definition File for QSymGen3
+* Source: Atmel-2586-AVR-8-bit-Microcontroller-ATtiny25-ATtiny45-ATtiny85_Datasheet.pdf
+* Package: 8-Pin PDIP/SOIC/TSSOP
+*
+D ATtiny25/45/85 8-Bit AVR Microcontroller
+P ATtiny25 ATtiny45 ATtiny85
+*
+* R sets ROUT -- the DLL port/pin internal output resistance in ohms.
+* Default is 1. Shown explicitly here for tutorial purposes.
+R 1
+*
+* Power pins
+V VCC
+G GND
+*
+* SimClock (synthetic -- not a physical device pin)
+K SIMCLK
+*
+* GPIO pins (Port B, bidirectional)
+B PB0 MOSI/DI/SDA/AIN0/OC0A/OC1A/AREF/PCINT0
+B PB1 MISO/DO/AIN1/OC0B/OC1A/PCINT1
+B PB2 SCK/USCK/SCL/ADC1/T0/INT0/PCINT2
+B PB3 XTAL1/CLKI/OC1B/ADC3/PCINT3
+B PB4 XTAL2/CLKO/OC1B/ADC2/PCINT4
+B PB5 RESET/ADC0/dW/PCINT5

@@ -8,11 +8,11 @@
 #include <iostream>
 
 #ifdef _DEBUG
-#define DBG_TXT " (DEBUG)"
+#define DBG_TXT "(DEBUG)"
 #else
-#define DBG_TXT ""
+#define DBG_TXT "(RELEASE)"
 #endif
-static const char *VersionInfo = "QMdbSim v0.7.0" DBG_TXT;
+static const char *VersionInfo = "QMdbSim2 v0.7.0 " DBG_TXT;
 
 // dbg_ holds a reference to jvmHost_, so jvmHost_ must be constructed first.
 // Declaration order in MdbSim.h guarantees this.
@@ -298,9 +298,6 @@ jobject MdbSim::findCachedPin(const char *pinName) {
 }
 
 bool MdbSim::fetchAndCachePins() {
-  pinVdd_ = dbg_.getPin("VDD");
-  if (!pinVdd_) std::cerr << "[WARN] MdbSim: could not get VDD pin\n";
-
   for (size_t i = 0; i < ppmList_.size(); ++i) {
     jobject pin = dbg_.getPin(ppmList_[i].pinName);
     if (!pin) {
@@ -311,7 +308,6 @@ bool MdbSim::fetchAndCachePins() {
   }
   return true;
 }
-
 void MdbSim::releasePins() {
   if (pinVdd_) {
     dbg_.releasePin(pinVdd_);

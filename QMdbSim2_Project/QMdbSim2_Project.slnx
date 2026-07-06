@@ -1,6 +1,13 @@
 <Solution>
+  <Configurations>
+    <Platform Name="Any CPU" />
+    <Platform Name="Win32" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Project Path="Devices/ATtinyx5/ATtinyx5.vcxproj" Id="c547d58e-09c0-4e6b-be9a-c0fa95de3eb4" />
   <Project Path="Devices/PIC16F1521x/PIC16F1521x.vcxproj" Id="3bee19d4-7aa0-4258-80c2-a23ceeccae0f">
     <Platform Project="Win32" />
   </Project>
+  <Project Path="Devices/PIC18F4x5x/PIC18F4x5x.vcxproj" Id="1642af9f-f0dd-4c21-a504-62748cd52059" />
   <Project Path="QMdbSim2_Shared/QMdbSim2_Shared.vcxitems" />
 </Solution>

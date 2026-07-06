@@ -91,6 +91,9 @@ public:
   SimState    getSimState() const { return simState; }
   bool        getErrState() const { return simState == ErrState; }
   const char *getLastErrMsg() const { return lastErrMsg.c_str(); }
+  double      getVDD() const { return vddV; }
+  const char *getVDDPinName() const { return vddPinName_.c_str(); }
+
   const char *getVerInfo();
   // Returns the QMdbCS JAR version string retrieved during initSim().
   // Empty string if initSim() has not yet succeeded.

@@ -4,8 +4,34 @@
 // https://github.com/robdunn4/QSpice/ for the complete project, current
 // sources, documentation, and demonstration code.
 //------------------------------------------------------------------------------
-// This is a template file used by QSymGen3 to produce QMdbSim2 Device DLL code.
-
+/* Notes:
+ *
+ * This is the QSpice component code for a Microchip PIC16F15213 device.  If you
+ * want to create a new Microchip device component, this is the only code that
+ * you need to change (at least, in theory).
+ *
+ * Changes from the QMdbSim (stdio-pipe) version:
+ *   - Include MdbSim.h / MdbConfig.h instead of QMdbSim.h.
+ *   - MdbSimPath QSpice parameter is now an ini-file path (or "." for the DLL
+ *     directory) rather than a path to MDB.bat.
+ *   - MdbConfig is loaded from MdbSimPath to derive all JVM/MDBCS paths;
+ *     MdbSim::configure() is called with the result before startSim().
+ *   - setVDD() must be called BEFORE startSim() (i.e. before connectSim()).
+ *   - VDD is read from data[0].d but initialization is deferred until QSpice
+ *     supplies a valid (non-zero) value.  Phase 1 (pin registration, path
+ *     config) runs on the first call; Phase 2 (startSim) runs on the first
+ *     call where VDD >= 0.5V.
+ *   - The gMdbSimPath / single-process guard is removed; the JNI layer handles
+ *     exactly one JVM per process.  Multi-instance schematics are not
+ *     supported.
+ *
+ * Note:  Although written to support multiple component instances, it's unclear
+ * whether the MDBCore back-end allows this.  In fact, we should test whether
+ * multiple steps work...  See developer notes.
+ *
+ * Note:  Consider using try/catch/finally blocks (at least in this unit) to
+ * simplify code and allow easier use of scoped timers...
+ */
 // see PerfTimer.h...
 #define PERFTIMER_ENABLED
 // #define PERFTIMER_DISABLED
@@ -83,29 +109,30 @@ void SimError(pInstData inst) {
 /*
  * QSpice evaluation function
  */
-extern "C" __declspec(dllexport) void
-pic16f1521x(pInstData *opaque, double t, uData *data) {
-     double       VDD         = data[ 0].d  ; // input
-     double       RA0_I       = data[ 1].d  ; // input
-     double       RA1_I       = data[ 2].d  ; // input
-     double       RA2_I       = data[ 3].d  ; // input
-     double       RA3         = data[ 4].d  ; // input
-     double       RA4_I       = data[ 5].d  ; // input
-     double       RA5_I       = data[ 6].d  ; // input
-     bool         SIMCLK      = data[ 7].b  ; // input
+extern "C" __declspec(dllexport) void attinyx5(pInstData *opaque, double t, uData *data) {
+     double       VCC         = data[ 0].d  ; // input
+     bool         SIMCLK      = data[ 1].b  ; // input
+     double       PB0_I       = data[ 2].d  ; // input
+     double       PB1_I       = data[ 3].d  ; // input
+     double       PB2_I       = data[ 4].d  ; // input
+     double       PB3_I       = data[ 5].d  ; // input
+     double       PB4_I       = data[ 6].d  ; // input
+     double       PB5_I       = data[ 7].d  ; // input
      const char * DevPartName = data[ 8].str; // input parameter
      const char * DevPgmPath  = data[ 9].str; // input parameter
      const char * CfgIniPath  = data[10].str; // input parameter
-     double      &RA0_O       = data[11].d  ; // output
-     bool        &RA0_C       = data[12].b  ; // output
-     double      &RA1_O       = data[13].d  ; // output
-     bool        &RA1_C       = data[14].b  ; // output
-     double      &RA2_O       = data[15].d  ; // output
-     bool        &RA2_C       = data[16].b  ; // output
-     double      &RA4_O       = data[17].d  ; // output
-     bool        &RA4_C       = data[18].b  ; // output
-     double      &RA5_O       = data[19].d  ; // output
-     bool        &RA5_C       = data[20].b  ; // output
+     double      &PB0_O       = data[11].d  ; // output
+     bool        &PB0_C       = data[12].b  ; // output
+     double      &PB1_O       = data[13].d  ; // output
+     bool        &PB1_C       = data[14].b  ; // output
+     double      &PB2_O       = data[15].d  ; // output
+     bool        &PB2_C       = data[16].b  ; // output
+     double      &PB3_O       = data[17].d  ; // output
+     bool        &PB3_C       = data[18].b  ; // output
+     double      &PB4_O       = data[19].d  ; // output
+     bool        &PB4_C       = data[20].b  ; // output
+     double      &PB5_O       = data[21].d  ; // output
+     bool        &PB5_C       = data[22].b  ; // output
   
 
   // if gAbortFlg is set, we're just waiting on MaxExtStepSize() to force abort
@@ -122,16 +149,47 @@ pic16f1521x(pInstData *opaque, double t, uData *data) {
     // simulator is case-sensitive...
     Display("DevPartName=%s, DevPgmPath=%s, CfgIniPath=%s\n", DevPartName,
             DevPgmPath, CfgIniPath);
+    // partname is forced lower case...  try upper case...
+    // DevPartName = "PIC16F15213";
 
     *opaque = inst = new InstData();
     inst->pt.start(PT_QsSim);
+
+    ///*** Begin QSymGen3 Code Snippet ***/
+    //// resolves QSpice-downcased device name to canonical case for MDBCS
+    // inst->deviceName = [DevPartName]() -> std::string {
+    //   static constexpr std::string_view deviceNames[] = {
+    //       "PIC16F15213",
+    //       "PIC16F15214",
+    //   };
+    //   for (const auto &name : deviceNames)
+    //     if (_stricmp(DevPartName, name.data()) == 0) return
+    //     std::string(name);
+    //   Display(std::format("Unknown device \"{}\"; check P record in pin
+    //   defs.",
+    //                       DevPartName)
+    //               .c_str());
+    //   gAbortFlg = true;
+    //   return "";
+    // }();
+
+    //// register pin/port/name mappings
+    // inst->vddName = "VDD";
+    // inst->mdb.addPinPortMap("RA0", &RA0_I, &RA0_O, &RA0_C);
+    // inst->mdb.addPinPortMap("RA1", &RA1_I, &RA1_O, &RA1_C);
+    // inst->mdb.addPinPortMap("RA2", &RA2_I, &RA2_O, &RA2_C);
+    // inst->mdb.addPinPortMap("RA3", &RA3);
+    // inst->mdb.addPinPortMap("RA4", &RA4_I, &RA4_O, &RA4_C);
+    // inst->mdb.addPinPortMap("RA5", &RA5_I, &RA5_O, &RA5_C);
+    ///*** End QSymGen3 Code Snippet ***/
 
     /*** Begin QSymGen3 Code Snippet ***/
     // resolves QSpice-downcased device name to canonical case for MDBCS
     inst->deviceName = [DevPartName]() -> std::string {
         static constexpr std::string_view deviceNames[] = {
-            "PIC16F15213",
-            "PIC16F15214",
+            "ATtiny25",
+            "ATtiny45",
+            "ATtiny85",
         };
         for (const auto &name : deviceNames)
             if (_stricmp(DevPartName, name.data()) == 0) return std::string(name);
@@ -141,13 +199,13 @@ pic16f1521x(pInstData *opaque, double t, uData *data) {
     }();
     
     // register pin/port/name mappings
-    inst->vddName = "VDD";
-    inst->mdb.addPinPortMap("RA0", &RA0_I, &RA0_O, &RA0_C);
-    inst->mdb.addPinPortMap("RA1", &RA1_I, &RA1_O, &RA1_C);
-    inst->mdb.addPinPortMap("RA2", &RA2_I, &RA2_O, &RA2_C);
-    inst->mdb.addPinPortMap("RA3", &RA3);
-    inst->mdb.addPinPortMap("RA4", &RA4_I, &RA4_O, &RA4_C);
-    inst->mdb.addPinPortMap("RA5", &RA5_I, &RA5_O, &RA5_C);
+    inst->vddName = "VCC";
+    inst->mdb.addPinPortMap("PB0", &PB0_I, &PB0_O, &PB0_C);
+    inst->mdb.addPinPortMap("PB1", &PB1_I, &PB1_O, &PB1_C);
+    inst->mdb.addPinPortMap("PB2", &PB2_I, &PB2_O, &PB2_C);
+    inst->mdb.addPinPortMap("PB3", &PB3_I, &PB3_O, &PB3_C);
+    inst->mdb.addPinPortMap("PB4", &PB4_I, &PB4_O, &PB4_C);
+    inst->mdb.addPinPortMap("PB5", &PB5_I, &PB5_O, &PB5_C);
     /*** End QSymGen3 Code Snippet ***/
 
         // load MdbConfig.ini from MdbSimPath ("." = DLL directory)
@@ -155,6 +213,7 @@ pic16f1521x(pInstData *opaque, double t, uData *data) {
     if (!cfg.load(CfgIniPath)) {
       Display("MdbConfig error: %s\n", cfg.getLastErrMsg());
       SimError(inst);
+      // gAbortFlg = true;
       return;
     }
 
@@ -217,6 +276,8 @@ pic16f1521x(pInstData *opaque, double t, uData *data) {
     // way as the device-specific voltaage name (VDD).
     //
     // TBD:  I used (4).  Revise documentation....
+
+    // DevPartName = "ATtiny85";
 
     if (!inst->mdb.startSim(inst->deviceName.c_str(), DevPgmPath)) {
       SimError(inst);
@@ -298,6 +359,7 @@ extern "C" __declspec(dllexport) double MaxExtStepSize(pInstData inst) {
   const double abortSim = -1e308;
 
   if (gAbortFlg || inst->mdb.getErrState()) {
+    // inst->pt.stop(PT_QsSim);
     Display("Aborting simulation...\n");
     return abortSim;
   }

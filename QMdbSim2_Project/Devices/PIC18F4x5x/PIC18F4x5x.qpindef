@@ -1,0 +1,104 @@
+* PIC18F4x5x Pin Definitions file
+* Generated from Microchip DS39632E (PIC18F2455/2550/4455/4550 Data Sheet)
+* Package: 40-Pin PDIP
+*
+* Layout convention: VDD is the first record (top-left of symbol),
+* SIMCLK is the last record of the left column (bottom-left),
+* VSS is the last record overall (bottom-right).
+* Middle pins (everything except VDD/SIMCLK/VSS) are sorted in ascending
+* alphabetical/register order, so pins sharing a port prefix (RA, RB,
+* RC, RD, RE) group together and sort ascending by pin number within
+* the group. Non-port utility pins (OSC1, VUSB) fall into their natural
+* alphabetical position in that same sort.
+* Total records = 39 (odd), so one X spacer is inserted before SIMCLK
+* to bring the total to 40 -- an exact 20/20 left/right split, with no
+* dependence on how QSymGen3 rounds size/2.
+D Microchip PIC18F4455/4550 40-pin, USB, Enhanced Flash microcontroller
+P PIC18F4455 PIC18F4550
+
+* --- Left column (20 records): VDD ... SIMCLK ---
+V VDD
+* NOTE: pin 32 is a second physical VDD pin (same net as pin 11's VDD).
+* No separate record is created for it -- see the pitfall on duplicate
+* pin names.
+
+I OSC1 CLKI                     * pin 13, input-only, no GPIO alt function
+
+* PORTA is a bidirectional I/O port -- RA0-RA5 all classified B.
+B RA0 AN0                       * pin 2
+B RA1 AN1                       * pin 3
+B RA2 AN2/VREF-/CVREF           * pin 4
+B RA3 AN3/VREF+                 * pin 5
+B RA4 T0CKI/C1OUT/RCV           * pin 6
+B RA5 AN4/SS/HLVDIN/C2OUT       * pin 7
+
+* Pin 14 - OSC2/CLKO/RA6 -- FLAGGED: oscillator-mode dependent. RA6 is
+* only available as GPIO when the device is configured for an internal
+* oscillator; otherwise this pin is OSC2/CLKO (both outputs). Classified
+* B for simulation flexibility, but this needs a human decision based on
+* the target oscillator configuration.
+B RA6 OSC2/CLKO
+
+* PORTB is a bidirectional I/O port -- RB0-RB7 all classified B.
+B RB0 AN12/INT0/FLT0/SDI/SDA    * pin 33
+B RB1 AN10/INT1/SCK/SCL         * pin 34
+B RB2 AN8/INT2/VMO              * pin 35
+B RB3 AN9/CCP2/VPO              * pin 36
+B RB4 AN11/KBI0/CSSPP           * pin 37
+B RB5 KBI1/PGM                  * pin 38
+B RB6 KBI2/PGC                  * pin 39
+B RB7 KBI3/PGD                  * pin 40
+
+* PORTC is a bidirectional I/O port (see RC4/RC5 exceptions below).
+B RC0 T1OSO/T13CKI              * pin 15
+
+* Spacer added to make the total record count even (40), so the
+* left/right column split is exactly 20/20 -- no dependence on how
+* QSymGen3 rounds size/2. This guarantees SIMCLK is the last (bottom)
+* entry of the left column.
+X
+
+K SIMCLK
+
+* --- Right column (20 records): RC1 ... VSS ---
+B RC1 T1OSI/CCP2/UOE            * pin 16
+B RC2 CCP1/P1A                  * pin 17
+
+* Pins 23-24 - RC4/D-/VM, RC5/D+/VP -- FLAGGED: pin-level exceptions to
+* "PORTC is a bidirectional I/O port". Both are documented as
+* input-only digital pins (dedicated USB D-/D+ lines). Classified I,
+* not B.
+I RC4 D-/VM                     * pin 23
+I RC5 D+/VP                     * pin 24
+
+B RC6 TX/CK                     * pin 25
+B RC7 RX/DT/SDO                 * pin 26
+
+* PORTD is a bidirectional I/O port or Streaming Parallel Port.
+B RD0 SPP0                      * pin 19
+B RD1 SPP1                      * pin 20
+B RD2 SPP2                      * pin 21
+B RD3 SPP3                      * pin 22
+B RD4 SPP4                      * pin 27
+B RD5 SPP5/P1B                  * pin 28
+B RD6 SPP6/P1C                  * pin 29
+B RD7 SPP7/P1D                  * pin 30
+
+* PORTE is a bidirectional I/O port (see RE3 exception below).
+B RE0 AN5/CK1SPP                * pin 8
+B RE1 AN6/CK2SPP                * pin 9
+B RE2 AN7/OESPP                 * pin 10
+
+* Pin 1 - MCLR/VPP/RE3 -- FLAGGED: pin-level exception to "PORTE is
+* bidirectional"; RE3 is documented as input-only on this shared pin
+* (unlike RE0-RE2), and MCLR/VPP are both inputs. Classified I, not B.
+I RE3 MCLR/VPP
+
+* Pin 18 - VUSB -- FLAGGED: internal 3.3V USB regulator output, not a
+* standard VDD supply pin. Classified O (regulator output), not V.
+O VUSB
+
+G VSS
+* NOTE: pin 31 is a second physical VSS pin (same net as pin 12's VSS).
+* No separate record is created for it -- see the pitfall on duplicate
+* pin names.
