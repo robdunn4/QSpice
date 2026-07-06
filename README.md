@@ -104,7 +104,7 @@ A micro-controller simulation framework for QSpice for Microchip devices.  (A co
 [Go to QMdbSim2 Project](./QMdbSim2_Project/)
 
 ## QParser2 Project
-A nearly framework for reading/writing QSpice symbol and schematic files.
+A nearly complete framework for reading/writing QSpice symbol and schematic files.
 
 [Go to QParser2 Project](./QParser2_Project/)
 
