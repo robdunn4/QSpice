@@ -7,19 +7,19 @@
 <table>
 <tr>
 <td align="center">
-<img src="./images/image0.png" alt="Pin Definitions File" height="100"><br>
+<img src="./images/image0.png" alt="Pin Definitions File" height="150"><br>
 Pin Definitions
 </td>
 <td align="center">
-<img src="./images/image1.png" alt="PIC16F1521x Demo Schematic" height="100"><br>
+<img src="./images/image1.png" alt="PIC16F1521x Demo Schematic" height="150"><br>
 Top-Level Schematic
 </td>
 <td align="center">
-<img src="./images/image2.gif" alt="PIC16F1521x Symbol Properties" height="100"><br>
+<img src="./images/image2.gif" alt="PIC16F1521x Symbol Properties" height="150"><br>
 Symbol Properties
 </td>
 <td align="center">
-<img src="./images/image3.png" alt="Simulation Waveforms" height="100"><br>
+<img src="./images/image3.png" alt="Simulation Waveforms" height="150"><br>
 Simulation Waveforms
 </td>
 </tr>
