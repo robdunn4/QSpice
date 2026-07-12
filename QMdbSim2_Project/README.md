@@ -4,12 +4,26 @@
 
 -----
 
-<p>
-
-    <img src="./images/image1.png" alt="Charlie-Plex Demo Schematic" height="100" hspace="10" >
-    <img src="./images/image2.png" alt="PIC16F15213 Device Schematic" height="100" hspace="10" >
-    <img src="./images/image3.png" alt="Charlie-Plex Waveforms" height="100" hspace="10" >
-</p>
+<table>
+<tr>
+<td align="center">
+<img src="./images/image0.png" alt="Pin Definitions File" height="100"><br>
+Pin Definitions
+</td>
+<td align="center">
+<img src="./images/image1.png" alt="PIC16F1521x Demo Schematic" height="100"><br>
+Top-Level Schematic
+</td>
+<td align="center">
+<img src="./images/image2.gif" alt="PIC16F1521x Symbol Properties" height="100"><br>
+Symbol Properties
+</td>
+<td align="center">
+<img src="./images/image3.png" alt="Simulation Waveforms" height="100"><br>
+Simulation Waveforms
+</td>
+</tr>
+</table>
 
 The QMdbSim2 Project is a framework for using Microchip micro-controller devices (PIC, AVR) in QSpice simulations.  It uses Microchip's software simulator so, in theory, it supports the same devices to the same extent as the simulator in MPLabX.
 
@@ -24,7 +38,7 @@ As usual, all sources and complete documentation are included.  If you wish to c
 * [Overview](QMdbSim2_Overview.pdf) &mdash; Start here.
 * [Basic User](QMdbSim2_Basic_User.pdf) &mdash; Intial setup and use.
 * [Device Developer](QMdbSim2_Dev_Developer.pdf) &mdash; Implementing/compiling Microchip device files.
-* [API Developer](QMdbSim2_API_Developer.pdf) &mdash; (TBD) Modifying/compiling the QMdbSim2 shared DLL and simulator Java interface.
+* [API Developer](QMdbSim2_API_Developer.pdf) &mdash; Modifying/compiling the QMdbSim2 DLL/Java simulator interface.
 
 ## Folders
 * [Devices](./Devices/) &mdash; Device files.
