@@ -324,14 +324,13 @@
   «wire (-400,100) (-600,100) "PB4"»
   «wire (-400,-100) (-600,-100) "PB5"»
   «rect (1550,850) (4850,-850) 0 0 2 0x4000000 0x1000000 -1 0 -1»
-  «text (5140,647) 0.8 5 1 0x1000000 -1 -1 "ï»¿Notes:\n* SIMCLK is NOT an actual device pin...\n* This device contains an internal oscillator.\n   However, that is not used for emulation.\n   Instead, SIMCLK is used to sychronize the\n   micro-controller to the QSpice simulation.\n   Each falling edge of SIMCLK steps the device\n   by 1 instruction cycle.  For this device,\n   one instruction cycle = 1 oscillator cycle.(?)\n* Set OscFreq to match device oscillator \n   frequency as defined in the *.hex/*.elf\n   configuration bits/fuses."»
-  «text (-2280,2872) 1.6 5 1 0x1000000 -1 -1 "ï»¿ATtiny25/45/85 Test Fixture"»
+  «text (5140,997) 0.8 5 1 0x1000000 -1 -1 "ï»¿Notes:\n* SIMCLK is NOT an actual device pin...\n* This device contains an internal oscillator.\n   However, that is not used for emulation.\n   Instead, SIMCLK is used to sychronize the\n   micro-controller to the QSpice simulation.\n   Each falling edge of SIMCLK steps the device\n   by 1 instruction cycle.  For this device,\n   one instruction cycle = 1 oscillator cycle.(?)\n* Set OscFreq to match device oscillator \n   frequency as defined in the *.hex/*.elf\n   configuration bits/fuses."»
+  «text (-2480,2072) 1.6 5 1 0x1000000 -1 -1 "ï»¿ATtiny25/45/85 Test Fixture"»
   «text (1650,-1541) 1 5 0 0x1000000 -1 -1 "ï»¿.param OscFreq=8Meg\n.param CyclesPerInst=1\n.param InstHz=OscFreq/CyclesPerInst"»
   «text (1600,-1400) 1 7 1 0x1000000 -1 -1 "ï»¿Device Clock Parameters"»
   «text (3201,889) 1.25 14 1 0x1000000 -1 -1 "ï»¿"Charlieplexed" LEDs"»
   «text (-2150,-2250) 1 7 0 0x1000000 -1 -1 "ï»¿.tran 625Âµ"»
   «text (5150,-1850) 1 7 0 0x1000000 -1 -1 "ï»¿.plot I(D1)\n.plot I(D2)\n.plot I(D3)\n.plot I(D4)\n.plot I(D5)\n.plot I(D6)"»
-  «text (-2250,2459) 1 5 1 0x1000000 -1 -1 "ï»¿Note:  This project requires that you have Microchip MPLabX installed in order to run a QSpice simulation.\nEdit the path to MDB.bat in ATtiny85.qsch to match your MPLabX installlation/version/location."»
-  «text (-2260,1897) 1 5 1 0x1000000 -1 -1 "ï»¿The most current schematics, code, and documentation are available in the QMdbSim project folder at\nhttps://github.com/robdunn4/QSpice."»
+  «text (-2460,1647) 1 5 1 0x1000000 -1 -1 "ï»¿The most current schematics, code, and documentation are available in the QMdbSim2 project folder at https://github.com/robdunn4/QSpice."»
 »
 
