@@ -44,8 +44,10 @@ As usual, all sources and complete documentation are included.  If you wish to c
 
 ## Folders
 * [Devices](./Devices/) &mdash; Device files.
-* [Basic Demo](./Basic_Demo/) &mdash; Demonstration files for Basic User PDF.
-* [Developer Demo](./Developer_Demo/) &mdash; Demonstration files for Device Developer PDF.
+* [QMdbSim2_Shared](./QMdbSim2_Shared/) &mdash; DLL shared files (required to compile DLLs).
+* [Java_API](./Java_API/) &mdash; Microchip SDK files (required to build QMdbCS.jar).
+* [Basic_Demo](./Basic_Demo/) &mdash; Demonstration files for Basic User PDF.
+* [Developer_Demo](./Developer_Demo/) &mdash; Demonstration files for Device Developer PDF.
 
 
 ## Contributors Needed
