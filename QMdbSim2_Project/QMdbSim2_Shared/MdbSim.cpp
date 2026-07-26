@@ -28,7 +28,8 @@ void MdbSim::configure(const Config &cfg) { jvmConfig_ = cfg; }
 
 // ── Individual initialisation steps ──────────────────────────────────────────
 
-bool MdbSim::initSim(const char *deviceName) {
+bool MdbSim::initSim(const char *deviceName, StdoutLineHandler stdoutHandler,
+                     StdoutLineHandler stderrHandler) {
   if (simState != NotStarted) {
     if (simState != ErrState) setError("initSim(invalid state)");
     return false;
@@ -47,8 +48,29 @@ bool MdbSim::initSim(const char *deviceName) {
     return false;
   }
 
-  // Construct the MDBCS Debugger object
-  if (!dbg_.construct(deviceName, jvmConfig_.tool, true)) {
+  // Resolve the QMdbCS class and cache method IDs -- does NOT construct the
+  // Java-side object yet.  Split from instantiate() below so capture can be
+  // installed before that call, since MDBCore's own startup chatter
+  // (pack-loading diagnostics, "Peripheral Missing" warnings, etc.) is
+  // emitted from inside the Java Debugger constructor itself.
+  if (!dbg_.resolveClass()) {
+    setError("initSim(Debugger resolveClass failed)");
+    return false;
+  }
+
+  // Install stdout/stderr capture BEFORE the Java-side QMdbCS/Debugger
+  // object is constructed -- NOT merely before getQMdbCSVersion()/
+  // setConciseMode() as previously done.  Installing it any later misses
+  // all the output MDBCore produces during its own Debugger construction.
+  if (stdoutHandler || stderrHandler) {
+    if (!dbg_.installStdoutCapture(std::move(stdoutHandler), std::move(stderrHandler)))
+      std::cerr << "[WARN] initSim: installStdoutCapture failed (non-fatal, "
+                   "Java stdout/stderr will not be captured)\n";
+  }
+
+  // Now construct the Java-side object.  Any MDBCore init chatter produced
+  // during this call is captured by the handlers installed above.
+  if (!dbg_.instantiate(deviceName, jvmConfig_.tool, true)) {
     setError("initSim(Debugger construct failed)");
     return false;
   }
@@ -148,9 +170,12 @@ bool MdbSim::reset() {
   return true;
 }
 
-bool MdbSim::startSim(const char *deviceName, const char *pgmPath) {
+bool MdbSim::startSim(const char *deviceName, const char *pgmPath,
+                      StdoutLineHandler stdoutHandler,
+                      StdoutLineHandler stderrHandler) {
   // setVDD() must have been called before startSim().
-  return initSim(deviceName) && loadProgram(pgmPath) && connectSim();
+  return initSim(deviceName, std::move(stdoutHandler), std::move(stderrHandler)) &&
+         loadProgram(pgmPath) && connectSim();
 }
 
 // ── Simulator commands

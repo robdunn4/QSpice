@@ -54,13 +54,14 @@
 //------------------------------------------------------------------------------
 #pragma once
 
-// ── Compile-time activation ───────────────────────────────────────────────────
+// ── Compile-time activation
+// ───────────────────────────────────────────────────
 #if defined(PERFTIMER_DISABLED)
-  #define PERFTIMER_ACTIVE 0
+#define PERFTIMER_ACTIVE 0
 #elif defined(PERFTIMER_ENABLED) || defined(_DEBUG)
-  #define PERFTIMER_ACTIVE 1
+#define PERFTIMER_ACTIVE 1
 #else
-  #define PERFTIMER_ACTIVE 0
+#define PERFTIMER_ACTIVE 0
 #endif
 
 #if PERFTIMER_ACTIVE
@@ -92,8 +93,8 @@ public:
   // End a named interval and accumulate elapsed time.
   // No-op if start() was not called for this name.
   void stop(const char *name) {
-    auto now = std::chrono::steady_clock::now();
-    Entry *e = find(name);
+    auto   now = std::chrono::steady_clock::now();
+    Entry *e   = find(name);
     if (!e || !e->running) return;
     e->totalNs +=
         std::chrono::duration_cast<std::chrono::nanoseconds>(now - e->pending)
@@ -148,24 +149,20 @@ public:
     //   + 12 (totalMs) + 11 (" ms total, ") + 12 (avgMs) + 8 (" ms avg")
     const std::string kDiv(2 + nameWidth + 62, '-');
 
-    os << "[PerfTimer]\n" << kDiv << "\n";
+    os << kDiv << "\n";
 
     for (const Entry &e : entries_) {
       double totalMs = static_cast<double>(e.totalNs) / 1000000.0;
-      double avgMs   = e.count > 0 ? totalMs / static_cast<double>(e.count)
-                                   : 0.0;
+      double avgMs = e.count > 0 ? totalMs / static_cast<double>(e.count) : 0.0;
 
       os << "  " << std::left << std::setw(static_cast<int>(nameWidth))
-         << e.name << std::right
-         << " : " << std::setw(8) << e.count
-         << (e.count == 1 ? " call , " : " calls, ")
-         << std::setw(12) << std::fixed << std::setprecision(3) << totalMs
-         << " ms total, "
+         << e.name << std::right << " : " << std::setw(8) << e.count
+         << (e.count == 1 ? " call , " : " calls, ") << std::setw(12)
+         << std::fixed << std::setprecision(3) << totalMs << " ms total, "
          << std::setw(12) << std::fixed << std::setprecision(3) << avgMs
          << " ms avg";
 
-      if (e.running)
-        os << "  [still running]";
+      if (e.running) os << "  [still running]";
 
       os << "\n";
     }
@@ -207,16 +204,16 @@ private:
 
 class PerfTimer {
 public:
-  void reserve(const char *)          {}
-  void start(const char *)            {}
-  void stop(const char *)             {}
-  void reset()                        {}
-  void report(std::ostream &) const   {}
+  void reserve(const char *) {}
+  void start(const char *) {}
+  void stop(const char *) {}
+  void reset() {}
+  void report(std::ostream &) const {}
 
   class ScopedTimer {
   public:
     ScopedTimer(PerfTimer &, const char *) {}
-    ~ScopedTimer()                         {}
+    ~ScopedTimer() {}
 
     ScopedTimer(const ScopedTimer &)            = delete;
     ScopedTimer &operator=(const ScopedTimer &) = delete;

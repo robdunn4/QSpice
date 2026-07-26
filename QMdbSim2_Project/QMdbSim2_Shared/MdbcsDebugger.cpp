@@ -7,13 +7,73 @@
 #include "MdbcsDebugger.h"
 #include <bit>
 #include <iostream>
+#include <mutex>
+#include <unordered_map>
 
 static const char *kQMdbCSClass = "com/microchip/mdbcs/QMdbCS";
 static const char *kPinClass    = "com/microchip/mdbcs/Pin";
 
+// ── Stdout/stderr capture: JVM* -> handler maps ─────────────────────────────
+// JNI requires a plain function pointer for RegisterNatives, not a member
+// function, so the native callbacks below are free-standing and look up the
+// right MdbcsDebugger instance's handler by JavaVM* (each MdbSim/InstData
+// owns one JVM, so this is a 1:1 mapping in practice, but keyed by JavaVM*
+// rather than assumed-singleton in case that ever changes).
+//
+// Stdout and stderr are kept in separate maps (rather than one map of a
+// struct-of-two-handlers) so each native callback's lookup/dispatch is
+// independent and a JVM with only one stream captured doesn't need a
+// placeholder entry for the other.
+namespace {
+  std::mutex g_stdoutHandlerMutex;
+  std::unordered_map<JavaVM *, MdbcsDebugger::StdoutLineHandler> g_stdoutHandlers;
+  std::unordered_map<JavaVM *, MdbcsDebugger::StdoutLineHandler> g_stderrHandlers;
+
+  void dispatchLine(JNIEnv *env, jstring jline,
+                    std::mutex &mutex,
+                    std::unordered_map<JavaVM *, MdbcsDebugger::StdoutLineHandler> &handlers) {
+    JavaVM *jvm = nullptr;
+    env->GetJavaVM(&jvm);
+
+    MdbcsDebugger::StdoutLineHandler handler;
+    {
+      std::lock_guard<std::mutex> lock(mutex);
+      auto it = handlers.find(jvm);
+      if (it == handlers.end()) return; // no handler registered for this JVM
+      handler = it->second; // copy out; don't hold the lock during user code
+    }
+    if (!handler) return;
+
+    const char *utf = env->GetStringUTFChars(jline, nullptr);
+    if (!utf) return;
+    std::string line(utf);
+    env->ReleaseStringUTFChars(jline, utf);
+
+    try {
+      handler(line);
+    } catch (...) {
+      // A C++ exception must never unwind across a JNI-called frame --
+      // that is undefined behavior. Swallow it here.
+    }
+  }
+
+  void JNICALL nativeHandleStdoutLine(JNIEnv *env, jclass /*clazz*/, jstring jline) {
+    dispatchLine(env, jline, g_stdoutHandlerMutex, g_stdoutHandlers);
+  }
+
+  void JNICALL nativeHandleStderrLine(JNIEnv *env, jclass /*clazz*/, jstring jline) {
+    dispatchLine(env, jline, g_stdoutHandlerMutex, g_stderrHandlers);
+  }
+} // namespace
+
 MdbcsDebugger::MdbcsDebugger(JvmHost &host) : host_(host) {}
 
 MdbcsDebugger::~MdbcsDebugger() {
+  if (stdoutCaptureInstalled_) {
+    std::lock_guard<std::mutex> lock(g_stdoutHandlerMutex);
+    g_stdoutHandlers.erase(host_.jvm());
+    g_stderrHandlers.erase(host_.jvm());
+  }
   if (obj_) {
     env()->DeleteGlobalRef(obj_);
     obj_ = nullptr;
@@ -42,8 +102,9 @@ jstring MdbcsDebugger::toJString(const std::string &s) {
 
 // ── QMdbCS API ───────────────────────────────────────────────────────────────
 
-bool MdbcsDebugger::construct(const std::string &device,
-                              const std::string &tool, bool asDebugger) {
+// ── QMdbCS class/object construction ──────────────────────────────────────────
+
+bool MdbcsDebugger::resolveClass() {
   jclass localCls = env()->FindClass(kQMdbCSClass);
   if (!localCls || checkException("FindClass(QMdbCS)")) return false;
   cls_ = static_cast<jclass>(env()->NewGlobalRef(localCls));
@@ -83,6 +144,11 @@ bool MdbcsDebugger::construct(const std::string &device,
     return false;
   }
 
+  return true;
+}
+
+bool MdbcsDebugger::instantiate(const std::string &device,
+                                const std::string &tool, bool asDebugger) {
   jstring jDev  = toJString(device);
   jstring jTool = toJString(tool);
   jobject local = env()->NewObject(cls_, midCtor_, jDev, jTool,
@@ -94,6 +160,11 @@ bool MdbcsDebugger::construct(const std::string &device,
   obj_ = env()->NewGlobalRef(local);
   env()->DeleteLocalRef(local);
   return true;
+}
+
+bool MdbcsDebugger::construct(const std::string &device,
+                              const std::string &tool, bool asDebugger) {
+  return resolveClass() && instantiate(device, tool, asDebugger);
 }
 
 std::string MdbcsDebugger::getQMdbCSVersion() {
@@ -180,6 +251,50 @@ bool MdbcsDebugger::disconnect() {
 bool MdbcsDebugger::destroy() {
   env()->CallVoidMethod(obj_, midDestroy_);
   return !checkException("destroy");
+}
+
+// ── Stdout/stderr capture ───────────────────────────────────────────────────
+//
+// StdoutFilter was merged into QMdbCS.java (no longer a separate class), so
+// this reuses the already-cached QMdbCS class global ref (cls_) rather than
+// doing its own FindClass/NewGlobalRef.  See QMdbCS.installStdoutCapture()
+// and QMdbCS.nativeHandleStdoutLine()/nativeHandleStderrLine() for the Java
+// side.
+
+bool MdbcsDebugger::installStdoutCapture(StdoutLineHandler stdoutHandler,
+                                         StdoutLineHandler stderrHandler) {
+  JNINativeMethod methods[] = {
+      {const_cast<char *>("nativeHandleStdoutLine"),
+       const_cast<char *>("(Ljava/lang/String;)V"),
+       reinterpret_cast<void *>(&nativeHandleStdoutLine)},
+      {const_cast<char *>("nativeHandleStderrLine"),
+       const_cast<char *>("(Ljava/lang/String;)V"),
+       reinterpret_cast<void *>(&nativeHandleStderrLine)}};
+
+  bool registerFailed = (env()->RegisterNatives(cls_, methods, 2) != 0) ||
+                        checkException("RegisterNatives(QMdbCS)");
+  if (registerFailed) return false;
+
+  jmethodID midInstall = env()->GetStaticMethodID(cls_, "installStdoutCapture", "()V");
+  if (checkException("GetStaticMethodID(installStdoutCapture)") || !midInstall) {
+    return false;
+  }
+
+  // Register the handlers BEFORE calling install() -- install() itself
+  // could theoretically trigger output (it doesn't today, but this
+  // ordering means both handlers are live the instant System.out/err are
+  // swapped, with no window where a captured line would find no handler
+  // registered).
+  JavaVM *jvm = host_.jvm();
+  {
+    std::lock_guard<std::mutex> lock(g_stdoutHandlerMutex);
+    g_stdoutHandlers[jvm] = std::move(stdoutHandler);
+    g_stderrHandlers[jvm] = std::move(stderrHandler);
+  }
+  stdoutCaptureInstalled_ = true;
+
+  env()->CallStaticVoidMethod(cls_, midInstall);
+  return !checkException("QMdbCS.installStdoutCapture()");
 }
 
 // ── Pin access ────────────────────────────────────────────────────────────────

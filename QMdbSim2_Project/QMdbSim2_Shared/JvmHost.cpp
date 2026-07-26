@@ -87,31 +87,32 @@ bool JvmHost::start(const Config &cfg) {
   // We detect the major version from the JVM DLL's embedded version resource.
   // If detection fails we err on the side of omitting the flag (safe for
   // both Java 8 and 9+: on 9+ the warning reappears but the JVM still starts).
-  std::string aoOpt = "--add-opens=java.base/java.lang.ref=ALL-UNNAMED";
+  std::string aoOpt    = "--add-opens=java.base/java.lang.ref=ALL-UNNAMED";
   bool        useAoOpt = false;
   {
-    DWORD  verInfoSize = GetFileVersionInfoSizeA(cfg.jvmDllPath.c_str(), nullptr);
+    DWORD verInfoSize =
+        GetFileVersionInfoSizeA(cfg.jvmDllPath.c_str(), nullptr);
     if (verInfoSize > 0) {
       std::vector<BYTE> verBuf(verInfoSize);
       if (GetFileVersionInfoA(cfg.jvmDllPath.c_str(), 0, verInfoSize,
                               verBuf.data())) {
-        VS_FIXEDFILEINFO *fi = nullptr;
+        VS_FIXEDFILEINFO *fi    = nullptr;
         UINT              fiLen = 0;
-        if (VerQueryValueA(verBuf.data(), "\\",
-                           reinterpret_cast<LPVOID *>(&fi), &fiLen) &&
+        if (VerQueryValueA(verBuf.data(), "\\", reinterpret_cast<LPVOID *>(&fi),
+                           &fiLen) &&
             fi) {
           // FILEVERSION major is the high word of dwFileVersionMS
           int jvmMajor = static_cast<int>(HIWORD(fi->dwFileVersionMS));
-          std::cout << "[  JVM ] Detected JVM major version: " << jvmMajor
-                    << "\n";
+          // std::cout << "[  JVM ] Detected JVM major version: " << jvmMajor
+          //           << "\n";
           useAoOpt = (jvmMajor >= 9);
         }
       }
     }
-    if (!useAoOpt) {
-      std::cout << "[  JVM ] Omitting --add-opens (Java 8 or version "
-                   "detection failed)\n";
-    }
+    // if (!useAoOpt) {
+    //   std::cout << "[  JVM ] Omitting --add-opens (Java 8 or version "
+    //                "detection failed)\n";
+    // }
   }
 
   JavaVMOption opts[5]{};
@@ -119,8 +120,7 @@ bool JvmHost::start(const Config &cfg) {
   opts[1].optionString = const_cast<char *>(pkOpt.c_str());
   opts[2].optionString = const_cast<char *>(tpOpt.c_str());
   opts[3].optionString = const_cast<char *>(nbOpt.c_str());
-  if (useAoOpt)
-    opts[4].optionString = const_cast<char *>(aoOpt.c_str());
+  if (useAoOpt) opts[4].optionString = const_cast<char *>(aoOpt.c_str());
 
   JavaVMInitArgs args{};
   args.version            = JNI_VERSION_1_8;
@@ -136,11 +136,13 @@ bool JvmHost::start(const Config &cfg) {
     return false;
   }
 
-  // Report actual JVM version (jint: high 16 bits = major, low 16 bits = minor).
-  jint jvmVer = env_->GetVersion();
-  int  major  = (jvmVer >> 16) & 0xFFFF;
-  int  minor  = jvmVer & 0xFFFF;
-  std::cout << "[  OK  ] JVM started (JNI " << major << "." << minor << ")\n";
+  // Report actual JVM version (jint: high 16 bits = major, low 16 bits =
+  // minor).
+  // jint jvmVer = env_->GetVersion();
+  // int  major  = (jvmVer >> 16) & 0xFFFF;
+  // int  minor  = jvmVer & 0xFFFF;
+  // std::cout << "[  OK  ] JVM started (JNI " << major << "." << minor <<
+  // ")\n";
   return true;
 }
 
@@ -166,7 +168,7 @@ std::string JvmHost::buildClasspath(const Config &cfg) {
   };
   for (const std::string &s : singles) jars.push_back(s);
 
-  std::cout << "[  CP  ] " << jars.size() << " JARs on classpath.\n";
+  // std::cout << "[  CP  ] " << jars.size() << " JARs on classpath.\n";
 
   std::string cp;
   for (size_t i = 0; i < jars.size(); ++i) {

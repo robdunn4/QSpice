@@ -7,6 +7,7 @@
 #pragma once
 #include "JvmHost.h"
 #include "PinState.h"
+#include <functional>
 #include <jni.h>
 #include <string>
 
@@ -21,8 +22,25 @@ public:
   // Maps 1:1 to com.microchip.mdbcs.QMdbCS.  All method IDs are cached
   // during construct() using signatures verified with javap -s.
 
-  bool      construct(const std::string &device, const std::string &tool,
-                      bool asDebugger);
+  // ── QMdbCS class/object construction ─────────────────────────────────────
+  // Split into two steps so callers can install stdout/stderr capture in
+  // between: resolveClass() finds the QMdbCS class and caches all method
+  // IDs but does NOT create the Java-side object; instantiate() then calls
+  // the Java constructor.  This matters because MDBCore emits a substantial
+  // amount of its own startup chatter (pack-loading diagnostics,
+  // "Peripheral Missing" warnings, etc.) directly from within the Java
+  // Debugger constructor -- i.e. triggered by instantiate(), not by any
+  // later call -- so capture must be installed before instantiate() runs,
+  // not merely before getQMdbCSVersion()/setConciseMode().
+  //
+  // construct() is a convenience wrapper (resolveClass() + instantiate())
+  // for callers that don't need capture installed before construction.
+
+  bool resolveClass();
+  bool instantiate(const std::string &device, const std::string &tool,
+                   bool asDebugger);
+  bool construct(const std::string &device, const std::string &tool,
+                bool asDebugger);
   // Returns the QMdbCS JAR version string (calls QMdbCS.getVersion()).
   // Returns an empty string on failure.
   std::string getQMdbCSVersion();
@@ -35,6 +53,32 @@ public:
   bool      setConciseMode(bool concise = true); // simulatordisplay.concisemode
   bool      disconnect();
   bool      destroy();
+
+  // ── Stdout/stderr capture ───────────────────────────────────────────────
+  // Redirects the JVM's System.out and System.err (com.microchip.mdbcs.
+  // QMdbCS.installStdoutCapture()) so every line Java would otherwise write
+  // to either stream instead calls the corresponding handler synchronously
+  // -- stdoutHandler for System.out lines, stderrHandler for System.err
+  // lines. Call this immediately after construct() and before any other
+  // JNI call that might produce output (getQMdbCSVersion(),
+  // setConciseMode(), etc.) -- anything written before install() completes
+  // bypasses the handlers and goes to the JVM's real stdout/stderr.
+  //
+  // Handlers run on whatever Java thread produced the line; no thread-attach
+  // is needed since JNI supplies a valid JNIEnv* to the native callback
+  // automatically. Handlers must not throw -- any exception is caught and
+  // discarded at the JNI boundary, since an unwind across a JNI-called frame
+  // is undefined behavior.
+  //
+  // Either handler may be empty (default-constructed std::function) if that
+  // stream doesn't need handling; the corresponding native callback will
+  // simply find no handler registered and return.
+  //
+  // Returns false if native registration or the install() call failed;
+  // non-fatal to the caller (JVM stdout/stderr are simply left unredirected).
+  using StdoutLineHandler = std::function<void(const std::string &)>;
+  bool installStdoutCapture(StdoutLineHandler stdoutHandler,
+                            StdoutLineHandler stderrHandler);
 
   // ── Pin access ───────────────────────────────────────────────────────────
   // getPin() calls QMdbCS.getPin(String) and returns a JNI global ref to
@@ -104,4 +148,11 @@ private:
   // Retained as a type token for JNI parameter passing only.
   // Individual Pin method IDs are not called directly from C++.
   jclass pinCls_ = nullptr;
+
+  // ── Stdout/stderr capture state ─────────────────────────────────────────
+  // Set true once installStdoutCapture() successfully registers handlers
+  // for this instance's JVM, so the destructor knows to erase this
+  // instance's entries from the static JavaVM* -> handler maps (stdout and
+  // stderr maps are separate; both keyed by the same JavaVM*).
+  bool stdoutCaptureInstalled_ = false;
 };

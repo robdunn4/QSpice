@@ -31,10 +31,18 @@
 //     Neither enforces state; both warn and proceed if state is unexpected.
 //   - Pin objects are fetched once in connectSim() and cached for the lifetime
 //     of the session.
+//   - Optional Java stdout/stderr capture: initSim()/startSim() accept
+//     separate StdoutLineHandlers for each stream.  When supplied, they are
+//     installed immediately after the Debugger is constructed -- before any
+//     other JNI call -- so all Java-side output for this instance's JVM is
+//     captured and never reaches the process's real stdout/stderr unless the
+//     handler forwards it.  Passing nullptr (the default) for either leaves
+//     the corresponding stream untouched.
 //------------------------------------------------------------------------------
 #pragma once
 #include "JvmHost.h"
 #include "MdbcsDebugger.h"
+#include <functional>
 #include <jni.h>
 #include <string>
 #include <vector>
@@ -80,6 +88,11 @@ public:
     // called.
   };
 
+  // Called once per captured Java stdout line.  Runs synchronously on
+  // whatever Java thread produced the line, before Java proceeds.  Must not
+  // throw. See MdbcsDebugger::installStdoutCapture() for details.
+  using StdoutLineHandler = MdbcsDebugger::StdoutLineHandler;
+
   MdbSim();
   ~MdbSim();
   MdbSim(const MdbSim &)            = delete;
@@ -105,8 +118,14 @@ public:
   // to have any effect on the simulator.
 
   // Step 1: start JVM and construct the MDBCS Debugger object.
+  // stdoutHandler/stderrHandler, if non-null, are installed immediately
+  // after the Debugger is constructed -- before getQMdbCSVersion()/
+  // setConciseMode() run -- so all Java stdout/stderr output from this
+  // point on is captured.  Either may be left null independently. Decided
+  // by the caller before the JVM starts; there is no later toggle.
   // State: NotStarted -> Initialised.
-  bool initSim(const char *deviceName);
+  bool initSim(const char *deviceName, StdoutLineHandler stdoutHandler = nullptr,
+              StdoutLineHandler stderrHandler = nullptr);
 
   // Step 2: set the supply voltage and the device-specific VDD pin name
   // (e.g. "VDD" for PIC16F15213).  May be called any time before connectSim();
@@ -125,7 +144,9 @@ public:
   // ── Convenience wrapper ────────────────────────────────────────────────
   // Calls initSim -> loadProgram -> connectSim.
   // setVDD() must have been called before startSim().
-  bool startSim(const char *deviceName, const char *pgmPath);
+  bool startSim(const char *deviceName, const char *pgmPath,
+               StdoutLineHandler stdoutHandler = nullptr,
+               StdoutLineHandler stderrHandler = nullptr);
 
   // ── Simulator commands (mirrors QMdbSim public API) ───────────────────
   bool stopSim();
