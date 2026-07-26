@@ -1,0 +1,77 @@
+*-----------------------------------------------------------
+* Pin Definition File for QSymGen3
+*
+* Implements: Microchip PIC18F45K50/PIC18LF45K50 (40-pin PDIP/UQFN)
+* Author:     Robert Dunn
+* Source:     DS30000684B, TABLE 1-3
+* Revised:    2026.07.14
+*-----------------------------------------------------------
+*
+* Pin names/descriptions verified IDENTICAL across PDIP, TQFP,
+* and UQFN packages -- TABLE 1-3 is a single shared table with
+* one Pin Name/Type/Buffer Type/Description column set; only
+* physical Pin Number differs per package (PDIP/TQFP/UQFN
+* columns). This file targets the 40-pin PDIP/UQFN pinout
+* (excludes ICCK/ICPGC, ICDT/ICPGD, ICRST/ICVPP, NC -- 44-pin
+* TQFP only).
+*
+* No directional-arrow annotations present in datasheet Pin
+* Diagram figures (Figure 3/4) for this family -- cross-check
+* step not applicable.
+*
+* OPEN ITEM: VUSB3V3 is an internal 3.3V regulator OUTPUT
+* (positive supply for USB transceiver), not a simple supply
+* input. Classified I here per the existing "extra V/G pins
+* -> I record" convention, but that convention is untested /
+* may not be correct for a regulator output -- needs a decision.
+*
+* D Microchip PIC18F45K50/PIC18LF45K50
+D Microchip PIC18F45K50/PIC18LF45K50 40-Pin PDIP/UQFN
+P PIC18F45K50 PIC18LF45K50
+R 1
+*
+* VDD: 2 physical pins on PDIP (11, 32) -- duplicate, same net
+V VDD
+B D+ IOCC5
+B D- IOCC4
+B RA0 C12IN0-/AN0
+B RA1 C12IN1-/AN1
+B RA2 C2IN+/AN2/DACOUT/VREF-
+B RA3 C1IN+/AN3/VREF+
+B RA4 C1OUT/SRQ/T0CKI
+B RA5 C2OUT/SRNQ/SS/HLVDIN/AN4
+B RA6 CLKO/OSC2
+B RA7 CLKI/OSC1
+B RB0 INT0/FLT0/SDI/SDA/SRI/AN12
+B RB1 INT1/P1C/SCK/SCL/C12IN3-/AN10
+B RB2 P1B/INT2/CTED1/AN8
+B RB3 CTED2/SDO/CCP2/C12IN2-/AN9
+B RB4 IOCB4/P1D/AN11
+B RB5 IOCB5/T3CKI/T1G/AN13
+B RB6 IOCB6/PGC
+X
+K SIMCLK [Not A Device Pin]
+B RB7 IOCB7/PGD
+B RC0 IOCC0/T3CKI/T3G/T1CKI/SOSCO
+B RC1 IOCC1/CCP2/SOSCI
+B RC2 CTPLS/P1A/CCP1/IOCC2/AN14
+B RC6 IOCC6/TX/CK/AN18
+B RC7 RX/DT/SDO/IOCC7/AN19
+B RD0 AN20
+B RD1 AN21
+B RD2 AN22
+B RD3 AN23
+B RD4 AN24
+B RD5 P1B/AN25
+B RD6 P1C/AN26
+B RD7 P1D/AN27
+B RE0 AN5
+B RE1 AN6
+B RE2 AN7
+I RE3 VPP/MCLR
+* I VUSB3V3 [OPEN ITEM: regulator output, see header]
+I VUSB3V3 [CHECK THIS!]
+* VSS: 2 physical pins on PDIP (12, 31) -- duplicate, same net
+G VSS
+*
+*** EOF ***
