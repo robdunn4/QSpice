@@ -1,7 +1,7 @@
 # QMdbSim2 Project &mdash; Available Devices & Miscellaneous Tools
 
 ## Available Devices
-These devices are currently available in the repository:
+These devices are currently available in the repository.  If you don't find what you need, it is really, really easy to create new device defintions &mdash; see the Device Developer documentation.
 
 | Device Folder | Supported Devices | Full<br>Demo |
 |---|---|:---:|
@@ -11,7 +11,6 @@ These devices are currently available in the repository:
 | [PIC18F45K50](./PIC18F45K50/) | PIC18F45K50, PIC18LF45K50  | ✗ |
 
 All devices include sources and compiled DLL binaries.  Items with Full Demo include top-level demonstration schematic and device-specific source and binary (e.g., \*.elf/\*.hex).  Otherwise, assume that this is an untested device definition.  (For these, be a hero and provide the missing demonstration bits.)
-
 
 ## Miscellaneous Device Developer Tools
 
