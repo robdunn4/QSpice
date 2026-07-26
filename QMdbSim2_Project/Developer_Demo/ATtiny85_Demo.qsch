@@ -222,7 +222,7 @@
       «triangle (-610,-350) (-660,-250) (-560,-250) 0 0 0xff0000 0xffffff -1 -1»
       «triangle (-660,-450) (-660,-550) (-560,-500) 0 0 0xff0000 0xffffff -1 -1»
       «text (0,150) 1 15 0 0x1000000 -1 -1 "X1"»
-      «text (0,50) 0.5 15 0 0x1000000 -1 -1 "ATtinyx5"»
+      «text (0,50) 0.5 15 0 0x1000000 -1 -1 "ATtiny85"»
       «text (0,250) 0.5 15 2 0x1000000 -1 -1 "Device=<"ATtiny25","ATtiny45",("ATtiny85")>Select target device from list"»
       «text (0,-1150) 0.5 15 2 0x1000000 -1 -1 "PgmPath=<"ATtiny85_Test.elf">Path to device code (*.hex/*.elf)"»
       «text (0,-1250) 0.5 15 2 0x1000000 -1 -1 "CfgPath=<".\\QMdbCfg.ini">Path to QMdbCfg.ini file"»

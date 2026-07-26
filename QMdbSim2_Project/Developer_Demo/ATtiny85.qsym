@@ -1,4 +1,4 @@
-ÿØÿÛ«symbol ATtinyx5
+ÿØÿÛ«symbol ATtiny85
   «type: »
   «description: ATtiny25/45/85 8-Bit AVR Microcontroller»
   «shorted pins: false»
@@ -13,9 +13,9 @@
   «triangle (-610,-350) (-660,-250) (-560,-250) 0 0 0xff0000 0xffffff -1 -1»
   «triangle (-660,-450) (-660,-550) (-560,-500) 0 0 0xff0000 0xffffff -1 -1»
   «text (0,150) 1 15 0 0x1000000 -1 -1 "X1"»
-  «text (0,50) 0.5 15 0 0x1000000 -1 -1 "ATtinyx5"»
+  «text (0,50) 0.5 15 0 0x1000000 -1 -1 "ATtiny85"»
   «text (0,250) 0.5 15 2 0x1000000 -1 -1 "Device=<("ATtiny25"),"ATtiny45","ATtiny85"> Select target device from list"»
-  «text (0,-1150) 0.5 15 2 0x1000000 -1 -1 "PgmPath=<"Test_ATtinyx5.elf"> Path to device code (*.hex/*.elf)"»
+  «text (0,-1150) 0.5 15 2 0x1000000 -1 -1 "PgmPath=<"Test_ATtiny85.elf"> Path to device code (*.hex/*.elf)"»
   «text (0,-1250) 0.5 15 2 0x1000000 -1 -1 "CfgPath=<".\QMdbCfg.ini"> Path to QMdbCfg.ini file"»
   «text (-530,-800) 0.25 7 1 0x1000000 -1 -1 "MOSI/DI/SDA/AIN0/OC0A/OC1A/AREF/PCINT0"»
   «text (-530,-1000) 0.25 7 1 0x1000000 -1 -1 "MISO/DO/AIN1/OC0B/OC1A/PCINT1"»
@@ -24,7 +24,7 @@
   «text (530,-600) 0.25 11 1 0x1000000 -1 -1 "XTAL2/CLKO/OC1B/ADC2/PCINT4"»
   «text (530,-800) 0.25 11 1 0x1000000 -1 -1 "RESET/ADC0/dW/PCINT5"»
   «pin (-700,-100) (170,0) 1 7 0 0x1000000 -1 "VCC"»
-  «pin (-700,-300) (170,0) 1 7 0 0x1000000 -1 "GND_"»
+  «pin (-700,-300) (170,0) 1 7 0 0x1000000 -1 "GND"»
   «pin (-700,-500) (170,0) 1 7 0 0x1000000 -1 "SIMCLK"»
   «pin (-700,-700) (170,0) 1 7 0 0x1000000 -1 "PB0"»
   «pin (-700,-900) (170,0) 1 7 0 0x1000000 -1 "PB1"»

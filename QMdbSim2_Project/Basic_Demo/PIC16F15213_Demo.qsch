@@ -264,9 +264,9 @@
       «triangle (610,-750) (560,-650) (660,-650) 0 0 0xff0000 0xffffff -1 -1»
       «triangle (660,-850) (660,-950) (560,-900) 0 0 0xff0000 0xffffff -1 -1»
       «text (0,150) 1 15 0 0x1000000 -1 -1 "X1"»
-      «text (0,50) 0.5 15 0 0x1000000 -1 -1 "PIC16F1521x"»
+      «text (0,50) 0.5 15 0 0x1000000 -1 -1 "PIC16F15213"»
       «text (0,250) 0.5 15 2 0x1000000 -1 -1 "Device=<("PIC16F15213"),"PIC16F15214">Select target device from list"»
-      «text (0,-1150) 0.5 15 2 0x1000000 -1 -1 "PgmPath=<"Test_PIC16F1521x.elf">Path to device code (*.hex/*.elf)"»
+      «text (0,-1150) 0.5 15 2 0x1000000 -1 -1 "PgmPath=<"Test_PIC16F15213.elf">Path to device code (*.hex/*.elf)"»
       «text (0,-1250) 0.5 15 2 0x1000000 -1 -1 "CfgPath=<".\\QMdbCfg.ini">Path to QMdbCfg.ini file"»
       «text (-530,-400) 0.25 7 1 0x1000000 -1 -1 "ICSPDAT"»
       «text (-530,-600) 0.25 7 1 0x1000000 -1 -1 "ICSPCLK"»
@@ -379,7 +379,7 @@
   «wire (-200,0) (-500,0) "GND"»
   «rect (1550,850) (4850,-850) 0 0 2 0x4000000 0x1000000 -1 0 -1»
   «text (5140,897) 0.8 5 1 0x1000000 -1 -1 "ï»¿Notes:\n* SIMCLK is NOT an actual device pin...\n* This device contains an internal oscillator.\n   However, that is not used for emulation.\n   Instead, SIMCLK is used to sychronize the\n   micro-controller to the QSpice simulation.\n   Each falling edge of SIMCLK steps the device\n   by 1 instruction cycle.  For this device,\n   one instruction cycle = 4 oscillator cycles.\n* Set OscFreq to match device oscillator \n   frequency as defined in the *.hex/*.elf\n   configuration bits."»
-  «text (-3180,2272) 1.6 5 1 0x1000000 -1 -1 "ï»¿PIC16F1521x Test Fixture"»
+  «text (-3180,2272) 1.6 5 1 0x1000000 -1 -1 "ï»¿PIC16F15213 Test Fixture"»
   «text (-3000,-2691) 1 5 0 0x1000000 -1 -1 "ï»¿.param OscFreq=4Meg\n.param CyclesPerInst=4\n.param InstHz=OscFreq/CyclesPerInst"»
   «text (-3050,-2550) 1 7 1 0x1000000 -1 -1 "ï»¿Device Clock Parameters"»
   «text (3201,889) 1.25 14 1 0x1000000 -1 -1 "ï»¿"Charlieplexed" LEDs"»
