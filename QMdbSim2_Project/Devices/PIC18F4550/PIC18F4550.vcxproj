@@ -21,8 +21,8 @@
   <PropertyGroup Label="Globals">
     <VCProjectVersion>18.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{1642af9f-f0dd-4c21-a504-62748cd52059}</ProjectGuid>
-    <RootNamespace>PIC18F4x5x</RootNamespace>
+    <ProjectGuid>{0b77762f-fd1c-4f58-8aec-8e8d533b8103}</ProjectGuid>
+    <RootNamespace>PIC18F4550</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -186,7 +186,7 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="PIC18F4x5x.cpp" />
+    <ClCompile Include="PIC18F4550.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

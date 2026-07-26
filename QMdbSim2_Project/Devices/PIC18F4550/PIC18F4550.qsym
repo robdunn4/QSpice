@@ -1,6 +1,6 @@
-ÿØÿÛ«symbol PIC18F4x5x
+ÿØÿÛ«symbol PIC18F4550
   «type: »
-  «description: Microchip PIC18F4455/4550 40-pin, USB, Enhanced Flash microcontroller»
+  «description: Microchip PIC18F4455/4550 40-pin»
   «shorted pins: false»
   «rect (-700,0) (700,-4100) 0 0 0 0x1000000 0xffff -1 1 -1»
   «ellipse (-660,-450) (-560,-550) 0 0 0 0xff0000 0xffffff -1 -1»
@@ -43,9 +43,9 @@
   «triangle (560,-3650) (560,-3750) (660,-3700) 0 0 0xff0000 0xffffff -1 -1»
   «triangle (610,-3950) (560,-3850) (660,-3850) 0 0 0xff0000 0xffffff -1 -1»
   «text (0,150) 1 15 0 0x1000000 -1 -1 "X1"»
-  «text (0,50) 0.5 15 0 0x1000000 -1 -1 "PIC18F4x5x"»
+  «text (0,50) 0.5 15 0 0x1000000 -1 -1 "PIC18F4550"»
   «text (0,250) 0.5 15 2 0x1000000 -1 -1 "Device=<("PIC18F4455"),"PIC18F4550"> Select target device from list"»
-  «text (0,-4150) 0.5 15 2 0x1000000 -1 -1 "PgmPath=<"Test_PIC18F4x5x.elf"> Path to device code (*.hex/*.elf)"»
+  «text (0,-4150) 0.5 15 2 0x1000000 -1 -1 "PgmPath=<"Test_PIC18F4550.elf"> Path to device code (*.hex/*.elf)"»
   «text (0,-4250) 0.5 15 2 0x1000000 -1 -1 "CfgPath=<".\QMdbCfg.ini"> Path to QMdbCfg.ini file"»
   «text (-530,-400) 0.25 7 1 0x1000000 -1 -1 "CLKI"»
   «text (-530,-600) 0.25 7 1 0x1000000 -1 -1 "AN0"»

@@ -436,11 +436,11 @@
   «component (1500,300) 0 0
     «symbol DLL
       «type: Ø(.DLL)»
-      «description: DLL for Microchip PIC18F4455/4550 40-pin, USB, Enhanced Flash microcontroller»
+      «description: DLL for Microchip PIC18F4455/4550 40-pin»
       «shorted pins: false»
       «rect (0,-100) (2000,-20300) 0 0 0 0x1000000 0xffff -1 1 -1»
       «text (1000,250) 1 15 0 0x1000000 -1 -1 "X1"»
-      «text (1000,100) 1 15 0 0x1000000 -1 -1 "PIC18F4x5x"»
+      «text (1000,100) 1 15 0 0x1000000 -1 -1 "PIC18F4550"»
       «text (1000,350) 1 15 2 0x1000000 -1 -1 "char* DevPartName=Device"»
       «text (1000,350) 1 15 2 0x1000000 -1 -1 "char* DevPgmPath=PgmPath"»
       «text (1000,350) 1 15 2 0x1000000 -1 -1 "char* CfgIniPath=CfgPath"»

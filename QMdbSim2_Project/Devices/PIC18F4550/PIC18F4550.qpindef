@@ -1,4 +1,4 @@
-* PIC18F4x5x Pin Definitions file
+* PIC18F4550 Pin Definitions file
 * Generated from Microchip DS39632E (PIC18F2455/2550/4455/4550 Data Sheet)
 * Package: 40-Pin PDIP
 *
@@ -13,7 +13,7 @@
 * Total records = 39 (odd), so one X spacer is inserted before SIMCLK
 * to bring the total to 40 -- an exact 20/20 left/right split, with no
 * dependence on how QSymGen3 rounds size/2.
-D Microchip PIC18F4455/4550 40-pin, USB, Enhanced Flash microcontroller
+D Microchip PIC18F4455/4550 40-pin
 P PIC18F4455 PIC18F4550
 
 * --- Left column (20 records): VDD ... SIMCLK ---
