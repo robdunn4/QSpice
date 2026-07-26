@@ -15,7 +15,7 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="ATtinyx5.cpp">
+    <ClCompile Include="ATtiny85.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
