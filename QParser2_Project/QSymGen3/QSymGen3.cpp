@@ -25,7 +25,7 @@ int main(int argc, char **argv) {
   CmdParser parser;
   if (parser.parse(argc, argv)) return -1;
 
-  cout << "Pin Defs File: " << parser.inPath.generic_string()     << "\n";
+  cout << "Pin Defs File: " << parser.inPath.generic_string() << "\n";
   cout << "To write sym:  " << parser.outPathSym.generic_string() << "\n";
   cout << "To write sch:  " << parser.outPathSch.generic_string() << "\n";
   cout << "To write cpp:  " << parser.outPathCpp.generic_string() << "\n";
@@ -45,7 +45,6 @@ int main(int argc, char **argv) {
          << "\n";
     return -3;
   }
-  cout << "QUX.exe found: " << quxPath.generic_string() << "\n";
 
   // Step 3: locate DLL template -- working directory first, then exe directory
   Fs::path templatePath =
@@ -127,6 +126,19 @@ int main(int argc, char **argv) {
     return -13;
   }
 
+  // Step 9b: append a local reference alias to the V-record's uData variable,
+  // e.g. "double &vddRef = VCC;", immediately following the uData declarations.
+  // Used only at the setVDD() call site in the template; getVDD() is the
+  // path for retrieving supply voltage afterward.
+  auto vIter = std::find_if(pinList.cbegin(), pinList.cend(),
+                            [](const PinDef &pd) { return pd.type == 'V'; });
+  if (vIter == pinList.cend()) {
+    cout << "Error:  No V record found in pin definitions.  Operation "
+            "aborted.\n";
+    return -13; // TODO:  Create unique error code
+  }
+  uDataLines.push_back("double &vddRef = " + vIter->name + ";");
+
   // Step 10: generate QSymGen3 code snippet (no file write)
   SymList cppSnippet;
   if (!cppSnippet.makeCppSnippet(pinList, std::cout)) {
@@ -144,13 +156,12 @@ int main(int argc, char **argv) {
 
   // inline scalar: eval function name is baseName lowercased
   std::string evalFuncName = parser.baseName;
-  std::transform(evalFuncName.begin(), evalFuncName.end(),
-                 evalFuncName.begin(),
+  std::transform(evalFuncName.begin(), evalFuncName.end(), evalFuncName.begin(),
                  [](unsigned char c) { return std::tolower(c); });
-  tmpl.addScalar(Config::tokenEvalFuncName,    evalFuncName);
+  tmpl.addScalar(Config::tokenEvalFuncName, evalFuncName);
 
   // block substitutions
-  tmpl.addBlock(Config::tokenUDataSnippet,    uDataLines);
+  tmpl.addBlock(Config::tokenUDataSnippet, uDataLines);
   tmpl.addBlock(Config::tokenQSymGen3Snippet, cppSnippet);
 
   if (!tmpl.apply(parser.outPathCpp, std::cout)) {

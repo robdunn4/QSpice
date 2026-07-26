@@ -11,6 +11,12 @@ StrList QuxRunner::run(const Fs::path &quxExePath, const Fs::path &qschPath,
                        std::ostream &errStrm) {
   StrList lines;
 
+  if (!Fs::exists(quxExePath)) {
+    errStrm << std::format("QuxRunner: QUX.exe not found at \"{}\".\n",
+                            quxExePath.string());
+    return lines;
+  }
+
   // cmd.exe requires the entire command string to be wrapped in an extra outer
   // pair of quotes when it contains multiple quoted arguments (e.g. paths with
   // spaces).  The resulting format is: "\"<exe>\" <args> \"<path>\""

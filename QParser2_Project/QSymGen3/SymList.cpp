@@ -7,8 +7,34 @@
 #include "GraphicSymbols.h"
 #include <ItemAll.h>
 #include <ItemTreeIO.h>
+#include <cctype>
+#include <format>
 
 namespace GS = GraphicsSymbols;
+
+// Sanitizes a pin/port name (as declared in the .qpindef) into a valid C++
+// identifier for use in generated code.  Only affects identifier contexts --
+// the original name must still be passed as-is (quoted) to addPinPortMap()
+// so it matches the actual device pin name for JNI lookup.
+//
+// Invalid characters are encoded as 'x' + 2-digit uppercase hex of their
+// ASCII value (e.g., '+' -> "x2B"), so "D+" becomes "Dx2B".  A leading digit
+// is prefixed with '_' since that's also invalid in a C++ identifier.
+static std::string safeIdentifier(const std::string &name) {
+  std::string result;
+  result.reserve(name.size());
+
+  if (!name.empty() && std::isdigit(static_cast<unsigned char>(name[0])))
+    result += '_';
+
+  for (unsigned char c : name) {
+    if (std::isalnum(c) || c == '_')
+      result += static_cast<char>(c);
+    else
+      result += std::format("x{:02X}", c);
+  }
+  return result;
+}
 
 bool SymList::makeSymbol(const PinDefList &pinList, int rectWidth,
                          std::ostream &errStrm) {
@@ -193,15 +219,20 @@ bool SymList::makeCppSnippet(const PinDefList &pinList, std::ostream &errStrm) {
 
   // emit code to wrap/map pins to port maps
   for (const PinDef &pinDef : pinList) {
+    // identifier form for use in declarations/references; the quoted
+    // literal passed to addPinPortMap() must remain the name as declared
+    // in the .qpindef, since that's what's matched against the actual
+    // device pin for JNI lookup
+    const std::string ident = safeIdentifier(pinDef.name);
+
     switch (pinDef.type) {
     case 'I':
-      push_back("inst->mdb.addPinPortMap(\"" + pinDef.name + "\", &" +
-                pinDef.name + ");");
+      push_back("inst->mdb.addPinPortMap(\"" + pinDef.name + "\", &" + ident +
+                ");");
       break;
     case 'B':
-      push_back("inst->mdb.addPinPortMap(\"" + pinDef.name + "\", &" +
-                pinDef.name + "_I, &" + pinDef.name + "_O, &" + pinDef.name +
-                "_C);");
+      push_back("inst->mdb.addPinPortMap(\"" + pinDef.name + "\", &" + ident +
+                "_I, &" + ident + "_O, &" + ident + "_C);");
       break;
     case 'O':
       // TBD:  Are output-only pins used in uCs?  If so, need to implement
@@ -418,35 +449,45 @@ bool SymList::makeSchematic(const PinDefList &pinList, std::ostream &errStrm) {
     case 'I':
     case 'V':
       pinInfo.setInfo(ArgPinInfo::TYPE_INPORT, ArgPinInfo::DATA_FLOAT);
-      symNode->addLast(
-          ItemPin::makePtr(Point(pinX, pinY), ptLbl, fntLbl, rotAlign, pinInfo,
-                           pinClr, ArgLookupNdx(), pinDef.name, pinDef.name));
+      symNode->addLast(ItemPin::makePtr(Point(pinX, pinY), ptLbl, fntLbl,
+                                        rotAlign, pinInfo, pinClr,
+                                        ArgLookupNdx(),
+                                        safeIdentifier(pinDef.name),
+                                        pinDef.name));
       break;
     case 'C': // GPIO control pin (synthesized from 'B'); DLL drives direction
       pinInfo.setInfo(ArgPinInfo::TYPE_OUTPORT, ArgPinInfo::DATA_BOOL);
-      symNode->addLast(
-          ItemPin::makePtr(Point(pinX, pinY), ptLbl, fntLbl, rotAlign, pinInfo,
-                           pinClr, ArgLookupNdx(), pinDef.name, pinDef.name));
+      symNode->addLast(ItemPin::makePtr(Point(pinX, pinY), ptLbl, fntLbl,
+                                        rotAlign, pinInfo, pinClr,
+                                        ArgLookupNdx(),
+                                        safeIdentifier(pinDef.name),
+                                        pinDef.name));
       break;
     case 'K': // SimClock pin; DLL receives clock signal
       pinInfo.setInfo(ArgPinInfo::TYPE_INPORT, ArgPinInfo::DATA_BOOL);
-      symNode->addLast(
-          ItemPin::makePtr(Point(pinX, pinY), ptLbl, fntLbl, rotAlign, pinInfo,
-                           pinClr, ArgLookupNdx(), pinDef.name, pinDef.name));
+      symNode->addLast(ItemPin::makePtr(Point(pinX, pinY), ptLbl, fntLbl,
+                                        rotAlign, pinInfo, pinClr,
+                                        ArgLookupNdx(),
+                                        safeIdentifier(pinDef.name),
+                                        pinDef.name));
       break;
     case 'G':
       // TODO: GND pin schematic handling to be determined
       // pinInfo.setInfo(ArgPinInfo::TYPE_INPORT, ArgPinInfo::DATA_FLOAT);
       pinInfo.setInfo(ArgPinInfo::TYPE_DLLGND, ArgPinInfo::DATA_FLOAT);
-      symNode->addLast(
-          ItemPin::makePtr(Point(pinX, pinY), ptLbl, fntLbl, rotAlign, pinInfo,
-                           pinClr, ArgLookupNdx(), pinDef.name, pinDef.name));
+      symNode->addLast(ItemPin::makePtr(Point(pinX, pinY), ptLbl, fntLbl,
+                                        rotAlign, pinInfo, pinClr,
+                                        ArgLookupNdx(),
+                                        safeIdentifier(pinDef.name),
+                                        pinDef.name));
       break;
     case 'O':
       pinInfo.setInfo(ArgPinInfo::TYPE_OUTPORT, ArgPinInfo::DATA_FLOAT);
-      symNode->addLast(
-          ItemPin::makePtr(Point(pinX, pinY), ptLbl, fntLbl, rotAlign, pinInfo,
-                           pinClr, ArgLookupNdx(), pinDef.name, pinDef.name));
+      symNode->addLast(ItemPin::makePtr(Point(pinX, pinY), ptLbl, fntLbl,
+                                        rotAlign, pinInfo, pinClr,
+                                        ArgLookupNdx(),
+                                        safeIdentifier(pinDef.name),
+                                        pinDef.name));
       break;
     case 'X':
       // no extra space

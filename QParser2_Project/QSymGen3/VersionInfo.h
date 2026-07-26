@@ -10,7 +10,7 @@
 namespace VersionInfo {
 constexpr std::string_view progName    = "QSymGen3";
 constexpr std::string_view compileDate = __DATE__ " " __TIME__;
-constexpr std::string_view version     = "0.5.0";
+constexpr std::string_view version     = "0.7.9";
 
 #if defined(_DEBUG)
 constexpr std::string_view buildType = "DEBUG";
