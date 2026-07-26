@@ -249,7 +249,7 @@
     »
   »
   «component (-1200,700) 0 0
-    «symbol PIC16F1521x
+    «symbol PIC16F15213
       «type: »
       «description: Microchip PIC16F15213/PIC16F15214»
       «shorted pins: false»
@@ -264,9 +264,9 @@
       «triangle (610,-750) (560,-650) (660,-650) 0 0 0xff0000 0xffffff -1 -1»
       «triangle (660,-850) (660,-950) (560,-900) 0 0 0xff0000 0xffffff -1 -1»
       «text (0,150) 1 15 0 0x1000000 -1 -1 "X1"»
-      «text (0,50) 0.5 15 0 0x1000000 -1 -1 "PIC16F1521x"»
+      «text (0,50) 0.5 15 0 0x1000000 -1 -1 "PIC16F15213"»
       «text (0,250) 0.5 15 2 0x1000000 -1 -1 "Device=<("PIC16F15213"),"PIC16F15214">Select target device from list"»
-      «text (0,-1150) 0.5 15 2 0x1000000 -1 -1 "PgmPath=<"Test_PIC16F1521x.elf">Path to device code (*.hex/*.elf)"»
+      «text (0,-1150) 0.5 15 2 0x1000000 -1 -1 "PgmPath=<"PIC16F15213_Test.elf">Path to device code (*.hex/*.elf)"»
       «text (0,-1250) 0.5 15 2 0x1000000 -1 -1 "CfgPath=<".\\QMdbCfg.ini">Path to QMdbCfg.ini file"»
       «text (-530,-400) 0.25 7 1 0x1000000 -1 -1 "ICSPDAT"»
       «text (-530,-600) 0.25 7 1 0x1000000 -1 -1 "ICSPCLK"»

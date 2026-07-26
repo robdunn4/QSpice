@@ -20,8 +20,7 @@ P PIC16F15213 PIC16F15214
 *
 *
 * R = DLL output pin internal resistance (ROUT) for generated Device Schematic
-* Recommended value=1; if omitted, defaults to 1000
-*
+* Default is 1. Shown explicitly here for tutorial purposes.
 R 1
 *
 *

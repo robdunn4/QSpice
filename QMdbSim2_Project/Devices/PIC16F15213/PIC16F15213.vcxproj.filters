@@ -15,7 +15,7 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="PIC16F1521x.cpp">
+    <ClCompile Include="PIC16F15213.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

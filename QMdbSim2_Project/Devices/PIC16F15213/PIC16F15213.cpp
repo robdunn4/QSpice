@@ -4,16 +4,19 @@
 // https://github.com/robdunn4/QSpice/ for the complete project, current
 // sources, documentation, and demonstration code.
 //------------------------------------------------------------------------------
-/* This is the template used by QSymGen3 to generate DLL code.
- * Revision Date:  2026.07.04
+/*
+ * This template is used by QSymGen3 to generate DLL code.
+ * Revision Date:  2026.07.25
  */
 // see PerfTimer.h...
 #define PERFTIMER_ENABLED
 // #define PERFTIMER_DISABLED
 
-#include "MdbConfig.h"
-#include "MdbSim.h"
-#include "PerfTimer.h"
+#include <MdbConfig.h>
+#include <MdbSim.h>
+#include <PerfTimer.h>
+#include <format>
+#include <functional>
 #include <sstream>
 
 // some performance timer constants
@@ -82,10 +85,34 @@ void SimError(pInstData inst) {
 }
 
 /*
+ * Java stdout/stderr line handlers -- forwards lines to Display() instead of
+ * allowing Java to write to stdout (which isn't handled well in the timer-based
+ * QSpice stdout servicing); could also be used to filter "noise" from simulator
+ * output
+ *
+ * Note:  These functions probably belong in the shared code library rather than
+ * in this device-specific template code; currently here in case we find
+ * something in the simulator that is specific to a given device
+ *
+ * Note:  We could enable/disable suppressing simulator output at runtime using
+ * QMdbCfg.ini or a per-instance attribute flag in device symbol; do we need
+ * that flexibility?
+ */
+void HandleJavaStdoutLine(pInstData inst, const std::string &line) {
+  if (line.empty()) return;
+  Display("%s\n", line.c_str());
+}
+
+void HandleJavaStderrLine(pInstData inst, const std::string &line) {
+  if (line.empty()) return;
+  Display("%s\n", line.c_str());
+}
+
+/*
  * QSpice evaluation function
  */
 extern "C" __declspec(dllexport) void
-pic16f1521x(pInstData *opaque, double t, uData *data) {
+pic16f15213(pInstData *opaque, double t, uData *data) {
      double       VDD         = data[ 0].d  ; // input
      double       RA0_I       = data[ 1].d  ; // input
      double       RA1_I       = data[ 2].d  ; // input
@@ -120,12 +147,7 @@ pic16f1521x(pInstData *opaque, double t, uData *data) {
   // the simulator -- that requires a valid VDD which QSpice may not have
   // provided yet.
   if (!inst) {
-    // for debugging, let's show the passed parameters; note that the MDB
-    // simulator is case-sensitive...
-    // Display("DevPartName=%s, DevPgmPath=%s, CfgIniPath=%s\n", DevPartName,
-    //        DevPgmPath, CfgIniPath);
-
-    *opaque = inst = new InstData();
+    inst = *opaque = new InstData();
     inst->pt.start(PT_QsSim);
 
     /*** Begin QSymGen3 Code Snippet ***/
@@ -196,9 +218,17 @@ pic16f1521x(pInstData *opaque, double t, uData *data) {
       return;
     }
 
+    // bind handlers and instance pointer to functions callable from Java
+    // callback
+    MdbSim::StdoutLineHandler stdoutHandler =
+        std::bind(&HandleJavaStdoutLine, inst, std::placeholders::_1);
+    MdbSim::StdoutLineHandler stderrHandler =
+        std::bind(&HandleJavaStderrLine, inst, std::placeholders::_1);
+
     // start JVM, load program, connect simulator, cache pin objects
     inst->pt.start(PT_Phase2);
-    if (!inst->mdb.startSim(inst->deviceName.c_str(), DevPgmPath)) {
+    if (!inst->mdb.startSim(inst->deviceName.c_str(), DevPgmPath, stdoutHandler,
+                            stderrHandler)) {
       SimError(inst);
       inst->pt.stop(PT_Phase2);
       return;
@@ -286,14 +316,15 @@ extern "C" __declspec(dllexport) double MaxExtStepSize(pInstData inst) {
 } // end of MaxExtStepSize()
 
 /*
- * Destroy() -- release the per-instance data
+ * Destroy() -- release per-instance data
  */
 extern "C" __declspec(dllexport) void Destroy(pInstData inst) {
   inst->pt.stop(PT_QsSim);
 
+  // print performance timer info if enabled
   std::ostringstream oss;
   inst->pt.report(oss);
-  Display("%s", oss.str().c_str());
+  if (!oss.str().empty()) Display("%s", oss.str().c_str());
 
   delete inst;
 } // end of Destroy()
