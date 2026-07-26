@@ -1,4 +1,0 @@
-Manifest-Version: 1.0
-Ant-Version: Apache Ant 1.10.17
-Created-By: 1.8.0_492-b09 (Temurin)
-

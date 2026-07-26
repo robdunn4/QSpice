@@ -1,0 +1,1 @@
+Run "ant jar" from this folder to build QMdbCS.jar

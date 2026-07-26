@@ -1,5 +1,6 @@
 package com.microchip.mdbcs;
 
+import java.io.*;
 
 /**
  * QMdbCS -- thin façade over MDBCS Debugger for use by QSpice C-Block
@@ -16,7 +17,7 @@ public class QMdbCS {
 
     // ── Version ───────────────────────────────────────────────────────────
 
-    public static String getVersion() { return "0.13.0"; }
+    public static String getVersion() { return "0.15.0"; }
 
     // ── Construction / lifecycle ──────────────────────────────────────────
 
@@ -76,4 +77,51 @@ public class QMdbCS {
     public void pinExternalSetVoltage(Pin pin, double v) {
         pin.externalSetVoltage(v);
     }
+
+    // ── Stdout/stderr capture ───────────────────────────────────────────────
+    //
+    // Redirects both System.out and System.err so every line written to
+    // either instead calls a native handler -- nativeHandleStdoutLine() for
+    // stdout, nativeHandleStderrLine() for stderr -- one call per line,
+    // synchronously on whatever Java thread produced it.  Installed by
+    // MdbcsDebugger::installStdoutCapture() via RegisterNatives + this
+    // static method -- see MdbcsDebugger.cpp for the native-side handler
+    // dispatch, which keeps stdout and stderr in separate JavaVM*-keyed
+    // handler maps so C++ can treat them differently.
+    //
+    // Each stream gets its own OutputStream/line-buffer instance (two
+    // separate makeCaptureStream() calls) rather than sharing one -- stdout
+    // and stderr can be written from different threads, and sharing a
+    // single ByteArrayOutputStream between them would corrupt line assembly
+    // under concurrent writes.
+    //
+    // Static (not instance-scoped) because System.out/err are JVM-global;
+    // this is consistent with each MdbSim/InstData owning one JVM, so in
+    // practice this is still a 1:1 relationship with the owning QMdbCS
+    // instance.
+
+    public static void installStdoutCapture() {
+        System.setOut(makeCaptureStream(true));
+        System.setErr(makeCaptureStream(false));
+    }
+
+    private static PrintStream makeCaptureStream(boolean isStdout) {
+        return new PrintStream(new OutputStream() {
+            private final ByteArrayOutputStream lineBuf = new ByteArrayOutputStream();
+            @Override
+            public void write(int b) {
+                if (b == '\n') {
+                    String line = lineBuf.toString();
+                    if (isStdout) nativeHandleStdoutLine(line);
+                    else          nativeHandleStderrLine(line);
+                    lineBuf.reset();
+                } else {
+                    lineBuf.write(b);
+                }
+            }
+        }, true);
+    }
+
+    private static native void nativeHandleStdoutLine(String line);
+    private static native void nativeHandleStderrLine(String line);
 }
