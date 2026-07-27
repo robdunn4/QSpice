@@ -19,7 +19,9 @@ static const char *VersionInfo = "QMdbSim2 v0.7.0 " DBG_TXT;
 MdbSim::MdbSim() : dbg_(jvmHost_) {}
 
 MdbSim::~MdbSim() {
-  if (simState == Running || simState == Initialised) stopSim();
+  // ErrState included: a failure in initSim()/loadProgram()/connectSim()
+  // still needs disconnect()/destroy() to run -- see stopSim().
+  if (simState != NotStarted && simState != Stopped) stopSim();
 }
 
 const char *MdbSim::getVerInfo() { return VersionInfo; }
@@ -182,18 +184,24 @@ bool MdbSim::startSim(const char *deviceName, const char *pgmPath,
 // ────────────────────────────────────────────────────────
 
 bool MdbSim::stopSim() {
-  if (simState == ErrState) return false;
   if (simState == NotStarted) {
     setError("stopSim(not started)");
     return false;
   }
+  if (simState == Stopped) return true; // idempotent, not an error path
 
   releasePins();
 
-  if (simState == Running) {
-    dbg_.disconnect();
-    dbg_.destroy();
-  }
+  // ErrState can occur at any point after initSim() -- e.g. loadProgram()
+  // failing before connect()/program() ever ran.  disconnect()/destroy() are
+  // no-ops on the Java side if the session never got that far, so it's safe
+  // (and necessary) to always try them here rather than only on the Running
+  // path.  Skipping this on ErrState previously left the MDBCore session
+  // (and whatever native/thread resources it holds) undestroyed for the
+  // life of the process -- the root cause of QSpice never returning to
+  // ready after a failed loadProgram().
+  dbg_.disconnect();
+  dbg_.destroy();
 
   simState = Stopped;
   return true;
