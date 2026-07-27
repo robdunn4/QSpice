@@ -6,6 +6,7 @@ These devices are currently available in the repository.  If you don't find what
 | Device Folder | Supported Devices | Full<br>Demo |
 |---|---|:---:|
 | [ATtiny85](./ATtiny85/) | ATtiny25, ATtiny45, ATtiny85 | ✓ |
+| [dsPIC33FJ128MC802](./dsPIC33FJ128MC802/) | dsPIC33FJ128MC802, dsPIC33FJ128MC202, dsPIC33FJ64MC802, dsPIC33FJ64MC202, dsPIC33FJ32MC302 | ✗ |
 | [PIC16F15213](./PIC16F15213/) | PIC16F15213, PIC16F15214 | ✓ |
 | [PIC18F4550](./PIC18F4550/) | PIC18F4455, PIC18F4550  | ✗ |
 | [PIC18F45K50](./PIC18F45K50/) | PIC18F45K50, PIC18LF45K50  | ✗ |

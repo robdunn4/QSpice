@@ -1,0 +1,66 @@
+* dsPIC33FJ128MC802 family -- Pin Definitions file for QSymGen3
+* Source: Microchip DS70291G, "dsPIC33FJ32MC302/304, dsPIC33FJ64MCX02/X04,
+* and dsPIC33FJ128MCX02/X04 Data Sheet"
+* Package: 28-Pin SPDIP/SOIC (pin numbers below refer to this pinout)
+* Covers dsPIC33FJ128MC802, dsPIC33FJ128MC202, dsPIC33FJ64MC802,
+* dsPIC33FJ64MC202, dsPIC33FJ32MC302 -- all five share this exact
+* pinout in both the 28-Pin SPDIP/SOIC and 28-Pin QFN-S diagrams.
+*
+* NOTE: AVDD, AVSS, and VCAP (flagged individually below) have no
+* proper record type in the current .qpindef format. AVDD/AVSS are
+* electrically distinct from VDD/VSS (separate analog supply/ground
+* per the datasheet) but the format allows only one V and one G
+* record; VCAP is a regulator filter-cap node, not a supply, ground,
+* or signal pin at all. All three are provisionally typed I pending
+* a decision on how QSymGen3 should represent them.
+*
+D 16-bit Digital Signal Controllers (up to 128 KB Flash and 16K SRAM) with Motor Control PWM and Advanced Analog
+P dsPIC33FJ128MC802 dsPIC33FJ128MC202 dsPIC33FJ64MC802 dsPIC33FJ64MC202 dsPIC33FJ32MC302
+*
+V VDD
+*
+* FLAG: AVDD (pin 28) -- see AVDD/AVSS/VCAP note above. Provisionally I.
+I AVDD
+*
+* FLAG: AVSS (pin 27) -- see AVDD/AVSS/VCAP note above. Provisionally I.
+I AVSS
+*
+* FLAG: MCLR (pin 1) -- device Reset input ("Master Clear (Reset) input.
+* This pin is an active-low Reset to the device."). Table lists it as
+* type I/P, not a general-purpose GPIO. Classified I; flagged per
+* procedure since RESET pins are explicitly called out as non-obvious.
+I MCLR
+*
+B RA0 AN0/VREF+/CN2
+B RA1 AN1/VREF-/CN3
+B RA2 OSC1/CLKI/CN30
+B RA3 OSC2/CLKO/CN29/PMA0
+B RA4 SOSCO/T1CK/CN0/PMA1
+B RB0 PGED1/AN2/C2IN-/RP0/CN4
+B RB1 PGEC1/AN3/C2IN+/RP1/CN5
+B RB2 AN4/C1IN-/RP2/CN6
+B RB3 AN5/C1IN+/RP3/CN7
+*
+K SIMCLK
+*
+B RB4 SOSCI/RP4/CN1/PMBE
+B RB5 PGED3/ASDA1/RP5/CN27/PMD7
+B RB6 PGEC3/ASCL1/RP6/CN24/PMD6
+B RB7 INT0/RP7/CN23/PMD5
+B RB8 TCK/PWM2H1/SCL1/RP8/CN22/PMD4
+B RB9 TDO/PWM2L1/SDA1/RP9/CN21/PMD3
+B RB10 PGED2/TDI/PWM1H3/RP10/CN16/PMD2
+B RB11 PGEC2/TMS/PWM1L3/RP11/CN15/PMD1
+B RB12 PWM1H2/RP12/CN14/PMD0
+B RB13 PWM1L2/RP13/CN13/PMRD
+B RB14 PWM1H1/RTCC/RP14/CN12/PMWR
+B RB15 PWM1L1/RP15/CN11/PMCS1
+*
+* FLAG: VCAP (pin 20) -- see AVDD/AVSS/VCAP note above. Provisionally I.
+* Must NOT be tied to the VDD/VSS net -- it's a distinct decoupling
+* node, not a duplicate power pin.
+I VCAP
+*
+* Pin 19 (VSS) is a second physical VSS pin -- same net as the VSS
+* record below (pin 8). No second record created (duplicate-pin rule).
+G VSS
