@@ -9,5 +9,6 @@
   <Project Path="Devices/PIC16F15213/PIC16F15213.vcxproj" Id="c8b012a7-b033-4f21-bac4-d5cceb81aabb" />
   <Project Path="Devices/PIC18F4550/PIC18F4550.vcxproj" Id="0b77762f-fd1c-4f58-8aec-8e8d533b8103" />
   <Project Path="Devices/PIC18F45K50/PIC18F45K50.vcxproj" Id="49961d45-dcc7-4cf3-9b92-b553ef2e64ed" />
+  <Project Path="Devices/PIC18F46K22/PIC18F46K22.vcxproj" Id="5e25fad4-41d3-47ab-b099-e21527a19617" />
   <Project Path="QMdbSim2_Shared/QMdbSim2_Shared.vcxitems" />
 </Solution>

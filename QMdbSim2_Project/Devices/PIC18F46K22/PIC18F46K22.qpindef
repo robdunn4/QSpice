@@ -1,0 +1,78 @@
+* PIC18(L)F4XK22 Pin Definitions -- 40/44-pin family
+* Source: Microchip DS40001412G "PIC18(L)F2X/4XK22 Data Sheet", Table 1-3
+*         (PIC18(L)F4XK22 Pinout I/O Descriptions)
+*
+* Flagged for manual review (dual-function / non-obvious pins):
+*   RE3/VPP/MCLR   -- default function is MCLR (active-low device Reset);
+*                     RE3 GPIO requires the MCLR Configuration bit cleared.
+*                     Classified I (input-only) per the table's Pin Type
+*                     column -- datasheet Features list confirms this is
+*                     the device's single input-only pin (35 I/O + 1 input).
+*   RA6/CLKO/OSC2, RA7/CLKI/OSC1 -- primary oscillator pins; unavailable as
+*                     GPIO when a crystal/resonator/external-clock
+*                     oscillator mode is selected.
+*   RC0/SOSCO, RC1/SOSCI -- Timer1 secondary oscillator pins; same caveat.
+*   RB6/PGC, RB7/PGD -- ICSP programming clock/data; shared with GPIO.
+*   CCP2/P2A (RB3 vs RC1) and T3CKI/CCP3/P3A/P2B (RB5/RC0/RE0/RD2) --
+*                     these alternate functions are pin-remapped by
+*                     Configuration bits (CCP2MX, CCP3MX, T3CMX, PB2MX)
+*                     rather than simultaneously present on every listed
+*                     pin; see datasheet Notes 1/2 for default vs.
+*                     alternate assignment. Recorded as-is on each physical
+*                     pin -- mux selection is a runtime/config concern
+*                     outside this file's scope.
+*
+* No directional-arrow Pin Diagram is present in this datasheet (Figures
+* 3-6 show only base pin names -- e.g. "RA0", "MCLR/VPP/RE3" -- not full
+* alt-function lists), so the Step 5 arrow cross-check does not apply.
+* Table 1-3 pin-type language (I/O/P columns) is the sole classification
+* source, and alt-function text below is taken from Table 1-3's pin-name
+* header rows rather than the Pin Diagram figures.
+*
+* VDD and VSS each occupy two physical package pins (PDIP 11/32 and
+* 12/31 respectively, TQFP/QFN equivalents per the table); both are the
+* same net, so a single V/G record covers both -- no VDD2/VSS2 created.
+
+D PIC18(L)F4XK22 40/44-Pin Low-Power High-Performance Microcontroller
+P PIC18F43K22 PIC18F44K22 PIC18F45K22 PIC18F46K22 PIC18LF43K22 PIC18LF44K22 PIC18LF45K22 PIC18LF46K22
+
+V VDD
+B RA0 C12IN0-/AN0
+B RA1 C12IN1-/AN1
+B RA2 C2IN+/AN2/DACOUT/VREF-
+B RA3 C1IN+/AN3/VREF+
+B RA4 C1OUT/SRQ/T0CKI
+B RA5 C2OUT/SRNQ/SS1/HLVDIN/AN4
+B RA6 CLKO/OSC2
+B RA7 CLKI/OSC1
+B RB0 INT0/FLT0/SRI/AN12
+B RB1 INT1/C12IN3-/AN10
+B RB2 INT2/CTED1/AN8
+B RB3 CTED2/P2A/CCP2/C12IN2-/AN9
+B RB4 IOC0/T5G/AN11
+B RB5 IOC1/P3A/CCP3/T3CKI/T1G/AN13
+B RB6 IOC2/PGC
+B RB7 IOC3/PGD
+B RC0 P2B/T3CKI/T3G/T1CKI/SOSCO
+X
+K SIMCLK
+B RC1 P2A/CCP2/SOSCI
+B RC2 CTPLS/P1A/CCP1/T5CKI/AN14
+B RC3 SCK1/SCL1/AN15
+B RC4 SDI1/SDA1/AN16
+B RC5 SDO1/AN17
+B RC6 TX1/CK1/AN18
+B RC7 RX1/DT1/AN19
+B RD0 SCK2/SCL2/AN20
+B RD1 CCP4/SDI2/SDA2/AN21
+B RD2 P2B/AN22
+B RD3 P2C/SS2/AN23
+B RD4 P2D/SDO2/AN24
+B RD5 P1B/AN25
+B RD6 P1C/TX2/CK2/AN26
+B RD7 P1D/RX2/DT2/AN27
+B RE0 P3A/CCP3/AN5
+B RE1 P3B/AN6
+B RE2 CCP5/AN7
+I RE3 VPP/MCLR
+G VSS
