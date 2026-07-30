@@ -220,34 +220,6 @@
       «pin (0,-200) (0,0) 1 0 0 0x0 -1 "-"»
     »
   »
-  «component (1700,-1700) 0 0
-    «symbol R
-      «type: R»
-      «description: Resistor(USA Style Symbol)»
-      «shorted pins: false»
-      «line (0,200) (0,180) 0 0 0x1000000 -1 -1»
-      «line (0,-180) (0,-200) 0 0 0x1000000 -1 -1»
-      «zigzag (-80,180) (80,-180) 0 0 0 0x1000000 -1 -1»
-      «text (100,150) 1 7 0 0x1000000 -1 -1 "R2"»
-      «text (100,-150) 1 7 0 0x1000000 -1 -1 "1Meg"»
-      «pin (0,200) (0,0) 1 0 0 0x0 -1 "+"»
-      «pin (0,-200) (0,0) 1 0 0 0x0 -1 "-"»
-    »
-  »
-  «component (3000,-1700) 0 0
-    «symbol R
-      «type: R»
-      «description: Resistor(USA Style Symbol)»
-      «shorted pins: false»
-      «line (0,200) (0,180) 0 0 0x1000000 -1 -1»
-      «line (0,-180) (0,-200) 0 0 0x1000000 -1 -1»
-      «zigzag (-80,180) (80,-180) 0 0 0 0x1000000 -1 -1»
-      «text (100,150) 1 7 0 0x1000000 -1 -1 "R6"»
-      «text (100,-150) 1 7 0 0x1000000 -1 -1 "1Meg"»
-      «pin (0,200) (0,0) 1 0 0 0x0 -1 "+"»
-      «pin (0,-200) (0,0) 1 0 0 0x0 -1 "-"»
-    »
-  »
   «component (-1200,700) 0 0
     «symbol PIC18F46K22
       «type: »
@@ -295,9 +267,9 @@
       «triangle (610,-3950) (560,-3850) (660,-3850) 0 0 0xff0000 0xffffff -1 -1»
       «text (0,150) 1 15 0 0x1000000 -1 -1 "X1"»
       «text (0,50) 0.5 15 0 0x1000000 -1 -1 "PIC18F46K22"»
-      «text (0,250) 0.5 15 2 0x1000000 -1 -1 "Device=<("PIC18F43K22"),"PIC18F44K22","PIC18F45K22","PIC18F46K22","PIC18LF43K22","PIC18LF44K22","PIC18LF45K22","PIC18LF46K22"> Select target device from list"»
-      «text (0,-4150) 0.5 15 2 0x1000000 -1 -1 "PgmPath=<"Test_PIC18F46K22.elf"> Path to device code (*.hex/*.elf)"»
-      «text (0,-4250) 0.5 15 2 0x1000000 -1 -1 "CfgPath=<".\\QMdbCfg.ini"> Path to QMdbCfg.ini file"»
+      «text (0,250) 0.5 15 2 0x1000000 -1 -1 "Device=<"PIC18F43K22","PIC18F44K22","PIC18F45K22",("PIC18F46K22"),"PIC18LF43K22","PIC18LF44K22","PIC18LF45K22","PIC18LF46K22">Select target device from list"»
+      «text (0,-4150) 0.5 15 2 0x1000000 -1 -1 "PgmPath=<"Test_PIC18F46K22.elf">Path to device code (*.hex/*.elf)"»
+      «text (0,-4250) 0.5 15 2 0x1000000 -1 -1 "CfgPath=<".\\QMdbCfg.ini">Path to QMdbCfg.ini file"»
       «text (-530,-400) 0.25 7 1 0x1000000 -1 -1 "C12IN0-/AN0"»
       «text (-530,-600) 0.25 7 1 0x1000000 -1 -1 "C12IN1-/AN1"»
       «text (-530,-800) 0.25 7 1 0x1000000 -1 -1 "C2IN+/AN2/DACOUT/VREF-"»
@@ -398,14 +370,40 @@
   «net (3200,-600) 1 13 0 "L3"»
   «net (4300,600) 1 14 0 "L1"»
   «net (4300,-600) 1 13 0 "L3"»
-  «net (1700,-2000) 1 13 0 "GND"»
-  «net (3000,-2000) 1 13 0 "GND"»
-  «net (1700,-1400) 1 14 0 "RA3"»
-  «net (3000,-1400) 1 14 0 "RA4"»
   «net (-400,-3000) 1 7 0 "MCLR"»
   «net (-2000,0) 1 11 0 "RA2"»
-  «net (-200,-3300) 1 13 0 "GND"»
   «net (-2900,100) 1 13 0 "MCLR"»
+  «net (-2000,-600) 1 11 0 "RA5"»
+  «net (-2000,-800) 1 11 0 "RA6"»
+  «net (-2000,-1000) 1 11 0 "RA7"»
+  «net (-2000,-1200) 1 11 0 "RB0"»
+  «net (-2000,-1400) 1 11 0 "RB1"»
+  «net (-2000,-1600) 1 11 0 "RB2"»
+  «net (-2000,-1800) 1 11 0 "RB3"»
+  «net (-2000,-2000) 1 11 0 "RB4"»
+  «net (-2000,-2200) 1 11 0 "RB5"»
+  «net (-2000,-2400) 1 11 0 "RB6"»
+  «net (-2000,-2600) 1 11 0 "RB7"»
+  «net (-2000,-2800) 1 11 0 "RC0"»
+  «net (-400,400) 1 7 0 "RC2"»
+  «net (-400,600) 1 7 0 "RC1"»
+  «net (-400,200) 1 7 0 "RC3"»
+  «net (-400,0) 1 7 0 "RC4"»
+  «net (-400,-200) 1 7 0 "RC5"»
+  «net (-400,-400) 1 7 0 "RC6"»
+  «net (-400,-600) 1 7 0 "RC7"»
+  «net (-400,-800) 1 7 0 "RD0"»
+  «net (-400,-1000) 1 7 0 "RD1"»
+  «net (-400,-1200) 1 7 0 "RD2"»
+  «net (-400,-1400) 1 7 0 "RD3"»
+  «net (-400,-1600) 1 7 0 "RD4"»
+  «net (-400,-1800) 1 7 0 "RD5"»
+  «net (-400,-2000) 1 7 0 "RD6"»
+  «net (-400,-2200) 1 7 0 "RD7"»
+  «net (-400,-2400) 1 7 0 "RE0"»
+  «net (-400,-2600) 1 7 0 "RE1"»
+  «net (-400,-2800) 1 7 0 "RE4"»
+  «net (-300,-3400) 1 13 0 "GND"»
   «junction (4300,300)»
   «junction (4300,-300)»
   «junction (3200,300)»
@@ -460,15 +458,41 @@
   «wire (4300,600) (4300,300) "L1"»
   «wire (4100,300) (4300,300) "L1"»
   «wire (4300,-600) (4300,-300) "L3"»
-  «wire (1700,-1900) (1700,-2000) "GND"»
-  «wire (1700,-1400) (1700,-1500) "RA3"»
-  «wire (3000,-1500) (3000,-1400) "RA4"»
-  «wire (3000,-2000) (3000,-1900) "GND"»
   «wire (-2900,100) (-2900,300) "MCLR"»
   «wire (-500,-3000) (-400,-3000) "MCLR"»
   «wire (-2000,0) (-1900,0) "RA2"»
-  «wire (-200,-3300) (-200,-3200) "GND"»
-  «wire (-200,-3200) (-500,-3200) "GND"»
+  «wire (-2000,-600) (-1900,-600) "RA5"»
+  «wire (-2000,-800) (-1900,-800) "RA6"»
+  «wire (-2000,-1000) (-1900,-1000) "RA7"»
+  «wire (-2000,-1200) (-1900,-1200) "RB0"»
+  «wire (-2000,-1400) (-1900,-1400) "RB1"»
+  «wire (-2000,-1600) (-1900,-1600) "RB2"»
+  «wire (-2000,-1800) (-1900,-1800) "RB3"»
+  «wire (-2000,-2000) (-1900,-2000) "RB4"»
+  «wire (-2000,-2200) (-1900,-2200) "RB5"»
+  «wire (-2000,-2400) (-1900,-2400) "RB6"»
+  «wire (-2000,-2600) (-1900,-2600) "RB7"»
+  «wire (-2000,-2800) (-1900,-2800) "RC0"»
+  «wire (-500,600) (-400,600) "RC1"»
+  «wire (-500,-2800) (-400,-2800) "RE4"»
+  «wire (-500,-2600) (-400,-2600) "RE1"»
+  «wire (-500,-2400) (-400,-2400) "RE0"»
+  «wire (-500,-2200) (-400,-2200) "RD7"»
+  «wire (-500,-2000) (-400,-2000) "RD6"»
+  «wire (-500,-1800) (-400,-1800) "RD5"»
+  «wire (-500,-1600) (-400,-1600) "RD4"»
+  «wire (-500,-1400) (-400,-1400) "RD3"»
+  «wire (-500,-1200) (-400,-1200) "RD2"»
+  «wire (-500,-1000) (-400,-1000) "RD1"»
+  «wire (-500,-800) (-400,-800) "RD0"»
+  «wire (-500,-600) (-400,-600) "RC7"»
+  «wire (-500,-400) (-400,-400) "RC6"»
+  «wire (-500,-200) (-400,-200) "RC5"»
+  «wire (-500,0) (-400,0) "RC4"»
+  «wire (-500,200) (-400,200) "RC3"»
+  «wire (-500,400) (-400,400) "RC2"»
+  «wire (-300,-3400) (-300,-3200) "GND"»
+  «wire (-300,-3200) (-500,-3200) "GND"»
   «rect (1550,850) (4850,-850) 0 0 2 0x4000000 0x1000000 -1 0 -1»
   «text (5140,897) 0.8 5 1 0x1000000 -1 -1 "ï»¿Notes:\n* SIMCLK is NOT an actual device pin...\n* This device contains an internal oscillator.\n   However, that is not used for emulation.\n   Instead, SIMCLK is used to sychronize the\n   micro-controller to the QSpice simulation.\n   Each falling edge of SIMCLK steps the device\n   by 1 instruction cycle.  For this device,\n   one instruction cycle = 4 oscillator cycles.\n* Set OscFreq to match device oscillator \n   frequency as defined in the *.hex/*.elf\n   configuration bits."»
   «text (-3180,2372) 1.6 5 1 0x1000000 -1 -1 "ï»¿PIC18F46K22 Test Fixture (Incomplete)"»
