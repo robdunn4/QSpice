@@ -8,17 +8,17 @@
 #include <string_view>
 
 namespace VersionInfo {
-constexpr std::string_view progName    = "QSymGen3";
-constexpr std::string_view compileDate = __DATE__ " " __TIME__;
-constexpr std::string_view version     = "0.7.9";
+	constexpr std::string_view progName = "QSymGen3";
+	constexpr std::string_view compileDate = __DATE__ " " __TIME__;
+	constexpr std::string_view version = "0.7.11";
 
 #if defined(_DEBUG)
-constexpr std::string_view buildType = "DEBUG";
+	constexpr std::string_view buildType = "DEBUG";
 #else
-constexpr std::string_view buildType = "RELEASE";
+	constexpr std::string_view buildType = "RELEASE";
 #endif
 
-inline const std::string versionInfo = std::format(
-    "{} v{} [{} Build, {}]", progName, version, buildType, compileDate);
+	inline const std::string versionInfo = std::format(
+		"{} v{} [{} Build, {}]", progName, version, buildType, compileDate);
 
 } // namespace VersionInfo

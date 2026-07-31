@@ -48,7 +48,7 @@ bool SymList::makeSymbol(const PinDefList &pinList, int rectWidth,
   }
 
   // some preliminary calcs for graphics
-  int       pinRows      = (pinList.totPinCnt + 1) / 2;
+  int       pinRows      = (static_cast<int>(pinList.size()) + 1) / 2;
   const int pinRowHeight = 200;
   int       rectHeight   = pinRows * pinRowHeight;
 

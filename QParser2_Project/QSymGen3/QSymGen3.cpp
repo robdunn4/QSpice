@@ -130,14 +130,17 @@ int main(int argc, char **argv) {
   // e.g. "double &vddRef = VCC;", immediately following the uData declarations.
   // Used only at the setVDD() call site in the template; getVDD() is the
   // path for retrieving supply voltage afterward.
-  auto vIter = std::find_if(pinList.cbegin(), pinList.cend(),
-                            [](const PinDef &pd) { return pd.type == 'V'; });
-  if (vIter == pinList.cend()) {
-    cout << "Error:  No V record found in pin definitions.  Operation "
-            "aborted.\n";
-    return -13; // TODO:  Create unique error code
+  //
+  // If no V record exists, parseLines() already asked the user whether to
+  // continue anyway (Step 6) -- if we got this far, either V was present or
+  // the user consented to proceed without it. Either way, don't abort here;
+  // just omit the vddRef line.
+  if (!pinList.vddPinName.empty()) {
+    uDataLines.push_back("double &vddRef = " + pinList.vddPinName + ";");
+  } else {
+    uDataLines.push_back(
+        "// No VDD ('V') record found in pin definitions -- vddRef omitted.");
   }
-  uDataLines.push_back("double &vddRef = " + vIter->name + ";");
 
   // Step 10: generate QSymGen3 code snippet (no file write)
   SymList cppSnippet;
