@@ -77,17 +77,51 @@ int PinDefList::parseLines(const StrList strList, std::ostream &errStrm) {
       continue;
     }
 
+    // X supports an optional integer repeat count: "X" alone means 1 blank
+    // position (unchanged); "X i" expands to i consecutive X records. This
+    // is pure sugar -- each expanded record is a completely ordinary X
+    // entry, indistinguishable from i separate "X" lines, so nothing
+    // downstream needs to know this shorthand exists.
+    if (tokenChar == 'X') {
+      int         count = 1;
+      std::string countStr;
+      if (ss >> countStr && countStr[0] != '*') {
+        try {
+          int parsed = std::stoi(countStr);
+          if (parsed >= 1) {
+            count = parsed;
+          } else {
+            errStrm << std::format(
+                " *** Warning:  X record invalid count \"{}\" @ line {}; "
+                "using default count=1.\n",
+                countStr, lineNbr);
+          }
+        } catch (const std::exception &) {
+          errStrm << std::format(
+              " *** Warning:  X record invalid count \"{}\" @ line {}; "
+              "using default count=1.\n",
+              countStr, lineNbr);
+        }
+      }
+
+      for (int i = 0; i < count; ++i) {
+        PinDef pinDef('X', "---");
+        skipPinCnt++;
+        push_back(pinDef);
+      }
+      continue;
+    }
+
     char        pinType = tokenChar;
-    std::string pinName = "---"; // default for 'X' type (skip)
+    std::string pinName;
 
     if (!(ss >> token)) {
-      if (pinType != 'X') {
-        errStrm << format(" *** Pin token missing name @ line {}: {}\n",
-                          lineNbr, line);
-        errState = true;
-        continue;
-      }
-    } else pinName = token;
+      errStrm << format(" *** Pin token missing name @ line {}: {}\n",
+                        lineNbr, line);
+      errState = true;
+      continue;
+    }
+    pinName = token;
 
     std::string pinAltText;
     while (ss >> token) {
@@ -126,9 +160,6 @@ int PinDefList::parseLines(const StrList strList, std::ostream &errStrm) {
     case 'K':
       clockPinCnt++;
       clockPinName = pinName; // last K pin wins; warned below if >1
-      break;
-    case 'X':
-      skipPinCnt++;
       break;
     }
     push_back(pinDef);
