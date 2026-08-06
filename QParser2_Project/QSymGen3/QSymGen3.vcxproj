@@ -162,6 +162,7 @@
     <ClCompile Include="RegUtil.cpp" />
     <ClCompile Include="SymList.cpp" />
     <ClCompile Include="TemplateProcessor.cpp" />
+    <ClCompile Include="UDataFixup.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\QParser2_Shared_Lib\QParser2_Shared_Lib.vcxproj">
@@ -179,6 +180,7 @@
     <ClInclude Include="RegUtil.h" />
     <ClInclude Include="SymList.h" />
     <ClInclude Include="TemplateProcessor.h" />
+    <ClInclude Include="UDataFixup.h" />
     <ClInclude Include="VersionInfo.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
