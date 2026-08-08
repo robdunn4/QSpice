@@ -1,0 +1,91 @@
+* PIC16F818/819 Pin Definitions -- 18-pin PDIP/SOIC, 20-pin SSOP, and
+* 28-pin QFN packages (all three share the identical 16-signal GPIO set;
+* see the VDD/VSS/QFN note near the end of this header for what actually
+* differs between them)
+* Source: Microchip DS39598F "PIC16F818/819 Data Sheet", Table 1-2
+*         (PIC16F818/819 Pinout Descriptions)
+*
+* Flagged for manual review (dual-function / non-obvious pins):
+*   RA5/MCLR/VPP   -- default function is MCLR (active-low device Reset);
+*                     RA5 GPIO requires the MCLRE Configuration bit cleared.
+*                     Classified I (input-only) per the table's I/O/P Type
+*                     column -- every sub-function (RA5, MCLR, VPP) is
+*                     listed I or P, never O; RA5-as-GPIO cannot drive an
+*                     output even with MCLRE cleared.
+*   RA6/OSC2/CLKO, RA7/OSC1/CLKI -- primary oscillator pins; classified B
+*                     per the table's own "Bidirectional I/O pin" text,
+*                     but constrained/unavailable as GPIO once a
+*                     crystal/resonator/external-clock oscillator mode is
+*                     selected (CLKO becomes output-only in RC mode).
+*   RB2/SDO/CCP1 and RB3/CCP1/PGM -- CCP1 alternate function appears on
+*                     both pins in Table 1-2. Believed to be pin-remapped
+*                     by a CCPMX-style Configuration bit (confirmed
+*                     pattern on the sibling PIC16F87/88 family, which
+*                     has the identical RB2/RB3 CCP1 dual-listing with an
+*                     explicit CCPMX footnote) rather than simultaneously
+*                     present on both pins. NOT independently confirmed
+*                     against a PIC16F818/819-specific footnote in the
+*                     source text available for this extraction --
+*                     recommend verifying against the primary datasheet.
+*                     Recorded as-is on each physical pin -- mux selection
+*                     is a runtime/config concern outside this file's
+*                     scope.
+*   RB3/PGM        -- Low-Voltage ICSP Programming enable pin; additional
+*                     dual-function on RB3 alongside the CCP1 item above.
+*   RB6/PGC, RB7/PGD -- ICSP programming clock/data; shared with GPIO and
+*                     with the Timer1 secondary oscillator (T1OSO/T1OSI).
+*
+* No directional-arrow Pin Diagram image was available for this
+* extraction -- source material was text-only search-index snippets, not
+* the rendered figure -- so the Step 5 arrow cross-check was not
+* performed. Table 1-2 pin-type language (I/O/P columns) is the sole
+* classification source.
+*
+* Table 1-2 and the Pin Diagram were reconstructed from search-engine-
+* indexed text snippets across multiple independent third-party mirrors
+* (primary microchip.com source disallows automated fetch); snippets were
+* mutually consistent across mirrors but not verified against the
+* original PDF directly. Recommend a final check against a primary copy
+* before relying on this file, particularly the RB2/RB3 CCP1 item above.
+*
+* VDD and VSS occupy a single physical pin each (14 and 5 respectively)
+* on the 18-pin PDIP/SOIC package -- no duplicates there. On the 20-pin
+* SSOP, each occupies two physical pins (VDD: 15 & 16; VSS: 5 & 6) --
+* same net each, still one V/G record. On the 28-pin QFN, each also
+* occupies two physical pins (VDD and VSS both appear twice in the pin
+* diagram), PLUS the datasheet recommends connecting the exposed thermal
+* pad to VSS as well -- still just one V/G record; the pad isn't a
+* numbered signal pin and isn't given its own record.
+*
+* The 28-pin QFN additionally has several NC (No Connect) pins, used only
+* to keep the 16-signal GPIO set physically routable on that pinout --
+* not recorded here, since NC isn't a signal in this file's format.
+
+D PIC16F818/819 18/20-Pin Enhanced Flash Microcontrollers with nanoWatt Technology
+P PIC16F818 PIC16F819 PIC16LF818 PIC16LF819
+
+V VDD
+B RA0 AN0
+B RA1 AN1
+B RA2 AN2/VREF-
+B RA3 AN3/VREF+
+B RA4 AN4/T0CKI
+I RA5 MCLR/VPP
+B RA6 OSC2/CLKO
+X
+K SIMCLK
+
+B RA7 OSC1/CLKI
+B RB0 INT
+B RB1 SDI/SDA
+B RB2 SDO/CCP1
+B RB3 CCP1/PGM
+B RB4 SCK/SCL
+B RB5 SS
+B RB6 T1OSO/T1CKI/PGC
+B RB7 T1OSI/PGD
+G VSS
+
+*
+* End of pin definitions file
+*
