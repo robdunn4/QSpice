@@ -198,7 +198,7 @@
       «pin (0,200) (0,0) 1 0 0 0x0 -1 "K"»
     »
   »
-  «component (-2300,-4000) 0 0
+  «component (-900,-4000) 0 0
     «symbol Vpulse
       «type: V»
       «description: Independent Voltage Source»
@@ -218,6 +218,55 @@
       «text (100,-150) 1 7 0 0x1000000 -1 -1 "PULSE 0 5 0 1n 1n 1/InstHz/2 1/InstHz"»
       «pin (0,200) (0,0) 1 0 0 0x0 -1 "+"»
       «pin (0,-200) (0,0) 1 0 0 0x0 -1 "-"»
+    »
+  »
+  «component (-2300,-4000) 0 0
+    «symbol V
+      «type: V»
+      «description: Independent Voltage Source»
+      «shorted pins: false»
+      «line (0,-130) (0,-200) 0 0 0x1000000 -1 -1»
+      «line (0,200) (0,130) 0 0 0x1000000 -1 -1»
+      «rect (-25,77) (25,73) 0 0 0 0x1000000 0x3000000 -1 0 -1»
+      «rect (-2,50) (2,100) 0 0 0 0x1000000 0x3000000 -1 0 -1»
+      «rect (-25,-73) (25,-77) 0 0 0 0x1000000 0x3000000 -1 0 -1»
+      «ellipse (-130,130) (130,-130) 0 0 0 0x1000000 0x1000000 -1 -1»
+      «text (100,150) 1 7 0 0x1000000 -1 -1 "V3"»
+      «text (100,-150) 1 7 0 0x1000000 -1 -1 "PWL 0 0 5m 5"»
+      «pin (0,200) (0,0) 1 0 0 0x0 -1 "+"»
+      «pin (0,-200) (0,0) 1 0 0 0x0 -1 "-"»
+    »
+  »
+  «component (1700,-2500) 0 0
+    «symbol DAC8
+      «type: €»
+      «description: Multiplying Gm Amplifier»
+      «shorted pins: false»
+      «line (-700,900) (-700,-900) 0 0 0x1000000 -1 -1»
+      «line (-700,900) (500,900) 0 0 0x1000000 -1 -1»
+      «line (-700,-900) (500,-900) 0 0 0x1000000 -1 -1»
+      «line (800,0) (500,900) 0 0 0x1000000 -1 -1»
+      «line (800,0) (500,-900) 0 0 0x1000000 -1 -1»
+      «text (0,0) 1 15 0 0x1000000 -1 -1 "€1"»
+      «text (100,-400) 0.5 0 2 0x1000000 -1 -1 "DAC"»
+      «text (914,-555) 1 5 2 0x1000000 -1 -1 "Rdac=<1K>"»
+      «pin (200,900) (0,0) 1 0 0 0x1000000 -1 "Vdd" "VDD"»
+      «pin (200,-900) (0,0) 1 0 0 0x1000000 -1 "Vss" "GND"»
+      «pin (800,0) (0,0) 1 15 0 0x1000000 -1 "OUT"»
+      «pin (-200,900) (0,-50) 1 13 0 0x1000000 -1 "Ref"»
+      «pin (-700,700) (50,0) 1 7 0 0x1000000 -1 "A0"»
+      «pin (-700,500) (50,0) 1 7 0 0x1000000 -1 "A1"»
+      «pin (-700,300) (50,0) 1 7 0 0x1000000 -1 "A2"»
+      «pin (-700,100) (50,0) 1 7 0 0x1000000 -1 "A3"»
+      «pin (-700,-100) (50,0) 1 7 0 0x1000000 -1 "A4"»
+      «pin (-700,-300) (50,0) 1 7 0 0x1000000 -1 "A5"»
+      «pin (-700,-500) (50,0) 1 7 0 0x1000000 -1 "A6"»
+      «pin (-700,-700) (50,0) 1 7 0 0x1000000 -1 "A7"»
+      «pin (400,-400) (0,0) 1 0 0 0x1000000 -1 "A8" "¥"»
+      «pin (400,-500) (0,0) 1 0 0 0x1000000 -1 "A9" "¥"»
+      «pin (400,-600) (0,0) 1 0 0 0x1000000 -1 "A10" "¥"»
+      «pin (400,-700) (0,0) 1 0 0 0x1000000 -1 "A11" "¥"»
+      «pin (-200,-900) (0,60) 1 14 0 0x1000000 -1 "EN" "VDD"»
     »
   »
   «component (-1200,700) 0 0
@@ -268,7 +317,7 @@
       «text (0,150) 1 15 0 0x1000000 -1 -1 "X1"»
       «text (0,50) 0.5 15 0 0x1000000 -1 -1 "PIC18F46K22"»
       «text (0,250) 0.5 15 2 0x1000000 -1 -1 "Device=<"PIC18F43K22","PIC18F44K22","PIC18F45K22",("PIC18F46K22"),"PIC18LF43K22","PIC18LF44K22","PIC18LF45K22","PIC18LF46K22">Select target device from list"»
-      «text (0,-4150) 0.5 15 2 0x1000000 -1 -1 "PgmPath=<"Test_PIC18F46K22.elf">Path to device code (*.hex/*.elf)"»
+      «text (0,-4150) 0.5 15 2 0x1000000 -1 -1 "PgmPath=<"Test_PIC18F46K22_ADC.elf">Path to device code (*.hex/*.elf)"»
       «text (0,-4250) 0.5 15 2 0x1000000 -1 -1 "CfgPath=<".\\QMdbCfg.ini">Path to QMdbCfg.ini file"»
       «text (-530,-400) 0.25 7 1 0x1000000 -1 -1 "C12IN0-/AN0"»
       «text (-530,-600) 0.25 7 1 0x1000000 -1 -1 "C12IN1-/AN1"»
@@ -353,11 +402,11 @@
   «net (-2000,400) 1 11 0 "RA0"»
   «net (-2000,200) 1 11 0 "RA1"»
   «net (-2000,-400) 1 11 0 "RA4"»
-  «net (-2000,-200) 1 11 0 "RA3"»
+  «net (-2000,-200) 1 11 0 "VDD"»
   «net (-2000,-3200) 1 11 0 "CLK"»
   «net (-2900,900) 1 14 0 "VDD"»
-  «net (-2300,-3700) 1 14 0 "CLK"»
-  «net (-2300,-4300) 1 13 0 "GND"»
+  «net (-900,-3700) 1 14 0 "CLK"»
+  «net (-900,-4300) 1 13 0 "GND"»
   «net (2100,600) 1 14 0 "L1"»
   «net (2100,-600) 1 13 0 "L2"»
   «net (1100,500) 1 7 0 "L1"»
@@ -400,10 +449,22 @@
   «net (-400,-1800) 1 7 0 "RD5"»
   «net (-400,-2000) 1 7 0 "RD6"»
   «net (-400,-2200) 1 7 0 "RD7"»
-  «net (-400,-2400) 1 7 0 "RE0"»
+  «net (-400,-2400) 1 7 0 "ADC_IN"»
   «net (-400,-2600) 1 7 0 "RE1"»
   «net (-400,-2800) 1 7 0 "RE4"»
   «net (-300,-3400) 1 13 0 "GND"»
+  «net (-2300,-3700) 1 14 0 "ADC_IN"»
+  «net (-2300,-4300) 1 13 0 "GND"»
+  «net (800,-1800) 1 11 0 "RD0"»
+  «net (800,-2000) 1 11 0 "RD1"»
+  «net (800,-2200) 1 11 0 "RD2"»
+  «net (800,-2400) 1 11 0 "RD3"»
+  «net (800,-2600) 1 11 0 "RD4"»
+  «net (800,-2800) 1 11 0 "RD5"»
+  «net (800,-3000) 1 11 0 "RD6"»
+  «net (800,-3200) 1 11 0 "RD7"»
+  «net (1500,-1400) 1 14 0 "VDD"»
+  «net (2700,-2500) 1 7 0 "DAC_OUT"»
   «junction (4300,300)»
   «junction (4300,-300)»
   «junction (3200,300)»
@@ -418,10 +479,10 @@
   «wire (-1900,400) (-2000,400) "RA0"»
   «wire (-2000,-3200) (-1900,-3200) "CLK"»
   «wire (-2000,-400) (-1900,-400) "RA4"»
-  «wire (-2000,-200) (-1900,-200) "RA3"»
+  «wire (-2000,-200) (-1900,-200) "VDD"»
   «wire (-2900,900) (-2900,700) "VDD"»
-  «wire (-2300,-3800) (-2300,-3700) "CLK"»
-  «wire (-2300,-4300) (-2300,-4200) "GND"»
+  «wire (-900,-3800) (-900,-3700) "CLK"»
+  «wire (-900,-4300) (-900,-4200) "GND"»
   «wire (1900,200) (1900,300) "L1"»
   «wire (2300,-200) (2300,-300) "L2"»
   «wire (2300,300) (2300,200) "L1"»
@@ -476,7 +537,7 @@
   «wire (-500,600) (-400,600) "RC1"»
   «wire (-500,-2800) (-400,-2800) "RE4"»
   «wire (-500,-2600) (-400,-2600) "RE1"»
-  «wire (-500,-2400) (-400,-2400) "RE0"»
+  «wire (-500,-2400) (-400,-2400) "ADC_IN"»
   «wire (-500,-2200) (-400,-2200) "RD7"»
   «wire (-500,-2000) (-400,-2000) "RD6"»
   «wire (-500,-1800) (-400,-1800) "RD5"»
@@ -493,15 +554,30 @@
   «wire (-500,400) (-400,400) "RC2"»
   «wire (-300,-3400) (-300,-3200) "GND"»
   «wire (-300,-3200) (-500,-3200) "GND"»
+  «wire (-2300,-3800) (-2300,-3700) "ADC_IN"»
+  «wire (-2300,-4300) (-2300,-4200) "GND"»
+  «wire (800,-1800) (1000,-1800) "RD0"»
+  «wire (800,-2000) (1000,-2000) "RD1"»
+  «wire (800,-2200) (1000,-2200) "RD2"»
+  «wire (800,-2400) (1000,-2400) "RD3"»
+  «wire (800,-2600) (1000,-2600) "RD4"»
+  «wire (800,-2800) (1000,-2800) "RD5"»
+  «wire (800,-3000) (1000,-3000) "RD6"»
+  «wire (800,-3200) (1000,-3200) "RD7"»
+  «wire (1500,-1400) (1500,-1600) "VDD"»
+  «wire (2700,-2500) (2500,-2500) "DAC_OUT"»
   «rect (1550,850) (4850,-850) 0 0 2 0x4000000 0x1000000 -1 0 -1»
+  «rect (350,-950) (4850,-3550) 0 0 2 0x4000000 0x1000000 -1 0 -1»
   «text (5140,897) 0.8 5 1 0x1000000 -1 -1 "ï»¿Notes:\n* SIMCLK is NOT an actual device pin...\n* This device contains an internal oscillator.\n   However, that is not used for emulation.\n   Instead, SIMCLK is used to sychronize the\n   micro-controller to the QSpice simulation.\n   Each falling edge of SIMCLK steps the device\n   by 1 instruction cycle.  For this device,\n   one instruction cycle = 4 oscillator cycles.\n* Set OscFreq to match device oscillator \n   frequency as defined in the *.hex/*.elf\n   configuration bits."»
   «text (-3180,2372) 1.6 5 1 0x1000000 -1 -1 "ï»¿PIC18F46K22 Test Fixture"»
-  «text (450,-1541) 1 5 0 0x1000000 -1 -1 "ï»¿.param OscFreq=4Meg\n.param CyclesPerInst=4\n.param InstHz=OscFreq/CyclesPerInst"»
-  «text (400,-1400) 1 7 1 0x1000000 -1 -1 "ï»¿Device Clock Parameters"»
+  «text (5200,-1541) 1 5 0 0x1000000 -1 -1 "ï»¿.param OscFreq=4Meg\n.param CyclesPerInst=4\n.param InstHz=OscFreq/CyclesPerInst"»
+  «text (5150,-1400) 1 7 1 0x1000000 -1 -1 "ï»¿Device Clock Parameters"»
   «text (3201,889) 1.25 14 1 0x1000000 -1 -1 "ï»¿"Charlieplexed" LEDs"»
-  «text (400,-2550) 1 7 0 0x1000000 -1 -1 "ï»¿.tran 5m"»
-  «text (5250,-1532) 1 5 0 0x1000000 -1 -1 "ï»¿.plot I(D1)\n.plot I(D2)\n.plot I(D3)\n.plot I(D4)\n.plot I(D5)\n.plot I(D6)"»
+  «text (5200,-3350) 1 7 0 0x1000000 -1 -1 "ï»¿.tran 5m"»
+  «text (5200,-3832) 1 5 0 0x1000000 -1 -1 "ï»¿.plot I(D1) I(D2)  I(D3)  I(D4) I(D5) I(D6)"»
   «text (-3160,1897) 1 5 1 0x1000000 -1 -1 "ï»¿The most current schematics, code, and documentation are available in the QMdbSim2 project folder at https://github.com/robdunn4/QSpice."»
-  «text (400,-2750) 1 7 1 0x1000000 -1 -1 "ï»¿.option fastmath=false"»
+  «text (5200,-3550) 1 7 1 0x1000000 -1 -1 "ï»¿.option fastmath=false"»
+  «text (5200,-4150) 1 7 0 0x1000000 -1 -1 "ï»¿.plot V(ADC_IN) V(DAC_OUT)"»
+  «text (450,-1100) 1 7 1 0x1000000 -1 -1 "ï»¿Note:  DAC is simply to demonstrate device ADC processing"»
 »
 

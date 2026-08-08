@@ -1,6 +1,0 @@
-* GPIO_IMPL.qsch
-R1 I G 1R
-R2 O G R=outimp()
-R3 0 C 1Meg
-.func outimp()=V(C)>0.5?10Meg:1
-.end

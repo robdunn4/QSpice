@@ -2,14 +2,14 @@
 <Project ToolsVersion="Current" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LocalDebuggerCommand>C:\Program Files\QSpice\QSpice64.exe</LocalDebuggerCommand>
-    <LocalDebuggerCommandArguments>PIC18F46K22_Demo.cir</LocalDebuggerCommandArguments>
+    <LocalDebuggerCommandArguments>PIC18F46K22_Demo_ADC.cir</LocalDebuggerCommandArguments>
     <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
-    <LocalDebuggerCommandArgumentsHistory>PIC18F46K22_Demo.cir|</LocalDebuggerCommandArgumentsHistory>
+    <LocalDebuggerCommandArgumentsHistory>PIC18F46K22_Demo.cir|PIC18F46K22_Demo_ADC.cir|</LocalDebuggerCommandArgumentsHistory>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LocalDebuggerCommand>C:\Program Files\QSpice\QSpice64.exe</LocalDebuggerCommand>
-    <LocalDebuggerCommandArguments>PIC18F46K22_Demo.cir</LocalDebuggerCommandArguments>
+    <LocalDebuggerCommandArguments>PIC18F46K22_Demo_ADC.cir</LocalDebuggerCommandArguments>
     <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
-    <LocalDebuggerCommandArgumentsHistory>PIC18F46K255_Demo.cir|PIC18F46K22_Demo.cir|</LocalDebuggerCommandArgumentsHistory>
+    <LocalDebuggerCommandArgumentsHistory>PIC18F46K255_Demo.cir|PIC18F46K22_Demo.cir|PIC18F46K22_Demo_ADC.cir|</LocalDebuggerCommandArgumentsHistory>
   </PropertyGroup>
 </Project>
