@@ -11,7 +11,7 @@
       «rect (-25,-73) (25,-77) 0 0 0 0x1000000 0x3000000 -1 0 -1»
       «ellipse (-130,130) (130,-130) 0 0 0 0x1000000 0x1000000 -1 -1»
       «text (100,150) 1 7 0 0x1000000 -1 -1 "V1"»
-      «text (100,-150) 1 7 0 0x1000000 -1 -1 "5.0"»
+      «text (100,-150) 1 7 0 0x1000000 -1 -1 "5"»
       «pin (0,200) (0,0) 1 0 0 0x0 -1 "+"»
       «pin (0,-200) (0,0) 1 0 0 0x0 -1 "-"»
     »
@@ -249,7 +249,7 @@
     »
   »
   «component (-1200,700) 0 0
-    «symbol PIC16F1521x
+    «symbol PIC16F15213
       «type: »
       «description: Microchip PIC16F15213/PIC16F15214»
       «shorted pins: false»
@@ -266,7 +266,7 @@
       «text (0,150) 1 15 0 0x1000000 -1 -1 "X1"»
       «text (0,50) 0.5 15 0 0x1000000 -1 -1 "PIC16F15213"»
       «text (0,250) 0.5 15 2 0x1000000 -1 -1 "Device=<("PIC16F15213"),"PIC16F15214">Select target device from list"»
-      «text (0,-1150) 0.5 15 2 0x1000000 -1 -1 "PgmPath=<"Test_PIC16F15213.elf">Path to device code (*.hex/*.elf)"»
+      «text (0,-1150) 0.5 15 2 0x1000000 -1 -1 "PgmPath=<"PIC16F15213_Test.elf">Path to device code (*.hex/*.elf)"»
       «text (0,-1250) 0.5 15 2 0x1000000 -1 -1 "CfgPath=<".\\QMdbCfg.ini">Path to QMdbCfg.ini file"»
       «text (-530,-400) 0.25 7 1 0x1000000 -1 -1 "ICSPDAT"»
       «text (-530,-600) 0.25 7 1 0x1000000 -1 -1 "ICSPCLK"»
@@ -285,12 +285,12 @@
   »
   «net (-2900,-2000) 1 13 0 "GND"»
   «net (-2900,-1400) 1 14 0 "VDD"»
-  «net (-2000,600) 1 11 0 "VDD"»
+  «net (-2000,900) 1 14 0 "VDD"»
   «net (-2000,400) 1 11 0 "RA0"»
   «net (-2000,200) 1 11 0 "RA1"»
   «net (-400,400) 1 7 0 "RA4"»
   «net (-400,200) 1 7 0 "RA5"»
-  «net (-300,-300) 1 13 0 "CLK"»
+  «net (-400,-500) 1 13 0 "CLK"»
   «net (-2900,900) 1 14 0 "VDD"»
   «net (-2300,-1400) 1 14 0 "CLK"»
   «net (-2300,-2000) 1 13 0 "GND"»
@@ -322,10 +322,11 @@
   «junction (2100,-300)»
   «wire (-2900,-1500) (-2900,-1400) "VDD"»
   «wire (-2900,-2000) (-2900,-1900) "GND"»
+  «wire (-2000,900) (-2000,600) "VDD"»
   «wire (-2000,600) (-1900,600) "VDD"»
   «wire (-1900,200) (-2000,200) "RA1"»
   «wire (-1900,400) (-2000,400) "RA0"»
-  «wire (-300,-300) (-300,-200) "CLK"»
+  «wire (-400,-500) (-400,-200) "CLK"»
   «wire (-400,400) (-500,400) "RA4"»
   «wire (-400,200) (-500,200) "RA5"»
   «wire (-2900,900) (-2900,700) "VDD"»
@@ -374,19 +375,19 @@
   «wire (-2900,100) (-2900,300) "MCLR"»
   «wire (-500,600) (-400,600) "MCLR"»
   «wire (-2000,0) (-1900,0) "RA2"»
-  «wire (-500,-200) (-300,-200) "CLK"»
+  «wire (-500,-200) (-400,-200) "CLK"»
   «wire (-200,-100) (-200,0) "GND"»
   «wire (-200,0) (-500,0) "GND"»
   «rect (1550,850) (4850,-850) 0 0 2 0x4000000 0x1000000 -1 0 -1»
   «text (5140,897) 0.8 5 1 0x1000000 -1 -1 "ï»¿Notes:\n* SIMCLK is NOT an actual device pin...\n* This device contains an internal oscillator.\n   However, that is not used for emulation.\n   Instead, SIMCLK is used to sychronize the\n   micro-controller to the QSpice simulation.\n   Each falling edge of SIMCLK steps the device\n   by 1 instruction cycle.  For this device,\n   one instruction cycle = 4 oscillator cycles.\n* Set OscFreq to match device oscillator \n   frequency as defined in the *.hex/*.elf\n   configuration bits."»
-  «text (-3180,2272) 1.6 5 1 0x1000000 -1 -1 "ï»¿PIC16F15213 Test Fixture"»
+  «text (-3180,2372) 1.6 5 1 0x1000000 -1 -1 "ï»¿PIC16F1521x Test Fixture"»
   «text (-3000,-2691) 1 5 0 0x1000000 -1 -1 "ï»¿.param OscFreq=4Meg\n.param CyclesPerInst=4\n.param InstHz=OscFreq/CyclesPerInst"»
   «text (-3050,-2550) 1 7 1 0x1000000 -1 -1 "ï»¿Device Clock Parameters"»
   «text (3201,889) 1.25 14 1 0x1000000 -1 -1 "ï»¿"Charlieplexed" LEDs"»
   «text (1650,-2550) 1 7 0 0x1000000 -1 -1 "ï»¿.tran 5m"»
   «text (5250,-1532) 1 5 0 0x1000000 -1 -1 "ï»¿.plot I(D1)\n.plot I(D2)\n.plot I(D3)\n.plot I(D4)\n.plot I(D5)\n.plot I(D6)"»
   «text (-3160,1897) 1 5 1 0x1000000 -1 -1 "ï»¿The most current schematics, code, and documentation are available in the QMdbSim2 project folder at https://github.com/robdunn4/QSpice."»
-  «text (5250,-2758) 1 5 0 0x1000000 -1 -1 "ï»¿;.plot V(RA0)\n;.plot V(RA1)\n;.plot V(RA2)\n;.plot V(RA4)\n;.plot V(RA5)"»
+  «text (5250,-2758) 1 5 0 0x1000000 -1 -1 "ï»¿; .plot V(RA0)\n; .plot V(RA1)\n; .plot V(RA2)\n; .plot V(RA4)\n; .plot V(RA5)"»
   «text (1650,-2750) 1 7 1 0x1000000 -1 -1 "ï»¿.option fastmath=false"»
 »
 
