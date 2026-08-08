@@ -17,7 +17,7 @@ public class QMdbCS {
 
     // ── Version ───────────────────────────────────────────────────────────
 
-    public static String getVersion() { return "0.15.0"; }
+    public static String getVersion() { return "0.17.0"; }
 
     // ── Construction / lifecycle ──────────────────────────────────────────
 

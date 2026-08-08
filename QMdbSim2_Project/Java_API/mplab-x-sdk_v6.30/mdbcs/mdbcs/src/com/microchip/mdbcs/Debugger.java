@@ -1704,8 +1704,16 @@ v     * @throws MException
             validateObject(assembly, "Debugger::init could not create assembly");
             if (pluginboard != null && !pluginboard.isEmpty())
                 assembly.SetPluginBoard(pluginboard);
+            // Save tool properties before ChangeTool() -- ChangeTool() resets them
+            // internally (see CmdDebugger/Hwtool.java in the interactive MDB CLI,
+            // which explicitly saves+restores around the equivalent call). Previously
+            // this code discarded whatever ChangeTool() set up by overwriting with a
+            // blank Properties() object; restoring the pre-change properties instead
+            // preserves tool/simulator defaults (e.g. peripheral model config) that
+            // the interactive CLI path never loses.
+            Properties preChangeToolProperties = assembly.GetToolProperties();
             af.ChangeTool(assembly, meta.getID(), meta.getClassName(), meta.getFlavor(), tool == null ? null : tool.getToolDescriptor());
-            toolProperties = createDefaultProperties();
+            toolProperties = (preChangeToolProperties != null) ? preChangeToolProperties : createDefaultProperties();
             af.SetToolProperties(assembly, toolProperties);
             pic = assembly.GetDevice();
             initMemories();
