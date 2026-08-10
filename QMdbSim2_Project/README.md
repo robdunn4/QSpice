@@ -1,6 +1,7 @@
 # QMdbSim2 Project
 
 ### Looking for a specific Microchip device?  [Click here](./Devices/)
+### Significant revision notes are [here](./Revision_Notes.md).
 
 -----
 
@@ -27,7 +28,7 @@ Simulation Waveforms
 
 -----
 
-The QMdbSim2 Project is a framework for using Microchip micro-controller devices (PIC, AVR) in QSpice simulations.  It uses Microchip's software simulator so, in theory, it supports the same devices to the same extent as the simulator in MPLabX.
+The QMdbSim2 Project is a framework for using Microchip micro-controller devices (PIC, AVR, dsPIC) in QSpice simulations.  It uses Microchip's software simulator so, in theory, it supports the same devices to the same extent as the simulator in MPLabX.
 
 The project is a replacement for the earlier QMdbSim project.  Key improvements:
 * QSpice simulations run much, much faster using Java Native Interface (JNI) calls to drive the Microchip Java-based simulator.
