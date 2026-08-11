@@ -1,4 +1,5 @@
-# QMdbSim2 Project
-## Claude Prompts
+# QMdbSim2 Project &mdash; Claude Stuff
 
-TBD
+Claude seems to do a reasonable first pass at generating a pin definitions file from a Microchip datasheet.  Feed Claude the Claude_Playbook_For_Pin_Definition_Files.md file along with a datasheet.  Then ask it to produce a pin definitions file for a specific device.  If that device comes in multiple packages, ask for a specific pin count.  Finally, ask Claude to include additional devices on the P record where pin count and pin functions are identical.
+
+Note:  QSymGen3 expects a single VDD and handles it as a special case when generating the DLL code.  If there is a second, distinct supply, e.g., an analog VDD, a standard input pin is used.  This may not work &mdash; the AVDD may require special handling like VDD.  If so, well, more to do.  Let me know.

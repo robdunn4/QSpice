@@ -1,0 +1,89 @@
+* dsPIC33EPXXGS202 Family Pin Definitions -- 28-pin SOIC/SSOP/QFN-S/UQFN
+* packages (all share the identical 28-signal set; only physical pin
+* NUMBERING differs between the SOIC/SSOP diagram and the QFN-style
+* diagrams in the datasheet -- irrelevant to this file's records, since
+* none of them encode physical pin numbers. See DS70005208E page 3-4 if
+* the numbering difference itself ever matters for a physical layout.)
+* Source: Microchip DS70005208E "dsPIC33EPXXGS202 Family Data Sheet",
+*         Table 1-1 (Pinout I/O Descriptions) and the 28-Pin SOIC/SSOP
+*         Pin Diagram (page 3). Extracted directly from the vendor PDF's
+*         text layer -- not reconstructed from search snippets, unlike
+*         the PIC16F819 file -- so no separate sourcing-reliability
+*         caveat is needed here.
+*
+* Flagged for manual review (dual-function / non-obvious pins):
+*   RB2/OSC2/CLKO/AN7/PGA1N2/RP34 -- Table 1-1's own Note 2: at device
+*                     power-up, a glitch pulse (~2V amplitude, >500us
+*                     duration) may appear on this pin regardless of
+*                     pull-down resistors. Datasheet explicitly
+*                     recommends NOT using this pin as an output driver
+*                     unless the circuit it drives can tolerate that.
+*   AVDD, AVSS      -- separate ANALOG power rail, not the same net as
+*                     VDD/VSS (Table 1-1: "must be connected at all
+*                     times", distinct Pin Type "P" entries from VDD/
+*                     VSS). The qpindef format only supports one V and
+*                     one G record, so these don't fit either -- recorded
+*                     as I (input), matching the VCAP treatment below.
+*                     This is an inference extending an explicit
+*                     instruction given for VCAP specifically, not
+*                     something independently confirmed as the intended
+*                     handling for AVDD/AVSS -- flagging for review.
+*   VCAP            -- CPU logic filter capacitor connection (Table 1-1
+*                     Pin Type: P). NOT simply a passive external
+*                     decoupling point -- it's the output of the on-chip
+*                     1.8V core-logic regulator that the CPU core
+*                     actually runs from, and it's actively monitored
+*                     internally by the Brown-out Reset circuit. Recorded
+*                     as I (input) per explicit instruction, despite this
+*                     not being a precise electrical match -- the format
+*                     has no dedicated category for an internal-regulator
+*                     node with no VDD/VSS/GPIO equivalent.
+*   MCLR            -- dedicated Reset input (Table 1-1 Pin Type I/P).
+*                     Unlike PIC16F819, this pin is NOT multiplexed with
+*                     any GPIO port bit on this device -- no RAx/RBx
+*                     alternate function exists for it at all.
+*
+* Every RAx/RBx pin's Peripheral Pin Select (PPS)-remappable alternate
+* functions (the RPnn-numbered names) are software-configurable at
+* runtime, not fixed like PIC16F819's dedicated alternate names -- this
+* does not affect classification (the underlying GPIO bit is
+* bidirectional regardless of what's remapped onto it via PPS), but
+* means the alt-text field below is busier per pin (5-6 alternate names
+* is typical) than on simpler fixed-mux devices.
+*
+* VSS occupies two physical pins (both are the same net) on this
+* package; still one G record. VDD, AVDD, AVSS, VCAP, and MCLR each
+* occupy exactly one physical pin.
+
+D dsPIC33EPXXGS202 Family 16-Bit Digital Signal Controllers for Digital Power Applications with Interconnected High-Speed PWM, ADC, PGA and Comparators
+P dsPIC33EP16GS202 dsPIC33EP32GS202
+
+V VDD
+I AVDD
+I AVSS
+I MCLR
+B RA0 AN0/PGA1P1/CMP1A
+B RA1 AN1/PGA1P2/PGA2P1/CMP1B
+B RA2 AN2/PGA1P3/PGA2P2/CMP1C/CMP2A
+B RA3 PWM1L
+B RA4 PWM1H
+B RB0 AN3/PGA2P3/CMP1D/CMP2B/RP32
+B RB1 OSC1/CLKI/AN6/RP33
+B RB2 OSC2/CLKO/AN7/PGA1N2/RP34
+B RB3 PGED2/AN8/INT0/RP35
+K SIMCLK
+
+B RB4 PGEC2/ADTRG31/RP36
+B RB5 TDO/AN9/PGA2N2/RP37
+B RB6 PGED1/TDI/AN10/SCL1/RP38
+B RB7 PGEC1/AN11/SDA1/RP39
+B RB8 PGED3/FLT31/RP40
+B RB9 AN4/CMP2C/RP41
+B RB10 AN5/CMP2D/RP42
+B RB11 TMS/PWM3H/RP43
+B RB12 TCK/PWM3L/RP44
+B RB13 PWM2H/RP45
+B RB14 PWM2L/RP46
+B RB15 PGEC3/RP47
+I VCAP
+G VSS
