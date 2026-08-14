@@ -1,0 +1,99 @@
+* ATmega48A/PA/88A/PA/168A/PA/328/P Pin Definitions -- 28-pin PDIP /
+* 28-pad QFN/MLF package
+* Source: Microchip DS40002061A "megaAVR Data Sheet
+*         ATmega48A/PA/88A/PA/168A/PA/328/P", Figure 1-1 (Pinout,
+*         28 PDIP and 28 MLF views) and Section 1.1 (Pin Descriptions).
+*
+* Primary device: ATmega328 (no "P" suffix) -- this determines the
+* file name. The P record below keeps the datasheet's own listing
+* order (48A/PA/88A/PA/168A/PA/328/P) rather than reordering around
+* the primary device.
+*
+* Companion devices -- all eight family members share this exact
+* 28-pin signal set. Per Table 2-1 (Memory Size Summary), they differ
+* ONLY in Flash/EEPROM/SRAM size and interrupt-vector word size --
+* never in pin count, pin names, or peripheral pin assignments:
+*   ATmega48A, ATmega48PA, ATmega88A, ATmega88PA, ATmega168A,
+*   ATmega168PA, ATmega328 (primary), ATmega328P
+*
+* Package scope -- this file covers the 28-pin package ONLY (PDIP and
+* QFN/MLF). The same datasheet also documents a 32-pin TQFP/QFN/MLF
+* package for this family, which is NOT pin-compatible with this file
+* (it adds ADC6/ADC7 as dedicated analog-only pins with no 28-pin
+* equivalent) and would need its own companion file.
+*
+* Per this project's established principle, physical pin numbers are
+* not part of the .qpindef format. This matters here specifically:
+* the 28-PDIP and 28-QFN/MLF packages use CONFLICTING physical pin
+* numbering schemes for the identical signal set (PDIP numbers 1-28
+* around two long edges; QFN/MLF numbers 1-28 around a 7x7 square).
+* Since numbering is irrelevant to this format, both packages are
+* covered by this single file without conflict. The QFN/MLF package
+* additionally has an exposed thermal pad on the bottom that should
+* be soldered to ground -- not a distinct signal, no separate record
+* needed (already covered by the G record below).
+*
+* Flagged for manual review (dual-function / non-obvious pins):
+*   PC6/RESET -- classic fuse-selectable dual-function pin. Default
+*              (RSTDISBL fuse unprogrammed) is dedicated active-low
+*              Reset input. If RSTDISBL is programmed, PC6 becomes a
+*              GPIO pin -- but the datasheet explicitly states it is
+*              "used as an I/O pin" in that mode with electrical
+*              characteristics differing from the rest of Port C.
+*              Classified I here (not B) per this project's
+*              established convention for this exact pin on other
+*              family members (matches yesterday's ATmega328P
+*              automotive-32-pin treatment).
+*   PB6, PB7 -- oscillator-mode-dependent, on top of their normal GPIO
+*              function (XTAL1/XTAL2 or TOSC1/TOSC2 depending on
+*              clock-selection fuse settings). Classified B for their
+*              default GPIO role.
+*   AVCC     -- separate ANALOG power rail. Datasheet: "It should be
+*              externally connected to VCC, even if the ADC is not
+*              used." Same voltage in practice, architecturally
+*              separate pin/rail -- recorded as I per this project's
+*              established workaround.
+*   AREF     -- external ADC voltage reference input; dedicated, not
+*              multiplexed with any GPIO port bit.
+*
+* No ADC6/ADC7 on this package -- datasheet explicitly scopes those
+* two dedicated analog-input pins to "TQFP and QFN/MLF Package Only"
+* (i.e. the 32-pin variant), so they are correctly absent here.
+*
+* VCC occupies one physical pin on both packages; GND occupies two
+* physical pins on both packages (plus the QFN/MLF thermal pad, not
+* separately counted). Same net regardless of physical pin count;
+* one V and one G record cover them.
+
+D ATmega48A/PA/88A/PA/168A/PA/328/P 28-Pin PDIP/QFN/MLF 8-bit AVR Microcontroller Family
+P ATmega48A ATmega48PA ATmega88A ATmega88PA ATmega168A ATmega168PA ATmega328 ATmega328P
+
+V VCC
+I AREF
+I AVCC
+B PB0 PCINT0/CLKO/ICP1
+B PB1 PCINT1/OC1A
+B PB2 PCINT2/SS/OC1B
+B PB3 PCINT3/OC2A/MOSI
+B PB4 PCINT4/MISO
+B PB5 SCK/PCINT5
+B PB6 PCINT6/XTAL1/TOSC1
+B PB7 PCINT7/XTAL2/TOSC2
+B PC0 ADC0/PCINT8
+B PC1 ADC1/PCINT9
+K SIMCLK
+
+B PC2 ADC2/PCINT10
+B PC3 ADC3/PCINT11
+B PC4 ADC4/SDA/PCINT12
+B PC5 ADC5/SCL/PCINT13
+I PC6 RESET/PCINT14
+B PD0 RXD/PCINT16
+B PD1 TXD/PCINT17
+B PD2 INT0/PCINT18
+B PD3 PCINT19/OC2B/INT1
+B PD4 PCINT20/XCK/T0
+B PD5 PCINT21/OC0B/T1
+B PD6 PCINT22/OC0A/AIN0
+B PD7 PCINT23/AIN1
+G GND

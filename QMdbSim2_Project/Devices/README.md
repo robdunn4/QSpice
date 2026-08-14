@@ -5,6 +5,7 @@ These devices are currently available in the repository.  If you don't find what
 
 | Device Folder | Supported Devices | Full<br>Demo |
 |---|---|:---:|
+| [ATmega328](./ATmega328/) | ATmega48A, ATmega48PA, ATmega88A, ATmega88PA, ATmega168A, ATmega168PA, ATmega328, ATmega328P | ✗ |
 | [ATtiny85](./ATtiny85/) | ATtiny25, ATtiny45, ATtiny85 | ✓ |
 | [dsPIC33EP32GS202](./dsPIC33EP32GS202/) | dsPIC33EP16GS202 dsPIC33EP32GS202 | ✗ |
 | [dsPIC33FJ128MC802](./dsPIC33FJ128MC802/) | dsPIC33FJ128MC802, dsPIC33FJ128MC202, dsPIC33FJ64MC802, dsPIC33FJ64MC202, dsPIC33FJ32MC302 | ✗ |

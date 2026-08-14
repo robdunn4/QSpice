@@ -4,13 +4,22 @@
     <Platform Name="Win32" />
     <Platform Name="x86" />
   </Configurations>
+  <Project Path="Devices/ATmega328/ATmega328.vcxproj" Id="529474b4-eb19-4c7a-b27b-ecac22ddc462" />
+  <Project Path="Devices/ATmega32U4/ATmega32U4.vcxproj" Id="41953860-cc86-438a-8db3-db54717b0413" />
+  <Project Path="Devices/ATSAMD21J18A/ATSAMD21J18A.vcxproj" Id="bfa9b9e0-cad4-4c3f-a0bf-c279e2396487" />
+  <Project Path="Devices/ATSAME54P20A/ATSAME54P20A.vcxproj" Id="0fece6b6-40ce-404c-8593-3eaeed00e9c9" />
   <Project Path="Devices/ATtiny85/ATtiny85.vcxproj" Id="8b59fb3d-f25f-402a-92f0-fdfdbd41fe53" />
   <Project Path="Devices/dsPIC33EP32GS202/dsPIC33EP32GS202.vcxproj" Id="b95c37f0-3ec6-449b-83de-d322c57e58f7" />
   <Project Path="Devices/dsPIC33FJ128MC802/dsPIC33FJ128MC802.vcxproj" Id="9f00d01c-a78b-4402-a4eb-b10a97bcbb53" />
+  <Project Path="Devices/PIC16F1509/PIC16F1509.vcxproj" Id="7a52a0ea-1f77-46d5-b061-30ab74ef5678" />
   <Project Path="Devices/PIC16F15213/PIC16F15213.vcxproj" Id="c8b012a7-b033-4f21-bac4-d5cceb81aabb" />
   <Project Path="Devices/PIC16F819/PIC16F819.vcxproj" Id="74693b4e-2d7a-4b0e-93c1-7f88f408866d" />
+  <Project Path="Devices/PIC16F877A/PIC16F877A.vcxproj" Id="dac8d560-b647-47a9-830e-2080df769779" />
   <Project Path="Devices/PIC18F4550/PIC18F4550.vcxproj" Id="0b77762f-fd1c-4f58-8aec-8e8d533b8103" />
   <Project Path="Devices/PIC18F45K50/PIC18F45K50.vcxproj" Id="49961d45-dcc7-4cf3-9b92-b553ef2e64ed" />
   <Project Path="Devices/PIC18F46K22/PIC18F46K22.vcxproj" Id="5e25fad4-41d3-47ab-b099-e21527a19617" />
+  <Project Path="Devices/PIC24FJ256GA110/PIC24FJ256GA110.vcxproj" Id="24862152-5078-4ca4-8538-ed363c5d8f09" />
+  <Project Path="Devices/PIC32MX470/PIC32MX470.vcxproj" Id="6ef2810b-e470-478c-bfe4-ee1a8fce6be0" />
+  <Project Path="Devices/TTOL_Test/TTOL_Test.vcxproj" Id="50847726-d100-4840-a5ba-42e54e126bcc" />
   <Project Path="QMdbSim2_Shared/QMdbSim2_Shared.vcxitems" />
 </Solution>
