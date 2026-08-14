@@ -472,7 +472,7 @@
   «wire (-400,-2800) (-700,-2800) "XTAL1"»
   «wire (-400,-3000) (-700,-3000) "XTAL2"»
   «rect (1550,850) (4850,-850) 0 0 2 0x4000000 0x1000000 -1 0 -1»
-  «rect (2250,-4000) (7600,-4750) 0 0 0 0x4000000 0x1000000 -1 0 -1»
+  «rect (2250,-4000) (7600,-4950) 0 0 0 0x4000000 0x1000000 -1 0 -1»
   «text (5140,897) 0.8 5 1 0x1000000 -1 -1 "ï»¿Notes:\n* SIMCLK is NOT an actual device pin...\n* This device contains an internal oscillator.\n   However, that is not used for emulation.\n   Instead, SIMCLK is used to sychronize the\n   micro-controller to the QSpice simulation.\n   Each falling edge of SIMCLK steps the device\n   by 1 instruction cycle. \n* Set OscFreq to match device oscillator \n   frequency as defined in the *.hex/*.elf\n   configuration bits/fuses."»
   «text (-2530,2022) 1.6 5 1 0x1000000 -1 -1 "ï»¿ATmega32 Test Fixture"»
   «text (750,-1391) 1 5 0 0x1000000 -1 -1 "ï»¿.param OscFreq=8Meg\n.param CyclesPerInst=1\n.param InstHz=OscFreq/CyclesPerInst"»
@@ -482,6 +482,6 @@
   «text (5350,-2100) 1 7 0 0x1000000 -1 -1 "ï»¿.plot I(D1)\n.plot I(D2)\n.plot I(D3)\n.plot I(D4)\n.plot I(D5)\n.plot I(D6)"»
   «text (-2510,1647) 1 5 1 0x1000000 -1 -1 "ï»¿The most current schematics, code, and documentation are available in the QMdbSim2 project folder at https://github.com/robdunn4/QSpice."»
   «text (650,-2450) 1 7 1 0x1000000 -1 -1 "ï»¿Note:  XTAL pins unused -- timing is driven by SIMCLK.\nJust makng QSpice netlist happy..."»
-  «text (2450,-4109) 1.25 5 1 0x1000000 -1 -1 "ï»¿Note:  The Microchip simulator does not support the AC\n(analog comparator) and ADC functions of this device."»
+  «text (2450,-4109) 1.25 5 1 0x1000000 -1 -1 "ï»¿Note:  The Microchip simulator does not support the AC\n(analog comparator) and ADC functions of this device as\nof MPLabX v6.30."»
 »
 
