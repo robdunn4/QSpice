@@ -1,0 +1,114 @@
+* ATmega32/ATmega32L Pin Definitions -- 40-pin PDIP and 44-lead
+* TQFP/44-pad QFN/MLF packages (combined)
+* Source: Atmel 2503Q-AVR-02/11 "ATmega32(L) Datasheet", Figure 1
+* (Pinout, PDIP and TQFP/MLF views) and the Pin Descriptions section.
+*
+* Companion devices -- ATmega32 and ATmega32L differ only in
+* operating voltage range (2.7V-5.5V for L vs. 4.5V-5.5V for
+* non-L) and maximum speed grade (8MHz vs. 16MHz). Same silicon,
+* same 32 I/O lines, same pin functions -- genuinely pin-compatible,
+* not merely package variants of a memory-size family like the
+* ATmega328 case. Both included:
+*   ATmega32, ATmega32L
+*
+* NOT included -- ATmega32U4, despite the similar part number, is a
+* distinct device (adds a full-speed USB controller, different I/O
+* line count, different package). Not pin-compatible with this
+* family; already has its own separate .qpindef file from a prior
+* session.
+*
+* Package scope -- 40-pin PDIP and 44-pin TQFP/QFN/MLF are combined
+* into this single file. The 44-pin package's four extra physical
+* pins vs. the 40-pin package are ALL duplicate VCC/GND pins for
+* power distribution (VCC: x1 on PDIP vs. x3 on TQFP/MLF; GND: x2 on
+* PDIP vs. x4 on TQFP/MLF) -- not additional signals, not NC pins.
+* Every other signal (32 GPIO pins across PORTA-D, RESET, XTAL1,
+* XTAL2, AREF, AVCC) appears exactly once on both packages. Per this
+* project's established handling, multiple physical VCC/GND pins
+* collapse to a single V/G record regardless of package, so the two
+* packages are fully combinable here. The QFN/MLF variant additionally
+* has an exposed thermal pad that should be soldered to ground -- not
+* a distinct signal, already covered by the G record.
+*
+* Pin classifications:
+*   PA0-PA7 -- Port A, bidirectional GPIO; ADC0-ADC7 alternate
+*              function (8-channel 10-bit ADC, single-ended; 7 of
+*              these channels also serve differential/gain-amplified
+*              inputs in the TQFP package per the datasheet, not a
+*              pin-count-affecting distinction). Classified B.
+*   PB0-PB7 -- Port B, bidirectional GPIO; alternate functions XCK/T0,
+*              T1, INT2/AIN0, OC0/AIN1, SS, MOSI, MISO, SCK (SPI +
+*              Timer/Counter + Analog Comparator + external interrupt
+*              muxing). Classified B.
+*   PC0-PC7 -- Port C, bidirectional GPIO; alternate functions SCL,
+*              SDA (TWI), TCK/TMS/TDO/TDI (JTAG -- datasheet notes
+*              "When the JTAG interface is enabled, this pin can not
+*              be used as an I/O pin" for PC2-PC5, a fuse/register-
+*              gated restriction, not a change to the pin's
+*              fundamental B classification), TOSC1/TOSC2 (Timer2
+*              async oscillator). Classified B.
+*   PD0-PD7 -- Port D, bidirectional GPIO; alternate functions RXD,
+*              TXD (USART), INT0, INT1, OC1B, OC1A, ICP1, OC2.
+*              Classified B.
+*   RESET    -- Dedicated active-low Reset input. Unlike newer AVR
+*              parts (e.g. ATmega328P), this datasheet documents no
+*              RSTDISBL fuse -- RESET is never GPIO-capable on this
+*              device. Classified I.
+*   XTAL1    -- "Input to the inverting Oscillator amplifier and
+*              input to the internal clock operating circuit."
+*              Dedicated pin, not shared with any GPIO port (unlike
+*              newer AVR parts where XTAL1/2 double with PB6/PB7).
+*              Classified I.
+*   XTAL2    -- "Output from the inverting Oscillator amplifier."
+*              Dedicated, not GPIO-shared. Classified O.
+*   AVCC     -- Separate analog supply pin for Port A and the ADC.
+*              Datasheet: "It should be externally connected to VCC,
+*              even if the ADC is not used." Recorded as I per this
+*              project's established workaround for AVCC-style pins.
+*   AREF     -- External ADC voltage reference input; dedicated, not
+*              multiplexed with any GPIO port bit.
+
+D ATmega32/ATmega32L 40-Pin PDIP / 44-Pin TQFP/QFN/MLF 8-bit AVR Microcontroller
+P ATmega32 ATmega32L
+
+V VCC
+I AREF
+I AVCC
+B PA0 ADC0
+B PA1 ADC1
+B PA2 ADC2
+B PA3 ADC3
+B PA4 ADC4
+B PA5 ADC5
+B PA6 ADC6
+B PA7 ADC7
+B PB0 XCK/T0
+B PB1 T1
+B PB2 INT2/AIN0
+B PB3 OC0/AIN1
+B PB4 SS
+B PB5 MOSI
+B PB6 MISO
+B PB7 SCK
+K SIMCLK
+
+B PC0 SCL
+B PC1 SDA
+B PC2 TCK
+B PC3 TMS
+B PC4 TDO
+B PC5 TDI
+B PC6 TOSC1
+B PC7 TOSC2
+B PD0 RXD
+B PD1 TXD
+B PD2 INT0
+B PD3 INT1
+B PD4 OC1B
+B PD5 OC1A
+B PD6 ICP1
+B PD7 OC2
+I RESET
+I XTAL1
+O XTAL2
+G GND

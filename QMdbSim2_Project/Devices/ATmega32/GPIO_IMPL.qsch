@@ -1,0 +1,85 @@
+ÿØÿÛ«schematic
+  «component (500,-500) 2 0
+    «symbol R
+      «type: R»
+      «description: Resistor(USA Style Symbol)»
+      «shorted pins: false»
+      «line (0,200) (0,180) 0 0 0x1000000 -1 -1»
+      «line (0,-180) (0,-200) 0 0 0x1000000 -1 -1»
+      «zigzag (-80,180) (80,-180) 0 0 0 0x1000000 -1 -1»
+      «text (80,0) 1 110 0 0x1000000 -1 -1 "R1"»
+      «text (-80,0) 1 109 0 0x1000000 -1 -1 "1R"»
+      «pin (0,200) (0,0) 1 0 0 0x0 -1 "1"»
+      «pin (0,-200) (0,0) 1 0 0 0x0 -1 "2"»
+    »
+  »
+  «component (200,-1200) 2 0
+    «symbol R
+      «type: R»
+      «description: Resistor(USA Style Symbol)»
+      «shorted pins: false»
+      «line (0,200) (0,180) 0 0 0x1000000 -1 -1»
+      «line (0,-180) (0,-200) 0 0 0x1000000 -1 -1»
+      «zigzag (-80,180) (80,-180) 0 0 0 0x1000000 -1 -1»
+      «text (80,0) 1 110 0 0x1000000 -1 -1 "R2"»
+      «text (-80,0) 1 109 0 0x1000000 -1 -1 "R=outimp()"»
+      «pin (0,200) (0,0) 1 0 0 0x0 -1 "1"»
+      «pin (0,-200) (0,0) 1 0 0 0x0 -1 "2"»
+    »
+  »
+  «component (-800,-2300) 12 0
+    «symbol R
+      «type: R»
+      «description: Resistor(USA Style Symbol)»
+      «shorted pins: false»
+      «line (0,200) (0,180) 0 0 0x1000000 -1 -1»
+      «line (0,-180) (0,-200) 0 0 0x1000000 -1 -1»
+      «zigzag (-80,180) (80,-180) 0 0 0 0x1000000 -1 -1»
+      «text (130,-150) 1 75 0 0x1000000 -1 -1 "R3"»
+      «text (130,150) 1 75 0 0x1000000 -1 -1 "1Meg"»
+      «pin (0,200) (0,0) 1 0 0 0x0 -1 "1"»
+      «pin (0,-200) (0,0) 1 0 0 0x0 -1 "2"»
+    »
+  »
+  «component (1300,-1200) 2 0
+    «symbol R
+      «type: R»
+      «description: Resistor(USA Style Symbol)»
+      «shorted pins: false»
+      «line (0,200) (0,180) 0 0 0x1000000 -1 -1»
+      «line (0,-180) (0,-200) 0 0 0x1000000 -1 -1»
+      «zigzag (-80,180) (80,-180) 0 0 0 0x1000000 -1 -1»
+      «text (80,0) 1 110 0 0x1000000 -1 -1 "R4"»
+      «text (-80,0) 1 109 0 0x1000000 -1 -1 "10Meg"»
+      «pin (0,200) (0,0) 1 0 0 0x0 -1 "+"»
+      «pin (0,-200) (0,0) 1 0 0 0x0 -1 "-"»
+    »
+  »
+  «net (1600,-500) 1 7 1 "G"»
+  «net (-1000,-500) 1 11 1 "I"»
+  «net (-1000,-1200) 1 11 1 "O"»
+  «net (-1000,-1900) 1 11 1 "C"»
+  «net (-800,-2600) 1 13 0 "GND"»
+  «net (1700,-1300) 1 13 0 "GND"»
+  «junction (900,-500)»
+  «junction (900,-1200)»
+  «wire (900,-1200) (900,-500) "G"»
+  «wire (900,-500) (1600,-500) "G"»
+  «wire (700,-500) (900,-500) "G"»
+  «wire (-1000,-500) (300,-500) "I"»
+  «wire (-800,-2100) (-800,-1900) "C"»
+  «wire (-800,-2600) (-800,-2500) "GND"»
+  «wire (-800,-1900) (-1000,-1900) "C"»
+  «wire (400,-1200) (900,-1200) "G"»
+  «wire (-1000,-1200) (0,-1200) "O"»
+  «wire (1700,-1300) (1700,-1200) "GND"»
+  «wire (1100,-1200) (900,-1200) "G"»
+  «wire (1700,-1200) (1500,-1200) "GND"»
+  «text (-1450,550) 0.8 7 1 0x1000000 -1 -1 "ï»¿Represents a single GPIO pin on uC. For an input operation, set\nC high then read from I. For output, set C low and set O."»
+  «text (-1450,1350) 1 7 1 0x1000000 -1 -1 "ï»¿Possible implementation of micro-controller GPIO pin."»
+  «text (-1475,-50) 1 7 1 0x1000000 -1 -1 "ï»¿To C-Block\n"Micro-Controller""»
+  «text (2116,-50) 1 11 1 0x1000000 -1 -1 "ï»¿To I/O Circuitry"»
+  «text (-300,-1900) 1 7 0 0x1000000 -1 -1 "ï»¿.func outimp()=V(C)>0.5?10Meg:1"»
+  «text (-1450,1050) 0.8 7 1 0x1000000 -1 -1 "ï»¿2026.08.09:  Added R4 to eliminate need to explicitly provide path to\nground, i.e., to prevent "floating nodes" in schematic."»
+»
+

@@ -4,6 +4,7 @@
     <Platform Name="Win32" />
     <Platform Name="x86" />
   </Configurations>
+  <Project Path="Devices/ATmega32/ATmega32.vcxproj" Id="d863a804-a33b-450c-8f25-1c0d8eb4ddd1" />
   <Project Path="Devices/ATmega328/ATmega328.vcxproj" Id="529474b4-eb19-4c7a-b27b-ecac22ddc462" />
   <Project Path="Devices/ATmega32U4/ATmega32U4.vcxproj" Id="41953860-cc86-438a-8db3-db54717b0413" />
   <Project Path="Devices/ATSAMD21J18A/ATSAMD21J18A.vcxproj" Id="bfa9b9e0-cad4-4c3f-a0bf-c279e2396487" />
