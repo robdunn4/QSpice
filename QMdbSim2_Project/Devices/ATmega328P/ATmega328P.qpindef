@@ -1,0 +1,111 @@
+* ATmega328P Pin Definitions -- 32-lead TQFP / 32-pad QFN/MLF package
+* Source: Atmel-7810D "Automotive Microcontrollers ATmega328P Datasheet",
+*         Figure 1-1 (Pinout) and Section 1.1 (Pin Descriptions).
+*         Extracted directly from the vendor PDF's text layer
+*         (permissions-encrypted against editing but not against text
+*         extraction/copying).
+*
+* IMPORTANT -- this is the AUTOMOTIVE-grade datasheet specifically
+* (Atmel-7810), which documents ONLY the 32-lead TQFP/QFN package. It
+* does NOT cover the 28-pin PDIP/SOIC/MLF package that "ATmega328P" is
+* commonly associated with in non-automotive contexts (e.g. the chip
+* used on many hobbyist boards) -- that package is documented in a
+* separate, non-automotive ATmega328P datasheet, not this one, and
+* would need its own .qpindef file (genuinely different pin count,
+* not just a package variant of this same 32-pin signal set -- the
+* 28-pin package omits PC6 as a distinct pin arrangement, drops ADC6/
+* ADC7 entirely, and renumbers everything). This file covers only what
+* this specific (automotive) datasheet documents.
+*
+* Roughly half of this device's 32 physical pins (9-16 and 25-32) sit
+* in the pinout diagram's top/bottom-edge regions, where label and
+* number columns are separated by the same text-extraction scrambling
+* seen on other devices in this project -- no reliable positional-
+* inference method was found for those two regions. Per this project's
+* established principle (pin numbers are not part of the .qpindef
+* format and do not block inclusion of a signal whose NAME is
+* otherwise confirmed), every signal below was still confirmed to
+* exist via direct, clear reading of its label text -- only the
+* specific physical pin number for those 16 pins is unresolved. Every
+* pin's ALT-TEXT was read directly from that same diagram, though,
+* since (unlike PIC24/D21/E54) this device's pin diagram carries the
+* full alternate-function text inline with each pin name -- no
+* separate multiplexing table was needed.
+*
+* Flagged for manual review (dual-function / non-obvious pins):
+*   PC6/RESET -- classic fuse-selectable dual-function pin. Default
+*              (RSTDISBL fuse unprogrammed) is dedicated active-low
+*              Reset input. If RSTDISBL is programmed, PC6 becomes a
+*              GPIO pin -- but the datasheet explicitly states it is
+*              "used as an input pin" in that mode, i.e. input-only
+*              even when GPIO-enabled, never a general bidirectional
+*              pin. Classified I to reflect that -- not B, despite
+*              PORTC otherwise being bidirectional.
+*   PB6, PB7 -- oscillator-mode-dependent, on top of their normal GPIO
+*              function. Depending on the clock-selection fuse
+*              settings: PB6 can serve as input to the inverting
+*              oscillator amplifier (XTAL1) and PB7 as its output
+*              (XTAL2); separately, if the internal calibrated RC
+*              oscillator is used as the chip clock source, this same
+*              pin pair can instead serve as TOSC1/TOSC2 for the
+*              asynchronous Timer/Counter2. Classified B (matches
+*              "Port B is bidirectional") for their default GPIO role,
+*              but availability as GPIO depends on which of these
+*              fuse-selected modes is active.
+*   ADC6, ADC7 -- genuinely dedicated analog-input-only pins with NO
+*              GPIO alternate at all, unlike ADC0-ADC5 (which share
+*              PC0-PC5). Datasheet: "In the TQFP and QFN/MLF package,
+*              ADC7:6 serve as analog inputs to the A/D converter."
+*              Package-dependent per that same sentence, though this
+*              file only covers the TQFP/QFN/MLF package, where they
+*              are always present.
+*   AVCC     -- separate ANALOG power rail. Datasheet explicitly notes
+*              "It should be externally connected to VCC, even if the
+*              ADC is not used" -- same nuance as AVDD-style pins on
+*              other devices in this project (same voltage in
+*              practice, architecturally separate pin/rail). Recorded
+*              as I per this project's established workaround.
+*   AREF     -- external ADC voltage reference input; dedicated, not
+*              multiplexed with any GPIO port bit.
+*
+* VCC occupies two physical pins (4 and 6); GND occupies three (3, 5,
+* and 21). Same net regardless of physical pin count in both cases;
+* one V and one G record cover them.
+*
+* No companion devices -- this datasheet covers only ATmega328P, no
+* plain ATmega328 or other memory-size variant.
+
+D Atmel ATmega328P 32-Pin Automotive-Grade 8-bit AVR Microcontroller with 32K Bytes In-System Programmable Flash
+P ATmega328P
+
+V VCC
+I ADC6
+I ADC7
+I AREF
+I AVCC
+B PB0 PCINT0/CLKO/ICP1
+B PB1 PCINT1/OC1A
+B PB2 PCINT2/SS/OC1B
+B PB3 PCINT3/OC2A/MOSI
+B PB4 PCINT4/MISO
+B PB5 SCK/PCINT5
+B PB6 PCINT6/XTAL1/TOSC1
+B PB7 PCINT7/XTAL2/TOSC2
+B PC0 ADC0/PCINT8
+K SIMCLK
+
+B PC1 ADC1/PCINT9
+B PC2 ADC2/PCINT10
+B PC3 ADC3/PCINT11
+B PC4 ADC4/SDA/PCINT12
+B PC5 ADC5/SCL/PCINT13
+I PC6 RESET/PCINT14
+B PD0 RXD/PCINT16
+B PD1 TXD/PCINT17
+B PD2 INT0/PCINT18
+B PD3 PCINT19/OC2B/INT1
+B PD4 PCINT20/XCK/T0
+B PD5 PCINT21/OC0B/T1
+B PD6 PCINT22/OC0A/AIN0
+B PD7 PCINT23/AIN1
+G GND

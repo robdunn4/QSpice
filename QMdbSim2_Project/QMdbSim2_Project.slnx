@@ -6,10 +6,12 @@
   </Configurations>
   <Project Path="Devices/ATmega32/ATmega32.vcxproj" Id="d863a804-a33b-450c-8f25-1c0d8eb4ddd1" />
   <Project Path="Devices/ATmega328/ATmega328.vcxproj" Id="529474b4-eb19-4c7a-b27b-ecac22ddc462" />
+  <Project Path="Devices/ATmega328P/ATmega328P.vcxproj" Id="afbb702e-2ae0-4727-8a3a-b2c6e4d4e4e6" />
   <Project Path="Devices/ATmega32U4/ATmega32U4.vcxproj" Id="41953860-cc86-438a-8db3-db54717b0413" />
   <Project Path="Devices/ATSAMD21J18A/ATSAMD21J18A.vcxproj" Id="bfa9b9e0-cad4-4c3f-a0bf-c279e2396487" />
   <Project Path="Devices/ATSAME54P20A/ATSAME54P20A.vcxproj" Id="0fece6b6-40ce-404c-8593-3eaeed00e9c9" />
   <Project Path="Devices/ATtiny85/ATtiny85.vcxproj" Id="8b59fb3d-f25f-402a-92f0-fdfdbd41fe53" />
+  <Project Path="Devices/dsPIC33CK256MP505/dsPIC33CK256MP505.vcxproj" Id="9d3b1e31-82c1-46ee-b119-8d26c2bea728" />
   <Project Path="Devices/dsPIC33EP32GS202/dsPIC33EP32GS202.vcxproj" Id="b95c37f0-3ec6-449b-83de-d322c57e58f7" />
   <Project Path="Devices/dsPIC33FJ128MC802/dsPIC33FJ128MC802.vcxproj" Id="9f00d01c-a78b-4402-a4eb-b10a97bcbb53" />
   <Project Path="Devices/PIC16F1509/PIC16F1509.vcxproj" Id="7a52a0ea-1f77-46d5-b061-30ab74ef5678" />

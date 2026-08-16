@@ -1,0 +1,131 @@
+* dsPIC33CK256MP508-Family Pin Definitions -- 48-Pin TQFP / UQFN
+* Source: Microchip DS70005349K "dsPIC33CK256MP508 Family Data
+*         Sheet", Pin Diagrams section (48-Pin TQFP, UQFN) and
+*         Table 6 (48-Pin TQFP, UQFN pinout).
+*
+* Primary device: dsPIC33CK256MP505 -- determines this file's name.
+*
+* Companion devices -- all 48-pin family members share this exact
+* pinout. Two independent axes distinguish family members, neither
+* of which changes a single pin:
+*   (1) Flash/RAM size (32K/64K/128K/256K program Flash) -- differs
+*       in memory only, standard practice throughout this project.
+*   (2) CAN FD presence -- the datasheet's own 48-Pin TQFP/UQFN pin
+*       diagram is explicitly captioned for BOTH "dsPIC33CKXXXMP505"
+*       (with CAN FD) and "dsPIC33CKXXXMP205" (without) together.
+*       CAN FD is routed entirely via Peripheral Pin Select (RPn) --
+*       there is no dedicated CAN pin at this or any other pin count
+*       in this family -- so its presence/absence never affects the
+*       physical pinout, only which peripheral modules exist behind
+*       the RPn remap fabric.
+* Per datasheet Table 1/Table 2 listing order (with-CAN-FD table
+* before without-CAN-FD table, each descending by memory size):
+*   dsPIC33CK256MP505, dsPIC33CK128MP505, dsPIC33CK64MP505,
+*   dsPIC33CK32MP505, dsPIC33CK256MP205, dsPIC33CK128MP205,
+*   dsPIC33CK64MP205, dsPIC33CK32MP205
+*
+* Package scope -- 48-Pin TQFP and 48-Pin UQFN are combined into
+* this single file; both share one pin diagram/table in the
+* datasheet (Fig./Table 6), differing only in package mechanicals.
+* Per this project's established principle, physical pin numbers are
+* not part of the .qpindef format, so any numbering difference
+* between the two packages (if any) does not block combining them.
+* The UQFN variant additionally has an exposed thermal pad on the
+* bottom that may be left floating or tied to VSS -- not a distinct
+* signal, no separate record needed (already covered by the G
+* record below).
+*
+* NOT included -- the 28-Pin (MP502/MP202), 36-Pin (MP503/MP203),
+* 64-Pin (MP506/MP206), and 80-Pin (MP508/MP208) family members all
+* have measurably different pin counts and I/O availability per the
+* datasheet's own family comparison tables (e.g. ADC channel counts,
+* PWM pair counts) and are NOT pin-compatible with this 48-pin
+* group. Each would need its own companion file.
+*
+* Flagged for manual review (dual-function / non-obvious pins):
+*   MCLR    -- dedicated active-low Reset input; the datasheet lists
+*             no GPIO alternate function for this pin at all (unlike
+*             PC6 on the ATmega328 family). Classified I.
+*   AVDD    -- separate ANALOG supply pin, distinct from digital VDD.
+*             Classified I per this project's established workaround
+*             for AVCC/AVDD-style pins (matches ATmega32/328 AVCC
+*             treatment).
+*   AVSS    -- separate ANALOG ground pin, distinct from digital VSS.
+*             Unlike the ATmega family (no separate analog ground
+*             pin there), this device has a genuinely distinct AVSS
+*             pin. Classified I (not folded into the G record) since
+*             it is architecturally a separate net from digital VSS,
+*             consistent with AVDD's treatment.
+*   RB0     -- OSCI/CLKI oscillator input is one alternate function
+*             among several (AN5, RP32) on an otherwise ordinary
+*             remappable GPIO pin -- this is a modern PPS-based part,
+*             not a classic AVR with dedicated XTAL pins. Classified
+*             B (GPIO-capable) like every other port pin; external
+*             oscillator mode is a configuration-bit choice, not a
+*             pin-dedication.
+*   RB1     -- OSCO/CLKO, same reasoning as RB0. Classified B.
+*   RB10    -- TMS (JTAG). Datasheet note: pulled up during erase/
+*             programming when JTAG is enabled -- a transient
+*             programming-time behavior, not a change to the pin's
+*             GPIO classification. Classified B.
+*   RB11/RB12/RB7 -- TCK/TDI/TDO (JTAG), same reasoning as RB10.
+*             Classified B.
+*   RB3/RB4/RB5/RB6/RB8/RB9 -- PGDn/PGCn (ICSP programming/debug),
+*             same reasoning -- ordinary remappable GPIO pins whose
+*             programming-time behavior does not change their B
+*             classification.
+*
+* All other pins (RAx/RBx/RCx/RDx not listed above) are ordinary
+* remappable-peripheral GPIO pins (ADC inputs, op-amp I/O, PWM
+* outputs, comparators, UART/SPI/I2C via RPn, etc.) -- classified B.
+
+D dsPIC33CK256MP508 Family 48-Pin TQFP/UQFN 16-bit Digital Signal Controller
+P dsPIC33CK256MP505 dsPIC33CK128MP505 dsPIC33CK64MP505 dsPIC33CK32MP505 dsPIC33CK256MP205 dsPIC33CK128MP205 dsPIC33CK64MP205 dsPIC33CK32MP205
+
+V VDD
+I AVDD
+I AVSS
+I MCLR
+B RA0 OA1OUT/AN0/CMP1A/IBIAS0
+B RA1 OA1IN-/ANA1
+B RA2 OA1IN+/AN9
+B RA3 DACOUT1/AN3/CMP1C
+B RA4 OA3OUT/AN4/CMP3B/IBIAS3
+B RB0 OSCI/CLKI/AN5/RP32
+B RB1 OSCO/CLKO/AN6/RP33
+B RB2 OA2OUT/AN1/AN7/ANA0/CMP1D/CMP2D/CMP3D/RP34/SCL3/INT0
+B RB3 PGD2/OA2IN-/AN8/RP35
+B RB4 PGC2/OA2IN+/RP36
+B RB5 PGD3/RP37/PWM6L/SDA2
+B RB6 PGC3/RP38/PWM6H/SCL2
+B RB7 TDO/AN2/CMP3A/RP39/SDA3
+B RB8 PGD1/AN10/RP40/SCL1
+B RB9 PGC1/AN11/RP41/SDA1
+B RB10 TMS/RP42/PWM3H
+B RB11 TCK/RP43/PWM3L
+X 1
+K SIMCLK
+
+B RB12 TDI/RP44/PWM2H
+B RB13 RP45/PWM2L
+B RB14 RP46/PWM1H
+B RB15 RP47/PWM1L
+B RC0 AN12/ANN0/RP48
+B RC1 OA3IN-/AN13/CMP1B/ISRC0/RP49
+B RC2 OA3IN+/AN14/CMP2B/ISRC1/RP50
+B RC3 AN15/CMP2A/IBIAS2/RP51
+B RC4 RP52/PWM5H/ASDA2
+B RC5 RP53/PWM5L/ASCL2
+B RC6 AN17/ANN1/IBIAS1/RP54
+B RC7 AN16/ISRC2/RP55
+B RC8 RP56/ASDA1/SCK2
+B RC9 RP57/ASCL1/SDI2
+B RC10 RP58/PWM7H
+B RC11 RP59/PWM7L
+B RC12 RP60/PWM8H
+B RC13 RP61/PWM8L
+B RD1 RP65/PWM4H
+B RD8 RP72/SDO2/PCI19
+B RD10 AN18/CMP3C/ISRC3/RP74
+B RD13 ANN2/RP77
+G VSS
