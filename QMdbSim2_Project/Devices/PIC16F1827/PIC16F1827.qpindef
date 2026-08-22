@@ -1,0 +1,100 @@
+* PIC16(L)F1827 Pin Definitions -- 18-Pin PDIP/SOIC, 20-Pin SSOP,
+* and 28-Pin QFN (combined)
+* Source: Microchip DS41391D "PIC16(L)F1826/27 Data Sheet" (full
+*         datasheet, superseding the DS41363A Advance-Information
+*         product brief this file was originally built from), Pin
+*         Diagrams section and Table 1-2 (Pinout Description).
+*
+* Primary device: PIC16F1827 -- determines this file's name.
+*
+* Companion device -- PIC16LF1827 differs only in operating voltage
+* range (1.8-3.6V vs 1.8-5.5V), same as every other "L" variant in
+* this project. Table 1 confirms PIC16F1827 and PIC16LF1827 have
+* identical Flash/EEPROM/SRAM/I-O/ADC/timer/EUSART/MSSP/CCP/CapSense
+* specs -- differ only in voltage/speed grade. Both included:
+*   PIC16F1827, PIC16LF1827
+*
+* NOT included -- PIC16F1826/PIC16LF1826, despite sharing this same
+* document (this full datasheet, like the product brief before it,
+* covers both devices together), the exact same pin diagrams, and
+* the exact same 16 physical GPIO pins (RA0-RA7, RB0-RB7). Confirmed
+* directly (not just inferred from the product brief) by this
+* datasheet's own Table 1-2 Note 2: "Functions are only available on
+* the PIC16(L)F1827" -- covering CCP2, CCP3, CCP4, P2A, P2B, SDA2,
+* SCL2, SCK2, SDI2, SDO2, and SS2. Several pins genuinely do less on
+* the 1826. This fails this project's pin-compatibility bar ("never
+* differ ... in peripheral pin assignments"), so 1826/LF1826 need
+* their own separate file if wanted later.
+*
+* Package scope -- ALL THREE packages (18-pin PDIP/SOIC, 20-pin SSOP,
+* 28-pin QFN) are combined into this single file, same pattern as
+* PIC16F1847 (same product family/generation): Table 2's peripheral/
+* alternate-function columns are pin-name-based, not package-specific,
+* and the only differences between package pin COUNTS are duplicate
+* VDD/VSS pins (18-pin: 1+1; 20-pin: 2+2; 28-pin: 2+2) plus 6 NC pins
+* filling out the 28-pin QFN body. No package adds a new signal pin.
+*
+* Flagged for manual review (dual-function / non-obvious pins):
+*   RA5     -- MCLR/VPP/SS1. Table 1-2 confirms explicitly (same
+*             wording/format as every other port pin): "RA5 TTL CMOS
+*             General purpose I/O." Classified B (not I): the MCLRE
+*             config bit allows RA5 to be ordinary GPIO when the
+*             dedicated Reset function is disabled.
+*   RA6/RA7 -- OSC2/CLKOUT/... and OSC1/CLKIN/..., oscillator-mode-
+*             dependent alternate functions on otherwise ordinary
+*             GPIO pins (external clock/crystal mode is a config-bit
+*             choice, not a pin dedication). Classified B, same
+*             reasoning as PIC16F1847's RA6/RA7.
+*   RB6/RB7 -- likely datasheet naming inconsistency, same pattern
+*             already flagged in PIC16F1847.qpindef: the RB6 pin-name
+*             header lists "T1OSI" (Timer1 Oscillator Input), but
+*             Table 1-2's function breakdown for RB6 lists "T1OSO"
+*             (Timer1 Oscillator Output) -- the same name the
+*             breakdown also gives RB7. Recorded as T1OSI for RB6
+*             (trusting the header, matching the expected T1OSI/T1OSO
+*             crystal-pair convention). This is evidently a template
+*             artifact shared across the whole PIC16F182x/184x
+*             document family, not a one-off typo -- it appears
+*             identically in the PIC16F1847 datasheet. Verify against
+*             the family reference manual if Timer1 async oscillator
+*             mode matters for your use case.
+*   RB0     -- also includes FLT0 (ECCP Auto-Shutdown Fault input),
+*             present in this full datasheet's Table 1-2 but missing
+*             from the DS41363A product brief's compact pin table --
+*             this file now includes it.
+*   RB0-RB7 -- all individually support interrupt-on-change (IOC)
+*             with an individually enabled weak pull-up; a shared
+*             electrical feature of the whole port, not a separate
+*             alternate function requiring its own field.
+*
+* All other pins are ordinary GPIO pins with ADC/comparator/
+* capacitive-sensing/PWM/EUSART/MSSP alternate functions, several
+* relocatable to one of two pin locations via software (marked in
+* the source diagrams but not separately encoded here, same as the
+* dsPIC/PIC16F1847 RPn-style remap notes elsewhere in this project).
+* Classified B.
+
+D PIC16(L)F1827 18/20/28-Pin PDIP/SOIC/SSOP/QFN 8-bit Flash Microcontroller
+P PIC16F1827 PIC16LF1827
+
+V VDD
+B RA0 AN0/CPS0/C12IN0-/SDO2
+B RA1 AN1/CPS1/C12IN1-/SS2
+B RA2 AN2/CPS2/C12IN2-/C12IN+/VREF-/DACOUT
+B RA3 AN3/CPS3/C12IN3-/C1IN+/VREF+/C1OUT/CCP3/SRQ
+B RA4 AN4/CPS4/C2OUT/T0CKI/CCP4/SRNQ
+B RA5 MCLR/VPP/SS1
+B RA6 OSC2/CLKOUT/CLKR/P1D/P2B/SDO1
+X 1
+K SIMCLK
+
+B RA7 OSC1/CLKIN/P1C/CCP2/P2A
+B RB0 INT/SRI/T1G/CCP1/P1A/FLT0
+B RB1 AN11/CPS11/RX/DT/SDA1/SDI1
+B RB2 AN10/CPS10/MDMIN/RX/DT/TX/CK/SDA2/SDI2/SDO1
+B RB3 AN9/CPS9/MDOUT/CCP1/P1A
+B RB4 AN8/CPS8/SCL1/SCK1/MDCIN2
+B RB5 AN7/CPS7/P1B/TX/CK/SCL2/SCK2/SS1
+B RB6 AN5/CPS5/T1CKI/T1OSCI/P1C/CCP2/P2A/ICSPCLK
+B RB7 AN6/CPS6/T1OSCO/P1D/P2B/MDCIN1/ICSPDAT
+G VSS
