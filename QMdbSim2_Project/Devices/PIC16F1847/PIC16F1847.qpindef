@@ -1,0 +1,95 @@
+* PIC16(L)F1847 Pin Definitions -- 18-Pin PDIP/SOIC, 20-Pin SSOP,
+* and 28-Pin QFN/UQFN/VQFN (combined)
+* Source: Microchip DS40001453G "PIC16(L)F1847 Data Sheet,
+*         18/20/28-Pin Flash Microcontrollers", Pin Diagrams section
+*         and Table 1-2 (Pinout Description).
+*
+* Primary device: PIC16F1847 -- determines this file's name.
+*
+* Companion device -- PIC16LF1847 (low-voltage variant) differs only
+* in operating voltage range/speed grade, same as every other "L"
+* variant handled in this project (e.g. ATmega32 vs ATmega32L). The
+* datasheet itself is written as "PIC16(L)F1847" throughout, i.e. one
+* unified document covering both. Both included:
+*   PIC16F1847, PIC16LF1847
+*
+* Package scope -- ALL THREE packages (18-pin PDIP/SOIC, 20-pin SSOP,
+* 28-pin QFN/UQFN/VQFN) are combined into this single file. Confirmed
+* directly against the datasheet's own Pin Diagrams and Table 1
+* (18/20/28-PIN SUMMARY): every package exposes the exact same 16
+* signal pins -- RA0-RA7, RB0-RB7 -- plus VDD/VSS. The ONLY
+* differences between packages are:
+*   - 18-pin: one VDD, one VSS (16 signal pins + 2 power = 18)
+*   - 20-pin: adds a second VDD and a second VSS (duplicate power
+*     pins only, no new signals) -> 20
+*   - 28-pin QFN/UQFN/VQFN: same duplicated VDD/VSS as the 20-pin
+*     package, plus 6 NC (no-connect) pins simply filling out the
+*     larger QFN body -> 28
+* Per this project's established handling (duplicate VCC/GND pins
+* collapse to a single V/G record regardless of package -- see the
+* ATmega32 28-pin QFN precedent), and NC pins need no record at all,
+* this is a clean, fully justified combination -- there is no
+* pin-count-driven functional difference to scope around here, unlike
+* the ATmega/dsPIC cases where larger packages added genuinely new
+* GPIO or analog pins. The 28-pin QFN/UQFN/VQFN variants also have an
+* exposed bottom pad the datasheet recommends tying to VSS -- not a
+* distinct signal, already covered by the G record.
+*
+* Flagged for manual review (dual-function / non-obvious pins):
+*   RA5     -- MCLR/VPP/SS1. Datasheet lists this pin's primary
+*             function as "General purpose I/O" (same row format as
+*             every other port pin), consistent with the MCLRE
+*             config bit allowing RA5 to be used as ordinary GPIO
+*             when the dedicated Reset function is disabled.
+*             Classified B (not I) per this project's established
+*             convention for config-bit-gated dual-function pins.
+*   RA6/RA7 -- OSC2/CLKOUT/... and OSC1/CLKIN/..., oscillator-mode-
+*             dependent alternate functions on otherwise ordinary
+*             GPIO pins (external clock/crystal mode is a config-bit
+*             choice, not a pin dedication). Classified B for their
+*             default GPIO role, same reasoning as dsPIC33CK's
+*             RB0/RB1 OSCI/OSCO.
+*   RB6/RB7 -- possible datasheet naming inconsistency: the RB6 pin-
+*             name header lists "T1OSI" (Timer1 Oscillator Input),
+*             but Table 1-2's own function breakdown for RB6 lists
+*             "T1OSO" (Timer1 Oscillator Output) -- the same "T1OSO"
+*             name Table 1-2 also gives RB7. Recorded as T1OSI for
+*             RB6 (trusting the pin-name header, and matching the
+*             expected T1OSI/T1OSO crystal-pair convention) -- verify
+*             against a second source (e.g. the family reference
+*             manual) before relying on this if Timer1 async
+*             oscillator mode matters for your use case.
+*   RB0-RB7 -- all individually support interrupt-on-change with an
+*             individually enabled weak pull-up; a shared electrical
+*             feature of the whole port, not a separate alternate
+*             function requiring its own field.
+*
+* All other pins (RA0-RA4, RB0-RB5 aside from the notes above) are
+* ordinary GPIO pins with ADC/comparator/capacitive-sensing/PWM/
+* USART/SPI/I2C alternate functions, many relocatable via the
+* APFCON0/APFCON1 Alternate Pin Function registers. Classified B.
+
+D PIC16(L)F1847 18/20/28-Pin PDIP/SOIC/SSOP/QFN/UQFN/VQFN 8-bit Flash Microcontroller
+P PIC16F1847 PIC16LF1847
+
+V VDD
+B RA0 AN0/CPS0/C12IN0-/SDO2
+B RA1 AN1/CPS1/C12IN1-/SS2
+B RA2 AN2/CPS2/C12IN2-/C12IN+/VREF-/DACOUT
+B RA3 AN3/CPS3/C12IN3-/C1IN+/VREF+/C1OUT/CCP3/SRQ
+B RA4 AN4/CPS4/C2OUT/T0CKI/CCP4/SRNQ
+B RA5 MCLR/VPP/SS1
+B RA6 OSC2/CLKOUT/CLKR/P1D/P2B/SDO1
+X 1
+K SIMCLK
+
+B RA7 OSC1/CLKIN/P1C/CCP2/P2A
+B RB0 T1G/CCP1/P1A/INT/SRI/FLT0
+B RB1 AN11/CPS11/RX/DT/SDA1/SDI1
+B RB2 AN10/CPS10/MDMIN/TX/CK/SDA2/SDI2/SDO1
+B RB3 AN9/CPS9/MDOUT/CCP1/P1A
+B RB4 AN8/CPS8/SCL1/SCK1/MDCIN2
+B RB5 AN7/CPS7/P1B/TX/CK/SCL2/SCK2/SS1
+B RB6 AN5/CPS5/T1CKI/T1OSI/P1C/CCP2/P2A/ICSPCLK
+B RB7 AN6/CPS6/T1OSO/P1D/P2B/MDCIN1/ICSPDAT
+G VSS
