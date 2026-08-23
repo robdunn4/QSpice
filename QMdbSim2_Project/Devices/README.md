@@ -25,8 +25,6 @@ These devices are currently available in the repository.  If you don't find what
 | [PIC18F45K50](./PIC18F45K50/) | PIC18F45K50, PIC18LF45K50  | ✗ |
 | [PIC18F46K22](./PIC18F46K22/) | PIC18F43K22, PIC18F44K22, PIC18F45K22, PIC18F46K22, PIC18LF43K22, PIC18LF44K22, PIC18LF45K22, PIC18LF46K22  | ✓ |
 
-<br>
-
 All devices include sources and compiled DLL binaries.  Items with *Demo* include top-level demonstration schematic and device-specific source and binary (e.g., \*.elf/\*.hex).  Otherwise, assume that this is an untested device definition.  (For these, please be a hero and send me a schematic and device code demonstrating the device.  I promise to give you credit.)
 
 ## Miscellaneous Device Developer Tools
