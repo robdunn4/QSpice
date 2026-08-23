@@ -16,8 +16,9 @@
   <Project Path="Devices/dsPIC33FJ128MC802/dsPIC33FJ128MC802.vcxproj" Id="9f00d01c-a78b-4402-a4eb-b10a97bcbb53" />
   <Project Path="Devices/PIC16F1509/PIC16F1509.vcxproj" Id="7a52a0ea-1f77-46d5-b061-30ab74ef5678" />
   <Project Path="Devices/PIC16F15213/PIC16F15213.vcxproj" Id="c8b012a7-b033-4f21-bac4-d5cceb81aabb" />
+  <Project Path="Devices/PIC16F1827/PIC16F1827.vcxproj" Id="238c030f-cd60-4f66-97bf-0fcd3fddc871" />
+  <Project Path="Devices/PIC16F1847/PIC16F1847.vcxproj" Id="d54862cd-821b-42b7-9db6-bd69687fc366" />
   <Project Path="Devices/PIC16F819/PIC16F819.vcxproj" Id="74693b4e-2d7a-4b0e-93c1-7f88f408866d" />
-  <Project Path="Devices/PIC16F877A/PIC16F877A.vcxproj" Id="dac8d560-b647-47a9-830e-2080df769779" />
   <Project Path="Devices/PIC18F4550/PIC18F4550.vcxproj" Id="0b77762f-fd1c-4f58-8aec-8e8d533b8103" />
   <Project Path="Devices/PIC18F45K50/PIC18F45K50.vcxproj" Id="49961d45-dcc7-4cf3-9b92-b553ef2e64ed" />
   <Project Path="Devices/PIC18F46K22/PIC18F46K22.vcxproj" Id="5e25fad4-41d3-47ab-b099-e21527a19617" />

@@ -1,0 +1,92 @@
+* PIC16(L)F1508/1509 Pin Definitions -- 20-Pin PDIP/SOIC/SSOP and
+* 20-Pin QFN/UQFN (combined)
+* Source: Microchip DS40001609F "PIC16(L)F1508/9 Microcontroller Data
+*         Sheet" (also covers PIC12F1501/PIC16F1503/1507 as siblings
+*         in the same family document set, but those are separate,
+*         non-pin-compatible devices documented elsewhere), Pin
+*         Diagrams section and Table 1-2 (Pinout Description).
+*
+* Primary device: PIC16F1509 -- determines this file's name.
+*
+* Companion devices -- PIC16F1508 and PIC16F1509 are peripheral-
+* identical per Table 1-1 (Device Peripheral Summary): same 18 I/O,
+* same 12-channel ADC, same comparators/timers/PWM/MSSP/EUSART/DAC/
+* CLC/NCO/CWG counts -- differing ONLY in Flash (4096 vs 8192 words)
+* and SRAM (256 vs 512 bytes), the standard memory-size-variant case
+* used throughout this project. Includes the low-voltage "L" variants
+* on the same basis as every other L-suffix device here (voltage/
+* speed grade only). Per datasheet listing order:
+*   PIC16F1508, PIC16LF1508, PIC16F1509, PIC16LF1509
+*
+* NOT included -- PIC12F1501 (8-pin), PIC16F1503 (14-pin), and
+* PIC16F1507 (20-pin but only 12 I/O per Table 1-1, a genuinely
+* smaller peripheral set) are covered by the same family overview
+* page as this datasheet but are documented in SEPARATE datasheets
+* (DS40001615, DS40001607, DS40001586 respectively) and are not
+* pin-compatible with the 1508/1509 pair. Each would need its own
+* file sourced from its own datasheet.
+*
+* Package scope -- 20-Pin PDIP/SOIC/SSOP and 20-Pin QFN/UQFN are
+* combined into this single file. Both packages expose the exact
+* same 20 physical pins (18 GPIO + MCLR-shared-RA3 counted within
+* that 18 + VDD + VSS) with identical functions -- confirmed via the
+* Pin Diagrams, which show both packages sharing one pin-allocation
+* table (Table 1) with just two different physical numbering
+* columns. No NC pins on either package -- unlike every prior multi-
+* package family in this project, both variants here use exactly 20
+* physical pins with no padding needed. The QFN/UQFN package also has
+* an exposed bottom pad the datasheet recommends tying to VSS -- not
+* a distinct signal, already covered by the G record.
+*
+* Flagged for manual review (dual-function / non-obvious pins):
+*   RA3     -- CLC1IN0/VPP/T1G/SS/MCLR. UNLIKE every other GPIO pin
+*             on this device (each explicitly documented as "General
+*             purpose I/O") and unlike the MCLR pin on the PIC16F1847/
+*             PIC16F1827 devices elsewhere in this project, Table 1-2
+*             explicitly documents this pin's GPIO function as
+*             "General purpose INPUT with IOC and WPU" -- Output Type
+*             column reads "--" (no output driver at all). Classified
+*             I (not B): this pin genuinely cannot drive an output
+*             even when MCLR is disabled via config bits, confirmed
+*             directly rather than assumed from precedent. This also
+*             matches Table 1-1's Note 2 ("One pin is input-only").
+*   RA4/RA5 -- CLKOUT/OSC2 and CLKIN/OSC1, oscillator-mode-dependent
+*             alternate functions on otherwise ordinary GPIO pins
+*             (both explicitly documented as "General purpose I/O").
+*             Classified B, same reasoning as PIC16F1847/1827's
+*             RA6/RA7 -- external oscillator mode is a config-bit
+*             choice, not a pin dedication, on this enhanced mid-
+*             range core.
+*   Several pins (RA3, RC5, RC6) have alternate functions selectable
+*   only via the APFCON (Alternate Pin Function) register rather than
+*   being always active -- noted in the datasheet with superscript
+*   (1) but not separately encoded here, same treatment as the PPS-
+*   remappable RPn functions on the dsPIC33CK256MP505 elsewhere in
+*   this project.
+
+D PIC16(L)F1508/9 20-Pin PDIP/SOIC/SSOP/QFN/UQFN 8-bit Flash Microcontroller
+P PIC16F1508 PIC16LF1508 PIC16F1509 PIC16LF1509
+
+V VDD
+B RA0 AN0/C1IN+/DAC1OUT1/ICSPDAT/ICDDAT
+B RA1 AN1/CLC4IN1/VREF+/C1IN0-/C2IN0-/ICSPCLK/ICDCLK
+B RA2 AN2/C1OUT/DAC1OUT2/T0CKI/INT/PWM3/CLC1/CWG1FLT
+I RA3 CLC1IN0/VPP/T1G/SS/MCLR
+B RA4 AN3/SOSCO/CLKOUT/T1G
+B RA5 CLKIN/T1CKI/NCO1CLK/SOSCI
+B RB4 AN10/CLC3IN0/SDA/SDI
+B RB5 AN11/CLC4IN0/RX/DT
+X 1
+K SIMCLK
+
+B RB6 SCL/SCK
+B RB7 CLC3/TX/CK
+B RC0 AN4/CLC2/C2IN+
+B RC1 AN5/C1IN1-/C2IN1-/PWM4/NCO1
+B RC2 AN6/C1IN2-/C2IN2-
+B RC3 AN7/C1IN3-/C2IN3-/PWM2/CLC2IN0
+B RC4 C2OUT/CLC2IN1/CLC4/CWG1B
+B RC5 PWM1/CLC1/CWG1A
+B RC6 AN8/NCO1/CLC3IN1/SS
+B RC7 AN9/CLC1IN1/SDO
+G VSS
