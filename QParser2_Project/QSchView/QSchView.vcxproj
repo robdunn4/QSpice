@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="18.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug-ASan|x64">
+      <Configuration>Debug-ASan</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="CliRun.h" />
+    <ClInclude Include="PrintDefaultsDlg.h" />
+    <ClInclude Include="resource.h" />
+    <ClInclude Include="SchHeaderFooterDlg.h" />
+    <ClInclude Include="SchPrintDlg.h" />
+    <ClInclude Include="Version.h" />
+    <ClInclude Include="ViewerIcons.h" />
+    <ClInclude Include="ViewerPrefs.h" />
+    <QtMoc Include="DocView.h" />
+    <QtMoc Include="ViewerWin.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="CliRun.cpp" />
+    <ClCompile Include="DocView.cpp" />
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="PrintDefaultsDlg.cpp" />
+    <ClCompile Include="SchHeaderFooterDlg.cpp" />
+    <ClCompile Include="SchPrintDlg.cpp" />
+    <ClCompile Include="Version.cpp" />
+    <ClCompile Include="ViewerIcons.cpp" />
+    <ClCompile Include="ViewerPrefs.cpp" />
+    <ClCompile Include="ViewerWin.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="QSchView.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="icons\Export_White.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\QParser2_Shared_Lib\QParser2_Shared_Lib.vcxproj">
+      <Project>{0e4b880d-e33d-40d8-bb71-81889e1861d5}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\QSch_Shared_Libs\SchCore\SchCore.vcxproj">
+      <Project>{A6930B75-E009-4C82-A40F-6A172D581A32}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\QSch_Shared_Libs\SchLink\SchLink.vcxproj">
+      <Project>{CCA5AC5D-9B8A-457C-9C5B-6165466C6A5A}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\QSch_Shared_Libs\SchRender\SchRender.vcxproj">
+      <Project>{4A4C18B6-6DA1-4159-9E9E-C1E61F25FE9E}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\QSch_Shared_Libs\SchOutput\SchOutput.vcxproj">
+      <Project>{7C9B88B8-0A89-45E1-8C67-86109D2787EA}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\QSch_Shared_Libs\SchApp\SchApp.vcxproj">
+      <Project>{79B321AD-1109-4416-A72B-FD43B8D317B9}</Project>
+    </ProjectReference>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{5CE57AAF-052C-4430-A886-A81CD1404282}</ProjectGuid>
+    <Keyword>QtVS_v304</Keyword>
+    <RootNamespace>QSchView</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <QtMsBuild Condition="'$(QtMsBuild)'=='' OR !Exists('$(QtMsBuild)\qt.targets')">$(MSBuildProjectDirectory)\QtMsBuild</QtMsBuild>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <PlatformToolset>v145</PlatformToolset>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug-ASan|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <PlatformToolset>v145</PlatformToolset>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <CharacterSet>Unicode</CharacterSet>
+    <EnableASAN>true</EnableASAN>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <PlatformToolset>v145</PlatformToolset>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Condition="Exists('$(QtMsBuild)\qt_defaults.props')">
+    <Import Project="$(QtMsBuild)\qt_defaults.props" />
+  </ImportGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="QtSettings">
+    <QtInstall>6.11.2_msvc2022_64</QtInstall>
+    <QtModules>core;gui;widgets;printsupport;svg</QtModules>
+    <QtBuildConfig>debug</QtBuildConfig>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug-ASan|x64'" Label="QtSettings">
+    <QtInstall>6.11.2_msvc2022_64</QtInstall>
+    <QtModules>core;gui;widgets;printsupport;svg</QtModules>
+    <QtBuildConfig>debug</QtBuildConfig>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="QtSettings">
+    <QtInstall>6.11.2_msvc2022_64</QtInstall>
+    <QtModules>core;gui;widgets;printsupport;svg</QtModules>
+    <QtBuildConfig>release</QtBuildConfig>
+  </PropertyGroup>
+  <Target Name="QtMsBuildNotFound" BeforeTargets="CustomBuild;ClCompile" Condition="!Exists('$(QtMsBuild)\qt.targets') or !Exists('$(QtMsBuild)\qt.props')">
+    <Message Importance="High" Text="QtMsBuild: could not locate qt.targets, qt.props; project may not build correctly." />
+  </Target>
+  <ImportGroup Label="ExtensionSettings" />
+  <ImportGroup Label="Shared" />
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="$(QtMsBuild)\Qt.props" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug-ASan|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="$(QtMsBuild)\Qt.props" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="$(QtMsBuild)\Qt.props" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <OutDir>$(ProjectDir)$(Platform)\$(Configuration)\</OutDir>
+    <IntDir>$(ProjectDir)obj\$(Platform)\$(Configuration)\</IntDir>
+    <TargetName>QSchView</TargetName>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug-ASan|x64'">
+    <OutDir>$(ProjectDir)$(Platform)\$(Configuration)\</OutDir>
+    <IntDir>$(ProjectDir)obj\$(Platform)\$(Configuration)\</IntDir>
+    <TargetName>QSchView</TargetName>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <OutDir>$(ProjectDir)$(Platform)\$(Configuration)\</OutDir>
+    <IntDir>$(ProjectDir)obj\$(Platform)\$(Configuration)\</IntDir>
+    <TargetName>QSchView</TargetName>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <LanguageStandard>stdcpp20</LanguageStandard>
+      <AdditionalIncludeDirectories>$(SolutionDir)QParser2_Shared_Lib;$(SolutionDir)QSch_Shared_Libs\SchCore;$(SolutionDir)QSch_Shared_Libs\SchLink;$(SolutionDir)QSch_Shared_Libs\SchRender;$(SolutionDir)QSch_Shared_Libs\SchOutput;$(SolutionDir)QSch_Shared_Libs\SchApp;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <WarningLevel>Level3</WarningLevel>
+      <SDLCheck>true</SDLCheck>
+      <ConformanceMode>true</ConformanceMode>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug-ASan|x64'">
+    <ClCompile>
+      <LanguageStandard>stdcpp20</LanguageStandard>
+      <AdditionalIncludeDirectories>$(SolutionDir)QParser2_Shared_Lib;$(SolutionDir)QSch_Shared_Libs\SchCore;$(SolutionDir)QSch_Shared_Libs\SchLink;$(SolutionDir)QSch_Shared_Libs\SchRender;$(SolutionDir)QSch_Shared_Libs\SchOutput;$(SolutionDir)QSch_Shared_Libs\SchApp;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <WarningLevel>Level3</WarningLevel>
+      <SDLCheck>true</SDLCheck>
+      <ConformanceMode>true</ConformanceMode>
+      <BasicRuntimeChecks>Default</BasicRuntimeChecks>
+      <PreprocessorDefinitions>_DISABLE_STRING_ANNOTATION;_DISABLE_VECTOR_ANNOTATION;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <LanguageStandard>stdcpp20</LanguageStandard>
+      <AdditionalIncludeDirectories>$(SolutionDir)QParser2_Shared_Lib;$(SolutionDir)QSch_Shared_Libs\SchCore;$(SolutionDir)QSch_Shared_Libs\SchLink;$(SolutionDir)QSch_Shared_Libs\SchRender;$(SolutionDir)QSch_Shared_Libs\SchOutput;$(SolutionDir)QSch_Shared_Libs\SchApp;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <WarningLevel>Level3</WarningLevel>
+      <SDLCheck>true</SDLCheck>
+      <ConformanceMode>true</ConformanceMode>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>false</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+  </ItemDefinitionGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Condition="Exists('$(QtMsBuild)\qt.targets')">
+    <Import Project="$(QtMsBuild)\qt.targets" />
+  </ImportGroup>
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
