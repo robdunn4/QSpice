@@ -18,26 +18,25 @@
  *   P7 -- Lookup index
  *   P8 -- Pin index
  *
- * Construction: use ItemArc::makePtr(...).  Constructors are protected.
+ * Construction: use ItemArc3P::makePtr(...).  Constructors are protected.
  */
 #pragma once
 #include "ArgUtils2.h"
 #include "ItemBase.h"
 
-class ItemArc;
-typedef std::shared_ptr<ItemArc> ItemArcPtr;
+class ItemArc3P;
+typedef std::shared_ptr<ItemArc3P> ItemArc3pPtr;
 
-class ItemArc : public ItemBaseT<ItemArc> {
+class ItemArc3P : public ItemBaseT<ItemArc3P> {
 public:
-  static ItemArcPtr makePtr() { return ItemArcPtr(new ItemArc()); }
-  static ItemArcPtr makePtr(const ArgPoint &pt1, const ArgPoint &pt2,
-                            const ArgPoint &pt3, const ArgLineWidth &lineWidth,
-                            const ArgLineType  &lineType,
-                            const ArgColor     &lineColor,
-                            const ArgLookupNdx &lookupNdx,
-                            const ArgPinNdx    &pinNdx) {
-    return ItemArcPtr(new ItemArc(pt1, pt2, pt3, lineWidth, lineType, lineColor,
-                                  lookupNdx, pinNdx));
+  static ItemArc3pPtr makePtr() { return ItemArc3pPtr(new ItemArc3P()); }
+  static ItemArc3pPtr
+  makePtr(const ArgPoint &pt1, const ArgPoint &pt2, const ArgPoint &pt3,
+          const ArgLineWidth &lineWidth, const ArgLineType &lineType,
+          const ArgColor &lineColor, const ArgLookupNdx &lookupNdx,
+          const ArgPinNdx &pinNdx) {
+    return ItemArc3pPtr(new ItemArc3P(pt1, pt2, pt3, lineWidth, lineType,
+                                      lineColor, lookupNdx, pinNdx));
   }
 
   bool        parseItem(const std::string &argStr) override;
@@ -53,15 +52,15 @@ public:
   ArgPinNdx    pinNdx;
 
 protected:
-  ItemArc() : ItemBaseT(QPI::ARC3P) {}
-  ItemArc(const ItemArc &other) = default;
-  ItemArc(const ArgPoint &pt1, const ArgPoint &pt2, const ArgPoint &pt3,
-          const ArgLineWidth &lineWidth, const ArgLineType &lineType,
-          const ArgColor &lineColor, const ArgLookupNdx &lookupNdx,
-          const ArgPinNdx &pinNdx)
+  ItemArc3P() : ItemBaseT(QPI::ARC3P) {}
+  ItemArc3P(const ItemArc3P &other) = default;
+  ItemArc3P(const ArgPoint &pt1, const ArgPoint &pt2, const ArgPoint &pt3,
+            const ArgLineWidth &lineWidth, const ArgLineType &lineType,
+            const ArgColor &lineColor, const ArgLookupNdx &lookupNdx,
+            const ArgPinNdx &pinNdx)
       : ItemBaseT(QPI::ARC3P), pt1(pt1), pt2(pt2), pt3(pt3),
         lineWidth(lineWidth), lineType(lineType), lineColor(lineColor),
         lookupNdx(lookupNdx), pinNdx(pinNdx) {}
 
-  friend class ItemBaseT<ItemArc>;
+  friend class ItemBaseT<ItemArc3P>;
 };

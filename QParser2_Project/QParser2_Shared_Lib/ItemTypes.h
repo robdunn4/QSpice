@@ -36,8 +36,7 @@
 // NodeType -- bitfield describing whether an item is a container, a leaf,
 // or either.
 //-----------------------------------------------------------------------------
-enum class NodeType : unsigned
-{
+enum class NodeType : unsigned {
   None      = 0,
   Container = 1 << 0,
   Leaf      = 1 << 1,
@@ -62,6 +61,10 @@ inline constexpr bool any(NodeType v) {
   return static_cast<std::underlying_type_t<NodeType>>(v) != 0;
 }
 
+/* Note:  ARC4P was added without confirming ordinal position -- probably not an
+ * issue but should revisit as this was a very late addition...
+ */
+
 #define QPI_ITEMS(X)                                                           \
   X(UNKNOWN, "base", NodeType::Leaf)                                           \
   X(SCH, "schematic", NodeType::Container)                                     \
@@ -79,14 +82,14 @@ inline constexpr bool any(NodeType v) {
   X(RECT, "rect", NodeType::Leaf)                                              \
   X(ELLIPSE, "ellipse", NodeType::Leaf)                                        \
   X(ARC3P, "arc3p", NodeType::Leaf)                                            \
+  X(ARC4P, "arc", NodeType::Leaf)                                              \
   X(TRIANGLE, "triangle", NodeType::Leaf)                                      \
   X(COIL, "coil", NodeType::Leaf)                                              \
   X(ZIGZAG, "zigzag", NodeType::Leaf)                                          \
   X(TEXT, "text", NodeType::Leaf)                                              \
   X(PIN, "pin", NodeType::Leaf)
 
-enum class QPI : int
-{
+enum class QPI : int {
 #define X(name, str, kind) name,
   QPI_ITEMS(X)
 #undef X

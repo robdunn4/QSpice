@@ -4,6 +4,7 @@
 //-----------------------------------------------------------------------------
 #include "ItemBase.h"
 #include "ItemArc3P.h"
+#include "ItemArc4P.h"
 #include "ItemCmp.h"
 #include "ItemCoil.h"
 #include "ItemDesc.h"
@@ -26,29 +27,52 @@
 
 ItemBasePtr ItemBase::makeItem(QPI enumID) {
   switch (enumID) {
-  case QPI::SCH:      return ItemSch::makePtr();
-  case QPI::COMP:     return ItemCmp::makePtr();
-  case QPI::SYM:      return ItemSym::makePtr();
-  case QPI::TYPE:     return ItemType::makePtr();
-  case QPI::DESC:     return ItemDesc::makePtr();
-  case QPI::LIB:      return ItemLib::makePtr();
-  case QPI::SHORTED:  return ItemShort::makePtr();
-  case QPI::NET:      return ItemNet::makePtr();
-  case QPI::JUNCTION: return ItemJunction::makePtr();
-  case QPI::WIRE:     return ItemWire::makePtr();
-  case QPI::TAP:      return ItemTap::makePtr();
-  case QPI::LINE:     return ItemLine::makePtr();
-  case QPI::RECT:     return ItemRect::makePtr();
-  case QPI::ELLIPSE:  return ItemEllipse::makePtr();
-  case QPI::ARC3P:    return ItemArc::makePtr();
-  case QPI::TRIANGLE: return ItemTriangle::makePtr();
-  case QPI::COIL:     return ItemCoil::makePtr();
-  case QPI::ZIGZAG:   return ItemZigzag::makePtr();
-  case QPI::TEXT:     return ItemText::makePtr();
-  case QPI::PIN:      return ItemPin::makePtr();
+  case QPI::SCH:
+    return ItemSch::makePtr();
+  case QPI::COMP:
+    return ItemCmp::makePtr();
+  case QPI::SYM:
+    return ItemSym::makePtr();
+  case QPI::TYPE:
+    return ItemType::makePtr();
+  case QPI::DESC:
+    return ItemDesc::makePtr();
+  case QPI::LIB:
+    return ItemLib::makePtr();
+  case QPI::SHORTED:
+    return ItemShort::makePtr();
+  case QPI::NET:
+    return ItemNet::makePtr();
+  case QPI::JUNCTION:
+    return ItemJunction::makePtr();
+  case QPI::WIRE:
+    return ItemWire::makePtr();
+  case QPI::TAP:
+    return ItemTap::makePtr();
+  case QPI::LINE:
+    return ItemLine::makePtr();
+  case QPI::RECT:
+    return ItemRect::makePtr();
+  case QPI::ELLIPSE:
+    return ItemEllipse::makePtr();
+  case QPI::ARC3P:
+    return ItemArc3P::makePtr();
+  case QPI::ARC4P:
+    return ItemArc4P::makePtr();
+  case QPI::TRIANGLE:
+    return ItemTriangle::makePtr();
+  case QPI::COIL:
+    return ItemCoil::makePtr();
+  case QPI::ZIGZAG:
+    return ItemZigzag::makePtr();
+  case QPI::TEXT:
+    return ItemText::makePtr();
+  case QPI::PIN:
+    return ItemPin::makePtr();
   case QPI::UNKNOWN:
   case QPI::COUNT:
-  default:            return nullptr;
+  default:
+    return nullptr;
   }
 }
 

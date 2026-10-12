@@ -47,9 +47,8 @@ bool writeNode(const NodePtr &n, int depth, std::ostream &out) {
   if (n->isContainer()) {
     out.put('\n');
     if (!out) return false;
-    for (const auto &c : n->children()) {
+    for (const auto &c : n->children())
       if (!writeNode(c, depth + 1, out)) return false;
-    }
     for (int i = 0; i < depth * 2; ++i) out.put(' ');
     out.put(static_cast<char>(END_NODE));
     out.put('\n');
@@ -60,24 +59,39 @@ bool writeNode(const NodePtr &n, int depth, std::ostream &out) {
   return static_cast<bool>(out);
 }
 
-} // namespace
+}   // namespace
 
 //-----------------------------------------------------------------------------
-// Read
+// Read -- reqFileID parameter determines if missing FileID bytes fails hard
 //-----------------------------------------------------------------------------
 
-ParseResult read(std::istream &in) {
+ParseResult read(std::istream &in, bool reqFileID) {
   // Header check.
   char hdr[4] = {0};
   in.read(hdr, 4);
-  if (in.gcount() != 4) return fail("file too short: missing header");
+  if (in.gcount() != 4) return fail("file too short to be valid");
+
+  // determine if the FileID bytes are present
+  bool idFound = true;
   for (int i = 0; i < 4; ++i) {
-    if (static_cast<unsigned char>(hdr[i]) != FILE_ID[i])
-      return fail("bad file header");
+    if (static_cast<unsigned char>(hdr[i]) == FILE_ID[i]) continue;
+    idFound = false;
+    break;
+  }
+
+  // not present and required, fail
+  if (reqFileID && !idFound) return fail("bad file header");
+
+  // if not found but not required, reset stream to start (yes, this could be
+  // done differently but I'm modifying existing code and efficiency for this
+  // bit of code isn't particularly important)
+  if (!reqFileID && !idFound) {
+    in.clear();
+    in.seekg(0, std::ios::beg);
   }
 
   ParseResult          result;
-  std::vector<NodePtr> stack; // open containers; top is current parent
+  std::vector<NodePtr> stack;   // open containers; top is current parent
   int                  lineNo = 0;
   std::string          rawLine;
 
@@ -86,7 +100,7 @@ ParseResult read(std::istream &in) {
     stripCR(rawLine);
     std::string_view line = stripLeadingSpaces(rawLine);
 
-    if (line.empty()) continue; // trailing blank line(s) OK
+    if (line.empty()) continue;   // trailing blank line(s) OK
 
     unsigned char first = static_cast<unsigned char>(line.front());
 
@@ -138,18 +152,19 @@ ParseResult read(std::istream &in) {
   return result;
 }
 
-ParseResult readFile(const std::string &path) {
+ParseResult readFile(const std::string &path, bool reqFileID) {
   try {
     std::ifstream f = FileUtil::openInput(path);
-    return read(f);
-  } catch (const std::exception &e) {
+    return read(f, reqFileID);
+  }
+  catch (const std::exception &e) {
     return fail(e.what());
   }
 }
 
-ParseResult readString(std::string_view text) {
+ParseResult readString(std::string_view text, bool reqFileID) {
   std::istringstream s{std::string(text)};
-  return read(s);
+  return read(s, reqFileID);
 }
 
 //-----------------------------------------------------------------------------
@@ -168,7 +183,8 @@ bool writeFile(const ItemTree &tree, const std::string &path) {
   try {
     std::ofstream f = FileUtil::openOutput(path);
     return write(tree, f);
-  } catch (...) {
+  }
+  catch (...) {
     return false;
   }
 }
@@ -184,4 +200,4 @@ StrList writeStrList(const ItemTree &tree) {
   return StrUtil::fromString(writeString(tree));
 }
 
-} // namespace ItemTreeIO
+}   // namespace ItemTreeIO

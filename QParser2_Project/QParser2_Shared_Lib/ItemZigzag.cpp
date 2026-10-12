@@ -13,7 +13,7 @@ bool ItemZigzag::parseItem(const std::string &argStr) {
   try {
     pt1       = ArgPoint(strList[0]);
     pt2       = ArgPoint(strList[1]);
-    rotation  = ArgRot(strList[2]);
+    rotate  = ArgRot(strList[2]);
     lineWidth = ArgLineWidth(strList[3]);
     lineType  = ArgLineType(strList[4]);
     lineColor = ArgColor(strList[5]);
@@ -27,7 +27,7 @@ bool ItemZigzag::parseItem(const std::string &argStr) {
 
 std::string ItemZigzag::toString() const {
   return std::string(getTypeStr()) + " " + pt1.toString() + " " +
-         pt2.toString() + " " + rotation.toString() + " " +
+         pt2.toString() + " " + rotate.toString() + " " +
          lineWidth.toString() + " " + lineType.toString() + " " +
          lineColor.toString() + " " + lookupNdx.toString() + " " +
          pinNdx.toString();

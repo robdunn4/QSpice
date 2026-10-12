@@ -15,12 +15,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="DrawIntf.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="DrawUtils.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="ItemArc3P.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -93,6 +87,9 @@
     <ClInclude Include="ItemZigzag.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="QParser2_Version.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="ArgUtils.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -111,11 +108,11 @@
     <ClInclude Include="StrList.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="ItemArc4P.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="DrawIntf.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="ItemArc3P.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -185,6 +182,9 @@
     <ClCompile Include="ItemZigzag.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="QParser2_Version.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="ArgUtils.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -195,6 +195,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="FileUtil.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ItemArc4P.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

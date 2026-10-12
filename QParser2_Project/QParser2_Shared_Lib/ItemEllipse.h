@@ -23,13 +23,13 @@
  */
 #pragma once
 #include "ArgUtils2.h"
-#include "DrawIntf.h"
 #include "ItemBase.h"
 
 class ItemEllipse;
 typedef std::shared_ptr<ItemEllipse> ItemEllipsePtr;
 
-class ItemEllipse : public ItemBaseT<ItemEllipse>, public DrawIntf {
+// class ItemEllipse : public ItemBaseT<ItemEllipse>, public DrawIntf {
+class ItemEllipse : public ItemBaseT<ItemEllipse> {
 public:
   static ItemEllipsePtr makePtr() { return ItemEllipsePtr(new ItemEllipse()); }
   static ItemEllipsePtr
@@ -45,11 +45,11 @@ public:
   bool        parseItem(const std::string &argStr) override;
   std::string toString() const override;
 
-  // DrawIntf overrides
-  [[nodiscard]] Rect  getRect() const noexcept override;
-  [[nodiscard]] Point getPosition() const noexcept override;
-  void                moveTo(Point p) noexcept override;
-  void                moveBy(Point p) noexcept override;
+  //// DrawIntf overrides
+  //[[nodiscard]] Rect  getRect() const noexcept override;
+  //[[nodiscard]] Point getPosition() const noexcept override;
+  // void                moveTo(Point p) noexcept override;
+  // void                moveBy(Point p) noexcept override;
 
   ArgPoint     pt1;
   ArgPoint     pt2;

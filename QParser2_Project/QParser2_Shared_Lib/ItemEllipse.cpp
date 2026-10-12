@@ -34,17 +34,17 @@ std::string ItemEllipse::toString() const {
          pinNdx.toString();
 }
 
-// ── DrawIntf implementation ────────────────────────────────────────────────
-
-Rect ItemEllipse::getRect() const noexcept {
-  return Rect(pt1.getValue(), pt2.getValue());
-}
-
-Point ItemEllipse::getPosition() const noexcept { return pt1.getValue(); }
-
-void ItemEllipse::moveTo(Point p) noexcept { moveBy(p - pt1.getValue()); }
-
-void ItemEllipse::moveBy(Point delta) noexcept {
-  pt1.setValue(pt1.getValue() + delta);
-  pt2.setValue(pt2.getValue() + delta);
-}
+//// ── DrawIntf implementation ────────────────────────────────────────────────
+//
+// Rect ItemEllipse::getRect() const noexcept {
+//  return Rect(pt1.getValue(), pt2.getValue());
+//}
+//
+// Point ItemEllipse::getPosition() const noexcept { return pt1.getValue(); }
+//
+// void ItemEllipse::moveTo(Point p) noexcept { moveBy(p - pt1.getValue()); }
+//
+// void ItemEllipse::moveBy(Point delta) noexcept {
+//  pt1.setValue(pt1.getValue() + delta);
+//  pt2.setValue(pt2.getValue() + delta);
+//}

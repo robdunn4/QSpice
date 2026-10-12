@@ -5,7 +5,7 @@
 #include "ItemArc3P.h"
 #include "StrUtil.h"
 
-bool ItemArc::parseItem(const std::string &argStr) {
+bool ItemArc3P::parseItem(const std::string &argStr) {
   StrList strList = StrUtil::tokenize(argStr);
 
   if (strList.size() != 8) return false;
@@ -25,7 +25,7 @@ bool ItemArc::parseItem(const std::string &argStr) {
   return true;
 }
 
-std::string ItemArc::toString() const {
+std::string ItemArc3P::toString() const {
   return std::string(getTypeStr()) + " " + pt1.toString() + " " +
          pt2.toString() + " " + pt3.toString() + " " + lineWidth.toString() +
          " " + lineType.toString() + " " + lineColor.toString() + " " +

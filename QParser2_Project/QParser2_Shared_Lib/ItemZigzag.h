@@ -31,11 +31,11 @@ class ItemZigzag : public ItemBaseT<ItemZigzag> {
 public:
   static ItemZigzagPtr makePtr() { return ItemZigzagPtr(new ItemZigzag()); }
   static ItemZigzagPtr
-  makePtr(const ArgPoint &pt1, const ArgPoint &pt2, const ArgRot &rotation,
+  makePtr(const ArgPoint &pt1, const ArgPoint &pt2, const ArgRot &rotate,
           const ArgLineWidth &lineWidth, const ArgLineType &lineType,
           const ArgColor &lineColor, const ArgLookupNdx &lookupNdx,
           const ArgPinNdx &pinNdx) {
-    return ItemZigzagPtr(new ItemZigzag(pt1, pt2, rotation, lineWidth, lineType,
+    return ItemZigzagPtr(new ItemZigzag(pt1, pt2, rotate, lineWidth, lineType,
                                         lineColor, lookupNdx, pinNdx));
   }
 
@@ -44,7 +44,7 @@ public:
 
   ArgPoint     pt1;
   ArgPoint     pt2;
-  ArgRot       rotation;
+  ArgRot       rotate;
   ArgLineWidth lineWidth;
   ArgLineType  lineType;
   ArgColor     lineColor;
@@ -54,11 +54,11 @@ public:
 protected:
   ItemZigzag() : ItemBaseT(QPI::ZIGZAG) {}
   ItemZigzag(const ItemZigzag &other) = default;
-  ItemZigzag(const ArgPoint &pt1, const ArgPoint &pt2, const ArgRot &rotation,
+  ItemZigzag(const ArgPoint &pt1, const ArgPoint &pt2, const ArgRot &rotate,
              const ArgLineWidth &lineWidth, const ArgLineType &lineType,
              const ArgColor &lineColor, const ArgLookupNdx &lookupNdx,
              const ArgPinNdx &pinNdx)
-      : ItemBaseT(QPI::ZIGZAG), pt1(pt1), pt2(pt2), rotation(rotation),
+      : ItemBaseT(QPI::ZIGZAG), pt1(pt1), pt2(pt2), rotate(rotate),
         lineWidth(lineWidth), lineType(lineType), lineColor(lineColor),
         lookupNdx(lookupNdx), pinNdx(pinNdx) {}
 

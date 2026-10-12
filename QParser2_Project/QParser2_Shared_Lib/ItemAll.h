@@ -6,6 +6,7 @@
 // need it.
 
 #include "ItemArc3P.h"
+#include "ItemArc4P.h"
 #include "ItemBase.h"
 #include "ItemCmp.h"
 #include "ItemCoil.h"

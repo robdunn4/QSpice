@@ -35,9 +35,9 @@ struct ParseResult {
 };
 
 // Read.  On failure, `tree` is empty and `error`/`line` describe the problem.
-ParseResult read(std::istream &in);
-ParseResult readFile(const std::string &path);
-ParseResult readString(std::string_view text);
+ParseResult read(std::istream &in, bool reqFileID = true);
+ParseResult readFile(const std::string &path, bool reqFileID = true);
+ParseResult readString(std::string_view text, bool reqFileID = true);
 
 // Write.  Returns false on I/O error.  Output is always well-formed.
 bool        write(const ItemTree &tree, std::ostream &out);
