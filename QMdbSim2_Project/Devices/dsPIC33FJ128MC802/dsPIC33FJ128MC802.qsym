@@ -1,4 +1,4 @@
-ÿØÿÛ«symbol dsPIC33FJ128MC802
+ÿØÿÛ«symbol dsPIC33Fj128MC802
   «type: »
   «description: 16-bit Digital Signal Controllers (up to 128 KB Flash and 16K SRAM) with Motor Control PWM and Advanced Analog»
   «shorted pins: false»
@@ -32,9 +32,9 @@
   «triangle (660,-2450) (660,-2550) (560,-2500) 0 0 0xff0000 0xffffff -1 -1»
   «triangle (610,-2750) (560,-2650) (660,-2650) 0 0 0xff0000 0xffffff -1 -1»
   «text (0,150) 1 15 0 0x1000000 -1 -1 "X1"»
-  «text (0,50) 0.5 15 0 0x1000000 -1 -1 "dsPIC33FJ128MC802"»
+  «text (0,50) 0.5 15 0 0x1000000 -1 -1 "dsPIC33Fj128MC802"»
   «text (0,250) 0.5 15 2 0x1000000 -1 -1 "Device=<("dsPIC33FJ128MC802"),"dsPIC33FJ128MC202","dsPIC33FJ64MC802","dsPIC33FJ64MC202","dsPIC33FJ32MC302"> Select target device from list"»
-  «text (0,-2950) 0.5 15 2 0x1000000 -1 -1 "PgmPath=<"Test_dsPIC33FJ128MC802.elf"> Path to device code (*.hex/*.elf)"»
+  «text (0,-2950) 0.5 15 2 0x1000000 -1 -1 "PgmPath=<"Test_dsPIC33Fj128MC802.elf"> Path to device code (*.hex/*.elf)"»
   «text (0,-3050) 0.5 15 2 0x1000000 -1 -1 "CfgPath=<".\QMdbCfg.ini"> Path to QMdbCfg.ini file"»
   «text (-530,-1000) 0.25 7 1 0x1000000 -1 -1 "AN0/VREF+/CN2"»
   «text (-530,-1200) 0.25 7 1 0x1000000 -1 -1 "AN1/VREF-/CN3"»

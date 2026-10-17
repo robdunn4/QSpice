@@ -217,7 +217,7 @@ dspic33fj128mc802(pInstData *opaque, double t, uData *data) {
         };
         for (const auto &name : deviceNames)
             if (_stricmp(DevPartName, name.data()) == 0) return std::string(name);
-        Display(std::format("Unknown device \"{}\"; check P record in pin defs.", DevPartName).c_str());
+        Display(std::format("Unknown device \"{}\"; check P record in pin defs.\n", DevPartName).c_str());
         gAbortFlg = true;
         return "";
     }();

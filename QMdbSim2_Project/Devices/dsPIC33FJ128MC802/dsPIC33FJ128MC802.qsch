@@ -300,7 +300,7 @@
       «shorted pins: false»
       «rect (0,-100) (2000,-14100) 0 0 0 0x1000000 0xffff -1 1 -1»
       «text (1000,250) 1 15 0 0x1000000 -1 -1 "X1"»
-      «text (1000,100) 1 15 0 0x1000000 -1 -1 "dsPIC33FJ128MC802"»
+      «text (1000,100) 1 15 0 0x1000000 -1 -1 "dsPIC33Fj128MC802"»
       «text (1000,350) 1 15 2 0x1000000 -1 -1 "char* DevPartName=Device"»
       «text (1000,350) 1 15 2 0x1000000 -1 -1 "char* DevPgmPath=PgmPath"»
       «text (1000,350) 1 15 2 0x1000000 -1 -1 "char* CfgIniPath=CfgPath"»

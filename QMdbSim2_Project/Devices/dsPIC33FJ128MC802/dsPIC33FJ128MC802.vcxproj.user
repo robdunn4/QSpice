@@ -1,4 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="Current" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <PropertyGroup />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <LocalDebuggerCommand>C:\Program Files\QSpice\QSpice64.exe</LocalDebuggerCommand>
+    <LocalDebuggerCommandArguments>dsPIC33FJ128MC802_Demo.cir</LocalDebuggerCommandArguments>
+    <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
+    <LocalDebuggerCommandArgumentsHistory>dsPIC33FJ128MC802_Demo.cir|</LocalDebuggerCommandArgumentsHistory>
+  </PropertyGroup>
 </Project>

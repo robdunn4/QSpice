@@ -11,7 +11,7 @@
       «rect (-25,-73) (25,-77) 0 0 0 0x1000000 0x3000000 -1 0 -1»
       «ellipse (-130,130) (130,-130) 0 0 0 0x1000000 0x1000000 -1 -1»
       «text (100,150) 1 7 0 0x1000000 -1 -1 "V1"»
-      «text (100,-150) 1 7 0 0x1000000 -1 -1 "5"»
+      «text (100,-150) 1 7 0 0x1000000 -1 -1 "3.5"»
       «pin (0,200) (0,0) 1 0 0 0x0 -1 "+"»
       «pin (0,-200) (0,0) 1 0 0 0x0 -1 "-"»
     »
@@ -215,7 +215,7 @@
       «rect (-25,-73) (25,-77) 0 0 0 0x1000000 0x3000000 -1 0 -1»
       «ellipse (-130,130) (130,-130) 0 0 0 0x1000000 0x1000000 -1 -1»
       «text (100,150) 1 7 0 0x1000000 -1 -1 "V2"»
-      «text (100,-150) 1 7 0 0x1000000 -1 -1 "PULSE 0 5 0 1n 1n 1/InstHz/2 1/InstHz"»
+      «text (100,-150) 1 7 0 0x1000000 -1 -1 "PULSE 0 3.5 0 1n 1n 1/InstHz/2 1/InstHz"»
       «pin (0,200) (0,0) 1 0 0 0x0 -1 "+"»
       «pin (0,-200) (0,0) 1 0 0 0x0 -1 "-"»
     »
@@ -285,7 +285,7 @@
       «text (0,150) 1 15 0 0x1000000 -1 -1 "X1"»
       «text (0,50) 0.5 15 0 0x1000000 -1 -1 "dsPIC33FJ128MC802"»
       «text (0,250) 0.5 15 2 0x1000000 -1 -1 "Device=<("dsPIC33FJ128MC802"),"dsPIC33FJ128MC202","dsPIC33FJ64MC802","dsPIC33FJ64MC202","dsPIC33FJ32MC302">Select target device from list"»
-      «text (0,-2950) 0.5 15 2 0x1000000 -1 -1 "PgmPath=<"Test_dsPIC33FJ128MC802.elf">Path to device code (*.hex/*.elf)"»
+      «text (0,-2950) 0.5 15 2 0x1000000 -1 -1 "PgmPath=<"MPLabX_Source.X.debug.elf">Path to device code (*.hex/*.elf)"»
       «text (0,-3050) 0.5 15 2 0x1000000 -1 -1 "CfgPath=<".\\QMdbCfg.ini">Path to QMdbCfg.ini file"»
       «text (-530,-1000) 0.25 7 1 0x1000000 -1 -1 "AN0/VREF+/CN2"»
       «text (-530,-1200) 0.25 7 1 0x1000000 -1 -1 "AN1/VREF-/CN3"»
@@ -370,12 +370,14 @@
   «net (-200,-2100) 1 13 0 "GND"»
   «net (-2900,100) 1 13 0 "MCLR"»
   «net (-2000,200) 1 11 0 "GND"»
+  «net (-2000,-1200) 1 11 0 "RB0"»
   «junction (4300,300)»
   «junction (4300,-300)»
   «junction (3200,300)»
   «junction (3200,-300)»
   «junction (2100,300)»
   «junction (2100,-300)»
+  «junction (-200,-2000)»
   «junction (-2000,600)»
   «wire (-2900,-2900) (-2900,-2800) "VDD"»
   «wire (-2900,-3400) (-2900,-3300) "GND"»
@@ -437,15 +439,19 @@
   «wire (-2000,200) (-1900,200) "GND"»
   «wire (-2000,600) (-2000,400) "VDD"»
   «wire (-2000,400) (-1900,400) "VDD"»
+  «wire (-500,-1800) (-200,-1800) "GND"»
+  «wire (-200,-1800) (-200,-2000) "GND"»
+  «wire (-2000,-1200) (-1900,-1200) "RB0"»
   «rect (1550,850) (4850,-850) 0 0 2 0x4000000 0x1000000 -1 0 -1»
   «text (5140,897) 0.8 5 1 0x1000000 -1 -1 "ï»¿Notes:\n* SIMCLK is NOT an actual device pin...\n* This device contains an internal oscillator.\n   However, that is not used for emulation.\n   Instead, SIMCLK is used to sychronize the\n   micro-controller to the QSpice simulation.\n   Each falling edge of SIMCLK steps the device\n   by 1 instruction cycle.  For this device,\n   one instruction cycle = 4 oscillator cycles.\n* Set OscFreq to match device oscillator \n   frequency as defined in the *.hex/*.elf\n   configuration bits."»
-  «text (-3180,2372) 1.6 5 1 0x1000000 -1 -1 "ï»¿dsPIC33FJ128MC802 Test Fixture (Incomplete)"»
-  «text (-3000,-4091) 1 5 0 0x1000000 -1 -1 "ï»¿.param OscFreq=4Meg\n.param CyclesPerInst=4\n.param InstHz=OscFreq/CyclesPerInst"»
+  «text (-3180,2372) 1.6 5 1 0x1000000 -1 -1 "ï»¿dsPIC33FJ128MC802 Test Fixture"»
+  «text (-3000,-4091) 1 5 0 0x1000000 -1 -1 "ï»¿.param OscFreq=80Meg\n.param CyclesPerInst=2\n.param InstHz=OscFreq/CyclesPerInst"»
   «text (-3050,-3950) 1 7 1 0x1000000 -1 -1 "ï»¿Device Clock Parameters"»
   «text (3201,889) 1.25 14 1 0x1000000 -1 -1 "ï»¿"Charlieplexed" LEDs"»
-  «text (1650,-2550) 1 7 0 0x1000000 -1 -1 "ï»¿.tran 5m"»
+  «text (1650,-2550) 1 7 0 0x1000000 -1 -1 "ï»¿.tran 100Âµ"»
   «text (5250,-1532) 1 5 0 0x1000000 -1 -1 "ï»¿.plot I(D1)\n.plot I(D2)\n.plot I(D3)\n.plot I(D4)\n.plot I(D5)\n.plot I(D6)"»
   «text (-3160,1897) 1 5 1 0x1000000 -1 -1 "ï»¿The most current schematics, code, and documentation are available in the QMdbSim2 project folder at https://github.com/robdunn4/QSpice."»
   «text (1650,-2750) 1 7 1 0x1000000 -1 -1 "ï»¿.option fastmath=false"»
+  «text (5280,-2907) 1 5 1 0x1000000 -1 -1 "ï»¿.plot V(RB0)\n.plot V(CLK)"»
 »
 
