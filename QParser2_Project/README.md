@@ -14,6 +14,7 @@ The prior code was sufficient for parsing an existing QSpice schematic or symbol
 
 ## Folders
 
+* [Unofficial_Doc](./Unofficial_Doc) &mdash; Unoffical documentation.  Could be very, very wrong.
 * [QParser2_Shared_Lib](./QParser2_Shared_Lib/) &mdash; The parser code library.
 * [QParser2_Tests](./QParser2_Tests/) &mdash; Test code to ensure read/parse/write round-tripping is correct.
 * [QBomGen](./QBomGen/) &mdash; A simple QParser2 command-line tool to generate a Bill of Materials list.
