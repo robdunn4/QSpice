@@ -28,16 +28,15 @@ static std::string safeIdentifier(const std::string &name) {
     result += '_';
 
   for (unsigned char c : name) {
-    if (std::isalnum(c) || c == '_')
-      result += static_cast<char>(c);
+    if (std::isalnum(c) || c == '_') result += static_cast<char>(c);
     else
       result += std::format("x{:02X}", c);
   }
   return result;
 }
 
-bool SymList::makeSymbol(const PinDefList &pinList, int rectWidth,
-                         std::ostream &errStrm) {
+bool SymList::makeSymbol(
+    const PinDefList &pinList, int rectWidth, std::ostream &errStrm) {
   ItemTree   tree;
   ItemSymPtr sym  = ItemSym::makePtr(pinList.partNbr);
   auto       root = tree.setRoot(sym);
@@ -56,19 +55,17 @@ bool SymList::makeSymbol(const PinDefList &pinList, int rectWidth,
   Point botRight{rectWidth / 2, -rectHeight};
 
   NodePtr nodePtr = root;
-  nodePtr->addLast(ItemType::makePtr()); // hierarchical entry
+  nodePtr->addLast(ItemType::makePtr());   // hierarchical entry
   nodePtr->addLast(ItemDesc::makePtr(pinList.description));
   nodePtr->addLast(ItemShort::makePtr(false));
 
   // add component reference
   nodePtr->addLast(ItemText::makePtr(ArgPoint(0, topLeft.y + 150),
-                                     ArgFontSize(), ArgRotAlign(),
-                                     ArgTextFlags(), 0x1000000, -1, -1, "X1"));
+      ArgFontSize(), ArgRotAlign(), ArgTextFlags(), 0x1000000, -1, -1, "X1"));
 
   // add DLL reference
   nodePtr->addLast(ItemText::makePtr(ArgPoint(0, topLeft.y + 50),
-                                     ArgFontSize(0.5), 15, 0, 0x1000000, -1, -1,
-                                     pinList.partNbr));
+      ArgFontSize(0.5), 15, 0, 0x1000000, -1, -1, pinList.partNbr));
 
   // add the multiple-choice device part number
   std::string mcDev;
@@ -77,28 +74,30 @@ bool SymList::makeSymbol(const PinDefList &pinList, int rectWidth,
     if (!mcDev.length()) {
       // if there is only one choice, we can't include the "()"
       if (pinList.partList.size() > 1) str = "Device=<(" + str + ")";
-      else str = "Device=<" + str;
-    } else str = "," + str;
+      else
+        str = "Device=<" + str;
+    } else
+      str = "," + str;
     mcDev += str;
   }
   mcDev += "> Select target device from list";
-  nodePtr->addLast(ItemText::makePtr(
-      ArgPoint(0, topLeft.y + 250), ArgFontSize(0.5f), ArgRotAlign(),
-      ArgTextFlags().setHidden(), 0x1000000, -1, -1, mcDev));
+  nodePtr->addLast(
+      ItemText::makePtr(ArgPoint(0, topLeft.y + 250), ArgFontSize(0.5f),
+          ArgRotAlign(), ArgTextFlags().setHidden(), 0x1000000, -1, -1, mcDev));
 
   // add the user-editable *.elf/*.hex program attribute
   // let's use "Test" + DLL name + ".elf" as default for generated code
   std::string mcBin = "PgmPath=<\"Test_" + pinList.partNbr +
-                      ".elf\"> Path to device code (*.hex/*.elf)";
-  nodePtr->addLast(ItemText::makePtr(
-      ArgPoint(0, botRight.y - 150), ArgFontSize(0.5f), ArgRotAlign(),
-      ArgTextFlags().setHidden(), 0x1000000, -1, -1, mcBin));
+      ".elf\"> Path to device code (*.hex/*.elf)";
+  nodePtr->addLast(
+      ItemText::makePtr(ArgPoint(0, botRight.y - 150), ArgFontSize(0.5f),
+          ArgRotAlign(), ArgTextFlags().setHidden(), 0x1000000, -1, -1, mcBin));
 
   // add the user-editable QMdbCfg.ini path attribute
   std::string mcIni = "CfgPath=<\".\\QMdbCfg.ini\"> Path to QMdbCfg.ini file";
-  nodePtr->addLast(ItemText::makePtr(
-      ArgPoint(0, botRight.y - 250), ArgFontSize(0.5f), ArgRotAlign(),
-      ArgTextFlags().setHidden(), 0x1000000, -1, -1, mcIni));
+  nodePtr->addLast(
+      ItemText::makePtr(ArgPoint(0, botRight.y - 250), ArgFontSize(0.5f),
+          ArgRotAlign(), ArgTextFlags().setHidden(), 0x1000000, -1, -1, mcIni));
 
   // note:  we could add the hierarchical rect now if we knew the final
   // dimensions but we don't know them.  we have two alternatives:
@@ -129,7 +128,7 @@ bool SymList::makeSymbol(const PinDefList &pinList, int rectWidth,
         ArgRotAlign::CENTER_V, col ? ArgRotAlign::EAST : ArgRotAlign::WEST);
 
     for (int row = 0; row < pinRows && iter != pinList.cend();
-         row++, y -= pinRowHeight, iter++) {
+        row++, y -= pinRowHeight, iter++) {
       if (iter->type == 'X') continue;
 
       Point ptPin(x, y);
@@ -137,16 +136,16 @@ bool SymList::makeSymbol(const PinDefList &pinList, int rectWidth,
       Point ptSym(xSym, y);
       Point ptAltText(ptPin.x + ptLbl.x, y - 100);
 
-      ItemPinPtr pinPtr = ItemPin::makePtr(
-          ptPin, ptLbl, ArgFontSize(1.0), rotAlign, ArgPinInfo(), ArgColor(),
-          ArgLookupNdx(), ArgString(iter->name));
+      ItemPinPtr pinPtr =
+          ItemPin::makePtr(ptPin, ptLbl, ArgFontSize(1.0), rotAlign,
+              ArgPinInfo(), ArgColor(), ArgLookupNdx(), ArgString(iter->name));
       nodePtr->addLast(pinPtr);
 
       // add alternate text in tiny font
       if (iter->altText.length()) {
-        ItemTextPtr txtPtr = ItemText::makePtr(
-            ptAltText, ArgFontSize(0.25), rotAlign, ArgTextFlags::COMMENT_BIT,
-            ArgColor(), ArgLookupNdx(), ArgPinNdx(), ArgString(iter->altText));
+        ItemTextPtr txtPtr = ItemText::makePtr(ptAltText, ArgFontSize(0.25),
+            rotAlign, ArgTextFlags::COMMENT_BIT, ArgColor(), ArgLookupNdx(),
+            ArgPinNdx(), ArgString(iter->altText));
         nodePtr->addLast(txtPtr);
       }
 
@@ -180,8 +179,7 @@ bool SymList::makeSymbol(const PinDefList &pinList, int rectWidth,
 
   // we add the rectangle using addFirst() to get the correct Z-order
   nodePtr->addFirst(ItemRect::makePtr(topLeft, botRight, 0, 0, 0, 0x1000000,
-                                      0xFFFF, -1, 1 /* is hierarchical block */,
-                                      -1));
+      0xFFFF, -1, 1 /* is hierarchical block */, -1));
 
   // TODO: this is a temporary bodge...
   StrList strList = ItemTreeIO::writeStrList(tree);
@@ -207,10 +205,12 @@ bool SymList::makeCppSnippet(const PinDefList &pinList, std::ostream &errStrm) {
     push_back("        \"" + dev + "\",");
   push_back("    };");
   push_back("    for (const auto &name : deviceNames)");
-  push_back("        if (_stricmp(DevPartName, name.data()) == 0) return "
-            "std::string(name);");
-  push_back("    Display(std::format(\"Unknown device \\\"{}\\\"; check P "
-            "record in pin defs.\", DevPartName).c_str());");
+  push_back(
+      "        if (_stricmp(DevPartName, name.data()) == 0) return "
+      "std::string(name);");
+  push_back(
+      "    Display(std::format(\"Unknown device \\\"{}\\\"; check P "
+      "record in pin defs.\\n\", DevPartName).c_str());");
   push_back("    gAbortFlg = true;");
   push_back("    return \"\";");
   push_back("}();");
@@ -227,24 +227,24 @@ bool SymList::makeCppSnippet(const PinDefList &pinList, std::ostream &errStrm) {
 
     switch (pinDef.type) {
     case 'I':
-      push_back("inst->mdb.addPinPortMap(\"" + pinDef.name + "\", &" + ident +
-                ");");
+      push_back(
+          "inst->mdb.addPinPortMap(\"" + pinDef.name + "\", &" + ident + ");");
       break;
     case 'B':
       push_back("inst->mdb.addPinPortMap(\"" + pinDef.name + "\", &" + ident +
-                "_I, &" + ident + "_O, &" + ident + "_C);");
+          "_I, &" + ident + "_O, &" + ident + "_C);");
       break;
     case 'O':
       // TBD:  Are output-only pins used in uCs?  If so, need to implement
       push_back("// TODO: output-only pin \"" + pinDef.name +
-                "\" -- review addPinPortMap() signature");
+          "\" -- review addPinPortMap() signature");
       break;
     case 'V':
       push_back("inst->vddName = \"" + pinDef.name + "\";");
       break;
-    case 'G': // no entry in snippet
-    case 'K': // no entry in snippet
-    case 'X': // no entry in snippet
+    case 'G':   // no entry in snippet
+    case 'K':   // no entry in snippet
+    case 'X':   // no entry in snippet
       break;
     default:
       errStrm << "Unexpected pin type '" << pinDef.type << "' for pin \""
@@ -296,11 +296,8 @@ bool SymList::makeSchematic(const PinDefList &pinList, std::ostream &errStrm) {
   const int gpioX    = 300;
 
   for (const PinDef &pinDef : pinList) {
-    if (pinDef.type == 'X') {
-      continue;
-    }
-    ItemNetPtr netPtr = ItemNet::makePtr(
-        ArgPoint(x, y), ArgFontSize(),
+    if (pinDef.type == 'X') { continue; }
+    ItemNetPtr netPtr = ItemNet::makePtr(ArgPoint(x, y), ArgFontSize(),
         ArgRotAlign(ArgRotAlign::SOUTH | ArgRotAlign::CENTER_H),
         ArgInt(1 /*port*/), pinDef.name);
     nodePtr->addLast(netPtr);
@@ -323,44 +320,40 @@ bool SymList::makeSchematic(const PinDefList &pinList, std::ostream &errStrm) {
     NodePtr     cmpNode = nodePtr->addLast(cmpPtr);
     ItemSymPtr  symPtr  = ItemSym::makePtr("GPIO_IMPL");
     NodePtr     symNode = cmpNode->addLast(symPtr);
-    ItemTypePtr typePtr = ItemType::makePtr(); // hierarchical block
+    ItemTypePtr typePtr = ItemType::makePtr();   // hierarchical block
     symNode->addLast(typePtr);
     symNode->addLast(ItemDesc::makePtr("GPIO Symbol for QSymGen2"));
     symNode->addLast(ItemShort::makePtr(false));
 
-    symNode->addLast(ItemRect::makePtr(
-        Point(-300, 0), Point(200, -200), ArgRot(), ArgLineWidth(),
-        ArgLineType(), ArgColor(0x1000000), ArgColor(0xffff), ArgLookupNdx(),
-        ArgInt(1 /* hierarchical */), ArgPinNdx()));
-    symNode->addLast(ItemText::makePtr(
-        Point(-50, -50), ArgFontSize(0.35f), ArgRotAlign(15), ArgTextFlags(),
-        ArgColor(), ArgLookupNdx(), ArgPinNdx(), "G_" + pinDef.name));
+    symNode->addLast(ItemRect::makePtr(Point(-300, 0), Point(200, -200),
+        ArgRot(), ArgLineWidth(), ArgLineType(), ArgColor(0x1000000),
+        ArgColor(0xffff), ArgLookupNdx(), ArgInt(1 /* hierarchical */),
+        ArgPinNdx()));
+    symNode->addLast(ItemText::makePtr(Point(-50, -50), ArgFontSize(0.35f),
+        ArgRotAlign(15), ArgTextFlags(), ArgColor(), ArgLookupNdx(),
+        ArgPinNdx(), "G_" + pinDef.name));
 
     //  GPIO implementation schematic
-    symNode->addLast(ItemText::makePtr(
-        Point(-50, -120), ArgFontSize(0.25f), ArgRotAlign(15), ArgTextFlags(),
-        ArgColor(), ArgLookupNdx(), ArgPinNdx(), ArgString("GPIO_IMPL")));
+    symNode->addLast(ItemText::makePtr(Point(-50, -120), ArgFontSize(0.25f),
+        ArgRotAlign(15), ArgTextFlags(), ArgColor(), ArgLookupNdx(),
+        ArgPinNdx(), ArgString("GPIO_IMPL")));
 
     // add pins
     symNode->addLast(ItemPin::makePtr(Point(-200, -150), Point(0, 20),
-                                      ArgFontSize(0.2f), ArgRotAlign(14),
-                                      ArgPinInfo(), ArgColor(), ArgLookupNdx(),
-                                      ArgString("G"), ArgString(pinDef.name)));
+        ArgFontSize(0.2f), ArgRotAlign(14), ArgPinInfo(), ArgColor(),
+        ArgLookupNdx(), ArgString("G"), ArgString(pinDef.name)));
 
-    symNode->addLast(ItemPin::makePtr(
-        Point(-100, -150), Point(0, 20), ArgFontSize(0.2f), ArgRotAlign(14),
-        ArgPinInfo(), ArgColor(), ArgLookupNdx(), ArgString("I"),
-        ArgString(pinDef.name + "_I")));
+    symNode->addLast(ItemPin::makePtr(Point(-100, -150), Point(0, 20),
+        ArgFontSize(0.2f), ArgRotAlign(14), ArgPinInfo(), ArgColor(),
+        ArgLookupNdx(), ArgString("I"), ArgString(pinDef.name + "_I")));
 
-    symNode->addLast(ItemPin::makePtr(
-        Point(0, -150), Point(0, 20), ArgFontSize(0.2f), ArgRotAlign(14),
-        ArgPinInfo(), ArgColor(), ArgLookupNdx(), ArgString("O"),
-        ArgString(pinDef.name + "_O")));
+    symNode->addLast(ItemPin::makePtr(Point(0, -150), Point(0, 20),
+        ArgFontSize(0.2f), ArgRotAlign(14), ArgPinInfo(), ArgColor(),
+        ArgLookupNdx(), ArgString("O"), ArgString(pinDef.name + "_O")));
 
-    symNode->addLast(ItemPin::makePtr(
-        Point(100, -150), Point(0, 20), ArgFontSize(0.2f), ArgRotAlign(14),
-        ArgPinInfo(), ArgColor(), ArgLookupNdx(), ArgString("C"),
-        ArgString(pinDef.name + "_C")));
+    symNode->addLast(ItemPin::makePtr(Point(100, -150), Point(0, 20),
+        ArgFontSize(0.2f), ArgRotAlign(14), ArgPinInfo(), ArgColor(),
+        ArgLookupNdx(), ArgString("C"), ArgString(pinDef.name + "_C")));
 
     y -= yIncGpio;
   }
@@ -381,39 +374,34 @@ bool SymList::makeSchematic(const PinDefList &pinList, std::ostream &errStrm) {
   symNode->addLast(ItemShort::makePtr(false));
 
   // instance name
-  symNode->addLast(ItemText::makePtr(
-      Point(rectCntrH, 250), ArgFontSize(), ArgRotAlign(15), ArgTextFlags(),
-      ArgColor(), ArgLookupNdx(), ArgPinNdx(), "X1"));
+  symNode->addLast(
+      ItemText::makePtr(Point(rectCntrH, 250), ArgFontSize(), ArgRotAlign(15),
+          ArgTextFlags(), ArgColor(), ArgLookupNdx(), ArgPinNdx(), "X1"));
 
   // DLL name
-  symNode->addLast(ItemText::makePtr(
-      Point(rectCntrH, 100), ArgFontSize(), ArgRotAlign(15), ArgTextFlags(),
-      ArgColor(), ArgLookupNdx(), ArgPinNdx(), pinList.partNbr));
+  symNode->addLast(ItemText::makePtr(Point(rectCntrH, 100), ArgFontSize(),
+      ArgRotAlign(15), ArgTextFlags(), ArgColor(), ArgLookupNdx(), ArgPinNdx(),
+      pinList.partNbr));
 
   // create DevPart attribute
-  symNode->addLast(
-      ItemText::makePtr(Point(rectCntrH, 350), ArgFontSize(), ArgRotAlign(15),
-                        ArgTextFlags().setHidden(), ArgColor(), ArgLookupNdx(),
-                        ArgPinNdx(), ArgString("char* DevPartName=Device")));
+  symNode->addLast(ItemText::makePtr(Point(rectCntrH, 350), ArgFontSize(),
+      ArgRotAlign(15), ArgTextFlags().setHidden(), ArgColor(), ArgLookupNdx(),
+      ArgPinNdx(), ArgString("char* DevPartName=Device")));
 
   // create DevPgmPath attribute
-  symNode->addLast(
-      ItemText::makePtr(Point(rectCntrH, 350), ArgFontSize(), ArgRotAlign(15),
-                        ArgTextFlags().setHidden(), ArgColor(), ArgLookupNdx(),
-                        ArgPinNdx(), ArgString("char* DevPgmPath=PgmPath")));
+  symNode->addLast(ItemText::makePtr(Point(rectCntrH, 350), ArgFontSize(),
+      ArgRotAlign(15), ArgTextFlags().setHidden(), ArgColor(), ArgLookupNdx(),
+      ArgPinNdx(), ArgString("char* DevPgmPath=PgmPath")));
 
   // create CfgIniPath attribute
-  symNode->addLast(
-      ItemText::makePtr(Point(rectCntrH, 350), ArgFontSize(), ArgRotAlign(15),
-                        ArgTextFlags().setHidden(), ArgColor(), ArgLookupNdx(),
-                        ArgPinNdx(), ArgString("char* CfgIniPath=CfgPath")));
+  symNode->addLast(ItemText::makePtr(Point(rectCntrH, 350), ArgFontSize(),
+      ArgRotAlign(15), ArgTextFlags().setHidden(), ArgColor(), ArgLookupNdx(),
+      ArgPinNdx(), ArgString("char* CfgIniPath=CfgPath")));
 
   // create ROUT attribute
-  symNode->addLast(
-      ItemText::makePtr(Point(rectCntrH, 350), ArgFontSize(), ArgRotAlign(15),
-                        ArgTextFlags().setHidden(), ArgColor(), ArgLookupNdx(),
-                        ArgPinNdx(),
-                        ArgString("ROUT=" + std::to_string(pinList.rout))));
+  symNode->addLast(ItemText::makePtr(Point(rectCntrH, 350), ArgFontSize(),
+      ArgRotAlign(15), ArgTextFlags().setHidden(), ArgColor(), ArgLookupNdx(),
+      ArgPinNdx(), ArgString("ROUT=" + std::to_string(pinList.rout))));
 
   // make a new PinList that contains all of the DLL pins
   PinDefList dllPinList;
@@ -421,7 +409,8 @@ bool SymList::makeSchematic(const PinDefList &pinList, std::ostream &errStrm) {
     if (pinDef.type != 'B') {
       dllPinList.push_back(pinDef);
       continue;
-    } // replace GPIO with three pins (_I, _O, _C); pin name is also pin net to
+    }   // replace GPIO with three pins (_I, _O, _C); pin name is also pin net
+        // to
     // connect to GPIO pin
     PinDef pd = pinDef;
     pd.type   = 'I';
@@ -450,44 +439,34 @@ bool SymList::makeSchematic(const PinDefList &pinList, std::ostream &errStrm) {
     case 'V':
       pinInfo.setInfo(ArgPinInfo::TYPE_INPORT, ArgPinInfo::DATA_FLOAT);
       symNode->addLast(ItemPin::makePtr(Point(pinX, pinY), ptLbl, fntLbl,
-                                        rotAlign, pinInfo, pinClr,
-                                        ArgLookupNdx(),
-                                        safeIdentifier(pinDef.name),
-                                        pinDef.name));
+          rotAlign, pinInfo, pinClr, ArgLookupNdx(),
+          safeIdentifier(pinDef.name), pinDef.name));
       break;
-    case 'C': // GPIO control pin (synthesized from 'B'); DLL drives direction
+    case 'C':   // GPIO control pin (synthesized from 'B'); DLL drives direction
       pinInfo.setInfo(ArgPinInfo::TYPE_OUTPORT, ArgPinInfo::DATA_BOOL);
       symNode->addLast(ItemPin::makePtr(Point(pinX, pinY), ptLbl, fntLbl,
-                                        rotAlign, pinInfo, pinClr,
-                                        ArgLookupNdx(),
-                                        safeIdentifier(pinDef.name),
-                                        pinDef.name));
+          rotAlign, pinInfo, pinClr, ArgLookupNdx(),
+          safeIdentifier(pinDef.name), pinDef.name));
       break;
-    case 'K': // SimClock pin; DLL receives clock signal
+    case 'K':   // SimClock pin; DLL receives clock signal
       pinInfo.setInfo(ArgPinInfo::TYPE_INPORT, ArgPinInfo::DATA_BOOL);
       symNode->addLast(ItemPin::makePtr(Point(pinX, pinY), ptLbl, fntLbl,
-                                        rotAlign, pinInfo, pinClr,
-                                        ArgLookupNdx(),
-                                        safeIdentifier(pinDef.name),
-                                        pinDef.name));
+          rotAlign, pinInfo, pinClr, ArgLookupNdx(),
+          safeIdentifier(pinDef.name), pinDef.name));
       break;
     case 'G':
       // TODO: GND pin schematic handling to be determined
       // pinInfo.setInfo(ArgPinInfo::TYPE_INPORT, ArgPinInfo::DATA_FLOAT);
       pinInfo.setInfo(ArgPinInfo::TYPE_DLLGND, ArgPinInfo::DATA_FLOAT);
       symNode->addLast(ItemPin::makePtr(Point(pinX, pinY), ptLbl, fntLbl,
-                                        rotAlign, pinInfo, pinClr,
-                                        ArgLookupNdx(),
-                                        safeIdentifier(pinDef.name),
-                                        pinDef.name));
+          rotAlign, pinInfo, pinClr, ArgLookupNdx(),
+          safeIdentifier(pinDef.name), pinDef.name));
       break;
     case 'O':
       pinInfo.setInfo(ArgPinInfo::TYPE_OUTPORT, ArgPinInfo::DATA_FLOAT);
       symNode->addLast(ItemPin::makePtr(Point(pinX, pinY), ptLbl, fntLbl,
-                                        rotAlign, pinInfo, pinClr,
-                                        ArgLookupNdx(),
-                                        safeIdentifier(pinDef.name),
-                                        pinDef.name));
+          rotAlign, pinInfo, pinClr, ArgLookupNdx(),
+          safeIdentifier(pinDef.name), pinDef.name));
       break;
     case 'X':
       // no extra space
@@ -503,10 +482,9 @@ bool SymList::makeSchematic(const PinDefList &pinList, std::ostream &errStrm) {
   // add the hierarchical block rect
   Point rectBR(rectTL.x + rectWidth, rectTL.y + pinY + 200);
 
-  symNode->addLast(
-      ItemRect::makePtr(rectTL, rectBR, ArgRot(), ArgLineWidth(), ArgLineType(),
-                        ArgColor(0x1000000), ArgColor(0xffff), ArgLookupNdx(),
-                        ArgInt(1 /* hierarchical */), ArgPinNdx()));
+  symNode->addLast(ItemRect::makePtr(rectTL, rectBR, ArgRot(), ArgLineWidth(),
+      ArgLineType(), ArgColor(0x1000000), ArgColor(0xffff), ArgLookupNdx(),
+      ArgInt(1 /* hierarchical */), ArgPinNdx()));
 
   // TODO: this is a temporary bodge...
   StrList strList = ItemTreeIO::writeStrList(tree);
