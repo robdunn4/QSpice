@@ -21,3 +21,6 @@ The prior code was sufficient for parsing an existing QSpice schematic or symbol
 * [QtDemo](./QtDemo/) &mdash; Using MSVS with Qt Extension for GUI interface to the QParser2 Project shared libraries.
 * [QSymGen2](./QSymGen2/) &mdash; QSpice symbol generator for the *QMdbSim* micro-controller simulator project.  Similar to QSymGen but recoded from scratch.  Adds support for GPIO pins.
 * [QSymGen3](./QSymGen3/) &mdash; QSpice symbol, schematic, and code generator.  Similar to QSymGen2 but designed specifically as a part of a toolchain to generate devices for the QMdbSym2 micro-controller project.
+* [QSch_Shared_Libs](./QSch_Shared_Libs/) &mdash; Shared libraries used by QSchView and QSchEdit.
+* [QSchView](./QSchView/) &mdash; QSpice schematic viewer, printer, and SVG exporter.
+* [QSchViewCon](./QSchViewCon/) &mdash; Command-line processor/launcher for QSchView.
