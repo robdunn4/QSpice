@@ -30,8 +30,8 @@
 namespace sch::app::log {
 
 // The [Log] key, for the program's settings documentation.
-inline constexpr const char *kLogGroup      = "Log";
-inline constexpr const char *kMaxSizeKBKey  = "MaxSizeKB";
+inline constexpr const char *kLogGroup     = "Log";
+inline constexpr const char *kMaxSizeKBKey = "MaxSizeKB";
 
 // The smallest size a nonzero MaxSizeKB is raised to.
 inline constexpr int kMinMaxSizeKB = 64;
@@ -43,4 +43,4 @@ void install(const QString &programName);
 // -- the file log accordingly. Call once.
 void configure(const QString &iniPath, int defaultMaxKB);
 
-} // namespace sch::app::log
+}   // namespace sch::app::log

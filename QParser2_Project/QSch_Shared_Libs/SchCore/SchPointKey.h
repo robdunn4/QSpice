@@ -56,9 +56,8 @@ struct PointKey {
 };
 
 inline size_t qHash(const PointKey &key, size_t seed = 0) {
-  return ::qHash(static_cast<qint64>(key.x) << 32 ^
-                     static_cast<quint32>(key.y),
-                 seed);
+  return ::qHash(
+      static_cast<qint64>(key.x) << 32 ^ static_cast<quint32>(key.y), seed);
 }
 
 // The exact coordinate a scene position stands for.
@@ -74,4 +73,4 @@ inline PointKey keyFor(const QPointF &scenePos) {
   return key;
 }
 
-} // namespace sch::core
+}   // namespace sch::core

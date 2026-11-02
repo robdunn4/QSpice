@@ -18,4 +18,4 @@ QPixmap appIconPixmap(int size);
 // (16 to 64 device pixels), for actions. Qt picks the size that fits.
 QIcon appIcon();
 
-} // namespace sch::app
+}   // namespace sch::app

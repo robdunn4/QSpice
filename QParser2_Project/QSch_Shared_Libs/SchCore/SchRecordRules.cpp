@@ -1,6 +1,7 @@
 #ifdef _MSC_VER
 #pragma warning(push)
-#pragma warning(disable : 4996) // Qt headers reference APIs deprecated for Qt 7
+#pragma warning(                                                               \
+    disable : 4996)   // Qt headers reference APIs deprecated for Qt 7
 #endif
 
 #include "SchRecordRules.h"
@@ -32,8 +33,8 @@ enum class Ctx { Sheet, Comp, Sym };
 QStringList libraryNotes;
 
 QString recordText(const NodePtr &node) {
-  const std::string raw = node->item()->toString();
-  QString text = decodeCp1252(QByteArray::fromStdString(raw));
+  const std::string raw  = node->item()->toString();
+  QString           text = decodeCp1252(QByteArray::fromStdString(raw));
   if (node->hasChildren()) text += QStringLiteral(" (and its contents)");
   return text;
 }
@@ -44,18 +45,28 @@ QString kindOf(const NodePtr &node) {
   switch (node->getEnumID()) {
   case QPI::WIRE: {
     const ItemWirePtr rec = std::static_pointer_cast<ItemWire>(node->item());
-    if (rec != nullptr && isBusName(decodeQSpiceString(rec->netName.getValue()).trimmed()))
+    if (rec != nullptr &&
+        isBusName(decodeQSpiceString(rec->netName.getValue()).trimmed()))
       return QStringLiteral("bus");
     return QStringLiteral("wire");
   }
-  case QPI::TAP: return QStringLiteral("bus tap");
-  case QPI::NET: return QStringLiteral("net label");
-  case QPI::JUNCTION: return QStringLiteral("junction");
-  case QPI::PIN: return QStringLiteral("pin");
-  case QPI::SYM: return QStringLiteral("symbol");
-  case QPI::COMP: return QStringLiteral("component");
-  case QPI::SCH: return QStringLiteral("schematic");
-  default: return QString::fromStdString(std::string(ItemTypes::getStr(node->getEnumID())));
+  case QPI::TAP:
+    return QStringLiteral("bus tap");
+  case QPI::NET:
+    return QStringLiteral("net label");
+  case QPI::JUNCTION:
+    return QStringLiteral("junction");
+  case QPI::PIN:
+    return QStringLiteral("pin");
+  case QPI::SYM:
+    return QStringLiteral("symbol");
+  case QPI::COMP:
+    return QStringLiteral("component");
+  case QPI::SCH:
+    return QStringLiteral("schematic");
+  default:
+    return QString::fromStdString(
+        std::string(ItemTypes::getStr(node->getEnumID())));
   }
 }
 
@@ -88,19 +99,21 @@ bool forbidden(Ctx ctx, QPI type) {
     return type == QPI::SCH || type == QPI::COMP;
   case Ctx::Sym:
     return type == QPI::WIRE || type == QPI::TAP || type == QPI::NET ||
-           type == QPI::JUNCTION || type == QPI::SYM || type == QPI::COMP ||
-           type == QPI::SCH;
+        type == QPI::JUNCTION || type == QPI::SYM || type == QPI::COMP ||
+        type == QPI::SCH;
   }
   return false;
 }
 
 QString whereText(Ctx ctx, QPI type, const QString &owner) {
   if (ctx == Ctx::Sym)
-    return owner.isEmpty() ? QStringLiteral("inside this symbol")
-                           : QStringLiteral("inside the symbol of %1").arg(owner);
+    return owner.isEmpty()
+        ? QStringLiteral("inside this symbol")
+        : QStringLiteral("inside the symbol of %1").arg(owner);
   if (ctx == Ctx::Comp)
-    return (type == QPI::SYM) ? QStringLiteral("beyond the first in %1").arg(owner)
-                              : QStringLiteral("inside %1").arg(owner);
+    return (type == QPI::SYM)
+        ? QStringLiteral("beyond the first in %1").arg(owner)
+        : QStringLiteral("inside %1").arg(owner);
   if (type == QPI::SYM) return QStringLiteral("outside a component");
   if (type == QPI::SCH) return QStringLiteral("inside the schematic");
   return QStringLiteral("at the top level of the schematic");
@@ -108,7 +121,8 @@ QString whereText(Ctx ctx, QPI type, const QString &owner) {
 
 // `owner` names whose content this is, for the message; empty for the
 // document itself.
-void sweep(const NodePtr &parent, Ctx ctx, const QString &owner, QList<Omitted> &out) {
+void sweep(
+    const NodePtr &parent, Ctx ctx, const QString &owner, QList<Omitted> &out) {
   // Collected first, detached after: detaching changes the list being
   // walked.
   std::vector<NodePtr> doomed;
@@ -118,11 +132,13 @@ void sweep(const NodePtr &parent, Ctx ctx, const QString &owner, QList<Omitted> 
     const QPI type = child->getEnumID();
 
     // A component holds ONE symbol: any after the first goes.
-    const bool extraSymbol = (ctx == Ctx::Comp && type == QPI::SYM && haveSymbol);
+    const bool extraSymbol =
+        (ctx == Ctx::Comp && type == QPI::SYM && haveSymbol);
     if (ctx == Ctx::Comp && type == QPI::SYM) haveSymbol = true;
 
     if (extraSymbol || forbidden(ctx, type)) {
-      out.append(Omitted{kindOf(child), whereText(ctx, type, owner), recordText(child)});
+      out.append(Omitted{
+          kindOf(child), whereText(ctx, type, owner), recordText(child)});
       doomed.push_back(child);
       continue;
     }
@@ -132,26 +148,33 @@ void sweep(const NodePtr &parent, Ctx ctx, const QString &owner, QList<Omitted> 
       continue;
     }
 
-    if (ctx == Ctx::Comp && type == QPI::SYM) sweep(child, Ctx::Sym, owner, out);
+    if (ctx == Ctx::Comp && type == QPI::SYM)
+      sweep(child, Ctx::Sym, owner, out);
   }
 
   for (const NodePtr &node : doomed) node->detach();
 }
 
-} // namespace
+}   // namespace
 
 QList<Omitted> dropForbidden(const NodePtr &node, Dest dest) {
   QList<Omitted> out;
   if (node == nullptr) return out;
 
   switch (node->getEnumID()) {
-  case QPI::SYM: sweep(node, Ctx::Sym, QString(), out); break;
-  case QPI::COMP: sweep(node, Ctx::Comp, compName(node), out); break;
+  case QPI::SYM:
+    sweep(node, Ctx::Sym, QString(), out);
+    break;
+  case QPI::COMP:
+    sweep(node, Ctx::Comp, compName(node), out);
+    break;
   case QPI::SCH:
     if (dest == Dest::Symbol) sweep(node, Ctx::Sym, QString(), out);
-    else sweep(node, Ctx::Sheet, QString(), out);
+    else
+      sweep(node, Ctx::Sheet, QString(), out);
     break;
-  default: break;
+  default:
+    break;
   }
 
   return out;
@@ -160,10 +183,12 @@ QList<Omitted> dropForbidden(const NodePtr &node, Dest dest) {
 QStringList summary(const QList<Omitted> &omitted) {
   // Ordered, so the same file always reads the same way.
   QMap<QString, int> counts;
-  for (const Omitted &one : omitted) ++counts[one.kind + QLatin1Char(' ') + one.where];
+  for (const Omitted &one : omitted)
+    ++counts[one.kind + QLatin1Char(' ') + one.where];
 
   QStringList out;
-  for (QMap<QString, int>::const_iterator it = counts.constBegin(); it != counts.constEnd(); ++it)
+  for (QMap<QString, int>::const_iterator it = counts.constBegin();
+      it != counts.constEnd(); ++it)
     out << QStringLiteral("%1 x %2").arg(it.value()).arg(it.key());
   return out;
 }
@@ -175,7 +200,8 @@ void log(const QString &source, const QList<Omitted> &omitted) {
                               .arg(source)
                               .arg(omitted.size());
   for (const Omitted &one : omitted)
-    qWarning().noquote() << QStringLiteral("  %1 %2: %3").arg(one.kind, one.where, one.record);
+    qWarning().noquote()
+        << QStringLiteral("  %1 %2: %3").arg(one.kind, one.where, one.record);
 }
 
 void noteLibrary(const QString &fileName, const QList<Omitted> &omitted) {
@@ -192,4 +218,4 @@ QStringList takeLibraryNotes() {
   return out;
 }
 
-} // namespace sch::core::recordrules
+}   // namespace sch::core::recordrules

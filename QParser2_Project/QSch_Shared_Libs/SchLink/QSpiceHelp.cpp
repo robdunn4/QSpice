@@ -37,7 +37,7 @@ const QHash<QString, QString> &specialPages() {
       {QStringLiteral("\u00A5"), QStringLiteral("Yen-device.htm")},
       {QStringLiteral("\u20AC"), QStringLiteral("Euro-device.htm")},
       {QStringLiteral("\u00A3"), QStringLiteral("Sterling-device.htm")},
-      {QStringLiteral("\u00D8(.dll)"), QStringLiteral("Oslash-device.htm")},
+      {QStringLiteral("\u00D8(.DLL)"), QStringLiteral("Oslash-device.htm")},
       {QStringLiteral("\u00D7"), QStringLiteral("Cross-device.htm")},
 
       // A blank type is a HIERARCHICAL schematic, which has no device
@@ -46,6 +46,21 @@ const QHash<QString, QString> &specialPages() {
   };
 
   return pages;
+}
+
+// The page `hash` gives `key`, matched without regard to case; null if
+// none. Exact first: the tables are small, but most lookups are exact.
+const QString *findNoCase(
+    const QHash<QString, QString> &hash, const QString &key) {
+  const QHash<QString, QString>::const_iterator exact = hash.constFind(key);
+  if (exact != hash.constEnd()) return &exact.value();
+
+  for (QHash<QString, QString>::const_iterator it = hash.constBegin();
+      it != hash.constEnd(); ++it) {
+    if (it.key().compare(key, Qt::CaseInsensitive) == 0) return &it.value();
+  }
+
+  return nullptr;
 }
 
 // Overrides from the index file -- see loadOverrides().
@@ -60,8 +75,8 @@ QHash<QString, QString> &overrides() {
 using HtmlHelpFn = HWND(WINAPI *)(HWND, LPCWSTR, UINT, DWORD_PTR);
 
 HtmlHelpFn htmlHelp() {
-  static HtmlHelpFn fn     = nullptr;
-  static bool       tried  = false;
+  static HtmlHelpFn fn    = nullptr;
+  static bool       tried = false;
 
   if (tried) return fn;
 
@@ -75,13 +90,11 @@ HtmlHelpFn htmlHelp() {
   return fn;
 }
 
-#endif // Q_OS_WIN
+#endif   // Q_OS_WIN
 
-} // namespace
+}   // namespace
 
-QString chmPath() {
-  return install::filePath(QLatin1String(kChmName));
-}
+QString chmPath() { return install::filePath(QLatin1String(kChmName)); }
 
 void loadOverrides(const QString &iniPath) {
   overrides().clear();
@@ -95,7 +108,8 @@ void loadOverrides(const QString &iniPath) {
     overrides().insert(key, settings.value(key).toString());
   settings.endGroup();
 
-  qWarning().noquote() << QObject::tr("Help index overrides: %1 entr(ies) from %2")
+  qWarning().noquote() << QObject::tr(
+      "Help index overrides: %1 entr(ies) from %2")
                               .arg(overrides().size())
                               .arg(QDir::toNativeSeparators(iniPath));
 }
@@ -106,15 +120,9 @@ QString pageForSymbolType(const QString &type) {
   // OVERRIDES first, so a renamed page can be corrected without a
   // rebuild -- including one that the rule below would otherwise get
   // right.
-  const QHash<QString, QString>::const_iterator patched =
-      overrides().constFind(key);
+  if (const QString *patched = findNoCase(overrides(), key)) return *patched;
 
-  if (patched != overrides().constEnd()) return patched.value();
-
-  const QHash<QString, QString>::const_iterator special =
-      specialPages().constFind(key);
-
-  if (special != specialPages().constEnd()) return special.value();
+  if (const QString *special = findNoCase(specialPages(), key)) return *special;
 
   if (key.isEmpty()) return QString();
 
@@ -124,7 +132,7 @@ QString pageForSymbolType(const QString &type) {
   QString letter = key;
   if (letter.size() == 2 &&
       (letter.endsWith(QLatin1Char('N'), Qt::CaseInsensitive) ||
-       letter.endsWith(QLatin1Char('P'), Qt::CaseInsensitive)))
+          letter.endsWith(QLatin1Char('P'), Qt::CaseInsensitive)))
     letter.chop(1);
 
   if (letter.size() != 1 || !letter.at(0).isLetter()) {
@@ -147,8 +155,9 @@ QString show(const QString &pageName) {
 #ifdef Q_OS_WIN
   const HtmlHelpFn fn = htmlHelp();
   if (fn == nullptr)
-    return QObject::tr("HTML Help is not available on this machine, so the "
-                       "help file cannot be shown.");
+    return QObject::tr(
+        "HTML Help is not available on this machine, so the "
+        "help file cannot be shown.");
 
   // "<chm>::/html/<page>" addresses one topic; the file alone opens at
   // the default page.
@@ -159,8 +168,8 @@ QString show(const QString &pageName) {
   // window of this process, not a child of ours. It still closes with
   // us (closeAll(), at shutdown), but it can sit behind the main window
   // like any other program's window rather than floating over it.
-  const HWND shown = fn(nullptr, reinterpret_cast<LPCWSTR>(target.utf16()),
-                        kHhDisplayTopic, 0);
+  const HWND shown = fn(
+      nullptr, reinterpret_cast<LPCWSTR>(target.utf16()), kHhDisplayTopic, 0);
   if (shown != nullptr) return QString();
 
   return QObject::tr("The help topic could not be shown:\n\n%1").arg(target);
@@ -176,4 +185,4 @@ void closeAll() {
 #endif
 }
 
-} // namespace sch::link::help
+}   // namespace sch::link::help

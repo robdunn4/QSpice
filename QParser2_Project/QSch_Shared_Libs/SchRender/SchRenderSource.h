@@ -29,7 +29,7 @@ public:
   // The items to draw.
   virtual QGraphicsScene *renderScene() const = 0;
 
-  // What fills the page behind the items -- the canvas colour.
+  // What fills the page behind the items -- the canvas color.
   virtual QBrush renderBackground() const = 0;
 
   // Not part of the document: for the editor, transient items and edit
@@ -60,10 +60,11 @@ public:
   // and elements as on screen -- Y-flip included -- but no grid, no
   // selection highlights, and none of the excluded items. Vector output.
   // `target` must have `source`'s aspect ratio; the caller fits and
-  // centres it. Without `withBackground`, nothing is drawn behind the
+  // centers it. Without `withBackground`, nothing is drawn behind the
   // elements: the paper shows through.
   void renderSceneForPrint(QPainter *painter, const QRectF &target,
-                           const QRectF &source, bool withBackground = true) const;
+                           const QRectF &source,
+                           bool          withBackground = true) const;
 };
 
 } // namespace sch::render

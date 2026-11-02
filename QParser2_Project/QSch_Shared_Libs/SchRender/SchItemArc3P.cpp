@@ -1,6 +1,7 @@
 #ifdef _MSC_VER
 #pragma warning(push)
-#pragma warning(disable : 4996) // Qt headers reference APIs deprecated for Qt 7
+#pragma warning(                                                               \
+    disable : 4996)   // Qt headers reference APIs deprecated for Qt 7
 #endif
 
 #include "SchItemArc3P.h"
@@ -26,9 +27,9 @@ namespace sch::render {
 
 namespace {
 
-constexpr double kPi = 3.14159265358979323846; // MSVC's <cmath> doesn't
-                                               // define M_PI without
-                                               // _USE_MATH_DEFINES
+constexpr double kPi = 3.14159265358979323846;   // MSVC's <cmath> doesn't
+                                                 // define M_PI without
+                                                 // _USE_MATH_DEFINES
 
 // Normalizes an angle (radians) into [0, 2*pi).
 double normalizeAngle(double a) {
@@ -71,11 +72,13 @@ double normalizeAngle(double a) {
 // start/end dots trace out).
 struct ArcGeometry {
   QPointF center;
-  double  radius1 = 0.0; // radius at pt1 (t=0)
-  double  radius2 = 0.0; // radius at pt2 (t=1)
-  double  angle1  = 0.0; // pt1's angle, radians
-  double  sweep = 0.0; // CCW-positive sweep from angle1 to angle2, in [0, 2*pi)
-  bool isPoint  = false; // pt1 == pt3 or pt2 == pt3 (zero radius) -- degenerate
+  double  radius1 = 0.0;   // radius at pt1 (t=0)
+  double  radius2 = 0.0;   // radius at pt2 (t=1)
+  double  angle1  = 0.0;   // pt1's angle, radians
+  double  sweep =
+      0.0;   // CCW-positive sweep from angle1 to angle2, in [0, 2*pi)
+  bool isPoint =
+      false;   // pt1 == pt3 or pt2 == pt3 (zero radius) -- degenerate
 };
 
 ArcGeometry computeArcGeometry(QPointF pt1, QPointF pt2, QPointF pt3) {
@@ -100,10 +103,10 @@ QPointF spiralPoint(const ArcGeometry &g, double t) {
   const double angle  = g.angle1 + g.sweep * t;
   const double radius = g.radius1 + (g.radius2 - g.radius1) * t;
   return QPointF(g.center.x() + radius * std::cos(angle),
-                 g.center.y() + radius * std::sin(angle));
+      g.center.y() + radius * std::sin(angle));
 }
 
-} // namespace
+}   // namespace
 
 SchItemArc3P::SchItemArc3P(ItemArc3pPtr item, QGraphicsItem *parent)
     : SchItemBase(parent), item_(std::move(item)) {
@@ -160,7 +163,7 @@ Rect SchItemArc3P::getRect() const noexcept {
     maxY            = std::max(maxY, p.y());
   }
 
-  constexpr double kMarginFraction = 0.02; // 2% of the curve's own extent
+  constexpr double kMarginFraction = 0.02;   // 2% of the curve's own extent
   constexpr double kMarginMin      = 5.0;
   const double marginX = std::max(kMarginMin, (maxX - minX) * kMarginFraction);
   const double marginY = std::max(kMarginMin, (maxY - minY) * kMarginFraction);
@@ -170,9 +173,9 @@ Rect SchItemArc3P::getRect() const noexcept {
   maxY += marginY;
 
   return Rect(Point(static_cast<int>(std::floor(minX)),
-                    static_cast<int>(std::floor(minY))),
-              Point(static_cast<int>(std::ceil(maxX)),
-                    static_cast<int>(std::ceil(maxY))));
+                  static_cast<int>(std::floor(minY))),
+      Point(static_cast<int>(std::ceil(maxX)),
+          static_cast<int>(std::ceil(maxY))));
 }
 
 Point SchItemArc3P::getPosition() const noexcept {
@@ -194,16 +197,17 @@ QList<Point> SchItemArc3P::controlPoints() const {
 void SchItemArc3P::setControlPoint(int index, Point p) {
   prepareGeometryChange();
   if (index == 0) item_->pt1.setValue(p);
-  else if (index == 1) item_->pt2.setValue(p);
-  else if (index == 2) item_->pt3.setValue(p);
+  else if (index == 1)
+    item_->pt2.setValue(p);
+  else if (index == 2)
+    item_->pt3.setValue(p);
 }
 
-void SchItemArc3P::paint(QPainter *painter, const QStyleOptionGraphicsItem *,
-                         QWidget *) {
-  QPen pen = SchPen::forElement(
-      painter,
+void SchItemArc3P::paint(
+    QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *) {
+  QPen pen = SchPen::forElement(painter,
       tint(SchColorDecode::fromArgColor(item_->lineColor.getValue(),
-                                        RenderStyle::current().graphicAnnotation)),
+          RenderStyle::current().graphicAnnotation)),
       item_->lineWidth.getValue(), item_->lineType.getValue());
   painter->setPen(pen);
 
@@ -232,4 +236,4 @@ QPainterPath SchItemArc3P::outlinePath() const {
   return path;
 }
 
-} // namespace sch::render
+}   // namespace sch::render

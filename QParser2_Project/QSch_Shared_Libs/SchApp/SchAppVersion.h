@@ -8,10 +8,10 @@
 namespace sch::app {
 
 struct LibraryInfo {
-  const char *name;    // "SchApp"
-  const char *version; // "major.minor.patch"
+  const char *name;      // "SchApp"
+  const char *version;   // "major.minor.patch"
 };
 
 LibraryInfo libraryInfo();
 
-} // namespace sch::app
+}   // namespace sch::app

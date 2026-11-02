@@ -83,11 +83,12 @@ void SchItemZigzag::paint(QPainter *painter, const QStyleOptionGraphicsItem *,
   // save/restore because the mirror cancellation below alters the
   // painter's transform.
   painter->save();
-  QPen pen = SchPen::forElement(
-      painter,
-      tint(SchColorDecode::fromArgColor(item_->lineColor.getValue(),
-                                        RenderStyle::current().graphicAnnotation)),
-      item_->lineWidth.getValue(), item_->lineType.getValue());
+  QPen pen = SchPen::forElement(painter,
+                                tint(SchColorDecode::fromArgColor(
+                                    item_->lineColor.getValue(),
+                                    RenderStyle::current().graphicAnnotation)),
+                                item_->lineWidth.getValue(),
+                                item_->lineType.getValue());
   painter->setPen(pen);
 
   // pt1/pt2 are the corners of the zigzag's BOUNDING BOX, not the start
@@ -105,7 +106,7 @@ void SchItemZigzag::paint(QPainter *painter, const QStyleOptionGraphicsItem *,
   // already inside a save() from the mirror handling above.
   const SchBoxFrame::Frame frame = boxFrame();
 
-  painter->translate(frame.centre);
+  painter->translate(frame.center);
   painter->rotate(frame.degrees());
 
   const double left   = -frame.a;
@@ -143,8 +144,8 @@ void SchItemZigzag::paint(QPainter *painter, const QStyleOptionGraphicsItem *,
   // transformation, in a canonical orientation, so the phase can never
   // flip.
   //
-  // Cancelled here by flipping about the box's own centre before
-  // drawing. The box is symmetric about that centre, so this changes
+  // Canceled here by flipping about the box's own center before
+  // drawing. The box is symmetric about that center, so this changes
   // only the phase -- nothing moves. The axis doesn't matter: flipping
   // about x versus y differ by a 180-degree rotation, and a 180-degree
   // rotation maps this zigzag onto itself (which is also why codes 0
@@ -201,9 +202,9 @@ void SchItemZigzag::paint(QPainter *painter, const QStyleOptionGraphicsItem *,
   const double shortSide = std::min(width, height);
   const int    pairs =
       (shortSide > 1e-6)
-          ? std::max(2, static_cast<int>(
-                            std::floor(0.75 * (longSide / shortSide) + 1.0625 + 1e-6)))
-          : 2;
+             ? std::max(2, static_cast<int>(std::floor(
+                            0.75 * (longSide / shortSide) + 1.0625 + 1e-6)))
+             : 2;
   const int segments = 2 * pairs + 1;
 
   // Spacing along the spine is NOT even: the first segment (centerline
@@ -220,8 +221,7 @@ void SchItemZigzag::paint(QPainter *painter, const QStyleOptionGraphicsItem *,
   // t = (2i-1) / (2*(segments-1)).
   QPainterPath path(start);
   for (int i = 1; i < segments; ++i) {
-    const double t =
-        static_cast<double>(2 * i - 1) / (2.0 * (segments - 1));
+    const double  t = static_cast<double>(2 * i - 1) / (2.0 * (segments - 1));
     const QPointF onSpine = start + along * (length * t);
     const double  side    = (i % 2 == 1) ? 1.0 : -1.0;
     path.lineTo(onSpine + perp * (amplitude * side));

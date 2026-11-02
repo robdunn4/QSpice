@@ -14,7 +14,7 @@ namespace sch::app {
 // The block's schematic, absolute, in `path`; true if it exists. False
 // after a warning box (parent `parent`) naming the problem and the path
 // tried. `docPath` is the schematic holding the block, empty if unsaved.
-bool hierSchematicPath(QWidget *parent, const NodePtr &compNode, const QString &docPath,
-                       QString &path);
+bool hierSchematicPath(QWidget *parent, const NodePtr &compNode,
+    const QString &docPath, QString &path);
 
-} // namespace sch::app
+}   // namespace sch::app

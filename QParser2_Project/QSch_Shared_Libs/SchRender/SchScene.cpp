@@ -13,7 +13,7 @@ namespace {
 // model.
 constexpr qint64 kStaleCheckMs = 1000;
 
-} // namespace
+}   // namespace
 
 SchScene::SchScene(QObject *parent) : QGraphicsScene(parent) {}
 
@@ -46,14 +46,16 @@ void SchScene::checkStale() {
   staleTimer.start();
 
   const QString cached = sch::core::conndump::dumpModel(*model_, QString());
-  const QString fresh  = sch::core::conndump::dumpModel(sch::core::NetModel(root_), QString());
-  const QString diff   = sch::core::conndump::firstDifference(cached, fresh);
+  const QString fresh =
+      sch::core::conndump::dumpModel(sch::core::NetModel(root_), QString());
+  const QString diff = sch::core::conndump::firstDifference(cached, fresh);
   if (diff.isEmpty() || diff == lastStaleReport) return;
 
   lastStaleReport = diff;
-  qWarning().noquote() << QStringLiteral("SchScene: net model served STALE (a path changed "
-                                         "records without invalidating it), %1 (cached | fresh)")
+  qWarning().noquote() << QStringLiteral(
+      "SchScene: net model served STALE (a path changed "
+      "records without invalidating it), %1 (cached | fresh)")
                               .arg(diff);
 }
 
-} // namespace sch::render
+}   // namespace sch::render

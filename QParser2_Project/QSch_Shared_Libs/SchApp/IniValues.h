@@ -27,17 +27,20 @@ namespace sch::app::ini {
 
 // The value with its "// default:" comment stripped, or `defValue` when
 // it is empty or "[]". Also copes with a value written with no comment.
-QString prefValue(QSettings &settings, const char *key, const QString &defValue);
-double  prefDouble(QSettings &settings, const char *key, double defValue);
-bool    prefBool(QSettings &settings, const char *key, bool defValue);
+QString prefValue(
+    QSettings &settings, const char *key, const QString &defValue);
+double prefDouble(QSettings &settings, const char *key, double defValue);
+bool   prefBool(QSettings &settings, const char *key, bool defValue);
 
 // Writes `value` with its default as a comment -- "[]" when it IS the
 // default. While an OnlyMissing exists, a key already in the file is
 // left alone.
 void setPrefValue(QSettings &settings, const char *key, const QString &value,
-                  const QString &defValue);
-void setPrefDouble(QSettings &settings, const char *key, double value, double defValue);
-void setPrefBool(QSettings &settings, const char *key, bool value, bool defValue);
+    const QString &defValue);
+void setPrefDouble(
+    QSettings &settings, const char *key, double value, double defValue);
+void setPrefBool(
+    QSettings &settings, const char *key, bool value, bool defValue);
 
 // For as long as one of these exists, the setPref...() functions write
 // only keys the file does not have yet. For writing every default the
@@ -66,10 +69,11 @@ bool onlyMissing();
 QStringList readPaths(QSettings &settings, const char *group);
 
 // Replaces the array `group` with `list`, and syncs.
-void writePaths(QSettings &settings, const char *group, const QStringList &list);
+void writePaths(
+    QSettings &settings, const char *group, const QStringList &list);
 
 // Removes every entry naming the same file as `path`, compared as
 // Windows does -- without regard to case, and with either separator.
 void removePath(QStringList &list, const QString &path);
 
-} // namespace sch::app::ini
+}   // namespace sch::app::ini

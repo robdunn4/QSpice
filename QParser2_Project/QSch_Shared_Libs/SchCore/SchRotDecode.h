@@ -1,7 +1,7 @@
 #pragma once
 #include <cmath>
 
-#include "ArgUtils.h" // Point
+#include "ArgUtils.h"   // Point
 
 // Decodes the raw ArgRot integer per the confirmed bit-encoding (see
 // project notes): mirrored = code & 0x8; rotationDegrees = (code & 0x7)
@@ -68,15 +68,32 @@ inline RotMatrix rotMatrix(int code) {
   RotMatrix m{1, 0, 0, 1};
 
   switch (rot) {
-  case 0: m = {1, 0, 0, 1}; break;
-  case 1: m = {1, -1, 1, 1}; break;    // 45, scaled sqrt(2)
-  case 2: m = {0, -1, 1, 0}; break;    // 90
-  case 3: m = {-1, -1, 1, -1}; break;  // 135, scaled
-  case 4: m = {-1, 0, 0, -1}; break;   // 180
-  case 5: m = {-1, 1, -1, -1}; break;  // 225, scaled
-  case 6: m = {0, 1, -1, 0}; break;    // 270
-  case 7: m = {1, 1, -1, 1}; break;    // 315, scaled
-  default: break;
+  case 0:
+    m = {1, 0, 0, 1};
+    break;
+  case 1:
+    m = {1, -1, 1, 1};
+    break;   // 45, scaled sqrt(2)
+  case 2:
+    m = {0, -1, 1, 0};
+    break;   // 90
+  case 3:
+    m = {-1, -1, 1, -1};
+    break;   // 135, scaled
+  case 4:
+    m = {-1, 0, 0, -1};
+    break;   // 180
+  case 5:
+    m = {-1, 1, -1, -1};
+    break;   // 225, scaled
+  case 6:
+    m = {0, 1, -1, 0};
+    break;   // 270
+  case 7:
+    m = {1, 1, -1, 1};
+    break;   // 315, scaled
+  default:
+    break;
   }
 
   // Mirror LAST, negating x -- which negates the first row, since that
@@ -96,7 +113,7 @@ inline RotMatrix rotMatrix(int code) {
 inline Point apply(int code, const Point &pos, const Point &local) {
   const RotMatrix m = rotMatrix(code);
   return Point(pos.x + m.m11 * local.x + m.m12 * local.y,
-               pos.y + m.m21 * local.x + m.m22 * local.y);
+      pos.y + m.m21 * local.x + m.m22 * local.y);
 }
 
 // Composes a quarter-turn onto an existing code.
@@ -110,7 +127,7 @@ inline int rotatedCode(int code, bool ccw) {
   const int mirror = code & 0x8;
   const int rot    = code & 0x7;
 
-  const int step = ccw ? 2 : 6;                 // 6 == -2 (mod 8)
+  const int step = ccw ? 2 : 6;   // 6 == -2 (mod 8)
   const int turn = mirror ? (8 - step) % 8 : step;
 
   return mirror | ((rot + turn) & 0x7);
@@ -137,4 +154,4 @@ inline int mirroredCodeY(int code) {
 // True when the code scales by sqrt(2) -- the odd rotations.
 inline bool isDiagonal(int code) { return (code & 0x1) != 0; }
 
-} // namespace sch::core::rotdecode
+}   // namespace sch::core::rotdecode

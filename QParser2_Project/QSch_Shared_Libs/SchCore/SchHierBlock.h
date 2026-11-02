@@ -21,11 +21,11 @@ namespace sch::core::hier {
 // Why a block's schematic could not be found, or Ok.
 enum class Result {
   Ok,
-  NotABlock, // not a component, or its symbol has a type
-  NoName,    // no first string attribute, or a blank one
-  NoFolder,  // a relative name, and the holding schematic is unsaved
-  NotFound,  // the file does not exist
-  NotAFile,  // the name is a folder
+  NotABlock,   // not a component, or its symbol has a type
+  NoName,      // no first string attribute, or a blank one
+  NoFolder,    // a relative name, and the holding schematic is unsaved
+  NotFound,    // the file does not exist
+  NotAFile,    // the name is a folder
 };
 
 // Whether `compNode` (a «component» node) is a hierarchical block.
@@ -41,6 +41,7 @@ QString schematicName(const NodePtr &compNode);
 // empty for an unsaved one. Whatever the result, `path` is the best path
 // known, for the message -- the name as written when it cannot be
 // resolved.
-Result schematicPath(const NodePtr &compNode, const QString &docPath, QString &path);
+Result schematicPath(
+    const NodePtr &compNode, const QString &docPath, QString &path);
 
-} // namespace sch::core::hier
+}   // namespace sch::core::hier

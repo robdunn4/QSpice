@@ -51,6 +51,12 @@ public:
   // The fill mode says "image" and there is image data to draw.
   bool hasImage() const;
 
+  // A hierarchical block's box: colored from QSpice's Hierarchical Box and
+  // Fill colors, not from the record (P9).
+  bool isHierarchicalBlock() const {
+    return item_->isHierarchicalBlock.getValue() != 0;
+  }
+
   // Picking: the rectangle as drawn, and whether its inside counts --
   // see SchItemBase::hitLevel().
   QPainterPath outlinePath() const override;

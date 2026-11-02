@@ -7,7 +7,7 @@
 //
 // Programs built on these libraries depend on QSpice being installed:
 // QUX.exe and the simulators are QSpice's, the Behavioral folder is part
-// of the symbol library, and the colours come from its registry settings
+// of the symbol library, and the colors come from its registry settings
 // (QSpicePrefs, loaded separately). So the installation is verified once
 // at startup, before any window is built, and a failure is reported
 // rather than discovered piecemeal later.

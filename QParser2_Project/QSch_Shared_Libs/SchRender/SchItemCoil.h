@@ -67,10 +67,10 @@ public:
 
 protected:
   void paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
-             QWidget *widget) override;
+      QWidget *widget) override;
 
 private:
   ItemCoilPtr item_;
 };
 
-} // namespace sch::render
+}   // namespace sch::render

@@ -6,7 +6,6 @@
 #include "QSpicePrefsWriter.h"
 
 #include <QDebug>
-#include <QDir>
 #include <QSettings>
 
 #ifdef _MSC_VER
@@ -29,14 +28,8 @@ PrefsWriter::PrefsWriter(const QString &vendorKey) {
 }
 
 bool PrefsWriter::setUserSymbolDirectories(const QStringList &dirs) {
-  // QSpice's form: every path enclosed in bars, so two paths meet as
-  // "||". An empty list is an empty string.
-  QString value;
-  for (const QString &dir : dirs)
-    value += QLatin1Char('|') + QDir::toNativeSeparators(dir.trimmed()) +
-             QLatin1Char('|');
-
-  return write(QStringLiteral("UserSymbolDirectories"), value);
+  return write(QStringLiteral("UserSymbolDirectories"),
+               prefs::userSymbolDirectoriesText(dirs));
 }
 
 bool PrefsWriter::write(const QString &name, const QString &value) {
@@ -47,8 +40,10 @@ bool PrefsWriter::write(const QString &name, const QString &value) {
   QSettings settings(keyPath, QSettings::NativeFormat);
 
   const QString old = settings.value(name).toString();
-  qInfo().noquote() << QStringLiteral("QSpice preferences: WRITING %1\\%2\n  was: %3\n  now: %4")
-                           .arg(keyPath, name, old, value);
+  qInfo().noquote()
+      << QStringLiteral(
+             "QSpice preferences: WRITING %1\\%2\n  was: %3\n  now: %4")
+             .arg(keyPath, name, old, value);
 
   settings.setValue(name, value); // REG_SZ, as QSpice stores it
   settings.sync();

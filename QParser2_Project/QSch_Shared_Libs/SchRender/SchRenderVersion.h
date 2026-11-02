@@ -8,10 +8,10 @@
 namespace sch::render {
 
 struct LibraryInfo {
-  const char *name;    // "SchRender"
-  const char *version; // "major.minor.patch"
+  const char *name;      // "SchRender"
+  const char *version;   // "major.minor.patch"
 };
 
 LibraryInfo libraryInfo();
 
-} // namespace sch::render
+}   // namespace sch::render

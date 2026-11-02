@@ -92,22 +92,23 @@ void SchItemCoil::setControlPoint(int index, Point p) {
 
 void SchItemCoil::paint(QPainter *painter, const QStyleOptionGraphicsItem *,
                         QWidget *) {
-  QPen pen = SchPen::forElement(
-      painter,
-      tint(SchColorDecode::fromArgColor(item_->lineColor.getValue(),
-                                        RenderStyle::current().graphicAnnotation)),
-      item_->lineWidth.getValue(), item_->lineType.getValue());
+  QPen pen = SchPen::forElement(painter,
+                                tint(SchColorDecode::fromArgColor(
+                                    item_->lineColor.getValue(),
+                                    RenderStyle::current().graphicAnnotation)),
+                                item_->lineWidth.getValue(),
+                                item_->lineType.getValue());
   painter->setPen(pen);
 
   // Wound in the shape's OWN frame -- an odd rotation code tilts it 45
   // degrees, see SchBoxFrame. The winding maths below is unchanged and
   // works from the box, so the box is simply expressed in that frame:
-  // centred on the origin, painter rotated to match. An even code makes
+  // centered on the origin, painter rotated to match. An even code makes
   // the transform identity and nothing moves.
   const SchBoxFrame::Frame frame = boxFrame();
 
   painter->save();
-  painter->translate(frame.centre);
+  painter->translate(frame.center);
   painter->rotate(frame.degrees());
 
   const double left   = -frame.a;
@@ -128,9 +129,8 @@ void SchItemCoil::paint(QPainter *painter, const QStyleOptionGraphicsItem *,
   const bool    vertical = (height >= width);
   const double  along    = vertical ? height : width;
   const double  across   = vertical ? width : height;
-  const QPointF origin = vertical
-                             ? QPointF((left + right) / 2.0, bottom)
-                             : QPointF(left, (bottom + top) / 2.0);
+  const QPointF origin   = vertical ? QPointF((left + right) / 2.0, bottom)
+                                    : QPointF(left, (bottom + top) / 2.0);
 
   if (along < 1e-6 || across < 1e-6) {
     // Degenerate box -- nothing meaningful to wind. Draw the spine so
@@ -239,16 +239,17 @@ void SchItemCoil::paint(QPainter *painter, const QStyleOptionGraphicsItem *,
   // stands when Lx*Ly < 0 and is reflected across its spine when
   // Lx*Ly > 0. So the order the corners were written in matters -- the
   // same box drawn from the other corner pair loops the other way --
-  // which is what the old code, working from the normalised box alone,
+  // which is what the old code, working from the normalized box alone,
   // could not reproduce.
-  const Point   p1   = item_->pt1.getValue();
-  const Point   p2   = item_->pt2.getValue();
-  const QPointF diag = frame.toFrame(QPointF(p2.x - p1.x, p2.y - p1.y));
-  double crossSign = (diag.x() * diag.y() < 0.0) ? 1.0 : -1.0;
+  const Point   p1        = item_->pt1.getValue();
+  const Point   p2        = item_->pt2.getValue();
+  const QPointF diag      = frame.toFrame(QPointF(p2.x - p1.x, p2.y - p1.y));
+  double        crossSign = (diag.x() * diag.y() < 0.0) ? 1.0 : -1.0;
 
   // The MIRROR bit on top -- measured earlier (codes 0 and 8). Whether it
   // composes this way with the corner signs is unmeasured.
-  if (sch::core::rotdecode::isMirrored(item_->rotate.getValue())) crossSign = -crossSign;
+  if (sch::core::rotdecode::isMirrored(item_->rotate.getValue()))
+    crossSign = -crossSign;
 
   const int steps = std::max(2, static_cast<int>(kStepsPerTurn * turns));
 

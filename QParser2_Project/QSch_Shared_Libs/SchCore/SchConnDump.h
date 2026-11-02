@@ -2,7 +2,6 @@
 
 #include <QString>
 
-
 // A TEXT description of a
 // sheet's connectivity, from the record-tree model (NetModel). QSchEdit
 // shows it as Tools > Dump Connectivity (Debug builds).
@@ -47,5 +46,5 @@ QString dumpModel(const sch::core::NetModel &model, const QString &fileName);
 // empty if they are the same.
 QString firstDifference(const QString &a, const QString &b);
 
-} // namespace conndump
-} // namespace sch::core
+}   // namespace conndump
+}   // namespace sch::core

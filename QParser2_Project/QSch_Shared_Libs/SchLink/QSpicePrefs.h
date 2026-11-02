@@ -7,23 +7,24 @@
 #include <QStringList>
 #include <QtGlobal>
 
-// QSpice's own colours and CAD settings, READ from the Windows registry
+// QSpice's own colors and CAD settings, READ from the Windows registry
 // at startup. Read-only: the one value ever written back goes through
 // PrefsWriter (QSpicePrefsWriter.h), deliberately a separate header.
 //
 // These are the values QSpice itself draws with, under
-//   HKEY_CURRENT_USER\Software\Marcus Aurelius Software LLC\QSPICE\[Preferences]
+//   HKEY_CURRENT_USER\Software\Marcus Aurelius Software
+//   LLC\QSPICE\[Preferences]
 //
 // Why they matter: an element's ArgColor can say "use this element
-// type's default colour" (the 0x01 high byte -- see SchColorDecode). The
+// type's default color" (the 0x01 high byte -- see SchColorDecode). The
 // real defaults live here.
 //
-// COLOURS ARE RETURNED RAW, as 0xBBGGRR integers exactly as QSpice
+// COLORS ARE RETURNED RAW, as 0xBBGGRR integers exactly as QSpice
 // stores them, so this library needs Qt Core only. Turning them into
 // QColor is the drawing side's job.
 //
 // BYTE ORDER is 0xBBGGRR -- the same convention ArgColor uses, NOT the
-// 0xRRGGBB an HTML-coloured eye reads. Confirmed three ways against
+// 0xRRGGBB an HTML-colored eye reads. Confirmed three ways against
 // QSpice screenshots that had already been measured pixel-by-pixel:
 //   CADBackgroundColor 0xe9ffff -> RGB(255,255,233), exactly the
 //     background measured from QSpice's own captures
@@ -46,7 +47,7 @@ namespace sch::link::prefs {
 void load(const QString &vendorKey);
 
 // True if the registry key was found and read. Worth checking before
-// telling the user their QSpice colours are in use.
+// telling the user their QSpice colors are in use.
 bool loaded();
 
 // For a program that may run WITHOUT QSpice: values for any name the
@@ -59,7 +60,7 @@ bool loaded();
 // says whether the REGISTRY was read.
 void fillMissing(const QHash<QString, QString> &fallbackValues);
 
-// Every value the drawing side reads -- the colours and metrics below,
+// Every value the drawing side reads -- the colors and metrics below,
 // not FastMath or the symbol folders -- as (registry name, stock text),
 // in the order listed below. The stock text is what a stock QSpice
 // installation holds, and what each accessor falls back to. For writing
@@ -73,27 +74,27 @@ const QString &keyPath();
 // The [Preferences] key under a vendor key.
 QString keyPathFor(const QString &vendorKey);
 
-// --- Schematic colours, 0xBBGGRR ---
-quint32 highlightColor();     // CADHighlightColor
-quint32 backgroundColor();    // CADBackgroundColor
-quint32 gridColor();          // CADbomberSight
-quint32 graphicAnnotation();  // CADgrapicAnnotation  -- symbol line work
-quint32 solidAnnotationFill();// CADsolidAnnotation   -- shape fill
-quint32 graphicText();        // CADgrapicText        -- text inside symbols
-quint32 componentText();      // CADnormalText        -- refdes/value labels
-quint32 schematicText();      // CADnormalSchText     -- top-level text
-quint32 commentText();        // CADcommentText
-quint32 netLabelText();       // CADnetLabelText
-quint32 wireColor();          // CADwireColor
-quint32 highlightWireColor(); // CADhighlightWireColor
-quint32 pinDotColor();        // CADpinDotColor
-quint32 spritedAnchor();      // CADspritedAnchor
-quint32 pinColor();           // CADpinColor
-quint32 portBkColor();        // CADportBkColor
-quint32 hierarchicalBlock();  // CADhierarchalBlock   [sic -- QSpice's spelling]
-quint32 hierarchicalFill();   // CADhierarchalFill    [sic]
-quint32 unconnectedPin();     // CADunconnectedPin
-quint32 busTapError();        // CADbusTapError
+// --- Schematic colors, 0xBBGGRR ---
+quint32 highlightColor();      // CADHighlightColor
+quint32 backgroundColor();     // CADBackgroundColor
+quint32 gridColor();           // CADbomberSight
+quint32 graphicAnnotation();   // CADgrapicAnnotation  -- symbol line work
+quint32 solidAnnotationFill(); // CADsolidAnnotation   -- shape fill
+quint32 graphicText();         // CADgrapicText        -- text inside symbols
+quint32 componentText();       // CADnormalText        -- refdes/value labels
+quint32 schematicText();       // CADnormalSchText     -- top-level text
+quint32 commentText();         // CADcommentText
+quint32 netLabelText();        // CADnetLabelText
+quint32 wireColor();           // CADwireColor
+quint32 highlightWireColor();  // CADhighlightWireColor
+quint32 pinDotColor();         // CADpinDotColor
+quint32 spritedAnchor();       // CADspritedAnchor
+quint32 pinColor();            // CADpinColor
+quint32 portBkColor();         // CADportBkColor
+quint32 hierarchicalBlock(); // CADhierarchalBlock   [sic -- QSpice's spelling]
+quint32 hierarchicalFill();  // CADhierarchalFill    [sic]
+quint32 unconnectedPin();    // CADunconnectedPin
+quint32 busTapError();       // CADbusTapError
 
 // --- Schematic metrics ---
 double junctionSize();       // JunctionSize
@@ -119,8 +120,8 @@ bool fastMath();
 // only the first time -- see sameDirectory().
 //
 // Read from the registry ONCE, at load(). After that this returns OUR
-// copy, as last set through PrefsWriter; changes QSpice makes while we
-// are running are not seen.
+// copy, as last set through useValue() or PrefsWriter; changes QSpice
+// makes while we are running are not seen here.
 QStringList userSymbolDirectories();
 
 // Whether two folder paths name the same folder, as far as the text
@@ -131,5 +132,33 @@ bool sameDirectory(const QString &a, const QString &b);
 // Parses one "0xBBGGRR" string. False, and bgr untouched, if it is not
 // one. Exposed for values this module doesn't wrap in a named accessor.
 bool bgrFromString(const QString &text, quint32 &bgr);
+
+// --- A program's own copies ("shadows") of QSpice's values ---
+//
+// QSchEdit keeps its own copy of each value it draws with, in its own
+// settings file, and only ever READS QSpice's registry (see QSchEdit's
+// QSpiceShadow). These let it do that through the accessors above.
+
+// The value names a program may keep copies of: every drawing value
+// (stockDrawingValues()) and UserSymbolDirectories, in that order.
+QStringList shadowableNames();
+
+// The text the accessors use for `name` now -- read from the registry,
+// filled in by fillMissing() or set by useValue(). Empty if none.
+QString valueText(const QString &name);
+
+// The accessors use `text` for `name` from now on, whatever the registry
+// says. Nothing is written anywhere.
+void useValue(const QString &name, const QString &text);
+
+// The [Preferences] key read AFRESH, name -> text, without changing what
+// the accessors use -- for comparing with the copies kept. Empty if the
+// key cannot be read (or on a non-Windows build).
+QHash<QString, QString> readRegistry();
+
+// UserSymbolDirectories' text form for a list of folders, as QSpice
+// writes it: each path enclosed in bars ("|a||b|"); an empty list is
+// empty text.
+QString userSymbolDirectoriesText(const QStringList &dirs);
 
 } // namespace sch::link::prefs

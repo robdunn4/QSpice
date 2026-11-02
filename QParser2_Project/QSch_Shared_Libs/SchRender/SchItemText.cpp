@@ -19,6 +19,7 @@
 #include <cmath>
 #include <utility>
 
+#include "ProgAttr.h"
 #include "RenderStyle.h"
 #include "SchColorDecode.h"
 #include "SchRotDecode.h"
@@ -47,16 +48,14 @@ Rect SchItemText::getRect() const noexcept {
   // hidden text while getRect() still reported its full extent --
   // harmless only because SchItemComp::getRect() excludes text children
   // from a component's box, so the oversized bounds fed into nothing.
-  if (!isDisplayed()) return Rect(item_->pt1.getValue(),
-                                  item_->pt1.getValue());
+  if (!isDisplayed()) return Rect(item_->pt1.getValue(), item_->pt1.getValue());
 
   // The DISPLAY form: overbar markers are not drawn and take no space
   // (unless Raw mode shows them -- see overbarDisplayText()),
   // so an element carrying them must not report bounds as though they
   // were characters. This is what makes selecting and hit-testing match
   // what is on screen.
-  const QString text =
-      overbarDisplayText(recordText());
+  const QString       text = overbarDisplayText(shownText());
   const QFontMetricsF fm(makeFont(item_->fontSize.getValue()));
   const int           alignH = effectiveAlignH();
   const int           alignV = effectiveAlignV();
@@ -98,8 +97,7 @@ Rect SchItemText::getRect() const noexcept {
   const QRectF painted = textXform().mapRect(textRect);
 
   constexpr double kMargin = 20.0;
-  const QRectF     padded =
-      painted.adjusted(-kMargin, -kMargin, kMargin, kMargin);
+  const QRectF padded = painted.adjusted(-kMargin, -kMargin, kMargin, kMargin);
 
   const Point anchor = item_->pt1.getValue();
   return Rect(Point(anchor.x + static_cast<int>(std::floor(padded.left())),
@@ -109,7 +107,41 @@ Rect SchItemText::getRect() const noexcept {
 }
 
 QString SchItemText::recordText() const {
-  return sch::core::lineBreaksFromRecord(sch::core::decodeQSpiceString(item_->text.getValue()));
+  return sch::core::lineBreaksFromRecord(
+      sch::core::decodeQSpiceString(item_->text.getValue()));
+}
+
+namespace {
+
+// The Programmable Attribute `item` shows, if it shows one: only a placed
+// component's attribute (a child item -- a symbol document's text is
+// top-level, and shows as written), and only with Raw Attributes off.
+sch::progattr::ProgAttr shownProgAttr(const QGraphicsItem *item,
+                                      const QString       &recordText) {
+  if (item->parentItem() == nullptr || SchRawText::enabled)
+    return sch::progattr::ProgAttr();
+
+  return sch::progattr::parse(recordText);
+}
+
+} // namespace
+
+QString SchItemText::shownText() const {
+  const QString                 raw  = recordText();
+  const sch::progattr::ProgAttr attr = shownProgAttr(this, raw);
+  return attr.isProgrammable() ? attr.displayText() : raw;
+}
+
+QString SchItemText::acceptValue(const QString &typed, bool *adjusted) const {
+  return sch::progattr::parse(recordText()).acceptValue(typed, adjusted);
+}
+
+bool SchItemText::editsInline() const {
+  return shownProgAttr(this, recordText()).kind != sch::progattr::Kind::Choice;
+}
+
+int SchItemText::shownLockedPrefix() const {
+  return shownProgAttr(this, recordText()).displayPrefixLen();
 }
 
 Point SchItemText::getPosition() const noexcept {
@@ -134,10 +166,16 @@ SchTextEditInfo SchItemText::textEditInfo() const {
   // them and renders the bars live instead; showing them keeps the
   // editor's text and its metrics the same string, which avoids a
   // second layout path through the whole editor.
-  info.text   = recordText();
-  info.anchor = item_->pt1.getValue();
-  info.color =
-      SchColorDecode::fromArgColor(item_->textColor.getValue(), defaultTextColor());
+  //
+  // A Programmable Attribute shown as "NAME=VALUE" is edited in that
+  // form, with "NAME=" locked: only the value is the user's to change,
+  // as in QSpice. applyTextEdit() puts the value back between the angle
+  // brackets.
+  info.text          = shownText();
+  info.lockedPrefix  = shownLockedPrefix();
+  info.anchor        = item_->pt1.getValue();
+  info.color         = SchColorDecode::fromArgColor(item_->textColor.getValue(),
+                                                    defaultTextColor());
   info.fontPixelSize = fontPixelSize(item_->fontSize.getValue());
   info.alignH        = item_->rotateAlign.getAlignH();
   info.alignV        = item_->rotateAlign.getAlignV();
@@ -155,8 +193,31 @@ void SchItemText::applyTextEdit(const SchTextEditInfo &info) {
   // and use Latin-1.
   //
   // Line feeds go back as QSpice's "\n" -- see sch::core::lineBreaksToRecord().
-  item_->text.setValue(
-      ArgString(sch::core::encodeQSpiceString(sch::core::lineBreaksToRecord(info.text))).quote().getValue());
+  //
+  // A snapshot taken of a shown Programmable Attribute holds "NAME=VALUE"
+  // with "NAME=" locked: only the value goes back, between the angle
+  // brackets of the record's own text, so the name and description stay
+  // exactly as stored.
+  QString text = info.text;
+
+  if (info.lockedPrefix > 0) {
+    const QString value = info.text.mid(info.lockedPrefix);
+    const QString raw   = recordText();
+
+    // The record should still be the attribute the snapshot was taken
+    // of -- undo restores records in order. If it somehow is not, the
+    // form is rebuilt from the snapshot rather than storing the
+    // "NAME=VALUE" display text as though it were the record.
+    text = sch::progattr::parse(raw).isProgrammable()
+               ? sch::progattr::withValue(raw, value)
+               : info.text.left(info.lockedPrefix) + QLatin1Char('<') + value +
+                     QLatin1Char('>');
+  }
+
+  item_->text.setValue(ArgString(sch::core::encodeQSpiceString(
+                                     sch::core::lineBreaksToRecord(text)))
+                           .quote()
+                           .getValue());
 
   // EDITING MUST NOT HIDE A VISIBLE ELEMENT.
   //
@@ -170,9 +231,11 @@ void SchItemText::applyTextEdit(const SchTextEditInfo &info) {
   // may legitimately contain hidden attribute text, and it still loads,
   // draws as hidden, and shows its Invis. tick. What must be impossible
   // is an edit turning visible into hidden behind the user's back.
-  const bool wasHidden = sch::core::alignMarksHidden(item_->rotateAlign.getAlignH(),
-                                          item_->rotateAlign.getAlignV());
-  const bool wouldHide = sch::core::alignMarksHidden(info.alignH, info.alignV);
+  const bool comment   = item_->textFlags.isComment();
+  const bool wasHidden = sch::core::alignHidesText(
+      comment, item_->rotateAlign.getAlignH(), item_->rotateAlign.getAlignV());
+  const bool wouldHide =
+      sch::core::alignHidesText(comment, info.alignH, info.alignV);
 
   if (wouldHide && !wasHidden) {
     qWarning("SchItemText: ignoring an edit that would have hidden a visible "
@@ -209,8 +272,7 @@ void SchItemText::setComment(bool comment) {
 int SchItemText::orientCode() const {
   // The WHOLE rotateAlign byte: rotation in the high nibble, alignment
   // in the low one. Mirroring changes both, so they travel together.
-  return (item_->rotateAlign.getRotCode() << 4) |
-         item_->rotateAlign.getAlign();
+  return (item_->rotateAlign.getRotCode() << 4) | item_->rotateAlign.getAlign();
 }
 
 void SchItemText::setOrientCode(int code) {
@@ -258,7 +320,8 @@ int SchItemText::orientAfterMirror() const {
 
   if (textIsVertical) {
     if (alignV == sch::core::kAlignVNorth) alignV = sch::core::kAlignVSouth;
-    else if (alignV == sch::core::kAlignVSouth) alignV = sch::core::kAlignVNorth;
+    else if (alignV == sch::core::kAlignVSouth)
+      alignV = sch::core::kAlignVNorth;
   } else {
     if (alignH == sch::core::kAlignHWest) alignH = sch::core::kAlignHEast;
     else if (alignH == sch::core::kAlignHEast) alignH = sch::core::kAlignHWest;
@@ -274,25 +337,27 @@ bool SchItemText::isDisplayed() const {
   // attribute text.
   if (item_->textFlags.isHidden()) return false;
 
-  // ...and, within a symbol, a zero alignment nibble, which appears to
-  // mark text that is not drawn on a schematic. OBSERVED, MECHANISM
-  // UNCONFIRMED -- see sch::core::alignMarksHidden() in SchTextLayout.h for what
-  // is actually known and the test that would settle it.
+  // ...and, within a symbol, a zero alignment nibble on ATTRIBUTE text,
+  // which appears to mark text that is not drawn on a schematic. Plain
+  // text (comment flag set) is drawn whatever its alignment -- see
+  // sch::core::alignHidesText() in SchAlign.h for what is confirmed and
+  // what is not.
   //
   // Restricted to symbol children because that is the only place the
   // rule has any evidence behind it; a top-level text element with no
   // alignment bits still has to go somewhere, and alignedRectForSize()
-  // centres it.
+  // centers it.
   if (parentItem() != nullptr &&
-      sch::core::alignMarksHidden(item_->rotateAlign.getAlignH(),
-                       item_->rotateAlign.getAlignV()))
+      sch::core::alignHidesText(item_->textFlags.isComment(),
+                                item_->rotateAlign.getAlignH(),
+                                item_->rotateAlign.getAlignV()))
     return false;
 
   return true;
 }
 
 QColor SchItemText::defaultTextColor() const {
-  // QSpice keeps three separate text colours, and this one class serves
+  // QSpice keeps three separate text colors, and this one class serves
   // all three roles, so the role has to be worked out here.
   //
   // The comment flag is bit 0 of the record's own textFlags (clear =
@@ -346,8 +411,9 @@ int SchItemText::effectiveAlignV() const {
 //
 //   comp code 7 (315), label rot 2 ( 90) -> on screen  45   [heuristic agreed]
 //   comp code 1 ( 45), label rot 6 (270) -> on screen -45   [heuristic agreed]
-//   comp code 5 (225), label rot 2 ( 90) -> on screen -45   [heuristic said +45]
-//   comp code 3 (135), label rot 6 (270) -> on screen  45   [heuristic said -45]
+//   comp code 5 (225), label rot 2 ( 90) -> on screen -45   [heuristic said
+//   +45] comp code 3 (135), label rot 6 (270) -> on screen  45   [heuristic
+//   said -45]
 //
 // Codes 5 and 7 share a label rotation but need opposite tilts, so no
 // function of the parent's code alone can produce both. The record says
@@ -360,10 +426,12 @@ double SchItemText::counterRotateDeg() const {
   return static_cast<double>(item_->rotateAlign.getRotDeg());
 }
 
-// Rotation by the record, the parent's scale and mirror cancelled, the
+// Rotation by the record, the parent's scale and mirror canceled, the
 // view's Y-flip undone, and the readability half turn when needed -- all
 // in SchItemBase::labelXform(), which pin labels share.
-QTransform SchItemText::textXform() const { return labelXform(counterRotateDeg()); }
+QTransform SchItemText::textXform() const {
+  return labelXform(counterRotateDeg());
+}
 
 void SchItemText::paint(QPainter *painter, const QStyleOptionGraphicsItem *,
                         QWidget *) {
@@ -371,7 +439,7 @@ void SchItemText::paint(QPainter *painter, const QStyleOptionGraphicsItem *,
 
   // RAW carries the overbar markers; DISPLAY is what is actually drawn
   // and measured. See kOverbarMarker in SchTextLayout.h.
-  const QString raw  = recordText();
+  const QString raw  = shownText();
   const QString text = overbarDisplayText(raw);
   if (text.isEmpty()) return;
 

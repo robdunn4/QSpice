@@ -36,6 +36,6 @@ QList<QGraphicsItem *> buildTopLevelItems(const ItemTree &tree);
 
 void populateScene(const ItemTree &tree, QGraphicsScene *scene);
 
-} // namespace SchTreeBuilder
+}   // namespace SchTreeBuilder
 
-} // namespace sch::render
+}   // namespace sch::render

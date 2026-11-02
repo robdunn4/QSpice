@@ -42,9 +42,9 @@ enum class Dest { Schematic, Symbol };
 
 // One record removed.
 struct Omitted {
-  QString kind;   // "wire", "bus", "pin", ... -- singular
-  QString where;  // "inside the symbol of R3", "at the top level"
-  QString record; // the record as written, for the log
+  QString kind;     // "wire", "bus", "pin", ... -- singular
+  QString where;    // "inside the symbol of R3", "at the top level"
+  QString record;   // the record as written, for the log
 };
 
 // Removes every record under `node` that may not be where it is, and
@@ -58,14 +58,13 @@ QStringList summary(const QList<Omitted> &omitted);
 // Every omitted record, one qWarning line each, headed by `source`.
 void log(const QString &source, const QList<Omitted> &omitted);
 
-
 // --- Symbol libraries.
 //
 // They load at startup, many files at once, so their reports are
 // collected here and shown in ONE dialog when loading is done
 // (SchOmittedDlg::warnLibraryNotes()), rather than a dialog per file.
 
-void           noteLibrary(const QString &fileName, const QList<Omitted> &omitted);
-QStringList    takeLibraryNotes();
+void        noteLibrary(const QString &fileName, const QList<Omitted> &omitted);
+QStringList takeLibraryNotes();
 
-} // namespace sch::core::recordrules
+}   // namespace sch::core::recordrules

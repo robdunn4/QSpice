@@ -12,8 +12,8 @@ namespace sch::render {
 // should add or remove one -- see the invariant described there.
 class SchItemJunction : public SchItemBase {
 public:
-  explicit SchItemJunction(ItemJunctionPtr item,
-                           QGraphicsItem *parent = nullptr);
+  explicit SchItemJunction(
+      ItemJunctionPtr item, QGraphicsItem *parent = nullptr);
 
   Rect  getRect() const noexcept override;
   Point getPosition() const noexcept override;
@@ -42,10 +42,10 @@ protected:
   static inline double radiusLineWidths = 10.0;
 
   void paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
-             QWidget *widget) override;
+      QWidget *widget) override;
 
 private:
   ItemJunctionPtr item_;
 };
 
-} // namespace sch::render
+}   // namespace sch::render

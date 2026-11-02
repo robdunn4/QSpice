@@ -5,8 +5,8 @@
 
 #include "SchItemRect.h"
 
-#include "SchPen.h"
 #include "SchBoxFrame.h"
+#include "SchPen.h"
 
 #include <QBuffer>
 #include <QByteArray>
@@ -84,29 +84,29 @@ void SchItemRect::setControlPoint(int index, Point p) {
 
 void SchItemRect::paint(QPainter *painter, const QStyleOptionGraphicsItem *,
                         QWidget *) {
-  // A hierarchical block is coloured entirely from QSpice's
+  // A hierarchical block is colored entirely from QSpice's
   // preferences, NOT from the record. CONFIRMED: the X1 block's rect
   // carries 0x4000000 for both line and fill -- the same fill value the
-  // AnalogLatch body uses for yellow -- yet QSpice draws it grey with a
+  // AnalogLatch body uses for yellow -- yet QSpice draws it gray with a
   // blue border. What distinguishes them is P9 (isHierarchicalBlock),
   // which ItemRect.h flags and which is 1 there and 0 on the latch.
   const bool hierarchical = item_->isHierarchicalBlock.getValue() != 0;
 
-  const QColor lineColor =
-      hierarchical ? RenderStyle::current().hierarchicalBlock
-                   : SchColorDecode::fromArgColor(
-                         item_->lineColor.getValue(),
-                         RenderStyle::current().graphicAnnotation);
+  const QColor lineColor = hierarchical
+                               ? RenderStyle::current().hierarchicalBlock
+                               : SchColorDecode::fromArgColor(
+                                     item_->lineColor.getValue(),
+                                     RenderStyle::current().graphicAnnotation);
 
-  QPen pen = SchPen::forElement(painter, tint(lineColor),
-                                item_->lineWidth.getValue(),
-                                item_->lineType.getValue());
+  QPen pen =
+      SchPen::forElement(painter, tint(lineColor), item_->lineWidth.getValue(),
+                         item_->lineType.getValue());
   painter->setPen(pen);
 
   // An unstuffed component is drawn as an OUTLINE: its fills go
-  // transparent rather than grey. A solid grey body would hide the
+  // transparent rather than gray. A solid gray body would hide the
   // symbol's own shape, which is the thing the user still has to
-  // recognise -- the greying says "not fitted", not "not there".
+  // recognize -- the graying says "not fitted", not "not there".
   //
   // An IMAGE fill draws the bitmap instead, and the outline over it.
   const bool withImage = !hierarchical && hasImage();
@@ -114,9 +114,10 @@ void SchItemRect::paint(QPainter *painter, const QStyleOptionGraphicsItem *,
   if (isUnstuffed() || withImage) {
     painter->setBrush(Qt::NoBrush);
   } else {
-    const QColor fill = hierarchical ? RenderStyle::current().hierarchicalFill
-                                     : SchColorDecode::fromArgFill(
-                                           item_->fillColor.getValue(), lineColor);
+    const QColor fill =
+        hierarchical ? RenderStyle::current().hierarchicalFill
+                     : SchColorDecode::fromArgFill(item_->fillColor.getValue(),
+                                                   lineColor);
     painter->setBrush(fill);
   }
 
@@ -136,7 +137,7 @@ void SchItemRect::paint(QPainter *painter, const QStyleOptionGraphicsItem *,
   const SchBoxFrame::Frame frame = boxFrame();
 
   painter->save();
-  painter->translate(frame.centre);
+  painter->translate(frame.center);
   painter->rotate(frame.degrees());
 
   if (withImage) drawImage(painter, frame.localRect());
@@ -157,8 +158,8 @@ const QImage &SchItemRect::image() const {
 
   // Hex digits -> the image file's own bytes; the format is whatever
   // they say (PNG from QSpice).
-  const QByteArray bytes =
-      QByteArray::fromHex(QByteArray::fromStdString(item_->imageData.getValue()));
+  const QByteArray bytes = QByteArray::fromHex(
+      QByteArray::fromStdString(item_->imageData.getValue()));
   imageCache = QImage::fromData(bytes);
 
   if (imageCache.isNull())
@@ -175,13 +176,13 @@ void SchItemRect::drawImage(QPainter *painter, const QRectF &rect) const {
   painter->save();
 
   // Image rows run DOWN; the view shows scene Y running UP. Flipped
-  // about the rect's horizontal centre line, the picture is upright.
+  // about the rect's horizontal center line, the picture is upright.
   painter->translate(0.0, rect.top() + rect.bottom());
   painter->scale(1.0, -1.0);
 
   // The mode's Windows raster op, where the paint engine has raster
   // ops (the screen does; printers and PDF do not -- they get a plain
-  // copy). 0x05 SRCCOPY is an ordinary draw, transparency honoured.
+  // copy). 0x05 SRCCOPY is an ordinary draw, transparency honored.
   if (painter->paintEngine() != nullptr &&
       painter->paintEngine()->hasFeature(QPaintEngine::RasterOpModes)) {
     switch (SchColorDecode::colorMode(item_->fillColor.getValue())) {
@@ -198,7 +199,8 @@ void SchItemRect::drawImage(QPainter *painter, const QRectF &rect) const {
       painter->setCompositionMode(QPainter::RasterOp_SourceAndNotDestination);
       break;
     case 0x0A: // NOTSRCERASE: NOT (source OR destination)
-      painter->setCompositionMode(QPainter::RasterOp_NotSourceAndNotDestination);
+      painter->setCompositionMode(
+          QPainter::RasterOp_NotSourceAndNotDestination);
       break;
     case 0x0B: // MERGEPAINT: NOT source OR destination
       painter->setCompositionMode(QPainter::RasterOp_NotSourceOrDestination);
@@ -215,7 +217,7 @@ void SchItemRect::drawImage(QPainter *painter, const QRectF &rect) const {
 }
 
 ItemRectPtr SchItemRect::makeImageRecord(const QImage &image,
-                                         double unitsPerPixel) {
+                                         double        unitsPerPixel) {
   ItemRectPtr rec = ItemRect::makePtr();
 
   // Stored as PNG whatever it was loaded from -- what QSpice writes, and
@@ -227,13 +229,15 @@ ItemRectPtr SchItemRect::makeImageRecord(const QImage &image,
 
   rec->imageData = ArgImage(png.toHex().toStdString());
 
-  const int w = std::max(1, static_cast<int>(std::lround(image.width() * unitsPerPixel)));
-  const int h = std::max(1, static_cast<int>(std::lround(image.height() * unitsPerPixel)));
+  const int w =
+      std::max(1, static_cast<int>(std::lround(image.width() * unitsPerPixel)));
+  const int h = std::max(
+      1, static_cast<int>(std::lround(image.height() * unitsPerPixel)));
   rec->pt1.setValue(Point(0, 0));
   rec->pt2.setValue(Point(w, h));
 
   // As QSpice's own image rect: image fill SRCCOPY, a dotted outline in
-  // the element's default colour.
+  // the element's default color.
   rec->lineColor.setValue(0x01000000);
   rec->lineType.setValue(2);
   rec->fillColor.setValue(0x05000000);
@@ -251,11 +255,13 @@ QPainterPath SchItemRect::outlinePath() const {
 bool SchItemRect::interiorHollow() const {
   // A hierarchical block is filled from the preferences, not the record
   // -- see paint().
-  if (item_->isHierarchicalBlock.getValue() == 0) return SchItemBase::interiorHollow();
+  if (item_->isHierarchicalBlock.getValue() == 0)
+    return SchItemBase::interiorHollow();
   if (isUnstuffed()) return true;
 
   const QColor fill = RenderStyle::current().hierarchicalFill;
-  return fill.alpha() == 0 || fill.rgb() == RenderStyle::current().background.rgb();
+  return fill.alpha() == 0 ||
+         fill.rgb() == RenderStyle::current().background.rgb();
 }
 
 } // namespace sch::render

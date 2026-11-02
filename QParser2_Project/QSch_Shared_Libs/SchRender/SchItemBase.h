@@ -1,8 +1,8 @@
 #pragma once
 #include <QColor>
 #include <QGraphicsItem>
-#include <QPainterPath>
 #include <QList>
+#include <QPainterPath>
 #include <QString>
 #include <QTransform>
 
@@ -11,7 +11,6 @@
 #include "SchRect.h"
 
 namespace sch::render {
-
 
 // Snapshot of a text-like element's editable state, handed to the
 // inline editor when live-edit begins (see
@@ -26,6 +25,14 @@ struct SchTextEditInfo {
   double  fontPixelSize = 0.0;
   int     alignH        = 0;
   int     alignV        = 0;
+
+  // How many leading characters of `text` cannot be edited: the "NAME="
+  // of a Programmable Attribute shown as "NAME=VALUE", where only VALUE
+  // is the user's to change. 0 for ordinary text. Carried in the
+  // snapshot, not worked out again when it is applied, so that undo
+  // applies a snapshot the way it was taken even if View > Raw
+  // Attributes has changed since.
+  int lockedPrefix = 0;
 };
 
 // True if two snapshots describe the same EDITABLE state. Deliberately
@@ -201,7 +208,7 @@ public:
   virtual QPainterPath outlinePath() const { return QPainterPath(); }
 
   // A shape whose interior LOOKS empty: no fill, a fill in the canvas
-  // background colour (a knockout), or an unstuffed component's outline
+  // background color (a knockout), or an unstuffed component's outline
   // drawing. Image fills are content, never hollow.
   virtual bool interiorHollow() const;
 
@@ -215,12 +222,17 @@ public:
   // Ordered by what should be readable on top of what, not by element
   // type: areas first, then line work, then connection markers, then
   // text.
+  //
+  // Except inside a symbol: there kZFill items are raised to kZGraphic,
+  // so fills and line work paint in record order, as in QSpice -- see
+  // buildComponent() in SchTreeBuilder.cpp. Top-level fills keep
+  // kZFill; there is no evidence yet for QSpice's order there.
   enum ZOrder {
-    kZFill    = 0, // rect, ellipse -- may be opaque, so underneath
-    kZGraphic = 1, // lines, zigzag, coil, arc, wires
-    kZPin     = 2, // pin markers
+    kZFill     = 0, // rect, ellipse -- may be opaque, so underneath
+    kZGraphic  = 1, // lines, zigzag, coil, arc, wires
+    kZPin      = 2, // pin markers
     kZJunction = 3,
-    kZText    = 4 // labels last -- always readable
+    kZText     = 4 // labels last -- always readable
   };
 
   // --- Document tree back-reference ---
@@ -352,7 +364,7 @@ public:
   // Empty by default -- most elements need none, since their handles sit
   // on the thing they control. The four-point arc is the case that does:
   // two handles bound an ellipse the arc may barely touch, and two more
-  // are rays whose distance from the centre is ignored.
+  // are rays whose distance from the center is ignored.
   struct EditGuide {
     QPainterPath   dashed;
     QList<QPointF> dots;
@@ -373,17 +385,17 @@ public:
   static void setShowResistorOrient(bool show) { showResistorOrient_ = show; }
   static bool showResistorOrient() { return showResistorOrient_; }
 
-  // --- Unstuffed components are drawn GREY ---
+  // --- Unstuffed components are drawn GRAY ---
   //
   // A component marked "do not stuff" or "stuff with jumper" is drawn
-  // in one flat colour, every part of it: lines, fills, text and pin
+  // in one flat color, every part of it: lines, fills, text and pin
   // markers alike. So each element asks whether it belongs to such a
-  // component and passes its own colour through tint().
+  // component and passes its own color through tint().
   //
   // Done per element rather than by tinting the whole component,
-  // because the JUMPER must stay wire-coloured while everything around
-  // it goes grey -- a whole-subtree effect would grey that too.
-  static void setDoNotStuffColor(const QColor &c) { doNotStuffColor_ = c; }
+  // because the JUMPER must stay wire-colored while everything around
+  // it goes gray -- a whole-subtree effect would gray that too.
+  static void   setDoNotStuffColor(const QColor &c) { doNotStuffColor_ = c; }
   static QColor doNotStuffColor() { return doNotStuffColor_; }
 
   // Jumper width, in device pixels -- see Prefs::jumperWidthPx().
@@ -393,7 +405,7 @@ public:
   // True when this element is, or sits inside, an unstuffed component.
   bool isUnstuffed() const;
 
-  // The colour to actually paint with.
+  // The color to actually paint with.
   QColor tint(const QColor &color) const {
     return isUnstuffed() ? doNotStuffColor_ : color;
   }
@@ -419,11 +431,11 @@ public:
   virtual int  lineType() const { return -1; }
   virtual void setLineType(int) {}
 
-  // --- Colours, as RAW ArgColor values ---
+  // --- Colors, as RAW ArgColor values ---
   //
   // Raw rather than QColor because the MODE matters: "default",
   // "background" and "foreground" are references resolved from the
-  // registry at paint time, not colours. -1 means the element has no
+  // registry at paint time, not colors. -1 means the element has no
   // such field, which is how the menus know what to offer.
   virtual int  lineColorRaw() const { return -1; }
   virtual void setLineColorRaw(int) {}
@@ -472,7 +484,7 @@ protected:
 
   NodePtr node_;
 
-  static bool showResistorOrient_;
+  static bool   showResistorOrient_;
   static QColor doNotStuffColor_;
   static double jumperWidthPx_;
 

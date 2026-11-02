@@ -49,7 +49,7 @@ struct SelHiLiteStyle {
 // offset a few pixels outside its bounding box.
 //
 // Replaces two earlier treatments: Qt's default dashed outline (easy to
-// miss at typical zoom levels) and then a semi-transparent grey mask
+// miss at typical zoom levels) and then a semi-transparent gray mask
 // over the item's own shape, which was certainly visible but obscured
 // the very thing it was highlighting.
 //
@@ -139,13 +139,13 @@ protected:
     // hypot(m11, m12) is the length of the image of (1,0), so it gives
     // the real on-screen scale regardless of rotation or mirroring, and
     // is always positive.
-    const QTransform xform = painter->transform();
+    const QTransform xform       = painter->transform();
     const double     deviceScale = std::hypot(xform.m11(), xform.m12());
     const double     margin =
         (deviceScale > 0.0)
-            ? std::min(SelHiLiteStyle::marginPixels / deviceScale,
-                       SelHiLiteStyle::maxSceneMargin)
-            : SelHiLiteStyle::maxSceneMargin;
+                ? std::min(SelHiLiteStyle::marginPixels / deviceScale,
+                           SelHiLiteStyle::maxSceneMargin)
+                : SelHiLiteStyle::maxSceneMargin;
 
     QPen pen(SelHiLiteStyle::color, 2);
     pen.setCosmetic(true); // constant 2px outline at any zoom

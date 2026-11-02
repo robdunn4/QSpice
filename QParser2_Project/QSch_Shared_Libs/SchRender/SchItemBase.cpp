@@ -35,12 +35,12 @@ bool SchItemBase::isUnstuffed() const {
   // Walks UP: a symbol's lines and labels are children of the
   // component, and it is the component that carries the flag.
   for (const QGraphicsItem *item = this; item != nullptr;
-       item = item->parentItem()) {
+       item                      = item->parentItem()) {
     const SchItemBase *schItem = dynamic_cast<const SchItemBase *>(item);
     if (schItem == nullptr) continue;
 
     const int stuff = schItem->stuffCode();
-    if (stuff > 0) return true;  // 1 do not stuff, 2 jumper
+    if (stuff > 0) return true;   // 1 do not stuff, 2 jumper
     if (stuff == 0) return false; // a component, and it IS stuffed
   }
 
@@ -102,7 +102,8 @@ QTransform SchItemBase::labelBaseXform(double ownRotDeg) const {
   // Cancel the parent's SCALE: a diagonal symbol is drawn 41% larger,
   // its labels are not (see parentScale()).
   const double pscale = parentScale();
-  if (pscale > 0.0 && !qFuzzyCompare(pscale, 1.0)) xform.scale(1.0 / pscale, 1.0 / pscale);
+  if (pscale > 0.0 && !qFuzzyCompare(pscale, 1.0))
+    xform.scale(1.0 / pscale, 1.0 / pscale);
 
   // Cancel the parent's mirror, so the glyphs do not read backwards.
   if (parentMirrored()) xform.scale(-1.0, 1.0);
@@ -123,7 +124,8 @@ bool SchItemBase::labelTurned(double ownRotDeg) const {
   // a direction pointing left in the scene points left on screen too:
   // the text would read right to left, upside down.
   const QTransform toScene = labelBaseXform(ownRotDeg) * sceneTransform();
-  const QPointF    dir     = toScene.map(QPointF(1.0, 0.0)) - toScene.map(QPointF(0.0, 0.0));
+  const QPointF    dir =
+      toScene.map(QPointF(1.0, 0.0)) - toScene.map(QPointF(0.0, 0.0));
 
   const double len = std::hypot(dir.x(), dir.y());
   if (len <= 0.0) return false;
@@ -157,7 +159,7 @@ int SchItemBase::labelAlignH(int alignH, double /*ownRotDeg*/) const {
 
   if (alignH == sch::core::kAlignHWest) return sch::core::kAlignHEast;
   if (alignH == sch::core::kAlignHEast) return sch::core::kAlignHWest;
-  return alignH; // centred is unaffected
+  return alignH; // centered is unaffected
 }
 
 int SchItemBase::labelAlignV(int alignV, double /*ownRotDeg*/) const {
@@ -212,7 +214,7 @@ void SchItemBase::paint(QPainter *painter, const QStyleOptionGraphicsItem *,
 }
 
 SchItemBase::HitLevel SchItemBase::hitLevel(const QPointF &localPos,
-                                            double tolerance) const {
+                                            double         tolerance) const {
   const QPainterPath outline = outlinePath();
 
   if (outline.isEmpty()) {
@@ -249,7 +251,7 @@ bool SchItemBase::interiorHollow() const {
   const int mode = SchColorDecode::colorMode(raw);
   if (mode >= 0x05 && mode <= 0x0B) return false;
 
-  // Decided by the colour as RESOLVED, so a knockout made any way --
+  // Decided by the color as RESOLVED, so a knockout made any way --
   // mode 0x02, an RGB fill or a solid-fill preference that happens to
   // match the canvas -- reads as empty, and follows the theme.
   const QColor fill = SchColorDecode::fromArgFill(raw, QColor());

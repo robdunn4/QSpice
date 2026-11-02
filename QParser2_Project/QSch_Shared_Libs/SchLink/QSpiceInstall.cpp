@@ -15,7 +15,7 @@ QString theQorvoPath;
 
 // A key's (Default) value -- the unnamed one regedit shows as
 // "(Default)". QSettings addresses it as "Default" or "."; both are
-// tried, since which one a given Qt version honours has varied.
+// tried, since which one a given Qt version honors has varied.
 QString defaultValueOf(const QString &key) {
   QSettings settings(key, QSettings::NativeFormat);
 
@@ -61,8 +61,7 @@ QStringList verify(const QString &vendorKey) {
   const QDir installDir(installPath);
 
   const QString quxExe = installDir.filePath(QStringLiteral("QUX.exe"));
-  if (QFileInfo(quxExe).isFile())
-    theQuxExePath = quxExe;
+  if (QFileInfo(quxExe).isFile()) theQuxExePath = quxExe;
   else
     problems.append(QObject::tr("QUX.exe was not found in:\n  %1")
                         .arg(QDir::toNativeSeparators(installPath)));
@@ -72,8 +71,7 @@ QStringList verify(const QString &vendorKey) {
   if (QFileInfo(qorvo).isDir()) theQorvoPath = qorvo;
 
   const QString behavioral = installDir.filePath(QStringLiteral("Behavioral"));
-  if (QFileInfo(behavioral).isDir())
-    theBehavioralPath = behavioral;
+  if (QFileInfo(behavioral).isDir()) theBehavioralPath = behavioral;
   else
     problems.append(
         QObject::tr("The QSpice Behavioral folder was not found:\n  %1")
@@ -104,8 +102,9 @@ SimPrograms simPrograms(bool fastMath) {
 
   for (const QString &exe : {programs.simExe, programs.qpostExe}) {
     if (!exe.isEmpty() && QFileInfo::exists(exe)) continue;
-    programs.missing << (exe.isEmpty() ? QStringLiteral("(installation folder unknown)")
-                                       : QDir::toNativeSeparators(exe));
+    programs.missing << (exe.isEmpty()
+                             ? QStringLiteral("(installation folder unknown)")
+                             : QDir::toNativeSeparators(exe));
   }
 
   return programs;

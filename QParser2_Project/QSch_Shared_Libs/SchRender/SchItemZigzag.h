@@ -50,16 +50,16 @@ public:
     const Point p1 = item_->pt1.getValue();
     const Point p2 = item_->pt2.getValue();
 
-    return SchBoxFrame::frameFor(p1.x, p1.y, p2.x, p2.y,
-                                 item_->rotate.getValue());
+    return SchBoxFrame::frameFor(
+        p1.x, p1.y, p2.x, p2.y, item_->rotate.getValue());
   }
 
 protected:
   void paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
-             QWidget *widget) override;
+      QWidget *widget) override;
 
 private:
   ItemZigzagPtr item_;
 };
 
-} // namespace sch::render
+}   // namespace sch::render

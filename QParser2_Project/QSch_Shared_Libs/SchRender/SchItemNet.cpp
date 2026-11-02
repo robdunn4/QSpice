@@ -9,9 +9,9 @@
 #include <QFont>
 #include <QFontMetricsF>
 #include <QPainter>
+#include <QPen>
 #include <QPolygonF>
 #include <QTransform>
-#include <QPen>
 
 #ifdef _MSC_VER
 #pragma warning(pop)
@@ -20,8 +20,8 @@
 #include <utility>
 
 #include "RenderStyle.h"
-#include "SchStringDecode.h"
 #include "SchPen.h"
+#include "SchStringDecode.h"
 #include "SchTextLayout.h"
 
 namespace sch::render {
@@ -31,9 +31,9 @@ namespace {
 // ItemNet has no color field at all -- these are fixed conventions
 // confirmed by visual comparison to real QSpice output, not decoded
 // from the file.
-// QSpice's own net-label colour (CADnetLabelText), which defaults to
+// QSpice's own net-label color (CADnetLabelText), which defaults to
 // red -- the value this used to hard-code. Read from prefs so a
-// customised QSpice palette is honoured.
+// customized QSpice palette is honored.
 QColor netNameColor() { return RenderStyle::current().netLabelText; }
 
 const QColor kNetDescColor(0, 150, 0);
@@ -80,12 +80,14 @@ QTransform groundXform(int alignH, int alignV) {
   // Rotations are expressed directly as the mapping of the canonical
   // "down" axis, rather than through painter rotation, because this
   // same transform is needed by getRect() where there is no painter.
-  if (alignV == sch::core::kAlignVNorth) return xform;              // extends down
-  if (alignV == sch::core::kAlignVSouth) return xform.rotate(180);  // extends up
-  if (alignH == sch::core::kAlignHEast) return xform.rotate(-90);   // extends left
-  if (alignH == sch::core::kAlignHWest) return xform.rotate(90);    // extends right
+  if (alignV == sch::core::kAlignVNorth) return xform; // extends down
+  if (alignV == sch::core::kAlignVSouth) return xform.rotate(180); // extends up
+  if (alignH == sch::core::kAlignHEast)
+    return xform.rotate(-90); // extends left
+  if (alignH == sch::core::kAlignHWest)
+    return xform.rotate(90); // extends right
 
-  return xform; // nothing recognised -- treat as the common downward case
+  return xform; // nothing recognized -- treat as the common downward case
 }
 
 // The symbol's line work in canonical (downward) coordinates, relative
@@ -96,7 +98,7 @@ QList<QPolygonF> groundShape(GroundKind kind) {
 
   switch (kind) {
   case GroundKind::Gnd: {
-    // Full-width top edge, apex at the bottom centre.
+    // Full-width top edge, apex at the bottom center.
     QPolygonF tri;
     tri << QPointF(-w, 0) << QPointF(w, 0) << QPointF(0, -kGroundDepth)
         << QPointF(-w, 0);
@@ -165,7 +167,7 @@ double labelSidePad(const QFontMetricsF &fm) { return 0.30 * fm.height(); }
 // the wire it hangs from; with it, a port's box (the text rect widened
 // by the same pad) lands with its anchored edge exactly on the anchor.
 // So a port is just a plain label with a box drawn around it, and the
-// two place their text identically. A centred label needs no shift.
+// two place their text identically. A centered label needs no shift.
 //
 // UNMEASURED for plain labels: the amount is the port's, which is what
 // QSpice's framed text implies, but bare text has not been compared.
@@ -264,13 +266,11 @@ bool SchItemNet::isGroundName(const QString &name) {
 }
 
 bool SchItemNet::isGroundSymbol() const {
-  return groundKindFor(sch::core::decodeQSpiceString(item_->netName.getValue())) !=
-         GroundKind::None;
+  return groundKindFor(sch::core::decodeQSpiceString(
+             item_->netName.getValue())) != GroundKind::None;
 }
 
-int SchItemNet::groundAlign() const {
-  return item_->rotateAlign.getAlign();
-}
+int SchItemNet::groundAlign() const { return item_->rotateAlign.getAlign(); }
 
 void SchItemNet::setGroundAlign(int align) {
   prepareGeometryChange();
@@ -305,7 +305,7 @@ Rect SchItemNet::getRect() const noexcept {
         if (first) {
           minX = maxX = pt.x();
           minY = maxY = pt.y();
-          first = false;
+          first       = false;
           continue;
         }
         minX = qMin(minX, pt.x());
@@ -374,8 +374,8 @@ QRectF SchItemNet::boundingRect() const {
   // The description's own rect, in the item's frame. paint() draws it
   // through a Y-flip, so the rect computed in the text frame is
   // mirrored back here.
-  const QString name =
-      overbarDisplayText(sch::core::decodeQSpiceString(item_->netName.getValue()));
+  const QString name = overbarDisplayText(
+      sch::core::decodeQSpiceString(item_->netName.getValue()));
   const QFontMetricsF fm(makeFont(item_->fontSize.getValue()));
 
   const NetTextLayout layout = computeLayout(
@@ -436,7 +436,7 @@ SchTextEditInfo SchItemNet::textEditInfo() const {
   info.text   = sch::core::decodeQSpiceString(item_->netName.getValue());
   info.anchor = item_->pt1.getValue();
   // ItemNet has no color field -- the editor shows the same fixed
-  // convention colour paint() draws the name in.
+  // convention color paint() draws the name in.
   info.color         = netNameColor();
   info.fontPixelSize = fontPixelSize(item_->fontSize.getValue());
   info.alignH        = item_->rotateAlign.getAlignH();
@@ -473,9 +473,9 @@ void SchItemNet::paint(QPainter *painter, const QStyleOptionGraphicsItem *,
   // -- same convention as Rect/Line/Wire.
   const GroundKind kind = groundKindFor(name);
   if (kind != GroundKind::None) {
-    // The ground SYMBOL is wire-coloured, not net-label-coloured: it is
+    // The ground SYMBOL is wire-colored, not net-label-colored: it is
     // drawn line work, the same blue as the wires it connects to, and
-    // only the net NAME text uses the net-label colour. Briefly setting
+    // only the net NAME text uses the net-label color. Briefly setting
     // it to netLabelText() turned every ground symbol red.
     // The WIRE's pen, so on paper and in SVG it matches the wires.
     QPen pen = SchItemWire::wirePen(painter);
@@ -483,10 +483,9 @@ void SchItemNet::paint(QPainter *painter, const QStyleOptionGraphicsItem *,
     painter->setPen(pen);
     painter->setBrush(Qt::NoBrush);
 
-    for (const QPolygonF &poly :
-         groundPolys(kind, item_->rotateAlign.getAlignH(),
-                     item_->rotateAlign.getAlignV(),
-                     toQ(item_->pt1.getValue())))
+    for (const QPolygonF &poly : groundPolys(
+             kind, item_->rotateAlign.getAlignH(),
+             item_->rotateAlign.getAlignV(), toQ(item_->pt1.getValue())))
       painter->drawPolyline(poly);
   }
 
@@ -516,17 +515,17 @@ void SchItemNet::paint(QPainter *painter, const QStyleOptionGraphicsItem *,
   // actual text extent).
   if (drawName) {
     // A PORT is boxed: white behind the name with a border in the net
-    // colour, which is how QSpice shows that the name reaches beyond
+    // color, which is how QSpice shows that the name reaches beyond
     // this sheet. An ordinary net label is text on the bare background.
     //
-    // WHITE rather than the background colour: the box is meant to
+    // WHITE rather than the background color: the box is meant to
     // stand out from the sheet, so following a dark background would
     // defeat it.
     if (isPort()) {
       // The text's metric rect, WIDENED.
       //
       // Measured against QSpice's own rendering of the same file, with
-      // both normalised by box height so the image scales cancel: the
+      // both normalized by box height so the image scales cancel: the
       // heights agree (top and bottom gaps 0.21/0.17 against our
       // 0.25/0.18), while QSpice's box is half again as wide -- aspect
       // 1.95 against 1.38, about 57 units a side at font size 1.

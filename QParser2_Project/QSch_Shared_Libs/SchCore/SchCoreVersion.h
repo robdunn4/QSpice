@@ -8,10 +8,10 @@
 namespace sch::core {
 
 struct LibraryInfo {
-  const char *name;    // "SchCore"
-  const char *version; // "major.minor.patch"
+  const char *name;      // "SchCore"
+  const char *version;   // "major.minor.patch"
 };
 
 LibraryInfo libraryInfo();
 
-} // namespace sch::core
+}   // namespace sch::core

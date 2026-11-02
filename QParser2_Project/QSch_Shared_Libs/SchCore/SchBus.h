@@ -20,7 +20,7 @@ namespace sch::core {
 // rejected as out of range.
 
 struct BusName {
-  QString base; // the part before '['
+  QString base;   // the part before '['
   int     lo = 0;
   int     hi = 0;
 };
@@ -28,7 +28,8 @@ struct BusName {
 // Parses a bus name. False for anything else, including a single-index
 // member name like Bus[1].
 inline bool parseBusName(const QString &name, BusName &out) {
-  static const QRegularExpression re(QStringLiteral(R"(^(.+)\[(\d+):(\d+)\]$)"));
+  static const QRegularExpression re(
+      QStringLiteral(R"(^(.+)\[(\d+):(\d+)\]$)"));
 
   const QRegularExpressionMatch m = re.match(name.trimmed());
   if (!m.hasMatch()) return false;
@@ -37,7 +38,7 @@ inline bool parseBusName(const QString &name, BusName &out) {
   bool      ok2 = false;
   const int n1  = m.captured(2).toInt(&ok1);
   const int n2  = m.captured(3).toInt(&ok2);
-  if (!ok1 || !ok2) return false; // too many digits for an int
+  if (!ok1 || !ok2) return false;   // too many digits for an int
 
   out.base = m.captured(1);
   out.lo   = qMin(n1, n2);
@@ -65,4 +66,4 @@ inline bool isBusMember(const QString &net, const BusName &bus) {
   return ok && index >= bus.lo && index <= bus.hi;
 }
 
-} // namespace sch::core
+}   // namespace sch::core

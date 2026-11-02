@@ -1,8 +1,8 @@
 #pragma once
-#include <QColor>
-#include <QTransform>
 #include "ItemText.h"
 #include "SchItemBase.h"
+#include <QColor>
+#include <QTransform>
 
 namespace sch::render {
 
@@ -25,9 +25,22 @@ public:
   // not be clickable.
   bool isDisplayed() const;
 
+  // A value typed for this attribute, as it would be stored: by the rules
+  // of the Programmable Attribute the record holds (an Integer's is cut
+  // to its leading whole number and clamped -- see
+  // sch::progattr::ProgAttr::acceptValue()); unchanged for anything else.
+  // `adjusted` is set when that changed what was typed, spaces aside.
+  QString acceptValue(const QString &typed, bool *adjusted = nullptr) const;
+
+  // Whether the text can be edited where it is drawn. Not a Multiple
+  // Choice shown as one (sch::progattr): its value is picked from the
+  // list in Symbol Properties, and a double-click on it does nothing, as
+  // in QSpice. With Raw Attributes on it is ordinary text again.
+  bool editsInline() const;
+
   // The comment flag -- bit 0 of the record's textFlags. It is the only
   // thing separating a SPICE directive from a comment, and it decides
-  // the colour as well.
+  // the color as well.
   // The record's font SIZE MULTIPLIER -- not a point size. QSpice
   // stores a scale factor that makeFont() turns into a real font.
   double fontSize() const override;
@@ -41,8 +54,8 @@ public:
   int  orientAfterTurn(bool ccw) const override;
   int  orientAfterMirror() const override;
 
-  SchTextEditInfo       textEditInfo() const override;
-  void                  applyTextEdit(const SchTextEditInfo &info) override;
+  SchTextEditInfo textEditInfo() const override;
+  void            applyTextEdit(const SchTextEditInfo &info) override;
 
   int  textColorRaw() const override { return item_->textColor.getValue(); }
   void setTextColorRaw(int raw) override {
@@ -71,9 +84,20 @@ protected:
   QColor defaultTextColor() const;
 
   // The record's text as the GUI works with it: decoded, and QSpice's
-  // "\n" turned into real line feeds (sch::core::lineBreaksFromRecord()). Overbar
-  // markers are still in it.
+  // "\n" turned into real line feeds (sch::core::lineBreaksFromRecord()).
+  // Overbar markers are still in it.
   QString recordText() const;
+
+  // The text as it is SHOWN, overbar markers still in it: recordText(),
+  // except that a placed component's Programmable Attribute shows as
+  // "NAME=VALUE" while View > Raw Attributes is off -- see
+  // sch::progattr. A symbol's own text (a top-level item, in a symbol
+  // document) always shows as written, as in QSpice's symbol editor.
+  QString shownText() const;
+
+  // How many leading characters of shownText() the inline editor must
+  // leave alone: a shown Programmable Attribute's "NAME=". 0 otherwise.
+  int shownLockedPrefix() const;
 
   int effectiveAlignH() const;
   int effectiveAlignV() const;

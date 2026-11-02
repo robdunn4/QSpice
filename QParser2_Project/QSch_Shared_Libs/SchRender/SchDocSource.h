@@ -40,7 +40,8 @@ public:
   // optional -- leaves out records the rules forbid (listed in
   // `omitted`), and builds the scene. False, with `error` set, if the
   // file cannot be read or parsed; the previous contents are kept.
-  bool load(const QString &path, QString &error, QList<sch::core::recordrules::Omitted> &omitted);
+  bool load(const QString &path, QString &error,
+      QList<sch::core::recordrules::Omitted> &omitted);
 
   bool isLoaded() const { return scene_ != nullptr; }
 
@@ -60,4 +61,4 @@ protected:
   QString                   path_;
 };
 
-} // namespace sch::render
+}   // namespace sch::render

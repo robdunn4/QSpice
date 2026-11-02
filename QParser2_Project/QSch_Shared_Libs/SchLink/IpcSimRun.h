@@ -9,6 +9,8 @@
 
 #include <functional>
 
+#include "NetlistRun.h"
+
 class QTimer;
 
 namespace sch::link {
@@ -40,15 +42,19 @@ class NetlistRun;
 class IpcSimRun : public QObject {
 public:
   struct Params {
-    QString     quxExe;     // for netlisting
-    QString     simExe;     // QSPICE64.exe or QSPICE80.exe
+    QString     quxExe;   // for netlisting
+    QString     simExe;   // QSPICE64.exe or QSPICE80.exe
     QString     qpostExe;
     QString     schPath;    // the schematic's file, empty if never saved
     QString     title;      // its display name
     QByteArray  content;    // serialized schematic, or empty: use schPath
     QStringList libPaths;   // user symbol folders, for .libpath lines
     QString     hwnd;       // the -hWnd window, decimal
-    QString     tempPrefix; // NetlistRun's temporary-copy prefix, "~<Program>_"
+    QString tempPrefix;     // NetlistRun's temporary-copy prefix, "~<Program>_"
+
+    // Hierarchical children QUX reads from temporary copies -- see
+    // NetlistDependents. The run owns the files and deletes them.
+    NetlistDependents dependents;
   };
 
   enum class Outcome { Completed, Aborted, Failed };
@@ -111,7 +117,7 @@ protected:
 
   Params      params;
   QString     qraw;
-  QString     schArg; // the "<Schematic Path>" argument
+  QString     schArg;   // the "<Schematic Path>" argument
   QByteArray  netlist;
   NetlistRun *netlistRun = nullptr;
   QProcess   *sim        = nullptr;
@@ -119,9 +125,9 @@ protected:
   QTimer     *qrawTimer  = nullptr;
   QDateTime   simStarted;
   qint64      simProcessId = 0;
-  bool        qrawReady  = false;
-  bool        running    = false;
-  bool        aborted    = false;
+  bool        qrawReady    = false;
+  bool        running      = false;
+  bool        aborted      = false;
 };
 
-} // namespace sch::link
+}   // namespace sch::link

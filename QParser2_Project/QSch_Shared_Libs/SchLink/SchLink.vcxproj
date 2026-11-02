@@ -21,6 +21,7 @@
     <ClInclude Include="QSpiceHelp.h" />
     <ClInclude Include="QSpiceInstall.h" />
     <ClInclude Include="QSpicePrefs.h" />
+    <ClInclude Include="QSpicePrefsWatch.h" />
     <ClInclude Include="QSpicePrefsWriter.h" />
     <ClInclude Include="QSpiceTools.h" />
     <ClInclude Include="SchLinkVersion.h" />
@@ -34,6 +35,7 @@
     <ClCompile Include="QSpiceHelp.cpp" />
     <ClCompile Include="QSpiceInstall.cpp" />
     <ClCompile Include="QSpicePrefs.cpp" />
+    <ClCompile Include="QSpicePrefsWatch.cpp" />
     <ClCompile Include="QSpicePrefsWriter.cpp" />
     <ClCompile Include="QSpiceTools.cpp" />
     <ClCompile Include="SchLinkVersion.cpp" />

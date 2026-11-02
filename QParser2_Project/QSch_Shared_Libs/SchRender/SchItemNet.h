@@ -1,7 +1,7 @@
 #pragma once
-#include <QSizeF>
 #include "ItemNet.h"
 #include "SchItemBase.h"
+#include <QSizeF>
 
 namespace sch::render {
 
@@ -84,20 +84,19 @@ public:
     update();
   }
 
-
-  double fontSize() const override;
-  void   setFontSize(double size) override;
-  SchTextEditInfo       textEditInfo() const override;
-  void                  applyTextEdit(const SchTextEditInfo &info) override;
+  double          fontSize() const override;
+  void            setFontSize(double size) override;
+  SchTextEditInfo textEditInfo() const override;
+  void            applyTextEdit(const SchTextEditInfo &info) override;
 
 protected:
   bool descHidden_ = false;
 
   void paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
-             QWidget *widget) override;
+      QWidget *widget) override;
 
 private:
   ItemNetPtr item_;
 };
 
-} // namespace sch::render
+}   // namespace sch::render

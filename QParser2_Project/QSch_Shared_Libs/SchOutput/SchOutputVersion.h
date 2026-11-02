@@ -8,10 +8,10 @@
 namespace sch::output {
 
 struct LibraryInfo {
-  const char *name;    // "SchOutput"
-  const char *version; // "major.minor.patch"
+  const char *name;      // "SchOutput"
+  const char *version;   // "major.minor.patch"
 };
 
 LibraryInfo libraryInfo();
 
-} // namespace sch::output
+}   // namespace sch::output

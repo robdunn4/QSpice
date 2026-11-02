@@ -23,6 +23,7 @@
 #include "ItemSym.h"
 #include "ItemText.h"
 #include "ItemTree.h"
+#include "ProgAttr.h"
 #include "SchItemArc3P.h"
 #include "SchItemArc4P.h"
 #include "SchItemCoil.h"
@@ -40,16 +41,16 @@
 #include "SchItemZigzag.h"
 #include "SchPen.h"
 #include "SchRefDes.h"
-#include "SchStringDecode.h"
 #include "SchRenderSource.h"
+#include "SchStringDecode.h"
 #include "SelHiLiteItem.h"
 
 namespace sch::output {
 
 // SchRender names used in this file.
-using sch::render::SchItemBase;
 using sch::render::SchItemArc3P;
 using sch::render::SchItemArc4P;
+using sch::render::SchItemBase;
 using sch::render::SchItemCoil;
 using sch::render::SchItemComp;
 using sch::render::SchItemEllipse;
@@ -63,8 +64,8 @@ using sch::render::SchItemText;
 using sch::render::SchItemTriangle;
 using sch::render::SchItemWire;
 using sch::render::SchItemZigzag;
-using sch::render::SelHiLiteStyle;
 using sch::render::SchRenderSource;
+using sch::render::SelHiLiteStyle;
 namespace SchPen = sch::render::SchPen;
 
 namespace {
@@ -135,7 +136,8 @@ CompInfo compInfo(const SchItemComp *comp) {
   if (symNode == nullptr) return out;
 
   const ItemSymPtr sym = std::static_pointer_cast<ItemSym>(symNode->item());
-  if (sym != nullptr) out.symbol = sch::core::decodeQSpiceString(sym->text.getValue()).trimmed();
+  if (sym != nullptr)
+    out.symbol = sch::core::decodeQSpiceString(sym->text.getValue()).trimmed();
 
   int textIndex = 0;
   for (const NodePtr &child : symNode->children()) {
@@ -143,7 +145,15 @@ CompInfo compInfo(const SchItemComp *comp) {
     if (textIndex++ != 1) continue;
 
     const ItemTextPtr text = std::static_pointer_cast<ItemText>(child->item());
-    if (text != nullptr) out.value = sch::core::decodeQSpiceString(text->text.getValue()).trimmed();
+    if (text == nullptr) break;
+
+    // A Programmable Attribute's VALUE, not its whole "NAME=<VALUE>DESC"
+    // form -- whatever View > Raw Attributes shows. The value is what
+    // the tooltip and data-value are for.
+    const QString content =
+        sch::core::decodeQSpiceString(text->text.getValue());
+    const sch::progattr::ProgAttr attr = sch::progattr::parse(content);
+    out.value = (attr.isProgrammable() ? attr.value : content).trimmed();
     break;
   }
   return out;
@@ -159,9 +169,11 @@ QString firstLine(const QString &text) {
 
 // ===========================================================================
 
-bool SchSvgExport::write(const QString &path, const SchRenderSource *view, const QString &title,
-                         double mmPer1000, double minLineMm, const QString &creator) {
-  if (view == nullptr || view->renderScene() == nullptr || mmPer1000 <= 0.0) return false;
+bool SchSvgExport::write(const QString &path, const SchRenderSource *view,
+                         const QString &title, double mmPer1000,
+                         double minLineMm, const QString &creator) {
+  if (view == nullptr || view->renderScene() == nullptr || mmPer1000 <= 0.0)
+    return false;
 
   const QRectF drawing = view->printableSceneRect();
   if (drawing.isEmpty()) return false;
@@ -185,12 +197,12 @@ bool SchSvgExport::write(const QString &path, const SchRenderSource *view, const
   return false;
 }
 
-SchSvgExport::SchSvgExport(const SchRenderSource *schView, const QRectF &sourceRect,
-                           double unitScale)
+SchSvgExport::SchSvgExport(const SchRenderSource *schView,
+                           const QRectF &sourceRect, double unitScale)
     : view(schView), source(sourceRect), pxPerUnit(unitScale) {
-  viewBox = QRectF(0.0, 0.0, source.width() * pxPerUnit,
-                   source.height() * pxPerUnit);
-  sizePx  = viewBox.size().toSize();
+  viewBox =
+      QRectF(0.0, 0.0, source.width() * pxPerUnit, source.height() * pxPerUnit);
+  sizePx = viewBox.size().toSize();
 
   // Scene Y runs UP, SVG's down: the source's top edge (largest Y) is
   // the drawing's y = 0.
@@ -198,14 +210,15 @@ SchSvgExport::SchSvgExport(const SchRenderSource *schView, const QRectF &sourceR
                     source.bottom() * pxPerUnit);
 }
 
-bool SchSvgExport::build(const QString &title, double mmPer1000, double minLineMm,
-                         const QString &creator, QByteArray &out) {
+bool SchSvgExport::build(const QString &title, double mmPer1000,
+                         double minLineMm, const QString &creator,
+                         QByteArray &out) {
   mapWireNets();
 
-  QByteArray graphics, symbols, labels, junctions, texts;
+  QByteArray                 graphics, symbols, labels, junctions, texts;
   QList<QString>             netOrder;
   QHash<QString, QByteArray> netBodies;
-  int counter = 0;
+  int                        counter = 0;
 
   // Print state for the duration: no highlights, the minimum line
   // width, and no cosmetic pens.
@@ -226,9 +239,10 @@ bool SchSvgExport::build(const QString &title, double mmPer1000, double minLineM
     switch (layerOf(item)) {
     case Layer::Symbols: {
       if (const SchItemComp *comp = dynamic_cast<const SchItemComp *>(item)) {
-        const CompInfo info  = compInfo(comp);
-        const QString  label = info.refdes.isEmpty() ? tr("Component") : info.refdes;
-        QString        tip   = label;
+        const CompInfo info = compInfo(comp);
+        const QString  label =
+            info.refdes.isEmpty() ? tr("Component") : info.refdes;
+        QString tip = label;
         if (!info.value.isEmpty()) tip += QStringLiteral(" – ") + info.value;
 
         symbols += group(body,
@@ -240,9 +254,10 @@ bool SchSvgExport::build(const QString &title, double mmPer1000, double minLineM
                          tip);
         break;
       }
-      symbols += group(body, {{QStringLiteral("id"),
-                               uniqueId(QStringLiteral("pin-%1").arg(counter))},
-                              {QStringLiteral("inkscape:label"), kindLabel(item)}});
+      symbols +=
+          group(body, {{QStringLiteral("id"),
+                        uniqueId(QStringLiteral("pin-%1").arg(counter))},
+                       {QStringLiteral("inkscape:label"), kindLabel(item)}});
       break;
     }
 
@@ -250,19 +265,21 @@ bool SchSvgExport::build(const QString &title, double mmPer1000, double minLineM
       const QString net = netAt(item);
       if (!netBodies.contains(net)) netOrder.append(net);
       netBodies[net] += group(
-          body, {{QStringLiteral("id"),
-                  uniqueId(QStringLiteral("%1-%2")
-                               .arg(dynamic_cast<const SchItemTap *>(item) != nullptr
-                                        ? QStringLiteral("tap")
-                                        : QStringLiteral("wire"))
-                               .arg(counter))},
-                 {QStringLiteral("inkscape:label"), kindLabel(item)}});
+          body,
+          {{QStringLiteral("id"),
+            uniqueId(QStringLiteral("%1-%2")
+                         .arg(dynamic_cast<const SchItemTap *>(item) != nullptr
+                                  ? QStringLiteral("tap")
+                                  : QStringLiteral("wire"))
+                         .arg(counter))},
+           {QStringLiteral("inkscape:label"), kindLabel(item)}});
       break;
     }
 
     case Layer::Labels: {
       const QString net = netAt(item);
-      labels += group(body, {{QStringLiteral("id"), uniqueId(QStringLiteral("label-") + net)},
+      labels += group(body, {{QStringLiteral("id"),
+                              uniqueId(QStringLiteral("label-") + net)},
                              {QStringLiteral("inkscape:label"), net},
                              {QStringLiteral("data-net"), net}});
       break;
@@ -270,10 +287,11 @@ bool SchSvgExport::build(const QString &title, double mmPer1000, double minLineM
 
     case Layer::Junctions: {
       const QString net = netAt(item);
-      junctions += group(body, {{QStringLiteral("id"),
-                                 uniqueId(QStringLiteral("junction-%1").arg(counter))},
-                                {QStringLiteral("inkscape:label"), kindLabel(item)},
-                                {QStringLiteral("data-net"), net}});
+      junctions +=
+          group(body, {{QStringLiteral("id"),
+                        uniqueId(QStringLiteral("junction-%1").arg(counter))},
+                       {QStringLiteral("inkscape:label"), kindLabel(item)},
+                       {QStringLiteral("data-net"), net}});
       break;
     }
 
@@ -288,9 +306,10 @@ bool SchSvgExport::build(const QString &title, double mmPer1000, double minLineM
     }
 
     case Layer::Graphics:
-      graphics += group(body, {{QStringLiteral("id"),
-                                uniqueId(QStringLiteral("graphic-%1").arg(counter))},
-                               {QStringLiteral("inkscape:label"), kindLabel(item)}});
+      graphics +=
+          group(body, {{QStringLiteral("id"),
+                        uniqueId(QStringLiteral("graphic-%1").arg(counter))},
+                       {QStringLiteral("inkscape:label"), kindLabel(item)}});
       break;
     }
   }
@@ -303,18 +322,19 @@ bool SchSvgExport::build(const QString &title, double mmPer1000, double minLineM
   QByteArray wires;
   for (const QString &net : netOrder) {
     const QString shown = net.isEmpty() ? tr("(unnamed)") : net;
-    wires += group(netBodies.value(net),
-                   {{QStringLiteral("id"),
-                     uniqueId(QStringLiteral("net-") +
-                              (net.isEmpty() ? QStringLiteral("unnamed") : net))},
-                    {QStringLiteral("inkscape:label"), shown},
-                    {QStringLiteral("data-net"), net}});
+    wires +=
+        group(netBodies.value(net),
+              {{QStringLiteral("id"),
+                uniqueId(QStringLiteral("net-") +
+                         (net.isEmpty() ? QStringLiteral("unnamed") : net))},
+               {QStringLiteral("inkscape:label"), shown},
+               {QStringLiteral("data-net"), net}});
   }
 
   // --- Assembly ----------------------------------------------------------
-  const double widthMm  = source.width() * mmPer1000 / 1000.0;
-  const double heightMm = source.height() * mmPer1000 / 1000.0;
-  const QString vb      = QStringLiteral("0 0 %1 %2")
+  const double  widthMm  = source.width() * mmPer1000 / 1000.0;
+  const double  heightMm = source.height() * mmPer1000 / 1000.0;
+  const QString vb       = QStringLiteral("0 0 %1 %2")
                          .arg(viewBox.width(), 0, 'f', 3)
                          .arg(viewBox.height(), 0, 'f', 3);
 
@@ -323,9 +343,13 @@ bool SchSvgExport::build(const QString &title, double mmPer1000, double minLineM
   out += QStringLiteral(
              "<svg xmlns=\"http://www.w3.org/2000/svg\"\n"
              "     xmlns:xlink=\"http://www.w3.org/1999/xlink\"\n"
-             "     xmlns:inkscape=\"http://www.inkscape.org/namespaces/inkscape\"\n"
-             "     xmlns:sodipodi=\"http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd\"\n"
-             "     width=\"%1mm\" height=\"%2mm\" viewBox=\"%3\" version=\"1.1\">\n")
+             "     "
+             "xmlns:inkscape=\"http://www.inkscape.org/namespaces/inkscape\"\n"
+             "     "
+             "xmlns:sodipodi=\"http://sodipodi.sourceforge.net/DTD/"
+             "sodipodi-0.dtd\"\n"
+             "     width=\"%1mm\" height=\"%2mm\" viewBox=\"%3\" "
+             "version=\"1.1\">\n")
              .arg(widthMm, 0, 'f', 3)
              .arg(heightMm, 0, 'f', 3)
              .arg(vb)
@@ -337,14 +361,16 @@ bool SchSvgExport::build(const QString &title, double mmPer1000, double minLineM
                  .arg(mmPer1000, 0, 'f', 1))
              .toUtf8() +
          "</desc>\n";
-  out += "<sodipodi:namedview id=\"namedview\" inkscape:document-units=\"mm\"/>\n";
+  out +=
+      "<sodipodi:namedview id=\"namedview\" inkscape:document-units=\"mm\"/>\n";
 
   // The background: locked, so it cannot be grabbed by accident.
   const QColor canvas = view->renderBackground().color();
-  out += QStringLiteral("<g inkscape:groupmode=\"layer\" id=\"layer-background\" "
-                        "inkscape:label=\"%1\" sodipodi:insensitive=\"true\">\n"
-                        "<rect x=\"0\" y=\"0\" width=\"%2\" height=\"%3\" fill=\"%4\"/>\n"
-                        "</g>\n")
+  out += QStringLiteral(
+             "<g inkscape:groupmode=\"layer\" id=\"layer-background\" "
+             "inkscape:label=\"%1\" sodipodi:insensitive=\"true\">\n"
+             "<rect x=\"0\" y=\"0\" width=\"%2\" height=\"%3\" fill=\"%4\"/>\n"
+             "</g>\n")
              .arg(esc(tr("Background")))
              .arg(viewBox.width(), 0, 'f', 3)
              .arg(viewBox.height(), 0, 'f', 3)
@@ -352,9 +378,9 @@ bool SchSvgExport::build(const QString &title, double mmPer1000, double minLineM
              .toUtf8();
 
   const QList<std::pair<QString, const QByteArray *>> layers = {
-      {tr("Graphics"), &graphics},       {tr("Symbols"), &symbols},
-      {tr("Wires"), &wires},             {tr("Net labels"), &labels},
-      {tr("Junctions"), &junctions},     {tr("Text"), &texts},
+      {tr("Graphics"), &graphics},   {tr("Symbols"), &symbols},
+      {tr("Wires"), &wires},         {tr("Net labels"), &labels},
+      {tr("Junctions"), &junctions}, {tr("Text"), &texts},
   };
   for (const std::pair<QString, const QByteArray *> &layer : layers) {
     if (layer.second->isEmpty()) continue;
@@ -362,7 +388,8 @@ bool SchSvgExport::build(const QString &title, double mmPer1000, double minLineM
     QString id = QStringLiteral("layer-") + layer.first.toLower();
     id.replace(QLatin1Char(' '), QLatin1Char('-'));
 
-    out += QStringLiteral("<g inkscape:groupmode=\"layer\" id=\"%1\" inkscape:label=\"%2\">\n")
+    out += QStringLiteral("<g inkscape:groupmode=\"layer\" id=\"%1\" "
+                          "inkscape:label=\"%2\">\n")
                .arg(esc(uniqueId(id)), esc(layer.first))
                .toUtf8();
     out += *layer.second;
@@ -398,7 +425,8 @@ void SchSvgExport::paintTree(QPainter &painter, QGraphicsItem *item) const {
   // parent go first, as the scene paints them.
   const QList<QGraphicsItem *> kids = item->childItems();
   for (QGraphicsItem *kid : kids)
-    if (kid->flags() & QGraphicsItem::ItemStacksBehindParent || kid->zValue() < 0.0)
+    if (kid->flags() & QGraphicsItem::ItemStacksBehindParent ||
+        kid->zValue() < 0.0)
       paintTree(painter, kid);
 
   painter.save();
@@ -409,7 +437,8 @@ void SchSvgExport::paintTree(QPainter &painter, QGraphicsItem *item) const {
   painter.restore();
 
   for (QGraphicsItem *kid : kids)
-    if (!(kid->flags() & QGraphicsItem::ItemStacksBehindParent) && kid->zValue() >= 0.0)
+    if (!(kid->flags() & QGraphicsItem::ItemStacksBehindParent) &&
+        kid->zValue() >= 0.0)
       paintTree(painter, kid);
 }
 
@@ -434,7 +463,7 @@ QString SchSvgExport::uniqueId(const QString &wanted) {
   return candidate;
 }
 
-QByteArray SchSvgExport::group(const QByteArray &body,
+QByteArray SchSvgExport::group(const QByteArray                         &body,
                                const QList<std::pair<QString, QString>> &attrs,
                                const QString &title) {
   QByteArray out = "<g";
@@ -455,7 +484,8 @@ SchSvgExport::Layer SchSvgExport::layerOf(const QGraphicsItem *item) {
   if (dynamic_cast<const SchItemWire *>(item) != nullptr) return Layer::Wires;
   if (dynamic_cast<const SchItemTap *>(item) != nullptr) return Layer::Wires;
   if (dynamic_cast<const SchItemNet *>(item) != nullptr) return Layer::Labels;
-  if (dynamic_cast<const SchItemJunction *>(item) != nullptr) return Layer::Junctions;
+  if (dynamic_cast<const SchItemJunction *>(item) != nullptr)
+    return Layer::Junctions;
   if (dynamic_cast<const SchItemText *>(item) != nullptr) return Layer::Text;
   return Layer::Graphics;
 }
@@ -463,14 +493,17 @@ SchSvgExport::Layer SchSvgExport::layerOf(const QGraphicsItem *item) {
 QString SchSvgExport::kindLabel(const QGraphicsItem *item) {
   if (dynamic_cast<const SchItemWire *>(item) != nullptr) return tr("Wire");
   if (dynamic_cast<const SchItemTap *>(item) != nullptr) return tr("Bus tap");
-  if (dynamic_cast<const SchItemJunction *>(item) != nullptr) return tr("Junction");
+  if (dynamic_cast<const SchItemJunction *>(item) != nullptr)
+    return tr("Junction");
   if (dynamic_cast<const SchItemPin *>(item) != nullptr) return tr("Pin");
   if (dynamic_cast<const SchItemText *>(item) != nullptr) return tr("Text");
 
   if (const SchItemRect *rect = dynamic_cast<const SchItemRect *>(item))
     return rect->hasImage() ? tr("Image") : tr("Rectangle");
-  if (dynamic_cast<const SchItemEllipse *>(item) != nullptr) return tr("Ellipse");
-  if (dynamic_cast<const SchItemTriangle *>(item) != nullptr) return tr("Triangle");
+  if (dynamic_cast<const SchItemEllipse *>(item) != nullptr)
+    return tr("Ellipse");
+  if (dynamic_cast<const SchItemTriangle *>(item) != nullptr)
+    return tr("Triangle");
   if (dynamic_cast<const SchItemLine *>(item) != nullptr) return tr("Line");
   if (dynamic_cast<const SchItemArc3P *>(item) != nullptr ||
       dynamic_cast<const SchItemArc4P *>(item) != nullptr)

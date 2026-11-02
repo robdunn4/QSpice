@@ -13,8 +13,9 @@ namespace sch::app {
 // only on those above it. Rich text, for QMessageBox.
 QString libraryVersionsHtml();
 
-// Shows the box, modal. `version` as the program formats it ("0.1.0", or
-// "0.1.0 (DEBUG)").
-void showAbout(QWidget *parent, const QString &programName, const QString &version);
+// Shows the box, modal. `version` as the program formats it for its About
+// box: "0.1.0 (RELEASE)" or "0.1.0 (DEBUG)".
+void showAbout(
+    QWidget *parent, const QString &programName, const QString &version);
 
-} // namespace sch::app
+}   // namespace sch::app

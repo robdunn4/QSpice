@@ -4,8 +4,8 @@
 #endif
 
 #include "SchItemPin.h"
-#include "SelHiLiteItem.h" // SelHiLiteStyle::suppressed
 #include "SchItemNet.h"
+#include "SelHiLiteItem.h" // SelHiLiteStyle::suppressed
 
 #include <QGraphicsScene>
 #include <QPainter>
@@ -19,11 +19,11 @@
 
 #include "RenderStyle.h"
 #include "SchColorDecode.h"
-#include "SchStringDecode.h"
-#include "SchPointKey.h"
-#include "SchPen.h"
 #include "SchItemWire.h"
+#include "SchPen.h"
+#include "SchPointKey.h"
 #include "SchScene.h"
+#include "SchStringDecode.h"
 #include "SchTextLayout.h"
 
 #include <utility>
@@ -44,7 +44,7 @@ constexpr double kHighlightBoxPx = 5.0;
 // ...and its scene-unit size, which takes over once zoomed in far
 // enough that the device floor would look too small against the symbol.
 constexpr double kHighlightBoxUnits = 6.0;
-}
+} // namespace
 
 SchItemPin::SchItemPin(ItemPinPtr item, QGraphicsItem *parent)
     : SchItemBase(parent), item_(std::move(item)) {
@@ -103,7 +103,8 @@ void SchItemPin::setControlPoint(int index, Point p) {
 }
 
 bool SchItemPin::labelVisible() const {
-  if (sch::core::decodeQSpiceString(item_->pinLabel.getValue()).isEmpty()) return false;
+  if (sch::core::decodeQSpiceString(item_->pinLabel.getValue()).isEmpty())
+    return false;
 
   // Independent rules, from the AnalogLatch symbol, where QSpice draws
   // EN, IN, CLK and OUT but not Vdd, Vss or the inverted Q, and the
@@ -124,16 +125,17 @@ bool SchItemPin::labelVisible() const {
   const int alignV = item_->rotateAlign.getAlignV();
   if (sch::core::alignMarksHidden(alignH, alignV)) return false;
 
-  // 1b. Centred both ways (nibble 0b1111). A pin label is placed by an
-  //     edge or corner, never by its centre -- QSpice's symbol editor
-  //     treats the centre point as "hidden". Robert's GmEnable symbol:
+  // 1b. Centered both ways (nibble 0b1111). A pin label is placed by an
+  //     edge or corner, never by its center -- QSpice's symbol editor
+  //     treats the center point as "hidden". Robert's GmEnable symbol:
   //     OUT, IN- and IN+ carry 15 and are not shown, EN carries 7 (west)
-  //     and is. PINS ONLY: centred TEXT is drawn (AnalogLatch's "Y1"),
+  //     and is. PINS ONLY: centered TEXT is drawn (AnalogLatch's "Y1"),
   //     so sch::core::alignMarksHidden() itself is left alone.
-  if (alignH == sch::core::kAlignHCenter && alignV == sch::core::kAlignVCenter) return false;
+  if (alignH == sch::core::kAlignHCenter && alignV == sch::core::kAlignVCenter)
+    return false;
 
   // 2. An attached net name (P9). CONFIRMED -- not from the file, but
-  //    from the behaviour of QSpice itself: giving a pin a net name
+  //    from the behavior of QSpice itself: giving a pin a net name
   //    hides its label. The inverted Q is the file-level example, being
   //    the only hidden pin whose offset and alignment otherwise look
   //    like a visible one.
@@ -143,7 +145,8 @@ bool SchItemPin::labelVisible() const {
 }
 
 QString SchItemPin::connectedNetName() const {
-  const QString own = sch::core::decodeQSpiceString(item_->netName.getValue()).trimmed();
+  const QString own =
+      sch::core::decodeQSpiceString(item_->netName.getValue()).trimmed();
   if (!own.isEmpty()) return own;
 
   if (scene() == nullptr) return QString();
@@ -170,11 +173,13 @@ bool SchItemPin::isInternal() const {
 
 // As SchItemText's: see SchItemBase::labelAlignH().
 int SchItemPin::effectiveAlignH() const {
-  return labelAlignH(item_->rotateAlign.getAlignH(), item_->rotateAlign.getRotDeg());
+  return labelAlignH(item_->rotateAlign.getAlignH(),
+                     item_->rotateAlign.getRotDeg());
 }
 
 int SchItemPin::effectiveAlignV() const {
-  return labelAlignV(item_->rotateAlign.getAlignV(), item_->rotateAlign.getRotDeg());
+  return labelAlignV(item_->rotateAlign.getAlignV(),
+                     item_->rotateAlign.getRotDeg());
 }
 
 bool SchItemPin::showsUnconnectedMark() const {
@@ -236,21 +241,24 @@ QRectF SchItemPin::labelRect() const {
 
   // The DISPLAY form, as paint() draws it -- measuring the raw label
   // counted overbar markers as characters and made the bounds too wide.
-  const QString label =
-      overbarDisplayText(sch::core::decodeQSpiceString(item_->pinLabel.getValue()));
+  const QString label = overbarDisplayText(
+      sch::core::decodeQSpiceString(item_->pinLabel.getValue()));
 
   const QFontMetricsF fm(makeFont(item_->fontSize.getValue()));
   // pt2 is the offset from the pin point to its label (per the record
   // documentation), so the label anchors there, not at the pin itself.
-  const QPointF anchor = toQ(item_->pt1.getValue()) + toQ(item_->pt2.getValue());
-  const QRectF  local  = alignedTextRect(fm, label, effectiveAlignH(), effectiveAlignV());
+  const QPointF anchor =
+      toQ(item_->pt1.getValue()) + toQ(item_->pt2.getValue());
+  const QRectF local =
+      alignedTextRect(fm, label, effectiveAlignH(), effectiveAlignV());
 
   // Through the same transform paint() draws with, so the reported box
   // is the one the glyphs occupy -- rotated, unmirrored and turned as
   // they are. (It used to apply only the Y-flip, which was right for an
   // upright label alone.)
   const QRectF painted =
-      labelXform(static_cast<double>(item_->rotateAlign.getRotDeg())).mapRect(local);
+      labelXform(static_cast<double>(item_->rotateAlign.getRotDeg()))
+          .mapRect(local);
   return painted.translated(anchor);
 }
 
@@ -259,7 +267,7 @@ void SchItemPin::paint(QPainter *painter, const QStyleOptionGraphicsItem *,
   // Internal pins draw nothing at all.
   if (isInternal()) return;
 
-  const QPointF centre = toQ(item_->pt1.getValue());
+  const QPointF center = toQ(item_->pt1.getValue());
 
   painter->setPen(Qt::NoPen);
 
@@ -279,15 +287,15 @@ void SchItemPin::paint(QPainter *painter, const QStyleOptionGraphicsItem *,
 
     painter->setBrush(QColor(Qt::red));
     painter->drawRect(
-        QRectF(centre.x() - half, centre.y() - half, half * 2, half * 2));
+        QRectF(center.x() - half, center.y() - half, half * 2, half * 2));
 
     // The unconnected mark is NOT drawn over a highlight: it is a small
-    // filled box in its own colour, and painting it on top left the red
+    // filled box in its own color, and painting it on top left the red
     // square with a hole in the middle.
     return;
   } else {
     painter->setBrush(tint(RenderStyle::current().pinDot));
-    painter->drawEllipse(centre, kMarkerRadius, kMarkerRadius);
+    painter->drawEllipse(center, kMarkerRadius, kMarkerRadius);
   }
 
   // An unattached pin gets a small open box, so a pin nobody wired to
@@ -318,8 +326,9 @@ void SchItemPin::paint(QPainter *painter, const QStyleOptionGraphicsItem *,
   // inverted Q, it just doesn't name them.
   if (!labelVisible()) return;
 
-  const QString rawLabel = sch::core::decodeQSpiceString(item_->pinLabel.getValue());
-  const QString label    = overbarDisplayText(rawLabel);
+  const QString rawLabel =
+      sch::core::decodeQSpiceString(item_->pinLabel.getValue());
+  const QString label = overbarDisplayText(rawLabel);
 
   const QFont font = makeFont(item_->fontSize.getValue());
 
@@ -328,17 +337,19 @@ void SchItemPin::paint(QPainter *painter, const QStyleOptionGraphicsItem *,
 
   // The SAME transform SchItemText draws with -- a pin's label is symbol
   // text like any other: its own rotation from rotateAlign, the parent's
-  // rotation, scale and mirror cancelled, the Y-flip undone, and the
+  // rotation, scale and mirror canceled, the Y-flip undone, and the
   // readability half turn. See SchItemBase::labelXform().
-  painter->setTransform(labelXform(static_cast<double>(item_->rotateAlign.getRotDeg())),
-                        /*combine=*/true);
+  painter->setTransform(
+      labelXform(static_cast<double>(item_->rotateAlign.getRotDeg())),
+      /*combine=*/true);
 
   painter->setFont(font);
   painter->setPen(tint(SchColorDecode::fromArgColor(
       item_->textColor.getValue(), RenderStyle::current().pin)));
 
   const QFontMetricsF fm(font);
-  const QRectF        rect = alignedTextRect(fm, label, effectiveAlignH(), effectiveAlignV());
+  const QRectF        rect =
+      alignedTextRect(fm, label, effectiveAlignH(), effectiveAlignV());
   painter->drawText(rect, Qt::AlignLeft | Qt::AlignTop | Qt::TextDontClip,
                     label);
 

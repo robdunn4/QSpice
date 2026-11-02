@@ -14,11 +14,11 @@
 #include <QFontMetricsF>
 #include <QLocale>
 #include <QPageLayout>
-#include <QStringList>
 #include <QPainter>
 #include <QPrinter>
 #include <QPrinterInfo>
 #include <QSettings>
+#include <QStringList>
 
 #include <algorithm>
 #include <cmath>
@@ -28,8 +28,8 @@
 #endif
 
 #include "SchPen.h"
-#include "SchSvgExport.h"
 #include "SchRenderSource.h"
+#include "SchSvgExport.h"
 
 namespace sch::output {
 
@@ -60,27 +60,29 @@ constexpr double kCropMarkMm = 5.0;
 constexpr double kMaxOverlapShare = 0.4;
 
 // --- Settings keys --------------------------------------------------
-constexpr const char *kPrintGroup     = "Print";
-constexpr const char *kModeKey        = "Mode";
-constexpr const char *kScaleKey       = "MmPer1000Units";
-constexpr const char *kInchUnitsKey   = "ScaleInInches";
-constexpr const char *kAutoOrientKey  = "AutoOrientation";
-constexpr const char *kOverlapOnKey   = "Overlap";
-constexpr const char *kOverlapMmKey   = "OverlapMm";
-constexpr const char *kCropMarksKey   = "CropMarks";
-constexpr const char *kBackgroundKey  = "Background";
-constexpr const char *kMinLineMmKey   = "MinLineWidthMm";
-constexpr const char *kMaxPagesKey    = "MaxPages";
-constexpr const char *kHeaderOnKey    = "HeaderOn";
-constexpr const char *kFooterOnKey    = "FooterOn";
-constexpr const char *kHeaderKeys[3]  = {"HeaderLeft", "HeaderCenter", "HeaderRight"};
-constexpr const char *kFooterKeys[3]  = {"FooterLeft", "FooterCenter", "FooterRight"};
-constexpr const char *kPrinterKey     = "Printer";
-constexpr const char *kPaperIdKey     = "PaperSizeId";
-constexpr const char *kPaperWKey      = "PaperWidthMm";
-constexpr const char *kPaperHKey      = "PaperHeightMm";
-constexpr const char *kOrientKey      = "Landscape";
-constexpr const char *kMarginsKey     = "MarginsMm"; // "left,top,right,bottom"
+constexpr const char *kPrintGroup    = "Print";
+constexpr const char *kModeKey       = "Mode";
+constexpr const char *kScaleKey      = "MmPer1000Units";
+constexpr const char *kInchUnitsKey  = "ScaleInInches";
+constexpr const char *kAutoOrientKey = "AutoOrientation";
+constexpr const char *kOverlapOnKey  = "Overlap";
+constexpr const char *kOverlapMmKey  = "OverlapMm";
+constexpr const char *kCropMarksKey  = "CropMarks";
+constexpr const char *kBackgroundKey = "Background";
+constexpr const char *kMinLineMmKey  = "MinLineWidthMm";
+constexpr const char *kMaxPagesKey   = "MaxPages";
+constexpr const char *kHeaderOnKey   = "HeaderOn";
+constexpr const char *kFooterOnKey   = "FooterOn";
+constexpr const char *kHeaderKeys[3] = {"HeaderLeft", "HeaderCenter",
+                                        "HeaderRight"};
+constexpr const char *kFooterKeys[3] = {"FooterLeft", "FooterCenter",
+                                        "FooterRight"};
+constexpr const char *kPrinterKey    = "Printer";
+constexpr const char *kPaperIdKey    = "PaperSizeId";
+constexpr const char *kPaperWKey     = "PaperWidthMm";
+constexpr const char *kPaperHKey     = "PaperHeightMm";
+constexpr const char *kOrientKey     = "Landscape";
+constexpr const char *kMarginsKey    = "MarginsMm"; // "left,top,right,bottom"
 
 QFont headerFont() {
   QFont font = QFontDatabase::systemFont(QFontDatabase::GeneralFont);
@@ -90,12 +92,12 @@ QFont headerFont() {
 
 double pxPerMm(double resolution) { return resolution / kMmPerInch; }
 
-// A rectangle of `size` fitted into `box`, proportions kept, centred.
+// A rectangle of `size` fitted into `box`, proportions kept, centered.
 QRectF fitted(const QSizeF &size, const QRectF &box) {
   if (size.isEmpty() || box.isEmpty()) return QRectF();
 
-  const double scale  = std::min(box.width() / size.width(),
-                                 box.height() / size.height());
+  const double scale =
+      std::min(box.width() / size.width(), box.height() / size.height());
   const QSizeF fitSize = size * scale;
   return QRectF(box.center().x() - fitSize.width() / 2.0,
                 box.center().y() - fitSize.height() / 2.0, fitSize.width(),
@@ -115,7 +117,8 @@ double SchPrintSettings::quantizeScale(double mm, bool inch, bool roundDown) {
 
   // The small allowance stops a value already on a step (2.54 mm is 0.1
   // inch, give or take floating point) from dropping to the one below.
-  double value = (roundDown ? std::floor(steps + 1e-6) : std::round(steps)) * step;
+  double value =
+      (roundDown ? std::floor(steps + 1e-6) : std::round(steps)) * step;
   value = std::clamp(value, inch ? kMinInch : kMinMm, inch ? kMaxInch : kMaxMm);
   return value * unit;
 }
@@ -131,18 +134,19 @@ void SchPrintSettings::load() {
   QSettings settings(settingsFile, QSettings::IniFormat);
   settings.beginGroup(QString::fromLatin1(kPrintGroup));
 
-  const int modeValue = settings.value(kModeKey, static_cast<int>(mode)).toInt();
+  const int modeValue =
+      settings.value(kModeKey, static_cast<int>(mode)).toInt();
   if (modeValue >= 0 && modeValue <= 3) mode = static_cast<Mode>(modeValue);
 
   // The unit first: the scale is made a whole number of its steps.
-  inchUnits  = settings.value(kInchUnitsKey, inchUnits).toBool();
+  inchUnits = settings.value(kInchUnitsKey, inchUnits).toBool();
 
   const double scale = settings.value(kScaleKey, savedMmPer1000).toDouble();
   if (scale > 0.0) setScale(scale);
 
-  autoOrient = settings.value(kAutoOrientKey, autoOrient).toBool();
-  overlapOn  = settings.value(kOverlapOnKey, overlapOn).toBool();
-  cropMarks  = settings.value(kCropMarksKey, cropMarks).toBool();
+  autoOrient      = settings.value(kAutoOrientKey, autoOrient).toBool();
+  overlapOn       = settings.value(kOverlapOnKey, overlapOn).toBool();
+  cropMarks       = settings.value(kCropMarksKey, cropMarks).toBool();
   printBackground = settings.value(kBackgroundKey, printBackground).toBool();
 
   const double overlap = settings.value(kOverlapMmKey, overlapMm).toDouble();
@@ -201,7 +205,8 @@ SchPrint::SchPrint(const QString &settingsFile) {
   printSettings.load();
 }
 
-SchPrint::SchPrint(const QString &settingsFile, const SchPrintSettings &defaults) {
+SchPrint::SchPrint(const QString          &settingsFile,
+                   const SchPrintSettings &defaults) {
   // load() keeps each value it finds no key for, so the defaults are
   // simply what it starts from.
   defaultSettings              = defaults;
@@ -254,7 +259,8 @@ QPrinter *SchPrint::ensurePrinter() {
   applySavedPrinter(printer.get());
 
   if (!isUsable(printer.get()))
-    qWarning().noquote() << QStringLiteral("Print: the printer \"%1\" could not be opened")
+    qWarning().noquote() << QStringLiteral(
+                                "Print: the printer \"%1\" could not be opened")
                                 .arg(printer->printerName());
   return printer.get();
 }
@@ -297,11 +303,13 @@ void SchPrint::applySavedPrinter(QPrinter *target) const {
   } else {
     const double w = settings.value(kPaperWKey, 0.0).toDouble();
     const double h = settings.value(kPaperHKey, 0.0).toDouble();
-    if (w > 0.0 && h > 0.0) size = QPageSize(QSizeF(w, h), QPageSize::Millimeter);
+    if (w > 0.0 && h > 0.0)
+      size = QPageSize(QSizeF(w, h), QPageSize::Millimeter);
   }
 
   QMarginsF margins = target->pageLayout().margins(QPageLayout::Millimeter);
-  const QStringList parts = settings.value(kMarginsKey).toString().split(QLatin1Char(','));
+  const QStringList parts =
+      settings.value(kMarginsKey).toString().split(QLatin1Char(','));
   if (parts.size() == 4)
     margins = QMarginsF(parts.at(0).toDouble(), parts.at(1).toDouble(),
                         parts.at(2).toDouble(), parts.at(3).toDouble());
@@ -319,7 +327,8 @@ void SchPrint::applySavedPrinter(QPrinter *target) const {
 
   // A printer that cannot take the layout keeps its own.
   if (!target->setPageLayout(pageLayout))
-    qWarning() << "Print: saved page layout not accepted by" << target->printerName();
+    qWarning() << "Print: saved page layout not accepted by"
+               << target->printerName();
 
   // Saved margins may be another printer's -- or a PDF's.
   enforceMinimumMargins(target);
@@ -344,8 +353,9 @@ bool SchPrint::enforceMinimumMargins(QPrinter *printer) {
   pageLayout.setMargins(wanted);
   if (!printer->setPageLayout(pageLayout)) return false;
 
-  qInfo("Print: margins raised to the printer's minimum: %.1f/%.1f/%.1f/%.1f mm",
-        wanted.left(), wanted.top(), wanted.right(), wanted.bottom());
+  qInfo(
+      "Print: margins raised to the printer's minimum: %.1f/%.1f/%.1f/%.1f mm",
+      wanted.left(), wanted.top(), wanted.right(), wanted.bottom());
   return true;
 }
 
@@ -365,7 +375,8 @@ void SchPrint::savePrinter() const {
   settings.setValue(kPaperIdKey, static_cast<int>(size.id()));
   settings.setValue(kPaperWKey, sizeMm.width());
   settings.setValue(kPaperHKey, sizeMm.height());
-  settings.setValue(kOrientKey, pageLayout.orientation() == QPageLayout::Landscape);
+  settings.setValue(kOrientKey,
+                    pageLayout.orientation() == QPageLayout::Landscape);
   settings.setValue(kMarginsKey, QStringLiteral("%1,%2,%3,%4")
                                      .arg(margins.left())
                                      .arg(margins.top())
@@ -385,8 +396,9 @@ double SchPrint::bandHeight(QPrinter *printer) {
 }
 
 QSizeF SchPrint::bodySizeMm(QPrinter *printer) {
-  const double res  = printer->resolution();
-  const QSizeF page = printer->pageLayout().paintRectPixels(static_cast<int>(res)).size();
+  const double res = printer->resolution();
+  const QSizeF page =
+      printer->pageLayout().paintRectPixels(static_cast<int>(res)).size();
   const double band = bandHeight(printer);
   return QSizeF(page.width() / pxPerMm(res),
                 (page.height() - 2.0 * band) / pxPerMm(res));
@@ -397,21 +409,22 @@ SchPrintLayout SchPrint::layout(QPrinter *printer, const SchRenderSource *view,
   const int    res  = printer->resolution();
   const double band = bandHeight(printer);
   return layoutFor(printer->pageLayout().paintRectPixels(res).size(), res,
-                   settings.headerOn ? band : 0.0, settings.footerOn ? band : 0.0,
-                   view, settings);
+                   settings.headerOn ? band : 0.0,
+                   settings.footerOn ? band : 0.0, view, settings);
 }
 
 SchPrintLayout SchPrint::layoutFor(const QSizeF &pageSize, double resolution,
                                    double headerBand, double footerBand,
-                                   const SchRenderSource *view, const SchPrintSettings &settings) {
+                                   const SchRenderSource  *view,
+                                   const SchPrintSettings &settings) {
   SchPrintLayout out;
 
   const QRectF page(QPointF(0.0, 0.0), pageSize);
   out.body = page.adjusted(0.0, headerBand, 0.0, -footerBand);
 
   // What is printed. An empty document prints what the window shows.
-  QRectF source = settings.whole() ? view->printableSceneRect()
-                                   : view->visibleSceneRect();
+  QRectF source =
+      settings.whole() ? view->printableSceneRect() : view->visibleSceneRect();
   if (source.isEmpty()) source = view->visibleSceneRect();
   out.source = source;
 
@@ -433,21 +446,22 @@ SchPrintLayout SchPrint::layoutFor(const QSizeF &pageSize, double resolution,
   const double devPerUnit = settings.mmPer1000 / 1000.0 * pxPerMm(resolution);
   if (devPerUnit <= 0.0) return out;
 
-  const double pageW = out.body.width() / devPerUnit;  // scene units
+  const double pageW = out.body.width() / devPerUnit; // scene units
   const double pageH = out.body.height() / devPerUnit;
 
   double overlap = settings.overlapOn
                        ? settings.overlapMm * 1000.0 / settings.mmPer1000
                        : 0.0;
-  overlap = std::min(overlap, kMaxOverlapShare * std::min(pageW, pageH));
-  out.overlapPx = overlap * devPerUnit;
+  overlap        = std::min(overlap, kMaxOverlapShare * std::min(pageW, pageH));
+  out.overlapPx  = overlap * devPerUnit;
 
   const double stepX = pageW - overlap;
   const double stepY = pageH - overlap;
 
   const auto countFor = [](double extent, double pageExtent, double step) {
     if (extent <= pageExtent) return 1;
-    return std::max(1, static_cast<int>(std::ceil((extent - pageExtent) / step)) + 1);
+    return std::max(
+        1, static_cast<int>(std::ceil((extent - pageExtent) / step)) + 1);
   };
 
   out.cols = countFor(source.width(), pageW, stepX);
@@ -456,14 +470,14 @@ SchPrintLayout SchPrint::layoutFor(const QSizeF &pageSize, double resolution,
   // A runaway guard: a small scale on a large schematic can ask for
   // hundreds of pages. Refused WHOLE -- a grid cut down to the limit
   // would print part of the drawing as if it were all of it.
-  const int limit = std::clamp(settings.maxPages, 1,
-                               SchPrintSettings::kMaxPagesHardLimit);
+  const int limit =
+      std::clamp(settings.maxPages, 1, SchPrintSettings::kMaxPagesHardLimit);
   if (out.cols * out.rows > limit) {
     out.overLimit = true;
     return out;
   }
 
-  // The drawing centred within the whole grid, so the spare space is
+  // The drawing centered within the whole grid, so the spare space is
   // shared out rather than all left on the last row and column.
   const double gridW = out.cols * stepX + overlap;
   const double gridH = out.rows * stepY + overlap;
@@ -479,11 +493,11 @@ SchPrintLayout SchPrint::layoutFor(const QSizeF &pageSize, double resolution,
   for (int row = 0; row < out.rows; ++row) {
     for (int col = 0; col < out.cols; ++col) {
       SchPrintTile tile;
-      tile.index  = static_cast<int>(out.tiles.size());
-      tile.row    = row;
-      tile.col    = col;
-      tile.scene  = QRectF(left + col * stepX, top - row * stepY - pageH, pageW,
-                           pageH);
+      tile.index = static_cast<int>(out.tiles.size());
+      tile.row   = row;
+      tile.col   = col;
+      tile.scene =
+          QRectF(left + col * stepX, top - row * stepY - pageH, pageW, pageH);
       tile.target = out.body;
 
       // Blank pages are skipped -- never the only one.
@@ -510,12 +524,10 @@ void SchPrint::chooseOrientation(QPrinter *printer, const SchRenderSource *view,
   portrait.setOrientation(QPageLayout::Portrait);
   landscape.setOrientation(QPageLayout::Landscape);
 
-  const SchPrintLayout p =
-      layoutFor(portrait.paintRectPixels(res).size(), res, headerBand, footerBand,
-                view, settings);
-  const SchPrintLayout l =
-      layoutFor(landscape.paintRectPixels(res).size(), res, headerBand, footerBand,
-                view, settings);
+  const SchPrintLayout p = layoutFor(portrait.paintRectPixels(res).size(), res,
+                                     headerBand, footerBand, view, settings);
+  const SchPrintLayout l = layoutFor(landscape.paintRectPixels(res).size(), res,
+                                     headerBand, footerBand, view, settings);
 
   // At scale: fewer pages. Fitted: the bigger drawing. A tie keeps the
   // printer's own choice.
@@ -525,8 +537,10 @@ void SchPrint::chooseOrientation(QPrinter *printer, const SchRenderSource *view,
     if (p.pages < l.pages) best = QPageLayout::Portrait;
     if (l.pages < p.pages) best = QPageLayout::Landscape;
   } else if (!p.tiles.isEmpty() && !l.tiles.isEmpty()) {
-    const double pArea = p.tiles.first().target.width() * p.tiles.first().target.height();
-    const double lArea = l.tiles.first().target.width() * l.tiles.first().target.height();
+    const double pArea =
+        p.tiles.first().target.width() * p.tiles.first().target.height();
+    const double lArea =
+        l.tiles.first().target.width() * l.tiles.first().target.height();
     if (pArea > lArea) best = QPageLayout::Portrait;
     if (lArea > pArea) best = QPageLayout::Landscape;
   }
@@ -539,8 +553,9 @@ void SchPrint::chooseOrientation(QPrinter *printer, const SchRenderSource *view,
 // Painting
 // ---------------------------------------------------------------------------
 
-SchPrintContext SchPrint::context(const SchRenderSource *view, const QString &title,
-                                  const SchPrintLayout &layout,
+SchPrintContext SchPrint::context(const SchRenderSource *view,
+                                  const QString         &title,
+                                  const SchPrintLayout  &layout,
                                   const SchPrintTile &tile, QPrinter *printer) {
   SchPrintContext ctx;
   ctx.title   = title;
@@ -570,16 +585,18 @@ SchPrintContext SchPrint::context(const SchRenderSource *view, const QString &ti
   return ctx;
 }
 
-SchPrint::PageText SchPrint::pageText(const SchRenderSource *view, const QString &title,
-                                      const SchPrintLayout &layout,
-                                      const SchPrintTile &tile, QPrinter *printer,
-                                      const SchPrintSettings &settings) {
+SchPrint::PageText
+SchPrint::pageText(const SchRenderSource *view, const QString &title,
+                   const SchPrintLayout &layout, const SchPrintTile &tile,
+                   QPrinter *printer, const SchPrintSettings &settings) {
   const SchPrintContext ctx = context(view, title, layout, tile, printer);
 
   PageText text;
   for (int i = 0; i < 3; ++i) {
-    if (settings.headerOn) text.header[i] = SchPrintFields::expand(settings.headerText[i], ctx);
-    if (settings.footerOn) text.footer[i] = SchPrintFields::expand(settings.footerText[i], ctx);
+    if (settings.headerOn)
+      text.header[i] = SchPrintFields::expand(settings.headerText[i], ctx);
+    if (settings.footerOn)
+      text.footer[i] = SchPrintFields::expand(settings.footerText[i], ctx);
   }
   return text;
 }
@@ -590,30 +607,33 @@ void SchPrint::drawBand(QPainter &painter, const QRectF &band,
   const double        gap   = metrics.height();
   const double        width = band.width();
 
-  // The centre first, at most what leaves a gap either side; the left
-  // and right then share what remains of their halves. With no centre,
+  // The center first, at most what leaves a gap either side; the left
+  // and right then share what remains of their halves. With no center,
   // the right keeps its whole text if it can (a date) and the left gives
   // way (a path, shortened in the middle -- drive and file name kept).
-  double centreW = 0.0;
-  QString centre;
+  double  centerW = 0.0;
+  QString center;
   if (!texts[1].isEmpty()) {
-    centre  = metrics.elidedText(texts[1], Qt::ElideMiddle, std::max(0.0, width - 2.0 * gap));
-    centreW = metrics.horizontalAdvance(centre);
+    center  = metrics.elidedText(texts[1], Qt::ElideMiddle,
+                                 std::max(0.0, width - 2.0 * gap));
+    centerW = metrics.horizontalAdvance(center);
   }
 
   double leftRoom  = 0.0;
   double rightRoom = 0.0;
-  if (centreW > 0.0) {
-    leftRoom  = std::max(0.0, (width - centreW) / 2.0 - gap);
+  if (centerW > 0.0) {
+    leftRoom  = std::max(0.0, (width - centerW) / 2.0 - gap);
     rightRoom = leftRoom;
   } else {
     rightRoom = std::min(metrics.horizontalAdvance(texts[2]), width / 2.0);
-    leftRoom  = std::max(0.0, width - rightRoom - (texts[2].isEmpty() ? 0.0 : gap));
+    leftRoom =
+        std::max(0.0, width - rightRoom - (texts[2].isEmpty() ? 0.0 : gap));
   }
 
   painter.drawText(band, Qt::AlignLeft | Qt::AlignVCenter,
                    metrics.elidedText(texts[0], Qt::ElideMiddle, leftRoom));
-  if (!centre.isEmpty()) painter.drawText(band, Qt::AlignHCenter | Qt::AlignVCenter, centre);
+  if (!center.isEmpty())
+    painter.drawText(band, Qt::AlignHCenter | Qt::AlignVCenter, center);
   painter.drawText(band, Qt::AlignRight | Qt::AlignVCenter,
                    metrics.elidedText(texts[2], Qt::ElideMiddle, rightRoom));
 }
@@ -621,7 +641,7 @@ void SchPrint::drawBand(QPainter &painter, const QRectF &band,
 void SchPrint::drawCropMarks(QPainter &painter, const SchPrintLayout &layout,
                              const SchPrintTile &tile, double resolution,
                              double penPx) {
-  // Marks on the MIDDLE of each overlap strip shared with a neighbour --
+  // Marks on the MIDDLE of each overlap strip shared with a neighbor --
   // the same scene line on both sheets, so one is trimmed there and laid
   // on the other's marks. Without overlap they fall on the page edge.
   const QRectF body = layout.body;
@@ -634,7 +654,8 @@ void SchPrint::drawCropMarks(QPainter &painter, const SchPrintLayout &layout,
 
   const auto vertical = [&](double x) {
     painter.drawLine(QPointF(x, body.top()), QPointF(x, body.top() + len));
-    painter.drawLine(QPointF(x, body.bottom() - len), QPointF(x, body.bottom()));
+    painter.drawLine(QPointF(x, body.bottom() - len),
+                     QPointF(x, body.bottom()));
   };
   const auto horizontal = [&](double y) {
     painter.drawLine(QPointF(body.left(), y), QPointF(body.left() + len, y));
@@ -647,10 +668,11 @@ void SchPrint::drawCropMarks(QPainter &painter, const SchPrintLayout &layout,
   if (tile.row < layout.rows - 1) horizontal(body.bottom() - half);
 }
 
-bool SchPrint::render(QPrinter *printer, const SchRenderSource *view, const QString &title,
-                      const SchPrintSettings &settings,
-                      const std::function<bool(const SchPrintTile &)> &include,
-                      const std::function<bool(int done, int total)> &progress) {
+bool SchPrint::render(
+    QPrinter *printer, const SchRenderSource *view, const QString &title,
+    const SchPrintSettings                          &settings,
+    const std::function<bool(const SchPrintTile &)> &include,
+    const std::function<bool(int done, int total)>  &progress) {
   if (printer == nullptr || view == nullptr) return false;
 
   enforceMinimumMargins(printer);
@@ -693,8 +715,10 @@ bool SchPrint::render(QPrinter *printer, const SchRenderSource *view, const QStr
   const QFontMetricsF metrics(font, printer);
   const double        line = metrics.height();
 
-  const QRectF page(QPointF(0.0, 0.0),
-                    QSizeF(printer->pageLayout().paintRectPixels(static_cast<int>(res)).size()));
+  const QRectF page(
+      QPointF(0.0, 0.0),
+      QSizeF(
+          printer->pageLayout().paintRectPixels(static_cast<int>(res)).size()));
   const QRectF header(page.left(), page.top(), page.width(), line);
   const QRectF footer(page.left(), page.bottom() - line, page.width(), line);
 
@@ -726,7 +750,8 @@ bool SchPrint::render(QPrinter *printer, const SchRenderSource *view, const QStr
 
     // --- The drawing -----------------------------------------------------
     SchPen::printMinDevicePx = minLine;
-    view->renderSceneForPrint(&painter, tile.target, tile.scene, settings.printBackground);
+    view->renderSceneForPrint(&painter, tile.target, tile.scene,
+                              settings.printBackground);
     SchPen::printMinDevicePx = 0.0;
 
     if (pages.tiled() && settings.cropMarks)
@@ -741,10 +766,12 @@ bool SchPrint::render(QPrinter *printer, const SchRenderSource *view, const QStr
 // SVG export
 // ===========================================================================
 
-bool SchPrint::writeSvg(const QString &path, const SchRenderSource *view, const QString &title,
-                        const SchPrintSettings &settings, const QString &creator) {
+bool SchPrint::writeSvg(const QString &path, const SchRenderSource *view,
+                        const QString &title, const SchPrintSettings &settings,
+                        const QString &creator) {
   // Layered for Inkscape -- see SchSvgExport.
-  return SchSvgExport::write(path, view, title, SchPrintSettings::kDefaultMmPer1000,
+  return SchSvgExport::write(path, view, title,
+                             SchPrintSettings::kDefaultMmPer1000,
                              settings.minLineMm, creator);
 }
 

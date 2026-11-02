@@ -8,7 +8,7 @@
 // Here, in SchApp, because it joins two libraries that are kept apart:
 // SchLink knows nothing about drawing (it hands out raw 0xBBGGRR
 // integers), and SchRender knows nothing about the registry. A program
-// that wants QSpice's colours calls this after prefs::load() (and, for
+// that wants QSpice's colors calls this after prefs::load() (and, for
 // one that runs without QSpice, prefs::fillMissing()):
 //
 //   RenderStyle::setCurrent(sch::app::qspiceRenderStyle());

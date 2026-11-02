@@ -1,6 +1,7 @@
 #ifdef _MSC_VER
 #pragma warning(push)
-#pragma warning(disable : 4996) // Qt headers reference APIs deprecated for Qt 7
+#pragma warning(                                                               \
+    disable : 4996)   // Qt headers reference APIs deprecated for Qt 7
 #endif
 
 #include "SchHierBlock.h"
@@ -25,7 +26,7 @@ NodePtr symbolOf(const NodePtr &compNode) {
   return compNode->findFirstOf(QPI::SYM);
 }
 
-} // namespace
+}   // namespace
 
 bool isBlock(const NodePtr &compNode) {
   const NodePtr symNode = symbolOf(compNode);
@@ -65,7 +66,8 @@ QString schematicName(const NodePtr &compNode) {
   return QString();
 }
 
-Result schematicPath(const NodePtr &compNode, const QString &docPath, QString &path) {
+Result schematicPath(
+    const NodePtr &compNode, const QString &docPath, QString &path) {
   path.clear();
 
   if (!isBlock(compNode)) return Result::NotABlock;
@@ -94,4 +96,4 @@ Result schematicPath(const NodePtr &compNode, const QString &docPath, QString &p
   return Result::Ok;
 }
 
-} // namespace sch::core::hier
+}   // namespace sch::core::hier

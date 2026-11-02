@@ -21,15 +21,15 @@
 #include "RenderStyle.h"
 #include "SchBus.h"
 #include "SchItemNet.h"
-#include "SchPen.h"
 #include "SchItemWire.h"
+#include "SchPen.h"
 #include "SchScene.h"
 
 namespace sch::render {
 
 namespace {
 
-// Click tolerance either side of the centreline, in schematic units --
+// Click tolerance either side of the centerline, in schematic units --
 // the same allowance a wire gets, which also covers the widest shape
 // (a diagonal spindle is 14 units either side).
 constexpr double kTapClickTolerance = 20.0;
@@ -209,9 +209,12 @@ SchItemTap::State SchItemTap::state() const {
     if (const sch::core::NetModel *model = sc->netModel()) {
       switch (model->tapState(sch::core::PointKey{p1.x, p1.y},
                               sch::core::PointKey{p2.x, p2.y})) {
-      case sch::core::NetModel::TapState::Valid: return State::Valid;
-      case sch::core::NetModel::TapState::Invalid: return State::Invalid;
-      case sch::core::NetModel::TapState::Loose: return State::Loose;
+      case sch::core::NetModel::TapState::Valid:
+        return State::Valid;
+      case sch::core::NetModel::TapState::Invalid:
+        return State::Invalid;
+      case sch::core::NetModel::TapState::Loose:
+        return State::Loose;
       }
       return State::Loose;
     }
@@ -219,14 +222,14 @@ SchItemTap::State SchItemTap::state() const {
 
   sch::core::BusName bus1;
   sch::core::BusName bus2;
-  const bool on1 = busAt(scene(), p1, bus1);
-  const bool on2 = busAt(scene(), p2, bus2);
+  const bool         on1 = busAt(scene(), p1, bus1);
+  const bool         on2 = busAt(scene(), p2, bus2);
 
   // A bus at BOTH ends is not a valid tap; neither is no bus at all.
   if (on1 == on2) return State::Loose;
 
   const sch::core::BusName &bus    = on1 ? bus1 : bus2;
-  const Point       member = on1 ? p2 : p1;
+  const Point               member = on1 ? p2 : p1;
 
   // Nothing at the member end: loose, not merely invalid.
   QString net;
@@ -245,8 +248,8 @@ QPolygonF SchItemTap::outline() const {
   // tapering over the first and last fifth. Measured: a straight tap
   // tapers over 20 units to 20.5 wide.
   if (st == State::Loose) {
-    const QPointF a  = toQ(p1);
-    const QPointF d  = toQ(p2) - a;
+    const QPointF a = toQ(p1);
+    const QPointF d = toQ(p2) - a;
     const QPointF n(-d.y(), d.x());
 
     QPolygonF poly;
@@ -259,7 +262,7 @@ QPolygonF SchItemTap::outline() const {
   // of the length either side. Measured: 21 units wide at the bus on a
   // straight tap, 30 on a diagonal.
   sch::core::BusName bus;
-  const bool busAtFirst = busAt(scene(), p1, bus);
+  const bool         busAtFirst = busAt(scene(), p1, bus);
 
   const QPointF busEnd    = toQ(busAtFirst ? p1 : p2);
   const QPointF memberEnd = toQ(busAtFirst ? p2 : p1);
@@ -273,10 +276,11 @@ QPolygonF SchItemTap::outline() const {
 
 void SchItemTap::paint(QPainter *painter, const QStyleOptionGraphicsItem *,
                        QWidget *) {
-  const QColor color = (state() == State::Valid) ? RenderStyle::current().wire
-                                                 : RenderStyle::current().busTapError;
+  const QColor color = (state() == State::Valid)
+                           ? RenderStyle::current().wire
+                           : RenderStyle::current().busTapError;
 
-  // A cosmetic outline in the same colour keeps the fine point of a
+  // A cosmetic outline in the same color keeps the fine point of a
   // triangle visible when zoomed out, where the fill alone vanishes.
   QPen pen(color);
   pen.setCosmetic(true);

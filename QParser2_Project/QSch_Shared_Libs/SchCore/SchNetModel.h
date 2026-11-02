@@ -48,18 +48,18 @@ public:
     NodePtr  node;
     PointKey a;
     PointKey b;
-    QString  netName;    // decoded, trimmed
-    QString  netNameRaw; // as stored, quotes and all
+    QString  netName;      // decoded, trimmed
+    QString  netNameRaw;   // as stored, quotes and all
     bool     bus = false;
   };
 
   struct Pin {
     NodePtr  node;
     PointKey at;
-    int      comp   = -1; // index into comps(); -1 for a sheet pin
-    int      number = 0;  // 1-based among the symbol's PIN records
-    QString  label;       // decoded, as written
-    bool     internal = false; // carries its own net name
+    int      comp   = -1;        // index into comps(); -1 for a sheet pin
+    int      number = 0;         // 1-based among the symbol's PIN records
+    QString  label;              // decoded, as written
+    bool     internal = false;   // carries its own net name
   };
 
   // A component. Its symbol's only ELECTRICAL content is pins: a
@@ -68,14 +68,14 @@ public:
   // (SchRecordRules).
   struct Comp {
     NodePtr    node;
-    QString    refdes; // empty if none
-    QList<int> pins;   // indices into pins()
+    QString    refdes;   // empty if none
+    QList<int> pins;     // indices into pins()
   };
 
   struct Label {
     NodePtr  node;
     PointKey at;
-    QString  netName; // decoded, trimmed
+    QString  netName;   // decoded, trimmed
   };
 
   struct Tap {
@@ -92,11 +92,11 @@ public:
   // A connected group: a wire, or two or more members touching. A lone
   // pin is not a net.
   struct Net {
-    QList<int>    wires;     // wires() (buses included)
-    QList<int>    pins;      // pins() -- component and sheet pins
-    QList<int>    labels;    // labels()
-    QList<int>    tapEnds;   // taps() index * 2 + end (0 = a, 1 = b)
-    QSet<QString> wireNames; // as the wires carry them
+    QList<int>    wires;       // wires() (buses included)
+    QList<int>    pins;        // pins() -- component and sheet pins
+    QList<int>    labels;      // labels()
+    QList<int>    tapEnds;     // taps() index * 2 + end (0 = a, 1 = b)
+    QSet<QString> wireNames;   // as the wires carry them
     QSet<QString> labelNames;
   };
 
@@ -176,4 +176,4 @@ protected:
   QSet<const TreeNode *>       pinNodes_;
 };
 
-} // namespace sch::core
+}   // namespace sch::core

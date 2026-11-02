@@ -1,9 +1,9 @@
 #pragma once
-#include <QPen>
-#include <string>
-#include <QPainterPath>
 #include "ItemWire.h"
+#include <QPainterPath>
+#include <QPen>
 #include <QString>
+#include <string>
 
 #include "SchItemBase.h"
 
@@ -39,7 +39,7 @@ public:
   // being placed. The preview used its own dashed pen, which meant the
   // segment changed appearance at the moment it was committed -- and
   // meant wire styling, once it is configurable (width, style and
-  // colour are all coming), would have had to be applied twice.
+  // color are all coming), would have had to be applied twice.
   static QPen wirePen();
 
   // The pen for drawing a wire with `painter`. On screen, wirePen().

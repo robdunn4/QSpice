@@ -1,6 +1,7 @@
 #ifdef _MSC_VER
 #pragma warning(push)
-#pragma warning(disable : 4996) // Qt headers reference APIs deprecated for Qt 7
+#pragma warning(                                                               \
+    disable : 4996)   // Qt headers reference APIs deprecated for Qt 7
 #endif
 
 #include "SchItemTriangle.h"
@@ -37,7 +38,7 @@ Rect SchItemTriangle::getRect() const noexcept {
   const Point c = item_->pt3.getValue();
 
   return Rect(Point(qMin(a.x, qMin(b.x, c.x)), qMax(a.y, qMax(b.y, c.y))),
-              Point(qMax(a.x, qMax(b.x, c.x)), qMin(a.y, qMin(b.y, c.y))));
+      Point(qMax(a.x, qMax(b.x, c.x)), qMin(a.y, qMin(b.y, c.y))));
 }
 
 Point SchItemTriangle::getPosition() const noexcept {
@@ -68,18 +69,19 @@ void SchItemTriangle::setControlPoint(int index, Point p) {
   prepareGeometryChange();
 
   if (index == 0) item_->pt1.setValue(p);
-  else if (index == 1) item_->pt2.setValue(p);
-  else if (index == 2) item_->pt3.setValue(p);
+  else if (index == 1)
+    item_->pt2.setValue(p);
+  else if (index == 2)
+    item_->pt3.setValue(p);
 }
 
-void SchItemTriangle::paint(QPainter *painter, const QStyleOptionGraphicsItem *,
-                            QWidget *) {
+void SchItemTriangle::paint(
+    QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *) {
   const QColor lineColor = SchColorDecode::fromArgColor(
       item_->lineColor.getValue(), RenderStyle::current().graphicAnnotation);
 
   QPen pen = SchPen::forElement(painter, tint(lineColor),
-                                item_->lineWidth.getValue(),
-                                item_->lineType.getValue());
+      item_->lineWidth.getValue(), item_->lineType.getValue());
   painter->setPen(pen);
 
   const QColor fill =
@@ -87,7 +89,8 @@ void SchItemTriangle::paint(QPainter *painter, const QStyleOptionGraphicsItem *,
 
   // Unstuffed: OUTLINE only -- see SchItemRect::paint().
   if (isUnstuffed()) painter->setBrush(Qt::NoBrush);
-  else painter->setBrush(fill);
+  else
+    painter->setBrush(fill);
 
   QPolygonF tri;
   tri << toQ(item_->pt1.getValue()) << toQ(item_->pt2.getValue())
@@ -107,4 +110,4 @@ QPainterPath SchItemTriangle::outlinePath() const {
   return path;
 }
 
-} // namespace sch::render
+}   // namespace sch::render

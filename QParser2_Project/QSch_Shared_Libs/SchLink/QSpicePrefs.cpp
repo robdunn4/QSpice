@@ -29,7 +29,8 @@ const QString kUserSymDirsKey = QStringLiteral("UserSymbolDirectories");
 
 // A folder path reduced to what sameDirectory() compares.
 QString dirKey(const QString &path) {
-  QString key = QDir::cleanPath(QDir::fromNativeSeparators(path.trimmed())).toLower();
+  QString key =
+      QDir::cleanPath(QDir::fromNativeSeparators(path.trimmed())).toLower();
 
   // "c:/" keeps its separator: without it, it names the current folder
   // on drive C rather than the root.
@@ -109,7 +110,8 @@ void remember(const QString &name, const QString &value) {
 
 bool bgrFromString(const QString &text, quint32 &bgr) {
   QString hex = text.trimmed();
-  if (hex.startsWith(QLatin1String("0x"), Qt::CaseInsensitive)) hex = hex.mid(2);
+  if (hex.startsWith(QLatin1String("0x"), Qt::CaseInsensitive))
+    hex = hex.mid(2);
   if (hex.isEmpty()) return false;
 
   bool       ok = false;
@@ -163,13 +165,15 @@ void fillMissing(const QHash<QString, QString> &fallbackValues) {
   }
 
   if (added > 0)
-    qInfo("QSpice preferences: %d value(s) taken from the program's settings", added);
+    qInfo("QSpice preferences: %d value(s) taken from the program's settings",
+          added);
 }
 
 QList<QPair<QString, QString>> stockDrawingValues() {
   QList<QPair<QString, QString>> list;
   for (const StockValue &stock : kStockDrawingValues)
-    list.append(qMakePair(QString::fromLatin1(stock.name), QString::fromLatin1(stock.text)));
+    list.append(qMakePair(QString::fromLatin1(stock.name),
+                          QString::fromLatin1(stock.text)));
   return list;
 }
 
@@ -213,7 +217,7 @@ QStringList userSymbolDirectories() {
       values.value(kUserSymDirsKey).split(QLatin1Char('|'), Qt::SkipEmptyParts);
 
   QStringList dirs;
-  QStringList seen; // normalised, for the duplicate check
+  QStringList seen; // normalized, for the duplicate check
 
   for (const QString &piece : pieces) {
     const QString path = piece.trimmed();
@@ -231,6 +235,39 @@ QStringList userSymbolDirectories() {
 
 bool sameDirectory(const QString &a, const QString &b) {
   return dirKey(a) == dirKey(b);
+}
+
+QStringList shadowableNames() {
+  QStringList names;
+  for (const StockValue &stock : kStockDrawingValues)
+    names.append(QString::fromLatin1(stock.name));
+  names.append(kUserSymDirsKey);
+  return names;
+}
+
+QString valueText(const QString &name) { return values.value(name); }
+
+void useValue(const QString &name, const QString &text) {
+  values.insert(name, text);
+}
+
+QHash<QString, QString> readRegistry() {
+  QHash<QString, QString> read;
+  if (loadedKeyPath.isEmpty()) return read;
+
+  QSettings settings(loadedKeyPath, QSettings::NativeFormat);
+  for (const QString &key : settings.childKeys())
+    read.insert(key, settings.value(key).toString());
+  return read;
+}
+
+QString userSymbolDirectoriesText(const QStringList &dirs) {
+  // Every path enclosed in bars, so two paths meet as "||".
+  QString text;
+  for (const QString &dir : dirs)
+    text += QLatin1Char('|') + QDir::toNativeSeparators(dir.trimmed()) +
+            QLatin1Char('|');
+  return text;
 }
 
 } // namespace sch::link::prefs

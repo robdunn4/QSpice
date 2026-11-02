@@ -25,13 +25,13 @@ namespace sch::render {
 //
 // READ but never written. QSpice renders odd codes yet offers no way to
 // set one, and neither do we: Ctrl+R transforms an element's geometry
-// rather than touching this field. Honouring it on load is what matters
+// rather than touching this field. Honoring it on load is what matters
 // -- an odd-coded ellipse from QSpice used to draw here as an upright
 // one, wrong shape and wrong size, with nothing to say so.
 namespace SchBoxFrame {
 
 struct Frame {
-  QPointF centre;
+  QPointF center;
   double  cosT = 1.0;
   double  sinT = 0.0;
   double  a    = 0.0; // half-width, in the frame
@@ -47,19 +47,19 @@ struct Frame {
     return QPointF(v.x() * cosT + v.y() * sinT, -v.x() * sinT + v.y() * cosT);
   }
 
-  // The shape's own rect, centred on the origin, drawn with the painter
-  // already translated to centre and rotated by degrees().
+  // The shape's own rect, centered on the origin, drawn with the painter
+  // already translated to center and rotated by degrees().
   QRectF localRect() const { return QRectF(-a, -b, a * 2.0, b * 2.0); }
 
   double degrees() const {
     return std::atan2(sinT, cosT) * 180.0 / std::numbers::pi;
   }
 
-  // Frame -> item coordinates: the painter's translate(centre) and
+  // Frame -> item coordinates: the painter's translate(center) and
   // rotate(degrees()), as a transform.
   QTransform transform() const {
     QTransform t;
-    t.translate(centre.x(), centre.y());
+    t.translate(center.x(), center.y());
     t.rotate(degrees());
     return t;
   }
@@ -77,12 +77,12 @@ struct Frame {
 
     for (const QPointF &corner :
          {QPointF(-a, -b), QPointF(a, -b), QPointF(a, b), QPointF(-a, b)}) {
-      const QPointF p = centre + fromFrame(corner);
+      const QPointF p = center + fromFrame(corner);
 
       if (first) {
         minX = maxX = p.x();
         minY = maxY = p.y();
-        first = false;
+        first       = false;
         continue;
       }
 
@@ -112,8 +112,8 @@ struct Frame {
 // signed corners): see SchItemCoil::boxFrame(). Do NOT move that rule
 // in here -- image rects would turn by 135 or 225 degrees and stop
 // matching.
-inline Frame frameFor(double x1, double y1, double x2, double y2,
-                      int rotCode, double oddDegrees = 45.0) {
+inline Frame frameFor(double x1, double y1, double x2, double y2, int rotCode,
+                      double oddDegrees = 45.0) {
   Frame f;
 
   const double theta =
@@ -122,13 +122,13 @@ inline Frame frameFor(double x1, double y1, double x2, double y2,
   f.cosT = std::cos(theta);
   f.sinT = std::sin(theta);
 
-  // The centre is the midpoint of the corners whatever the frame, so
+  // The center is the midpoint of the corners whatever the frame, so
   // there is no pivot to choose.
-  f.centre = QPointF((x1 + x2) / 2.0, (y1 + y2) / 2.0);
+  f.center = QPointF((x1 + x2) / 2.0, (y1 + y2) / 2.0);
 
   const QPointF diag = f.toFrame(QPointF(x2 - x1, y2 - y1));
-  f.a = std::abs(diag.x()) / 2.0;
-  f.b = std::abs(diag.y()) / 2.0;
+  f.a                = std::abs(diag.x()) / 2.0;
+  f.b                = std::abs(diag.y()) / 2.0;
 
   return f;
 }

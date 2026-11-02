@@ -1,9 +1,12 @@
 #ifdef _MSC_VER
 #pragma warning(push)
-#pragma warning(disable : 4996) // Qt headers reference APIs deprecated for Qt 7
+#pragma warning(                                                               \
+    disable : 4996)   // Qt headers reference APIs deprecated for Qt 7
 #endif
 
 #include "NetlistRun.h"
+
+#include <algorithm>
 
 #include <QCoreApplication>
 #include <QDateTime>
@@ -48,11 +51,11 @@ constexpr qint64 kStaleSecs = 24 * 60 * 60;
 QString fileSafe(const QString &name) {
   QString safe = name;
   safe.replace(QRegularExpression(QStringLiteral(R"([<>:"/\\|?*\x00-\x1F])")),
-               QStringLiteral("_"));
+      QStringLiteral("_"));
   return safe.isEmpty() ? QStringLiteral("Untitled") : safe;
 }
 
-} // namespace
+}   // namespace
 
 NetlistRun::NetlistRun(const QString &prefix, QObject *parent)
     : QObject(parent), tempPrefix(prefix) {
@@ -73,9 +76,13 @@ NetlistRun::~NetlistRun() {
   removeTempCopy();
 }
 
+void NetlistRun::setDependents(const NetlistDependents &deps) {
+  dependents = deps;
+}
+
 void NetlistRun::start(const QString &quxExe, const QString &schPath,
-                       const QString &title, const QByteArray &content,
-                       const QStringList &libPaths) {
+    const QString &title, const QByteArray &content,
+    const QStringList &libPaths) {
   userLibPaths = libPaths;
 
   realBase = schPath.isEmpty() ? QFileInfo(title).completeBaseName()
@@ -108,8 +115,7 @@ void NetlistRun::start(const QString &quxExe, const QString &schPath,
   process = new QProcess(this);
   process->setProgram(quxExe);
   process->setArguments({QStringLiteral("-Netlist"),
-                         QDir::toNativeSeparators(netlistPath),
-                         QStringLiteral("-stdout")});
+      QDir::toNativeSeparators(netlistPath), QStringLiteral("-stdout")});
   process->setWorkingDirectory(QFileInfo(netlistPath).absolutePath());
 
 #ifdef Q_OS_WIN
@@ -125,8 +131,8 @@ void NetlistRun::start(const QString &quxExe, const QString &schPath,
 #endif
 
   connect(process, &QProcess::finished, this, &NetlistRun::onFinished);
-  connect(process, &QProcess::errorOccurred, this,
-          &NetlistRun::onErrorOccurred);
+  connect(
+      process, &QProcess::errorOccurred, this, &NetlistRun::onErrorOccurred);
 
   watchdog->start(kTimeoutMs);
   process->start();
@@ -142,8 +148,24 @@ void NetlistRun::onFinished(int exitCode, QProcess::ExitStatus status) {
   // (the help warns that -stdout output is not terminal-safe: µ, Ω and
   // the like). Decoding to text and encoding back could change those
   // bytes, so text is derived from the bytes for display only.
-  QByteArray      raw = process->readAllStandardOutput();
-  const QString   err = decodeOutput(process->readAllStandardError()).trimmed();
+  QByteArray raw = process->readAllStandardOutput();
+  QString    err = decodeOutput(process->readAllStandardError()).trimmed();
+
+  // Dependent sheets' temporary names, wherever QUX echoed them --
+  // subcircuit names, messages -- become the real ones.
+  //
+  // Longest first, so a name that begins another is never replaced
+  // inside it.
+  QList<QPair<QString, QString>> names = dependents.names;
+  std::sort(names.begin(), names.end(),
+      [](const QPair<QString, QString> &a, const QPair<QString, QString> &b) {
+        return a.first.size() > b.first.size();
+      });
+  for (const QPair<QString, QString> &name : names) {
+    raw.replace(netlistBytes(name.first), netlistBytes(name.second));
+    err.replace(name.first, name.second);
+  }
+  if (!tempBase.isEmpty()) err.replace(tempBase, realBase);
 
   removeTempCopy();
 
@@ -159,7 +181,7 @@ void NetlistRun::onFinished(int exitCode, QProcess::ExitStatus status) {
 
   if (raw.trimmed().isEmpty()) {
     emit failed(tr("QUX.exe produced no netlist (exit code %1).%2")
-                    .arg(QString::number(exitCode), errPart));
+            .arg(QString::number(exitCode), errPart));
     return;
   }
 
@@ -183,8 +205,8 @@ void NetlistRun::onErrorOccurred(QProcess::ProcessError error) {
   if (error != QProcess::FailedToStart) return;
 
   fail(tr("Could not start QUX.exe:\n%1\n\n%2")
-           .arg(QDir::toNativeSeparators(process->program()),
-                process->errorString()));
+          .arg(QDir::toNativeSeparators(process->program()),
+              process->errorString()));
 }
 
 void NetlistRun::onTimeout() {
@@ -195,11 +217,11 @@ void NetlistRun::onTimeout() {
   process->waitForFinished(2000);
 
   fail(tr("QUX.exe did not finish within %1 seconds and was stopped.")
-           .arg(kTimeoutMs / 1000));
+          .arg(kTimeoutMs / 1000));
 }
 
-QByteArray NetlistRun::withLibPaths(const QByteArray &netlist,
-                                    const QStringList &libPaths) {
+QByteArray NetlistRun::withLibPaths(
+    const QByteArray &netlist, const QStringList &libPaths) {
   if (libPaths.isEmpty()) return netlist;
 
   // After QUX's first line (its "* ..." title), as QSpice does it:
@@ -212,11 +234,11 @@ QByteArray NetlistRun::withLibPaths(const QByteArray &netlist,
   //
   // Lines end the way QUX ends its own, so the result is not a mixture.
   const qsizetype eol = netlist.indexOf('\n');
-  if (eol < 0) return netlist; // no title line -- nothing sensible to do
+  if (eol < 0) return netlist;   // no title line -- nothing sensible to do
 
-  const QByteArray lineEnd =
-      (eol > 0 && netlist.at(eol - 1) == '\r') ? QByteArray("\r\n")
-                                                : QByteArray("\n");
+  const QByteArray lineEnd = (eol > 0 && netlist.at(eol - 1) == '\r')
+      ? QByteArray("\r\n")
+      : QByteArray("\n");
 
   QByteArray block = lineEnd;
   for (const QString &libPath : libPaths)
@@ -246,7 +268,7 @@ void NetlistRun::fail(const QString &message) {
 }
 
 QString NetlistRun::writeTempCopy(const QString &dir, const QString &base,
-                                  const QByteArray &content, QString &error) {
+    const QByteArray &content, QString &error) {
   static int counter = 0;
   ++counter;
 
@@ -285,13 +307,20 @@ QString NetlistRun::writeTempCopy(const QString &dir, const QString &base,
   // the result, so a failure here is ignored.
   const QString native = QDir::toNativeSeparators(path);
   SetFileAttributesW(reinterpret_cast<LPCWSTR>(native.utf16()),
-                     FILE_ATTRIBUTE_HIDDEN | FILE_ATTRIBUTE_TEMPORARY);
+      FILE_ATTRIBUTE_HIDDEN | FILE_ATTRIBUTE_TEMPORARY);
 #endif
 
   return path;
 }
 
 void NetlistRun::removeTempCopy() {
+  for (const QString &path : dependents.tempFiles) {
+    if (!QFile::remove(path))
+      qWarning().noquote() << "Netlist: could not delete temporary copy"
+                           << QDir::toNativeSeparators(path);
+  }
+  dependents.tempFiles.clear();
+
   if (tempPath.isEmpty()) return;
 
   if (!QFile::remove(tempPath))
@@ -328,4 +357,4 @@ void NetlistRun::sweepStaleCopies(const QString &dir) const {
   }
 }
 
-} // namespace sch::link
+}   // namespace sch::link

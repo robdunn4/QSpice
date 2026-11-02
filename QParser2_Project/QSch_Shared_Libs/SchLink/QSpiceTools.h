@@ -23,4 +23,4 @@ namespace sch::link::tools {
 // Returns empty on success, otherwise why it could not be started.
 QString run(const QString &exeName, const QString &workingDir);
 
-} // namespace sch::link::tools
+}   // namespace sch::link::tools

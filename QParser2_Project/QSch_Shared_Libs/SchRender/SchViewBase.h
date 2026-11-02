@@ -21,8 +21,8 @@ class SchScene;
 // a viewer from its own .ini -- and nothing here knows which.
 struct ViewOptions {
   bool   gridVisible         = true;
-  qreal  gridMinDevicePixels = 20.0;   // a grid tier fades out below this spacing
-  qreal  minZoomScale        = 0.02;   // pixels per schematic unit
+  qreal  gridMinDevicePixels = 20.0; // a grid tier fades out below this spacing
+  qreal  minZoomScale        = 0.02; // pixels per schematic unit
   qreal  maxZoomScale        = 20.0;
   double newViewWidth        = 5000.0; // schematic units across an EMPTY view
 };
@@ -81,10 +81,10 @@ public:
   void zoomToFit();
 
   // Zooms an EMPTY view to show newViewWidth schematic units across,
-  // centred on the origin.
+  // centered on the origin.
   void applyNewViewZoom();
 
-  // One step in or out, centred on the viewport -- the keyboard
+  // One step in or out, centered on the viewport -- the keyboard
   // equivalent of a wheel notch.
   void zoomIn() { zoomStep(true); }
   void zoomOut() { zoomStep(false); }
@@ -120,10 +120,10 @@ public:
   // A plain view excludes nothing; the editor overrides
   // isPrintExcluded() to leave out its transient items.
   QGraphicsScene *renderScene() const override { return scene(); }
-  QBrush          renderBackground() const override { return backgroundBrush(); }
-  bool            isPrintExcluded(const QGraphicsItem *) const override { return false; }
-  QRectF          visibleSceneRect() const override; // the viewport
-  QString         sourcePath() const override { return filePath_; }
+  QBrush renderBackground() const override { return backgroundBrush(); }
+  bool   isPrintExcluded(const QGraphicsItem *) const override { return false; }
+  QRectF visibleSceneRect() const override; // the viewport
+  QString sourcePath() const override { return filePath_; }
 
 signals:
   void cursorPosChanged(QPointF scenePos);
@@ -142,7 +142,7 @@ protected:
   void mouseReleaseEvent(QMouseEvent *event) override;
   void wheelEvent(QWheelEvent *event) override;
 
-  // The canvas colour, then the grid (when shown).
+  // The canvas color, then the grid (when shown).
   void drawBackground(QPainter *painter, const QRectF &rect) override;
 
   ViewOptions options;

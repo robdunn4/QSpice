@@ -131,18 +131,23 @@ inline void applyStyle(QPen &pen, int lineType) {
 // anything that only wants to know solid from patterned).
 inline Qt::PenStyle styleFor(int lineType) {
   switch (lineType) {
-  case 1: return Qt::DashLine;
-  case 2: return Qt::DotLine;
-  case 3: return Qt::DashDotLine;
-  case 4: return Qt::DashDotDotLine;
-  default: return Qt::SolidLine;
+  case 1:
+    return Qt::DashLine;
+  case 2:
+    return Qt::DotLine;
+  case 3:
+    return Qt::DashDotLine;
+  case 4:
+    return Qt::DashDotDotLine;
+  default:
+    return Qt::SolidLine;
   }
 }
 
 // Thickness in schematic units.
 inline double widthUnits(int lineWidth) {
-  const double w =
-      (lineWidth == 0) ? RenderStyle::current().cadLineWidth : double(lineWidth);
+  const double w = (lineWidth == 0) ? RenderStyle::current().cadLineWidth
+                                    : double(lineWidth);
 
   return w + 1.0;
 }
@@ -157,8 +162,8 @@ inline double widthUnits(int lineWidth) {
 // Note the transform includes any enclosing COMPONENT's scale, so a
 // symbol's lines thicken with the symbol -- including the sqrt(2) of a
 // 45-degree rotation.
-inline QPen forElement(const QPainter *painter, const QColor &color,
-                       int lineWidth, int lineType) {
+inline QPen forElement(
+    const QPainter *painter, const QColor &color, int lineWidth, int lineType) {
   QPen pen(color);
   applyStyle(pen, lineType);
   pen.setJoinStyle(Qt::MiterJoin);
@@ -177,7 +182,7 @@ inline QPen forElement(const QPainter *painter, const QColor &color,
   double scale = 1.0;
   if (painter != nullptr) {
     const QTransform xform = painter->transform();
-    scale = std::hypot(xform.m11(), xform.m12());
+    scale                  = std::hypot(xform.m11(), xform.m12());
   }
 
   // Printing: never thinner than the print minimum, kept in schematic
@@ -201,6 +206,6 @@ inline QPen forElement(const QPainter *painter, const QColor &color,
   return pen;
 }
 
-} // namespace SchPen
+}   // namespace SchPen
 
-} // namespace sch::render
+}   // namespace sch::render

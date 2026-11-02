@@ -9,8 +9,7 @@ namespace {
 QString textOf(const NodePtr &textNode) {
   if (textNode == nullptr) return QString();
 
-  const ItemTextPtr text =
-      std::static_pointer_cast<ItemText>(textNode->item());
+  const ItemTextPtr text = std::static_pointer_cast<ItemText>(textNode->item());
   if (text == nullptr) return QString();
 
   return decodeQSpiceString(text->text.getValue()).trimmed();
@@ -90,8 +89,23 @@ QString assign(const NodePtr &compNode, QSet<QString> &taken) {
   const ItemTextPtr text = std::static_pointer_cast<ItemText>(textNode->item());
   if (text == nullptr) return QString();
 
-  text->text.setValue(ArgString(encodeQSpiceString(assigned)).quote().getValue());
+  text->text.setValue(
+      ArgString(encodeQSpiceString(assigned)).quote().getValue());
   return assigned;
+}
+
+QString assignKeeping(const NodePtr &compNode, QSet<QString> &taken) {
+  const QString current = ofNode(compNode);
+  if (current.isEmpty()) return QString();
+
+  // Free: kept as it is, and reserved so a later component of the same
+  // run that carries it too is renamed.
+  if (!taken.contains(current.toLower())) {
+    taken.insert(current.toLower());
+    return QString();
+  }
+
+  return assign(compNode, taken);
 }
 
 } // namespace sch::core::refdes

@@ -16,13 +16,13 @@ namespace sch::render {
 // its two ends touch -- confirmed against BusStuff_QSpice.qsch:
 //
 //   VALID    one end on a bus wire, the other on a net that is one of
-//            that bus's members: a thin triangle in the WIRE colour,
+//            that bus's members: a thin triangle in the WIRE color,
 //            base on the bus, point at the member.
 //   INVALID  one end on a bus, the other on a net that is NOT a member
 //            (wrong name or index out of range): the same triangle in
-//            the bus-tap ERROR colour.
+//            the bus-tap ERROR color.
 //   LOOSE    no bus at either end, a bus at BOTH ends, or a bus at one
-//            end and nothing at the other: a spindle in the error colour.
+//            end and nothing at the other: a spindle in the error color.
 //
 // Shapes are built from the tap's own vector d (end to end) and its
 // perpendicular n, so a diagonal tap is automatically sqrt(2) larger --
@@ -42,7 +42,7 @@ public:
   bool           isElectrical() const override { return true; }
   QList<QPointF> connectionPoints() const override;
 
-  // The drawn shape, plus a click tolerance along the centreline so a
+  // The drawn shape, plus a click tolerance along the centerline so a
   // thin triangle's point is still easy to hit.
   QPainterPath shape() const override;
 

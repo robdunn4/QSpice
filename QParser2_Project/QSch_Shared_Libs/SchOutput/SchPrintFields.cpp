@@ -34,7 +34,8 @@ QString formatWhen(const QDateTime &when, const QString &format) {
 
   if (fmt.isEmpty() || fmt == QLatin1String("short"))
     return locale.toString(when, QLocale::ShortFormat);
-  if (fmt == QLatin1String("long")) return locale.toString(when, QLocale::LongFormat);
+  if (fmt == QLatin1String("long"))
+    return locale.toString(when, QLocale::LongFormat);
   if (fmt == QLatin1String("iso"))
     return when.toString(QStringLiteral("yyyy-MM-dd HH:mm:ss"));
   if (fmt == QLatin1String("date"))
@@ -57,10 +58,10 @@ QString pageInfo(const SchPrintContext &ctx) {
   return tr("Page %1 of %2").arg(ctx.page).arg(ctx.pages);
 }
 
-// One field's value; `known` false for a name not recognised.
+// One field's value; `known` false for a name not recognized.
 QString fieldValue(const QString &name, const QString &format,
                    const SchPrintContext &ctx, bool &known) {
-  known = true;
+  known             = true;
   const QString key = name.trimmed().toLower();
 
   if (key == QLatin1String("path"))
@@ -107,8 +108,8 @@ QString expand(const QString &templ, const SchPrintContext &ctx) {
     const QChar ch = templ.at(i);
 
     // Doubled braces are literal.
-    if ((ch == QLatin1Char('{') || ch == QLatin1Char('}')) && i + 1 < templ.size() &&
-        templ.at(i + 1) == ch) {
+    if ((ch == QLatin1Char('{') || ch == QLatin1Char('}')) &&
+        i + 1 < templ.size() && templ.at(i + 1) == ch) {
       out += ch;
       i += 2;
       continue;
@@ -161,14 +162,16 @@ QList<std::pair<QString, QString>> menuEntries() {
       {tr("Modified (long)"), QStringLiteral("{modified:long}")},
       {tr("Modified (ISO)"), QStringLiteral("{modified:iso}")},
       {tr("Modified date"), QStringLiteral("{modified:date}")},
-      {tr("Modified, custom format..."), QStringLiteral("{modified:yyyy-MM-dd HH:mm}")},
+      {tr("Modified, custom format..."),
+       QStringLiteral("{modified:yyyy-MM-dd HH:mm}")},
       {QString(), QString()},
       {tr("Printed (short)"), QStringLiteral("{printed}")},
       {tr("Printed (long)"), QStringLiteral("{printed:long}")},
       {tr("Printed (ISO)"), QStringLiteral("{printed:iso}")},
       {tr("Printed date"), QStringLiteral("{printed:date}")},
       {tr("Printed time"), QStringLiteral("{printed:time}")},
-      {tr("Printed, custom format..."), QStringLiteral("{printed:yyyy-MM-dd HH:mm}")},
+      {tr("Printed, custom format..."),
+       QStringLiteral("{printed:yyyy-MM-dd HH:mm}")},
       {QString(), QString()},
       {tr("Page info (several pages only)"), QStringLiteral("{pageinfo}")},
       {tr("Page number"), QStringLiteral("{page}")},

@@ -14,7 +14,9 @@
 class QGraphicsItem;
 class QPainter;
 
-namespace sch::render { class SchRenderSource; }
+namespace sch::render {
+class SchRenderSource;
+}
 
 namespace sch::output {
 
@@ -28,7 +30,7 @@ namespace sch::output {
 // up -- and the drawing part of each result is spliced into a file
 // assembled here, inside groups and layers of our own:
 //
-//   Background         one canvas-colour rect, locked
+//   Background         one canvas-color rect, locked
 //   Graphics           annotation shapes and images
 //   Symbols            a group per component: id/label = refdes, a
 //                      <title>, data-refdes / data-value / data-symbol
@@ -48,13 +50,16 @@ public:
   // units), lines no thinner than `minLineMm`, to `path`. `creator` is
   // the program's name, for the file's description. False on failure;
   // nothing is left behind.
-  static bool write(const QString &path, const sch::render::SchRenderSource *view, const QString &title,
-                    double mmPer1000, double minLineMm, const QString &creator);
+  static bool write(const QString                      &path,
+                    const sch::render::SchRenderSource *view,
+                    const QString &title, double mmPer1000, double minLineMm,
+                    const QString &creator);
 
 protected:
   enum class Layer { Graphics, Symbols, Wires, Labels, Junctions, Text };
 
-  SchSvgExport(const sch::render::SchRenderSource *view, const QRectF &source, double pxPerUnit);
+  SchSvgExport(const sch::render::SchRenderSource *view, const QRectF &source,
+               double pxPerUnit);
 
   bool build(const QString &title, double mmPer1000, double minLineMm,
              const QString &creator, QByteArray &out);
@@ -70,7 +75,7 @@ protected:
   QString uniqueId(const QString &wanted);
 
   // `piece` inside <g> with these attributes.
-  static QByteArray group(const QByteArray &body,
+  static QByteArray group(const QByteArray                         &body,
                           const QList<std::pair<QString, QString>> &attrs,
                           const QString &title = QString());
 
@@ -86,11 +91,11 @@ protected:
   static QString esc(const QString &text);
 
   const sch::render::SchRenderSource *view = nullptr;
-  QRectF     source;      // scene area drawn
-  double     pxPerUnit = 0.0;
-  QSize      sizePx;
-  QRectF     viewBox;
-  QTransform page;        // scene -> drawing, Y flipped
+  QRectF                              source; // scene area drawn
+  double                              pxPerUnit = 0.0;
+  QSize                               sizePx;
+  QRectF                              viewBox;
+  QTransform                          page; // scene -> drawing, Y flipped
 
   QSet<QString>           usedIds;
   QHash<QString, QString> wireNetAt; // pointKey -> net name

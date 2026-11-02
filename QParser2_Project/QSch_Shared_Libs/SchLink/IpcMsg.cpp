@@ -8,8 +8,8 @@ namespace sch::link::ipcmsg {
 
 bool TextBuf::add(quint64 wParam, qint64 lParam, QString &text) {
   const quint32 lo = static_cast<quint32>(wParam & 0xFFFFFFFFu);
-  const quint32 hi = static_cast<quint32>(static_cast<quint64>(lParam) &
-                                          0xFFFFFFFFu);
+  const quint32 hi =
+      static_cast<quint32>(static_cast<quint64>(lParam) & 0xFFFFFFFFu);
 
   if (lo == 0 && hi == 0) {
     text = sch::core::decodeCp1252(pending);
@@ -41,7 +41,11 @@ Rect Rect::fromParams(quint64 wParam, qint64 lParam) {
 }
 
 QString Rect::toString() const {
-  return QStringLiteral("%1,%2,%3,%4").arg(left).arg(top).arg(right).arg(bottom);
+  return QStringLiteral("%1,%2,%3,%4")
+      .arg(left)
+      .arg(top)
+      .arg(right)
+      .arg(bottom);
 }
 
 Rect Rect::fromString(const QString &text) {
@@ -50,7 +54,8 @@ Rect Rect::fromString(const QString &text) {
 
   int  values[4] = {};
   bool ok        = true;
-  for (int i = 0; i < 4 && ok; ++i) values[i] = parts.at(i).trimmed().toInt(&ok);
+  for (int i = 0; i < 4 && ok; ++i)
+    values[i] = parts.at(i).trimmed().toInt(&ok);
   if (!ok) return Rect();
 
   Rect rect;
@@ -61,4 +66,4 @@ Rect Rect::fromString(const QString &text) {
   return rect;
 }
 
-} // namespace sch::link::ipcmsg
+}   // namespace sch::link::ipcmsg

@@ -1,14 +1,14 @@
 #pragma once
+#include <QDebug>
 #include <QFont>
+#include <QFontInfo>
 #include <QFontMetricsF>
-#include <QPair>
-#include <QPainter>
 #include <QList>
+#include <QPainter>
+#include <QPair>
 #include <QRectF>
 #include <QSizeF>
 #include <QString>
-#include <QFontInfo>
-#include <QDebug>
 
 #include "SchAlign.h"
 #include <QStringList>
@@ -44,7 +44,7 @@ namespace sch::render {
 // earlier attempt did -- renders text ~4% taller than QSpice.
 //
 // An earlier calibration had a large intercept and an unexplained
-// "non-linearity at small sizes". Both were artefacts of measuring OUR
+// "non-linearity at small sizes". Both were artifacts of measuring OUR
 // OWN output rather than QSpice's, so the fit described the intercept
 // already in our own formula.
 constexpr double kCapHeightPerFontSize = 116.0;
@@ -110,14 +110,18 @@ inline double fontPixelSize(double fontSizeValue) {
     const QFontMetricsF metrics(probe);
     const double        cap = metrics.capHeight();
 
-    // qWarning rather than qInfo: qInfo did not reach the log, and a
-    // substituted font is worth flagging anyway -- the text will be the
-    // right height, but the letterforms will not be QSpice's.
+    // A WARNING only when the font was substituted -- the text will be
+    // the right height, but the letterforms will not be QSpice's.
+    // Otherwise an INFO line.
     const QString resolved = QFontInfo(probe).family();
 
-    qWarning().noquote()
-        << "Schematic text font: requested Tahoma, resolved to" << resolved
-        << "-- cap height" << cap << "px at" << kProbePixels << "px";
+    if (resolved.compare(QStringLiteral("Tahoma"), Qt::CaseInsensitive) == 0)
+      qInfo().noquote() << "Schematic text font: Tahoma -- cap height" << cap
+                        << "px at" << kProbePixels << "px";
+    else
+      qWarning().noquote()
+          << "Schematic text font: requested Tahoma, substituted" << resolved
+          << "-- cap height" << cap << "px at" << kProbePixels << "px";
 
     // A font with no usable cap metric would give a nonsense scale;
     // Tahoma's cap ratio (0.727 em) is the sensible thing to assume.
@@ -188,29 +192,29 @@ inline QFont makeFont(double fontSizeValue) {
 //   - Nibble 0 is not drawn. The AnalogLatch's Vdd and Vss pins and its
 //     "LATCH" text all carry 0, and QSpice draws none of them.
 //   - Nibble 15 IS drawn. That symbol's "Y1" label carries 0b1111 --
-//     explicitly centred, both bits set in each field -- and QSpice
+//     explicitly centered, both bits set in each field -- and QSpice
 //     draws it.
-//   - Reported behaviour: the SYMBOL EDITOR offers an alignment point
-//     (corners, edge midpoints, centre), and choosing CENTRE warns that
-//     the text will be hidden. So "centred" and "hidden" are linked
+//   - Reported behavior: the SYMBOL EDITOR offers an alignment point
+//     (corners, edge midpoints, center), and choosing CENTRE warns that
+//     the text will be hidden. So "centered" and "hidden" are linked
 //     somewhere in QSpice's UI.
 //
-// What is NOT known: what that centre button actually writes. If it
+// What is NOT known: what that center button actually writes. If it
 // writes 0, this rule is right for the right reason. If it writes
 // 0b1111 and QSpice hides that, then this rule is right only by
 // accident -- "Y1" would have to be displayed for some other reason
-// (being the reference designator?) -- and a genuinely centred comment
+// (being the reference designator?) -- and a genuinely centered comment
 // would render here when QSpice hides it.
 //
 // The rule below fits every element in the one symbol available, and
 // there is no counter-example, which is the whole of the evidence.
 //
 // PINS differ (2026-10-04, GmEnable symbol): a pin whose nibble is 15 is
-// NOT drawn -- its label hides when centred. SchItemPin::labelVisible()
+// NOT drawn -- its label hides when centered. SchItemPin::labelVisible()
 // adds that rule for pins only; text keeps this one.
 //
 // DECISIVE TEST, for when the symbol editor is built: create a text
-// element, click the centre alignment point, accept the warning, and
+// element, click the center alignment point, accept the warning, and
 // read the nibble QSpice wrote. That single value settles it.
 // --- Overbars ---
 //
@@ -317,13 +321,13 @@ inline void drawOverbars(QPainter *painter, const QFontMetricsF &fm,
   const QList<QPair<int, int>> runs = overbarRuns(rawLine);
   if (runs.isEmpty()) return;
 
-  const double capHeight = (fm.capHeight() > 0.0) ? fm.capHeight()
-                                                  : fm.ascent() * 0.7;
+  const double capHeight =
+      (fm.capHeight() > 0.0) ? fm.capHeight() : fm.ascent() * 0.7;
 
   const double thickness = qMax(capHeight * 0.10, 1.0);
   const double y         = baseline - capHeight - thickness * 1.5;
 
-  // Explicitly in the TEXT's colour and weight. The painter's pen is
+  // Explicitly in the TEXT's color and weight. The painter's pen is
   // the text pen, but its WIDTH is whatever drew the glyphs -- usually
   // hairline -- which gives a bar far too faint against the letters.
   const QPen saved = painter->pen();
@@ -334,10 +338,8 @@ inline void drawOverbars(QPainter *painter, const QFontMetricsF &fm,
   painter->setPen(barPen);
 
   for (const QPair<int, int> &run : runs) {
-    const double x0 =
-        left + fm.horizontalAdvance(displayLine.left(run.first));
-    const double x1 =
-        left + fm.horizontalAdvance(displayLine.left(run.second));
+    const double x0 = left + fm.horizontalAdvance(displayLine.left(run.first));
+    const double x1 = left + fm.horizontalAdvance(displayLine.left(run.second));
 
     painter->drawLine(QPointF(x0, y), QPointF(x1, y));
   }
@@ -381,9 +383,9 @@ inline OverbarEdit invertOverbars(const QString &raw, int start, int end) {
       continue;
     }
 
-    const bool barred  = (raw[i] == marker);
-    const int  charPos = barred ? i + 1 : i;
-    const QChar ch     = raw[charPos];
+    const bool  barred  = (raw[i] == marker);
+    const int   charPos = barred ? i + 1 : i;
+    const QChar ch      = raw[charPos];
 
     const bool selected = (charPos >= start && charPos < end);
     const bool isBreak  = (ch == QLatin1Char('\n') || ch == QLatin1Char('\r'));
@@ -414,13 +416,15 @@ inline OverbarEdit invertOverbars(const QString &raw, int start, int end) {
 // The alignment codes (kAlign*) are in SchAlign.h.
 
 inline QRectF alignedRectForSize(const QSizeF &size, int alignH, int alignV) {
-  double dx = -size.width() / 2.0;    // CENTER_H (default/fallback)
-  if (alignH == sch::core::kAlignHWest) dx = 0.0; // anchor at the text's left edge
+  double dx = -size.width() / 2.0; // CENTER_H (default/fallback)
+  if (alignH == sch::core::kAlignHWest)
+    dx = 0.0; // anchor at the text's left edge
   else if (alignH == sch::core::kAlignHEast)
     dx = -size.width(); // anchor at the text's right edge
 
-  double dy = -size.height() / 2.0;      // CENTER_V (default/fallback)
-  if (alignV == sch::core::kAlignVNorth) dy = 0.0;  // anchor at the text's top edge
+  double dy = -size.height() / 2.0; // CENTER_V (default/fallback)
+  if (alignV == sch::core::kAlignVNorth)
+    dy = 0.0; // anchor at the text's top edge
   else if (alignV == sch::core::kAlignVSouth)
     dy = -size.height(); // anchor at the text's bottom edge
 
@@ -556,8 +560,8 @@ inline TextBlockLayout layoutTextBlock(const QFontMetricsF &fm,
   // rendering already does -- this must stay byte-for-byte equivalent
   // to the old behavior for the overwhelmingly common one-line case.
   // Only stacked lines use the ink metrics.
-  double rowHeight = multiLine ? (ink.ascent + ink.descent)
-                               : fm.boundingRect(text).height();
+  double rowHeight =
+      multiLine ? (ink.ascent + ink.descent) : fm.boundingRect(text).height();
   if (rowHeight <= 0.0) rowHeight = ink.ascent + ink.descent;
 
   const double firstBaseline = multiLine ? ink.ascent : fm.ascent();
@@ -570,7 +574,7 @@ inline TextBlockLayout layoutTextBlock(const QFontMetricsF &fm,
 
   // Each line is justified to the anchor's side: lines of a block
   // anchored on its left edge start together, on its right edge end
-  // together, and on a centre line share a centre. A single line fills
+  // together, and on a center line share a center. A single line fills
   // the box, so this changes nothing there.
   for (int i = 0; i < layout.lines.size(); ++i) {
     const double top = layout.box.top() + i * layout.lineHeight;

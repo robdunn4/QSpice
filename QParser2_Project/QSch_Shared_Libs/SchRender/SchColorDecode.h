@@ -13,19 +13,19 @@ namespace sch::render {
 // which is authoritative -- this is a transcription, not a discovery:
 //
 //   0x00       custom RGB, from the low three bytes
-//   0x01       the type's default colour, or no fill
-//   0x02       background colour from the registry
-//   0x03       foreground colour from the registry
-//   0x04       solid fill colour from the registry
+//   0x01       the type's default color, or no fill
+//   0x02       background color from the registry
+//   0x03       foreground color from the registry
+//   0x04       solid fill color from the registry
 //   0x05-0x0B  background IMAGE, with a Windows raster op (SRCCOPY,
 //              SRCPAINT, SRCAND, SRCINVERT, SRCERASE, NOTSRCERASE,
 //              MERGEPAINT respectively)
 //
 // Modes 0x01 through 0x04 still carry populated RGB bytes, copied from
-// the registry when the colour was chosen. Those are deliberately
+// the registry when the color was chosen. Those are deliberately
 // ignored here: the registry value wins, so changing a QSpice
 // preference restyles existing files rather than leaving them on
-// whatever the colour was when they were saved.
+// whatever the color was when they were saved.
 //
 // FOREGROUND AND BACKGROUND are GDI vocabulary, not QSpice preference
 // names, which is why neither has its own registry entry. In GDI they
@@ -36,20 +36,20 @@ namespace sch::render {
 //
 // Mapped here to the nearest schematic equivalents:
 //   foreground -> CADgrapicAnnotation, i.e. "whatever symbols are drawn
-//     in". Behaviourally this is what the V source's +/- bars and the
+//     in". Behaviorally this is what the V source's +/- bars and the
 //     NPN's triangle do: filled solid in the same blue as the line
 //     work.
-//   background -> CADBackgroundColor, i.e. the canvas colour. Not so
-//     much a colour choice as a knockout -- an opaque shape that hides
+//   background -> CADBackgroundColor, i.e. the canvas color. Not so
+//     much a color choice as a knockout -- an opaque shape that hides
 //     what is behind it while looking empty.
 //
 // BOTH MAPPINGS ARE INFERRED. No reference file has been seen using
 // 0x02 at all, and 0x03 has only been seen where the element's line
-// colour happens to equal CADgrapicAnnotation, so the two readings of
+// color happens to equal CADgrapicAnnotation, so the two readings of
 // it cannot be told apart from the evidence available. A shape with an
-// explicit RGB line colour and a 0x03 fill would separate them: this
+// explicit RGB line color and a 0x03 fill would separate them: this
 // mapping fills it with the palette blue, the alternative fills it with
-// that shape's own line colour.
+// that shape's own line color.
 
 namespace SchColorDecode {
 
@@ -64,7 +64,7 @@ inline QColor rgbFromArgColor(int raw) {
   return QColor(r, g, b);
 }
 
-// Reports each unrecognised mode once, so a file that uses one says so
+// Reports each unrecognized mode once, so a file that uses one says so
 // without filling the log. These are the values needed to finish the
 // palette mapping.
 inline void noteUnknownMode(int raw, const char *usage) {
@@ -72,40 +72,40 @@ inline void noteUnknownMode(int raw, const char *usage) {
   const int        mode = colorMode(raw);
   if (reported.contains(mode)) return;
   reported.insert(mode);
-  qWarning("ArgColor: unrecognised colour mode 0x%02x (raw 0x%08x, used as "
+  qWarning("ArgColor: unrecognized color mode 0x%02x (raw 0x%08x, used as "
            "%s) -- falling back; this mode still needs mapping to a QSpice "
            "palette entry",
            mode, static_cast<unsigned int>(raw), usage);
 }
 
-// Line, outline and text colours.
+// Line, outline and text colors.
 //
 // Modes confirmed against QSpice's own rendering:
 //   0x04  BusStuff_QSpice.qsch's rect is line 0x4000000, fill 0x1000000,
 //         and QSpice draws its outline in the element's DEFAULT line
-//         colour (CADgrapicAnnotation blue), NOT CADsolidAnnotation
-//         yellow. So "solid fill colour" is a fill-only meaning; as a
-//         line colour 0x04 is the same as 0x01. The X1 hierarchical
+//         color (CADgrapicAnnotation blue), NOT CADsolidAnnotation
+//         yellow. So "solid fill color" is a fill-only meaning; as a
+//         line color 0x04 is the same as 0x01. The X1 hierarchical
 //         block's rect (line 0x4000000, blue border) agrees.
 inline QColor fromArgColor(int raw, const QColor &defaultColor) {
   const int mode = colorMode(raw);
   if (mode == 0x00) return rgbFromArgColor(raw);
   if (mode == 0x01 || mode == 0x04) return defaultColor;
 
-  noteUnknownMode(raw, "a line/text colour");
+  noteUnknownMode(raw, "a line/text color");
   return defaultColor;
 }
 
-// Fill colours.
+// Fill colors.
 //
 // Modes confirmed against QSpice's own rendering:
 //   0x01  V1's ellipse is 0x1000000 and draws hollow.
 //   0x03  V1's +/- bars and the NPN's triangle are 0x3000000 and draw
-//         solid in the symbol's line colour.
+//         solid in the symbol's line color.
 //   0x04  the AnalogLatch's body is 0x4000000 and draws yellow, which
 //         is CADsolidAnnotation exactly.
 //
-// lineColor is this element's resolved outline colour. No longer used
+// lineColor is this element's resolved outline color. No longer used
 // for 0x03 -- see the foreground note above -- but kept as the
 // parameter because it is the right fallback if that mapping turns out
 // to be wrong.
@@ -128,13 +128,13 @@ inline QColor fromArgFill(int raw, const QColor &lineColor) {
   }
 
   // 0x05-0x0B are image fills. A rect with image data draws the bitmap
-  // itself (SchItemRect::drawImage()) and never asks for a colour; any
+  // itself (SchItemRect::drawImage()) and never asks for a color; any
   // other shape has no image to draw, so it is left unfilled rather than
-  // given a colour that would be wrong in a different way.
+  // given a color that would be wrong in a different way.
   const int mode = colorMode(raw);
   if (mode >= 0x05 && mode <= 0x0B) return Qt::transparent;
 
-  noteUnknownMode(raw, "a fill colour");
+  noteUnknownMode(raw, "a fill color");
   return Qt::transparent;
 }
 

@@ -52,8 +52,8 @@ QGraphicsItem *makeLeafItem(bool topLevel, Args &&...args) {
 // Builds a leaf wrapper for node, parented under parentItem (nullptr for
 // a top-level, scene-direct child). Returns nullptr if there's no
 // wrapper class for this element type yet.
-QGraphicsItem *buildLeafForType(const NodePtr &node,
-                                QGraphicsItem *parentItem) {
+QGraphicsItem *buildLeafForType(
+    const NodePtr &node, QGraphicsItem *parentItem) {
   const bool topLevel = (parentItem == nullptr);
   switch (node->getEnumID()) {
   case QPI::RECT:
@@ -69,29 +69,24 @@ QGraphicsItem *buildLeafForType(const NodePtr &node,
     return makeLeafItem<SchItemTap>(
         topLevel, std::static_pointer_cast<ItemTap>(node->item()), parentItem);
   case QPI::ELLIPSE:
-    return makeLeafItem<SchItemEllipse>(
-        topLevel, std::static_pointer_cast<ItemEllipse>(node->item()),
-        parentItem);
+    return makeLeafItem<SchItemEllipse>(topLevel,
+        std::static_pointer_cast<ItemEllipse>(node->item()), parentItem);
   case QPI::ARC3P:
-    return makeLeafItem<SchItemArc3P>(
-        topLevel, std::static_pointer_cast<ItemArc3P>(node->item()), parentItem);
+    return makeLeafItem<SchItemArc3P>(topLevel,
+        std::static_pointer_cast<ItemArc3P>(node->item()), parentItem);
   case QPI::ARC4P:
-    return makeLeafItem<SchItemArc4P>(
-        topLevel, std::static_pointer_cast<ItemArc4P>(node->item()),
-        parentItem);
+    return makeLeafItem<SchItemArc4P>(topLevel,
+        std::static_pointer_cast<ItemArc4P>(node->item()), parentItem);
   case QPI::TRIANGLE:
-    return makeLeafItem<SchItemTriangle>(
-        topLevel, std::static_pointer_cast<ItemTriangle>(node->item()),
-        parentItem);
+    return makeLeafItem<SchItemTriangle>(topLevel,
+        std::static_pointer_cast<ItemTriangle>(node->item()), parentItem);
 
   case QPI::ZIGZAG:
-    return makeLeafItem<SchItemZigzag>(
-        topLevel, std::static_pointer_cast<ItemZigzag>(node->item()),
-        parentItem);
+    return makeLeafItem<SchItemZigzag>(topLevel,
+        std::static_pointer_cast<ItemZigzag>(node->item()), parentItem);
   case QPI::JUNCTION:
-    return makeLeafItem<SchItemJunction>(
-        topLevel, std::static_pointer_cast<ItemJunction>(node->item()),
-        parentItem);
+    return makeLeafItem<SchItemJunction>(topLevel,
+        std::static_pointer_cast<ItemJunction>(node->item()), parentItem);
   case QPI::COIL:
     return makeLeafItem<SchItemCoil>(
         topLevel, std::static_pointer_cast<ItemCoil>(node->item()), parentItem);
@@ -129,12 +124,25 @@ QGraphicsItem *buildComponent(const NodePtr &compNode) {
 
   // Flatten: see the design note in SchTreeBuilder.h.
   if (NodePtr symNode = compNode->findFirstOf(QPI::SYM))
-    for (const NodePtr &child : symNode->children()) buildLeaf(child, compItem);
+    for (const NodePtr &child : symNode->children()) {
+      QGraphicsItem *item = buildLeaf(child, compItem);
+      if (item == nullptr) continue;
+
+      // Inside a symbol, filled shapes paint in RECORD order with the
+      // line work, not beneath it: QSpice does, so a body drawn after a
+      // line covers it. An NE5532's supply-pin line runs through its
+      // filled triangle; QSpice shows only the stubs outside the body
+      // (TripleCompositeAmplifierwithCommon-emitterOutputStage.qsch,
+      // 2026-11-02). Equal-Z siblings paint in insertion order, which is
+      // the symbol's record order. Pins and text keep their layers above.
+      const qreal graphic = static_cast<qreal>(SchItemBase::kZGraphic);
+      if (item->zValue() < graphic) item->setZValue(graphic);
+    }
 
   return compItem;
 }
 
-} // namespace
+}   // namespace
 
 namespace SchTreeBuilder {
 
@@ -146,8 +154,8 @@ QList<QGraphicsItem *> buildTopLevelItems(const ItemTree &tree) {
 
   for (const NodePtr &child : root->children()) {
     QGraphicsItem *item = (child->getEnumID() == QPI::COMP)
-                              ? buildComponent(child)
-                              : buildLeaf(child, nullptr);
+        ? buildComponent(child)
+        : buildLeaf(child, nullptr);
     if (item != nullptr) items.append(item);
   }
 
@@ -158,6 +166,6 @@ void populateScene(const ItemTree &tree, QGraphicsScene *scene) {
   for (QGraphicsItem *item : buildTopLevelItems(tree)) scene->addItem(item);
 }
 
-} // namespace SchTreeBuilder
+}   // namespace SchTreeBuilder
 
-} // namespace sch::render
+}   // namespace sch::render

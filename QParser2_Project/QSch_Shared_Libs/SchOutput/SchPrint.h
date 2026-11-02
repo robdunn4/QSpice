@@ -14,7 +14,9 @@
 class QPainter;
 class QPrinter;
 
-namespace sch::render { class SchRenderSource; }
+namespace sch::render {
+class SchRenderSource;
+}
 
 namespace sch::output {
 
@@ -44,11 +46,11 @@ struct SchPrintSettings {
   static constexpr double kMinInch          = 0.10;
   static constexpr double kMaxInch          = 10.00;
 
-  Mode   mode       = Mode::VisibleFit;
+  Mode mode = Mode::VisibleFit;
 
   // The scale IN EFFECT -- what layout() and render() use. Usually the
   // saved scale; Fit changes this alone, for the dialog it is used in.
-  double mmPer1000  = kDefaultMmPer1000;
+  double mmPer1000 = kDefaultMmPer1000;
 
   // The scale the user chose (typed, stepped or reset) -- the one saved,
   // and the one every Print dialog starts from.
@@ -57,21 +59,21 @@ struct SchPrintSettings {
   bool   inchUnits  = false; // the scale SHOWN in inches (stored in mm)
   bool   autoOrient = false; // orientation needing the fewest pages
   bool   overlapOn  = true;
-  double overlapMm  = 6.0;  // shared strip between neighbouring pages
+  double overlapMm  = 6.0; // shared strip between neighboring pages
   bool   cropMarks  = true;
 
-  // The canvas colour behind the drawing, as on screen. Off, the paper
+  // The canvas color behind the drawing, as on screen. Off, the paper
   // shows through. Printing and PDF only: SVG export keeps its locked
   // background layer either way.
   bool   printBackground = true;
-  double minLineMm  = 0.1;  // thinnest printed line
-  int    maxPages   = 50;   // the largest page grid allowed, in pages
+  double minLineMm       = 0.1; // thinnest printed line
+  int    maxPages        = 50;  // the largest page grid allowed, in pages
 
   // Header and footer: each band on or off, and its three slots (left,
-  // centre, right) as templates of text and {fields} -- see
+  // center, right) as templates of text and {fields} -- see
   // SchPrintFields. A band that is off takes no space on the page.
-  bool    headerOn = true;
-  bool    footerOn = true;
+  bool    headerOn      = true;
+  bool    footerOn      = true;
   QString headerText[3] = {SchPrintFields::defaultHeaderLeft(),
                            SchPrintFields::defaultHeaderCenter(),
                            SchPrintFields::defaultHeaderRight()};
@@ -98,8 +100,12 @@ struct SchPrintSettings {
   static double quantizeScale(double mm, bool inch, bool roundDown = false);
 
   // The limits, in mm, for the unit.
-  static double minScaleMm(bool inch) { return inch ? kMinInch * kMmPerInch : kMinMm; }
-  static double maxScaleMm(bool inch) { return inch ? kMaxInch * kMmPerInch : kMaxMm; }
+  static double minScaleMm(bool inch) {
+    return inch ? kMinInch * kMmPerInch : kMinMm;
+  }
+  static double maxScaleMm(bool inch) {
+    return inch ? kMaxInch * kMmPerInch : kMaxMm;
+  }
 
   // Read from and written to `settingsFile`, an ini file, [Print]
   // group -- set by SchPrint from what its owner passed in. Empty: not
@@ -115,11 +121,11 @@ struct SchPrintSettings {
 // wait on one that is asleep. The same keys SchPrint::savePrinter() writes
 // and a new QPrinter is given (margins are left as they are).
 struct SchPrinterChoice {
-  QString printer;          // empty: the system's default printer
-  int     paperId    = -1;  // a QPageSize::PageSizeId; -1: none saved
+  QString printer;             // empty: the system's default printer
+  int     paperId       = -1;  // a QPageSize::PageSizeId; -1: none saved
   double  paperWidthMm  = 0.0; // for a custom size (paperId Custom)
   double  paperHeightMm = 0.0;
-  bool    landscape  = false;
+  bool    landscape     = false;
 
   static SchPrinterChoice load(const QString &settingsFile);
   void                    save(const QString &settingsFile) const;
@@ -138,13 +144,13 @@ struct SchPrintTile {
 
 struct SchPrintLayout {
   QList<SchPrintTile> tiles; // every grid cell, blank ones included
-  int    rows  = 1;
-  int    cols  = 1;
-  int    pages = 0;       // tiles with a page number
-  QRectF source;          // the scene area being printed
-  QRectF covered;         // the area the whole grid covers
-  QRectF body;            // the drawing area of a page, device pixels
-  double overlapPx = 0.0; // overlap on the page, device pixels
+  int                 rows  = 1;
+  int                 cols  = 1;
+  int                 pages = 0; // tiles with a page number
+  QRectF              source;    // the scene area being printed
+  QRectF              covered;   // the area the whole grid covers
+  QRectF              body;      // the drawing area of a page, device pixels
+  double              overlapPx = 0.0; // overlap on the page, device pixels
 
   // The grid would have exceeded SchPrintSettings::maxPages: rows and
   // cols say how big it would have been, and there are NO tiles -- an
@@ -160,12 +166,12 @@ struct SchPrintLayout {
 // schematic, fitted to one page or printed at a fixed scale -- 1000
 // schematic units = mmPer1000 on paper -- and tiled across as many pages
 // as that needs, with overlap and crop marks to join them. Pages with
-// nothing on them are skipped. Screen colours, background included; no
+// nothing on them are skipped. Screen colors, background included; no
 // grid, no highlights. Vector output. Lines are never thinner than
 // minLineMm on paper (SchPen::printMinDevicePx).
 //
 // A header and a footer frame each page, either or both switched off in
-// the settings: three slots each (left, centre, right), templates of
+// the settings: three slots each (left, center, right), templates of
 // text and {fields} (SchPrintFields; PrintHeaderFooterFields.md). By
 // default: file path left and file date right; page number left (when
 // there are several) and print date right.
@@ -219,11 +225,13 @@ public:
   // With autoOrient on: turns the printer to whichever orientation the
   // layout needs fewer pages in (fit modes: the larger drawing). Called
   // before laying out or painting.
-  static void chooseOrientation(QPrinter *printer, const sch::render::SchRenderSource *view,
-                                const SchPrintSettings &settings);
+  static void chooseOrientation(QPrinter                           *printer,
+                                const sch::render::SchRenderSource *view,
+                                const SchPrintSettings             &settings);
 
-  static SchPrintLayout layout(QPrinter *printer, const sch::render::SchRenderSource *view,
-                               const SchPrintSettings &settings);
+  static SchPrintLayout layout(QPrinter                           *printer,
+                               const sch::render::SchRenderSource *view,
+                               const SchPrintSettings             &settings);
 
   // Paints the layout's pages for which `include` is true, one printer
   // page each. A null `include` prints them all.
@@ -231,10 +239,11 @@ public:
   // `progress`, if given, is called before each page with the pages done
   // and the total, and once more at the end; returning false CANCELS --
   // the job is aborted and render() returns false.
-  static bool render(QPrinter *printer, const sch::render::SchRenderSource *view, const QString &title,
-                     const SchPrintSettings &settings,
-                     const std::function<bool(const SchPrintTile &)> &include,
-                     const std::function<bool(int done, int total)> &progress = nullptr);
+  static bool
+  render(QPrinter *printer, const sch::render::SchRenderSource *view,
+         const QString &title, const SchPrintSettings &settings,
+         const std::function<bool(const SchPrintTile &)> &include,
+         const std::function<bool(int done, int total)>  &progress = nullptr);
 
   // A real printer's margins raised, side by side, to at least the
   // printer's own minimum -- its unprintable border. A saved or typed
@@ -243,13 +252,14 @@ public:
   // anything changed. PDF output has no minimum and is left alone.
   static bool enforceMinimumMargins(QPrinter *printer);
 
-  // The drawing area of a page, in millimetres -- for "fit N pages wide".
+  // The drawing area of a page, in millimeters -- for "fit N pages wide".
   static QSizeF bodySizeMm(QPrinter *printer);
 
   // What the header/footer fields refer to, for one page of `layout`.
   // Public for the header/footer dialog's sample line.
-  static SchPrintContext context(const sch::render::SchRenderSource *view, const QString &title,
-                                 const SchPrintLayout &layout,
+  static SchPrintContext context(const sch::render::SchRenderSource *view,
+                                 const QString                      &title,
+                                 const SchPrintLayout               &layout,
                                  const SchPrintTile &tile, QPrinter *printer);
 
   // --- SVG export ---
@@ -259,31 +269,34 @@ public:
   // crop marks -- at the DEFAULT scale (25.4 mm per 1000 units), so it
   // imports at a known physical size. Whatever the print settings say
   // about mode and scale is ignored; the thinnest-line setting applies.
-  // Screen colours, canvas background, no grid or highlights, as in
+  // Screen colors, canvas background, no grid or highlights, as in
   // print.
   //
   // Writes the file, no questions asked: a LAYERED file for Inkscape
   // (SchSvgExport). False on failure. Asking where, and reporting a
-  // failure, are the program's (QSchEdit: MainWin::onExportSvg()) -- this class has
-  // no dialogs of its own.
+  // failure, are the program's (QSchEdit: MainWin::onExportSvg()) -- this class
+  // has no dialogs of its own.
   //
   // `creator` is the PROGRAM's name, written into the file's description
   // ("Exported by <creator> ..."); a library has no name of its own to
   // give.
-  static bool writeSvg(const QString &path, const sch::render::SchRenderSource *view, const QString &title,
-                       const SchPrintSettings &settings, const QString &creator);
+  static bool writeSvg(const QString                      &path,
+                       const sch::render::SchRenderSource *view,
+                       const QString &title, const SchPrintSettings &settings,
+                       const QString &creator);
 
 protected:
   struct PageText {
-    QString header[3]; // left, centre, right
+    QString header[3]; // left, center, right
     QString footer[3];
   };
 
-  static PageText pageText(const sch::render::SchRenderSource *view, const QString &title,
-                           const SchPrintLayout &layout, const SchPrintTile &tile,
-                           QPrinter *printer, const SchPrintSettings &settings);
+  static PageText pageText(const sch::render::SchRenderSource *view,
+                           const QString &title, const SchPrintLayout &layout,
+                           const SchPrintTile &tile, QPrinter *printer,
+                           const SchPrintSettings &settings);
 
-  // One band's three slots in `band`: the centre slot centred, the left
+  // One band's three slots in `band`: the center slot centered, the left
   // and right in what is left; anything too long is shortened in the
   // middle.
   static void drawBand(QPainter &painter, const QRectF &band,
@@ -294,7 +307,8 @@ protected:
   // band that is off).
   static SchPrintLayout layoutFor(const QSizeF &pageSize, double resolution,
                                   double headerBand, double footerBand,
-                                  const sch::render::SchRenderSource *view, const SchPrintSettings &settings);
+                                  const sch::render::SchRenderSource *view,
+                                  const SchPrintSettings             &settings);
 
   // Header/footer band height, device pixels, for this printer.
   static double bandHeight(QPrinter *printer);

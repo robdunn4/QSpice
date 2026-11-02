@@ -13,7 +13,7 @@ namespace sch::render {
 //   pt1, pt2  opposite corners of the ellipse's bounding box, in a frame
 //             rotated by (rotate x 45) degrees -- so an ODD rotation
 //             tilts the ellipse 45 degrees, and only the low bit shows
-//   pt3, pt4  start and end RAYS from the box centre; distance along the
+//   pt3, pt4  start and end RAYS from the box center; distance along the
 //             ray is ignored
 //
 // Drawn COUNTER-CLOCKWISE in QSpice's Y-up coordinates from the start ray
@@ -54,7 +54,7 @@ protected:
              QWidget *widget) override;
 
   // The dashed bounding box (tilted with an odd rotation), a dot at the
-  // centre the rays start from, and dashed rays out to the two ray
+  // center the rays start from, and dashed rays out to the two ray
   // handles.
   EditGuide editGuide() const override;
 
@@ -62,7 +62,7 @@ private:
   // The ellipse's frame, shared by the drawing and the edit guide so the
   // two cannot disagree about where the ellipse is.
   struct Frame {
-    QPointF centre;
+    QPointF center;
     double  cosT = 1.0;
     double  sinT = 0.0;
     double  a    = 0.0; // semi-axes, in the frame

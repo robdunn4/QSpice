@@ -4,9 +4,9 @@ namespace sch::render {
 
 namespace {
 
-RenderStyle currentStyle; // stock until someone sets it
+RenderStyle currentStyle;   // stock until someone sets it
 
-} // namespace
+}   // namespace
 
 const RenderStyle &RenderStyle::current() { return currentStyle; }
 
@@ -19,4 +19,4 @@ QColor RenderStyle::fromBgr(quint32 bgr) {
   return QColor(r, g, b);
 }
 
-} // namespace sch::render
+}   // namespace sch::render

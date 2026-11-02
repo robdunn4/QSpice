@@ -30,8 +30,8 @@
 //   component is called.
 namespace sch::core::refdes {
 
-// Records only: no scene, no QGraphicsItem. The editor maps items to their nodes and repaints what
-// changed -- see SchViewInteract::beginPlacement().
+// Records only: no scene, no QGraphicsItem. The editor maps items to their
+// nodes and repaints what changed -- see SchViewInteract::beginPlacement().
 
 // A component's designator RECORD: text record 0 inside its symbol
 // (positional, as every attribute is -- record 1 is the value). Null if
@@ -60,5 +60,20 @@ QString nextFree(const QString &prefix, QSet<QString> &taken);
 // name, or empty if nothing changed -- no designator, a cleared one, or
 // already the lowest free name.
 QString assign(const NodePtr &compNode, QSet<QString> &taken);
+
+// As assign(), but a designator that is not in `taken` is KEPT (and
+// reserved there); only one already taken is renamed, to the lowest free
+// name. For a schematic snippet (a .sch from a symbol folder), as QSpice
+// places one -- measured, 2026-10-24:
+//
+//   - into an empty schematic, every designator is kept as the .sch has
+//     it: C2, R5, R1, ...
+//   - dropped twice, the second copy's are all taken, so all are renamed
+//   - with an R5 already placed, the snippet's R5 became R1 -- its own R1
+//     not yet placed -- so its R1 became R2, and its R2 R3
+//
+// so components are taken in order, each against what is placed plus
+// what this run has already named: one collision can rename a chain.
+QString assignKeeping(const NodePtr &compNode, QSet<QString> &taken);
 
 } // namespace sch::core::refdes

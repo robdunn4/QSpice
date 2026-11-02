@@ -4,14 +4,14 @@
 #endif
 
 #include "SchItemComp.h"
-#include "RenderStyle.h"
-#include "SchColorDecode.h"
-#include "SchStringDecode.h"
-#include "SchItemPin.h"
-#include "SchPen.h"
-#include "SchItemWire.h"
 #include "ItemSym.h"
 #include "ItemType.h"
+#include "RenderStyle.h"
+#include "SchColorDecode.h"
+#include "SchItemPin.h"
+#include "SchItemWire.h"
+#include "SchPen.h"
+#include "SchStringDecode.h"
 
 #include <QPainter>
 #include <QTransform>
@@ -44,8 +44,9 @@ SchItemComp::SchItemComp(ItemCmpPtr item, QGraphicsItem *parent)
   // sqrt(2) scale that Qt's rotation API cannot express. Everything
   // else follows from this one matrix -- child geometry, pin positions
   // in scene coordinates, hit-testing and bounds all flow through it.
-  const int                   rotCode = item_->rotate.getValue();
-  const sch::core::rotdecode::RotMatrix m     = sch::core::rotdecode::rotMatrix(rotCode);
+  const int                             rotCode = item_->rotate.getValue();
+  const sch::core::rotdecode::RotMatrix m =
+      sch::core::rotdecode::rotMatrix(rotCode);
 
   // QTransform's constructor takes (m11, m12, m21, m22, dx, dy) with
   // its own row/column convention: Qt maps x' = m11*x + m21*y, so the
@@ -80,7 +81,8 @@ void SchItemComp::setOrientCode(int code) {
 
   // The transform is derived entirely from the code, so re-deriving it
   // is all that is needed -- children, pins and bounds all follow.
-  const sch::core::rotdecode::RotMatrix m = sch::core::rotdecode::rotMatrix(code);
+  const sch::core::rotdecode::RotMatrix m =
+      sch::core::rotdecode::rotMatrix(code);
   setTransform(QTransform(m.m11, m.m21, m.m12, m.m22, 0.0, 0.0));
 }
 
@@ -212,10 +214,9 @@ bool SchItemComp::firstTwoPins(Point &p0, Point &p1) const {
   // positional convention as ArgPinNdx and the refdes.
   QList<const SchItemPin *> pins;
 
-  for (const QGraphicsItem *child : childItems()) {
+  for (const QGraphicsItem *child : childItems())
     if (const SchItemPin *pin = dynamic_cast<const SchItemPin *>(child))
       pins.append(pin);
-  }
 
   if (pins.size() < 2) return false;
 
@@ -233,12 +234,12 @@ void SchItemComp::paint(QPainter *painter, const QStyleOptionGraphicsItem *,
   // --- Stuffed with a JUMPER ---
   //
   // The part is not fitted; a link is soldered across instead. So the
-  // symbol is drawn grey like any unstuffed component -- each element
+  // symbol is drawn gray like any unstuffed component -- each element
   // tints itself -- and a wire is drawn between its two pins.
   //
-  // Wire-coloured, NOT grey: it is a real connection, and drawn with
+  // Wire-colored, NOT gray: it is a real connection, and drawn with
   // the same pen SchItemWire uses so the two cannot look different.
-  // This is also why the grey is applied per element rather than by
+  // This is also why the gray is applied per element rather than by
   // tinting the whole component: a subtree tint would take the jumper
   // with it.
   //
@@ -247,7 +248,7 @@ void SchItemComp::paint(QPainter *painter, const QStyleOptionGraphicsItem *,
   if (stuffCode() == 2 && pinCount() == 2) {
     Point a, b;
     if (firstTwoPins(a, b)) {
-      // The wire's own pen, WIDENED: same colour and style, so it still
+      // The wire's own pen, WIDENED: same color and style, so it still
       // reads as a connection, but heavier so it reads as a deliberate
       // link rather than a wire that happens to run past.
       //
@@ -305,7 +306,7 @@ void SchItemComp::paint(QPainter *painter, const QStyleOptionGraphicsItem *,
   constexpr double kOffAxis   = 28.0; // off the axis
   constexpr double kArmLength = 9.0;
 
-  const QPointF centre(p0.x + axis.x() * kAlongPin + perp.x() * kOffAxis,
+  const QPointF center(p0.x + axis.x() * kAlongPin + perp.x() * kOffAxis,
                        p0.y + axis.y() * kAlongPin + perp.y() * kOffAxis);
 
   // Drawn along the symbol's own axes rather than the screen's, so the
@@ -316,22 +317,22 @@ void SchItemComp::paint(QPainter *painter, const QStyleOptionGraphicsItem *,
 
   painter->save();
 
-  QPen pen(SchColorDecode::fromArgColor(0x01000000,
-                                        RenderStyle::current().graphicAnnotation));
+  QPen pen(SchColorDecode::fromArgColor(
+      0x01000000, RenderStyle::current().graphicAnnotation));
   pen.setCosmetic(true);
   SchPen::enforcePrintMin(pen, painter);
   painter->setPen(pen);
 
-  painter->drawLine(centre - arm1, centre + arm1);
-  painter->drawLine(centre - arm2, centre + arm2);
+  painter->drawLine(center - arm1, center + arm1);
+  painter->drawLine(center - arm2, center + arm2);
 
   painter->restore();
 }
 
 SchItemBase::HitLevel SchItemComp::hitLevel(const QPointF &localPos,
-                                            double tolerance) const {
-  const QRectF body = elementRect().adjusted(-tolerance, -tolerance, tolerance,
-                                             tolerance);
+                                            double         tolerance) const {
+  const QRectF body =
+      elementRect().adjusted(-tolerance, -tolerance, tolerance, tolerance);
   if (body.contains(localPos)) return HitLevel::Body;
 
   for (const QGraphicsItem *child : childItems()) {

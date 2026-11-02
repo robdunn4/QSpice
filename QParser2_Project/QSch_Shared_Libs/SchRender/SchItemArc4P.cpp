@@ -66,9 +66,9 @@ SchItemArc4P::Frame SchItemArc4P::frame() const {
   f.cosT             = std::cos(theta);
   f.sinT             = std::sin(theta);
 
-  // The centre is the midpoint of the corners whatever the frame, so
+  // The center is the midpoint of the corners whatever the frame, so
   // there is no pivot to choose.
-  f.centre           = (p1 + p2) / 2.0;
+  f.center           = (p1 + p2) / 2.0;
   const QPointF diag = f.toFrame(p2 - p1);
 
   f.a = std::abs(diag.x()) / 2.0;
@@ -84,10 +84,10 @@ SchItemBase::EditGuide SchItemArc4P::editGuide() const {
   // The bounding box, drawn in the ellipse's own frame -- so for an odd
   // rotation it appears TILTED, which is the one place that otherwise
   // invisible property shows.
-  const QPointF c0 = f.centre + f.fromFrame(QPointF(-f.a, -f.b));
-  const QPointF c1 = f.centre + f.fromFrame(QPointF(f.a, -f.b));
-  const QPointF c2 = f.centre + f.fromFrame(QPointF(f.a, f.b));
-  const QPointF c3 = f.centre + f.fromFrame(QPointF(-f.a, f.b));
+  const QPointF c0 = f.center + f.fromFrame(QPointF(-f.a, -f.b));
+  const QPointF c1 = f.center + f.fromFrame(QPointF(f.a, -f.b));
+  const QPointF c2 = f.center + f.fromFrame(QPointF(f.a, f.b));
+  const QPointF c3 = f.center + f.fromFrame(QPointF(-f.a, f.b));
 
   guide.dashed.moveTo(c0);
   guide.dashed.lineTo(c1);
@@ -95,16 +95,16 @@ SchItemBase::EditGuide SchItemArc4P::editGuide() const {
   guide.dashed.lineTo(c3);
   guide.dashed.closeSubpath();
 
-  // The rays, from the centre out to their handles. Drawn to the HANDLE,
+  // The rays, from the center out to their handles. Drawn to the HANDLE,
   // not to the ellipse, because the handle is what is being dragged --
   // and seeing the ray keep its direction as the handle slides along it
   // is what shows that distance does not matter.
-  guide.dashed.moveTo(f.centre);
+  guide.dashed.moveTo(f.center);
   guide.dashed.lineTo(toQ(item_->pt3.getValue()));
-  guide.dashed.moveTo(f.centre);
+  guide.dashed.moveTo(f.center);
   guide.dashed.lineTo(toQ(item_->pt4.getValue()));
 
-  guide.dots.append(f.centre);
+  guide.dots.append(f.center);
   return guide;
 }
 
@@ -113,7 +113,7 @@ QPainterPath SchItemArc4P::arcPath() const {
   const QPointF pe = toQ(item_->pt4.getValue());
 
   const Frame   f      = frame();
-  const QPointF centre = f.centre;
+  const QPointF center = f.center;
   const double  a      = f.a;
   const double  b      = f.b;
 
@@ -128,9 +128,9 @@ QPainterPath SchItemArc4P::arcPath() const {
   // The RAY's direction sets the angle; how far along it the point sits
   // does not. Taking the angle of the point after scaling by the
   // semi-axes gives the ellipse's parametric angle -- which is exactly
-  // where the ray from the centre meets the ellipse.
+  // where the ray from the center meets the ellipse.
   const auto paramAngle = [&](const QPointF &p) {
-    const QPointF v = toFrame(p - centre);
+    const QPointF v = toFrame(p - center);
     return std::atan2(v.y() / b, v.x() / a);
   };
 
@@ -145,11 +145,12 @@ QPainterPath SchItemArc4P::arcPath() const {
   // GDI's Arc(), which would draw the full ellipse.
   if (sweep < kEps || (kTwoPi - sweep) < kEps) return QPainterPath();
 
-  const int samples = qMax(
-      kMinSamples, static_cast<int>(std::ceil(kSamplesPerTurn * sweep / kTwoPi)));
+  const int samples =
+      qMax(kMinSamples,
+           static_cast<int>(std::ceil(kSamplesPerTurn * sweep / kTwoPi)));
 
   const auto pointAt = [&](double t) {
-    return centre + fromFrame(QPointF(a * std::cos(t), b * std::sin(t)));
+    return center + fromFrame(QPointF(a * std::cos(t), b * std::sin(t)));
   };
 
   QPainterPath path(pointAt(start));
@@ -164,11 +165,10 @@ Rect SchItemArc4P::getRect() const noexcept {
 
   // Nothing drawn: the box itself, so the element can still be found
   // and selected rather than vanishing entirely.
-  const QRectF r = path.isEmpty()
-                       ? QRectF(toQ(item_->pt1.getValue()),
-                                toQ(item_->pt2.getValue()))
-                             .normalized()
-                       : path.boundingRect();
+  const QRectF r = path.isEmpty() ? QRectF(toQ(item_->pt1.getValue()),
+                                           toQ(item_->pt2.getValue()))
+                                        .normalized()
+                                  : path.boundingRect();
 
   return Rect(Point(static_cast<int>(std::floor(r.left())),
                     static_cast<int>(std::ceil(r.bottom()))),
@@ -184,11 +184,13 @@ void SchItemArc4P::moveTo(Point p) noexcept {
   prepareGeometryChange();
 
   // All four points move together, keeping their offsets from pt1 -- the
-  // rays are directions from the centre, which moves with the box.
+  // rays are directions from the center, which moves with the box.
   const Point o = item_->pt1.getValue();
   const Point d(p.x - o.x, p.y - o.y);
 
-  const auto shift = [&d](const Point &q) { return Point(q.x + d.x, q.y + d.y); };
+  const auto shift = [&d](const Point &q) {
+    return Point(q.x + d.x, q.y + d.y);
+  };
 
   item_->pt1.setValue(p);
   item_->pt2.setValue(shift(item_->pt2.getValue()));
@@ -215,11 +217,12 @@ void SchItemArc4P::paint(QPainter *painter, const QStyleOptionGraphicsItem *,
   const QPainterPath path = arcPath();
   if (path.isEmpty()) return;
 
-  QPen pen = SchPen::forElement(
-      painter,
-      tint(SchColorDecode::fromArgColor(item_->lineColor.getValue(),
-                                        RenderStyle::current().graphicAnnotation)),
-      item_->lineWidth.getValue(), item_->lineType.getValue());
+  QPen pen = SchPen::forElement(painter,
+                                tint(SchColorDecode::fromArgColor(
+                                    item_->lineColor.getValue(),
+                                    RenderStyle::current().graphicAnnotation)),
+                                item_->lineWidth.getValue(),
+                                item_->lineType.getValue());
   painter->setPen(pen);
   painter->setBrush(Qt::NoBrush);
 

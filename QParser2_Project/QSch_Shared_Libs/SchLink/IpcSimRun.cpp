@@ -1,6 +1,7 @@
 #ifdef _MSC_VER
 #pragma warning(push)
-#pragma warning(disable : 4996) // Qt headers reference APIs deprecated for Qt 7
+#pragma warning(                                                               \
+    disable : 4996)   // Qt headers reference APIs deprecated for Qt 7
 #endif
 
 #include "IpcSimRun.h"
@@ -36,11 +37,11 @@ constexpr int kQrawPollMs = 100;
 QString fileSafe(const QString &name) {
   QString safe = name;
   safe.replace(QRegularExpression(QStringLiteral(R"([<>:"/\\|?*\x00-\x1F])")),
-               QStringLiteral("_"));
+      QStringLiteral("_"));
   return safe.isEmpty() ? QStringLiteral("Untitled") : safe;
 }
 
-} // namespace
+}   // namespace
 
 IpcSimRun::IpcSimRun(QObject *parent) : QObject(parent) {}
 
@@ -68,24 +69,26 @@ void IpcSimRun::start(const Params &p) {
   if (!params.schPath.isEmpty()) {
     const QFileInfo info(params.schPath);
     schArg = info.absoluteFilePath();
-    qraw   = info.dir().filePath(info.completeBaseName() + QStringLiteral(".qraw"));
+    qraw =
+        info.dir().filePath(info.completeBaseName() + QStringLiteral(".qraw"));
   } else {
     const QString base = fileSafe(QFileInfo(params.title).completeBaseName());
-    schArg = QDir::temp().filePath(base + QStringLiteral(".qsch"));
-    qraw   = QDir::temp().filePath(base + QStringLiteral(".qraw"));
+    schArg             = QDir::temp().filePath(base + QStringLiteral(".qsch"));
+    qraw               = QDir::temp().filePath(base + QStringLiteral(".qraw"));
   }
 
   netlistRun = new NetlistRun(params.tempPrefix, this);
 
   connect(netlistRun, &NetlistRun::succeeded, this,
-          [this](const QByteArray &bytes, const QString &, const QString &) {
-            onNetlist(bytes);
-          });
+      [this](const QByteArray &bytes, const QString &, const QString &) {
+        onNetlist(bytes);
+      });
   connect(netlistRun, &NetlistRun::failed, this,
-          [this](const QString &message) { onNetlistFailed(message); });
+      [this](const QString &message) { onNetlistFailed(message); });
 
-  netlistRun->start(params.quxExe, params.schPath, params.title,
-                    params.content, params.libPaths);
+  netlistRun->setDependents(params.dependents);
+  netlistRun->start(params.quxExe, params.schPath, params.title, params.content,
+      params.libPaths);
 }
 
 void IpcSimRun::abort() {
@@ -145,14 +148,14 @@ void IpcSimRun::startSim() {
   qrawReady  = false;
 
   sim = launch(params.simExe, args);
-  if (!running) return; // failed to start
+  if (!running) return;   // failed to start
 
   simProcessId = sim->processId();
 
   connect(sim, &QProcess::finished, this,
-          [this](int exitCode, QProcess::ExitStatus status) {
-            onSimFinished(exitCode, status);
-          });
+      [this](int exitCode, QProcess::ExitStatus status) {
+        onSimFinished(exitCode, status);
+      });
 
   qrawTimer = new QTimer(this);
   qrawTimer->setInterval(kQrawPollMs);
@@ -192,8 +195,8 @@ void IpcSimRun::onSimFinished(int exitCode, QProcess::ExitStatus status) {
   // The simulator prints its own summary; only a failure is worth adding.
   if (exitCode != 0)
     note(tr("%1 exit code %2.")
-             .arg(QFileInfo(params.simExe).fileName())
-             .arg(exitCode));
+            .arg(QFileInfo(params.simExe).fileName())
+            .arg(exitCode));
 
   // Too quick for the timer: the viewer still gets its data.
   checkQraw();
@@ -217,9 +220,9 @@ void IpcSimRun::startPost() {
   post = launch(params.qpostExe, args);
 
   connect(post, &QProcess::finished, this,
-          [this](int exitCode, QProcess::ExitStatus status) {
-            onPostFinished(exitCode, status);
-          });
+      [this](int exitCode, QProcess::ExitStatus status) {
+        onPostFinished(exitCode, status);
+      });
 }
 
 void IpcSimRun::onPostFinished(int exitCode, QProcess::ExitStatus status) {
@@ -230,8 +233,7 @@ void IpcSimRun::onPostFinished(int exitCode, QProcess::ExitStatus status) {
     return;
   }
 
-  if (status == QProcess::CrashExit)
-    note(tr("QPOST.exe crashed."), true);
+  if (status == QProcess::CrashExit) note(tr("QPOST.exe crashed."), true);
   else if (exitCode != 0)
     note(tr("QPOST.exe exit code %1.").arg(exitCode), true);
 
@@ -257,24 +259,27 @@ QProcess *IpcSimRun::launch(const QString &exe, const QStringList &args) {
   // Console programs: no console window of their own. Their text comes
   // as window messages anyway.
   process->setCreateProcessArgumentsModifier(
-      [](QProcess::CreateProcessArguments *a) { a->flags |= CREATE_NO_WINDOW; });
+      [](QProcess::CreateProcessArguments *a) {
+        a->flags |= CREATE_NO_WINDOW;
+      });
 #endif
 
   // Drained as it arrives -- an unread pipe that fills would stall the
   // process -- and kept for noteOutput().
   connect(process, &QProcess::readyRead, process, [process]() {
     const QByteArray more = process->readAll();
-    process->setProperty("ipcOut", process->property("ipcOut").toByteArray() + more);
+    process->setProperty(
+        "ipcOut", process->property("ipcOut").toByteArray() + more);
   });
 
   connect(process, &QProcess::errorOccurred, this,
-          [this, process, exe](QProcess::ProcessError error) {
-            if (error != QProcess::FailedToStart) return;
-            note(tr("Could not start %1: %2")
-                     .arg(QDir::toNativeSeparators(exe), process->errorString()),
-                 exe == params.qpostExe); // `post` is not set yet
-            finish(Outcome::Failed);
-          });
+      [this, process, exe](QProcess::ProcessError error) {
+        if (error != QProcess::FailedToStart) return;
+        note(tr("Could not start %1: %2")
+                 .arg(QDir::toNativeSeparators(exe), process->errorString()),
+            exe == params.qpostExe);   // `post` is not set yet
+        finish(Outcome::Failed);
+      });
 
   process->start();
 
@@ -296,11 +301,12 @@ void IpcSimRun::note(const QString &line, bool toPost) {
 void IpcSimRun::noteOutput(QProcess *process, bool toPost) {
   if (process == nullptr) return;
 
-  QByteArray out = process->property("ipcOut").toByteArray() + process->readAll();
-  out            = out.trimmed();
+  QByteArray out =
+      process->property("ipcOut").toByteArray() + process->readAll();
+  out = out.trimmed();
   if (out.isEmpty()) return;
 
   note(sch::core::decodeCp1252(out), toPost);
 }
 
-} // namespace sch::link
+}   // namespace sch::link

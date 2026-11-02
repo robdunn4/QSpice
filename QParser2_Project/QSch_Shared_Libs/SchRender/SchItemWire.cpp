@@ -17,12 +17,12 @@
 #pragma warning(pop)
 #endif
 
-#include <QGraphicsScene>
-#include <cmath>
+#include "RenderStyle.h"
 #include "SchBus.h"
 #include "SchPointKey.h"
 #include "SchScene.h"
-#include "RenderStyle.h"
+#include <QGraphicsScene>
+#include <cmath>
 
 #include <utility>
 
@@ -47,7 +47,6 @@ inline double busWidthUnits() {
 
 } // namespace
 
-
 SchItemWire::SchItemWire(ItemWirePtr item, QGraphicsItem *parent)
     : SchItemBase(parent), item_(std::move(item)) {
   // Only truly top-level items are independently selectable/movable --
@@ -69,7 +68,7 @@ Rect SchItemWire::getRect() const noexcept {
 
   // A BUS is as wide as it is drawn, so the selection outline, the band
   // test and the repaint bounds all follow the visible bar rather than
-  // its centreline. Rounded up, so nothing drawn falls outside.
+  // its centerline. Rounded up, so nothing drawn falls outside.
   const int half = static_cast<int>(std::ceil(busWidthUnits() / 2.0));
   return Rect(line.left - half, line.top + half, line.right + half,
               line.bottom - half);
@@ -161,7 +160,7 @@ constexpr double kLooseEndBoxPx = 3.0;
 } // namespace
 
 QPen SchItemWire::wirePen() {
-  // TODO: no net-name-based colouring/highlighting yet, and width and
+  // TODO: no net-name-based coloring/highlighting yet, and width and
   // style are not configurable yet either -- CADlineWidth is read from
   // the registry but not applied. When they are, this is the one place
   // that changes.
@@ -176,7 +175,8 @@ QPen SchItemWire::wirePen(const QPainter *painter) {
   // On screen a wire is a constant one-pixel line (wirePen()). That is a
   // SCREEN convention: on paper and in SVG it came out at the minimum
   // line width, visibly thinner than every symbol's lines.
-  if (SchPen::printMinDevicePx <= 0.0 && !SchPen::vectorExport) return wirePen();
+  if (SchPen::printMinDevicePx <= 0.0 && !SchPen::vectorExport)
+    return wirePen();
 
   QPen pen = SchPen::forElement(painter, RenderStyle::current().wire, 0, 0);
   pen.setCapStyle(Qt::RoundCap);
@@ -220,8 +220,7 @@ void SchItemWire::paint(QPainter *painter, const QStyleOptionGraphicsItem *,
   // rotation.
   const QTransform xform = painter->transform();
   const double     scale = std::hypot(xform.m11(), xform.m12());
-  const double     half =
-      (scale > 0.0) ? (kLooseEndBoxPx / scale) : kLooseEndBoxPx;
+  const double half = (scale > 0.0) ? (kLooseEndBoxPx / scale) : kLooseEndBoxPx;
 
   QPen boxPen(Qt::black);
   boxPen.setCosmetic(true);

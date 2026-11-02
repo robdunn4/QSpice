@@ -4,7 +4,7 @@
 
 namespace sch::render {
 
-// A filled/outlined triangle -- three points, line and fill colours.
+// A filled/outlined triangle -- three points, line and fill colors.
 //
 // This class did not exist until triangles became placeable. Stock
 // symbols use them (the NPN's arrowhead is one), and QParser2 parsed
@@ -13,7 +13,7 @@ namespace sch::render {
 class SchItemTriangle : public SchItemBase {
 public:
   explicit SchItemTriangle(ItemTrianglePtr item,
-                           QGraphicsItem *parent = nullptr);
+                           QGraphicsItem  *parent = nullptr);
 
   Rect  getRect() const noexcept override;
   Point getPosition() const noexcept override;

@@ -42,10 +42,10 @@ public:
 
 protected:
   void paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
-             QWidget *widget) override;
+      QWidget *widget) override;
 
 private:
   ItemArc3pPtr item_;
 };
 
-} // namespace sch::render
+}   // namespace sch::render

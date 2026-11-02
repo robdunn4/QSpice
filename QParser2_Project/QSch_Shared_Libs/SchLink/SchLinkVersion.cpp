@@ -2,6 +2,6 @@
 
 namespace sch::link {
 
-LibraryInfo libraryInfo() { return LibraryInfo{"SchLink", "0.1.1"}; }
+LibraryInfo libraryInfo() { return LibraryInfo{"SchLink", "0.1.12"}; }
 
 } // namespace sch::link

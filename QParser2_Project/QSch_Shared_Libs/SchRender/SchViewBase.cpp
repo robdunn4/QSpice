@@ -62,7 +62,7 @@ void drawGridCrosses(QPainter *painter, const QRectF &rect, qreal spacing,
   painter->setPen(pen);
   painter->setBrush(Qt::NoBrush);
 
-  // Widened by an arm on every side: a cross centred just outside the
+  // Widened by an arm on every side: a cross centered just outside the
   // repainted area still reaches into it, and skipping it would leave
   // half a cross behind after a partial repaint.
   const QRectF area = rect.adjusted(-arm, -arm, arm, arm);
@@ -99,11 +99,15 @@ void drawGridDots(QPainter *painter, const QRectF &rect, qreal spacing,
 }
 
 // `from`, moved `towardBackground` of the way to `background`.
-QColor blendColor(const QColor &from, const QColor &background, double towardBackground) {
+QColor blendColor(const QColor &from, const QColor &background,
+                  double towardBackground) {
   const double keep = 1.0 - towardBackground;
-  return QColor(static_cast<int>(from.red() * keep + background.red() * towardBackground),
-                static_cast<int>(from.green() * keep + background.green() * towardBackground),
-                static_cast<int>(from.blue() * keep + background.blue() * towardBackground));
+  return QColor(
+      static_cast<int>(from.red() * keep + background.red() * towardBackground),
+      static_cast<int>(from.green() * keep +
+                       background.green() * towardBackground),
+      static_cast<int>(from.blue() * keep +
+                       background.blue() * towardBackground));
 }
 
 } // namespace
@@ -119,7 +123,7 @@ SchViewBase::SchViewBase(QWidget *parent) : QGraphicsView(parent) {
   setDragMode(QGraphicsView::NoDrag);
   setTransformationAnchor(QGraphicsView::AnchorUnderMouse);
 
-  // QSpice's configured canvas colour, so a schematic looks the same
+  // QSpice's configured canvas color, so a schematic looks the same
   // here as it does there.
   setBackgroundBrush(RenderStyle::current().background);
 
@@ -170,7 +174,9 @@ void SchViewBase::setTree(ItemTree tree) {
   treeChanged();
 }
 
-SchScene *SchViewBase::schScene() const { return static_cast<SchScene *>(scene()); }
+SchScene *SchViewBase::schScene() const {
+  return static_cast<SchScene *>(scene());
+}
 
 void SchViewBase::invalidateNetModel() {
   if (SchScene *sc = schScene()) sc->invalidateNetModel();
@@ -199,7 +205,7 @@ void SchViewBase::applyNewViewZoom() {
   xform.scale(pixelsPerUnit, -pixelsPerUnit);
   setTransform(xform);
 
-  // Room to pan around the whole visible area, then centred on the
+  // Room to pan around the whole visible area, then centered on the
   // origin, where new content lands. The placeholder scene rect is
   // narrower than the default width, and a scene rect smaller than the
   // view would clamp centerOn().
@@ -226,15 +232,16 @@ void SchViewBase::zoomToFit() {
   // The scene RECT -- not itemsBoundingRect() -- governs the scrollbar
   // range and how far panning and centerOn() can move. Left at the
   // placeholder, content larger than it could not be scrolled to, and
-  // fitInView()'s centring was clamped. Reset here on every fit, with a
+  // fitInView()'s centering was clamped. Reset here on every fit, with a
   // generous margin (half the content's own size each side).
   const qreal sceneMarginX = contentRect.width() * 0.5;
   const qreal sceneMarginY = contentRect.height() * 0.5;
-  scene()->setSceneRect(
-      contentRect.adjusted(-sceneMarginX, -sceneMarginY, sceneMarginX, sceneMarginY));
+  scene()->setSceneRect(contentRect.adjusted(-sceneMarginX, -sceneMarginY,
+                                             sceneMarginX, sceneMarginY));
 
   constexpr qreal kMargin = 20.0;
-  fitInView(contentRect.adjusted(-kMargin, -kMargin, kMargin, kMargin), Qt::KeepAspectRatio);
+  fitInView(contentRect.adjusted(-kMargin, -kMargin, kMargin, kMargin),
+            Qt::KeepAspectRatio);
 
   // The rect set above is the only place it ever shrinks; topped up here
   // so the fitted view still has pan room on all sides.
@@ -269,7 +276,8 @@ void SchViewBase::zoomStep(bool zoomIn) {
 }
 
 void SchViewBase::wheelZoom(QWheelEvent *event) {
-  zoomBy(event->angleDelta().y() > 0 ? kZoomStepFactor : (1.0 / kZoomStepFactor));
+  zoomBy(event->angleDelta().y() > 0 ? kZoomStepFactor
+                                     : (1.0 / kZoomStepFactor));
   event->accept();
 }
 
@@ -281,8 +289,8 @@ void SchViewBase::ensurePanRoom() {
 
   // One full viewport of slack on each side: enough that a single drag
   // cannot run out of room, without making the scrollbar thumb tiny.
-  const QRectF needed =
-      visible.adjusted(-visible.width(), -visible.height(), visible.width(), visible.height());
+  const QRectF needed = visible.adjusted(-visible.width(), -visible.height(),
+                                         visible.width(), visible.height());
 
   const QRectF current = scene()->sceneRect();
   if (current.contains(needed)) return;
@@ -294,7 +302,8 @@ void SchViewBase::refreshTextDisplay() {
   if (scene() == nullptr) return;
 
   for (QGraphicsItem *item : scene()->items())
-    if (SchItemBase *schItem = dynamic_cast<SchItemBase *>(item)) schItem->displayChanged();
+    if (SchItemBase *schItem = dynamic_cast<SchItemBase *>(item))
+      schItem->displayChanged();
 
   viewport()->update();
 }
@@ -363,16 +372,19 @@ void SchViewBase::drawBackground(QPainter *painter, const QRectF &rect) {
   // Each tier fades by its OWN on-screen spacing, so zooming out loses
   // the 10-unit dots first, then the 100-unit dots, then the 1000-unit
   // crosses, and nothing is left when even those would be a smear.
-  const qreal minPixels    = opts.gridMinDevicePixels;
-  const qreal fineOpacity  = gridTierOpacity(kFineGridSpacing * deviceScale, minPixels);
-  const qreal minorOpacity = gridTierOpacity(kMinorGridSpacing * deviceScale, minPixels);
-  const qreal majorOpacity = gridTierOpacity(kMajorGridSpacing * deviceScale, minPixels);
+  const qreal minPixels = opts.gridMinDevicePixels;
+  const qreal fineOpacity =
+      gridTierOpacity(kFineGridSpacing * deviceScale, minPixels);
+  const qreal minorOpacity =
+      gridTierOpacity(kMinorGridSpacing * deviceScale, minPixels);
+  const qreal majorOpacity =
+      gridTierOpacity(kMajorGridSpacing * deviceScale, minPixels);
 
   if (majorOpacity <= 0.0) return; // nothing left to show
 
-  // Derived from QSpice's own grid colour (CADbomberSight) rather than
-  // fixed greys, so the grid stays legible against whichever background
-  // is configured. QSpice stores ONE grid colour; the three tiers are
+  // Derived from QSpice's own grid color (CADbomberSight) rather than
+  // fixed grays, so the grid stays legible against whichever background
+  // is configured. QSpice stores ONE grid color; the three tiers are
   // ours, each blended part-way toward the background -- the finest the
   // most -- so the grid stays behind the schematic.
   const QColor baseGridColor = RenderStyle::current().grid;
@@ -396,12 +408,15 @@ void SchViewBase::drawBackground(QPainter *painter, const QRectF &rect) {
   // Finest first, so each coarser mark draws over the finer ones it
   // coincides with.
   if (fineOpacity > 0.0)
-    drawGridDots(painter, rect, kFineGridSpacing, fineDotColor, kFineDotRadius, deviceScale);
+    drawGridDots(painter, rect, kFineGridSpacing, fineDotColor, kFineDotRadius,
+                 deviceScale);
 
   if (minorOpacity > 0.0)
-    drawGridDots(painter, rect, kMinorGridSpacing, minorDotColor, kMinorDotRadius, deviceScale);
+    drawGridDots(painter, rect, kMinorGridSpacing, minorDotColor,
+                 kMinorDotRadius, deviceScale);
 
-  drawGridCrosses(painter, rect, kMajorGridSpacing, majorColor, kMajorCrossArm, deviceScale);
+  drawGridCrosses(painter, rect, kMajorGridSpacing, majorColor, kMajorCrossArm,
+                  deviceScale);
 
   painter->restore();
 }

@@ -21,6 +21,7 @@
 #include "SchCoreVersion.h"
 #include "SchLinkVersion.h"
 #include "SchOutputVersion.h"
+#include "SchProgAttrVersion.h"
 #include "SchRenderVersion.h"
 
 namespace sch::app {
@@ -37,29 +38,35 @@ QString libraryVersionsHtml() {
     const char *version;
   };
 
-  const qparser2::LibraryInfo    parser = qparser2::libraryInfo();
-  const sch::core::LibraryInfo   core   = sch::core::libraryInfo();
-  const sch::link::LibraryInfo   link   = sch::link::libraryInfo();
-  const sch::render::LibraryInfo render = sch::render::libraryInfo();
-  const sch::output::LibraryInfo output = sch::output::libraryInfo();
-  const sch::app::LibraryInfo    app    = sch::app::libraryInfo();
+  const qparser2::LibraryInfo      parser   = qparser2::libraryInfo();
+  const sch::core::LibraryInfo     core     = sch::core::libraryInfo();
+  const sch::link::LibraryInfo     link     = sch::link::libraryInfo();
+  const sch::render::LibraryInfo   render   = sch::render::libraryInfo();
+  const sch::output::LibraryInfo   output   = sch::output::libraryInfo();
+  const sch::app::LibraryInfo      app      = sch::app::libraryInfo();
+  const sch::progattr::LibraryInfo progAttr = sch::progattr::libraryInfo();
 
   const Row rows[] = {
-      {parser.name, parser.version}, {core.name, core.version},     {link.name, link.version},
-      {render.name, render.version}, {output.name, output.version}, {app.name, app.version},
+      {parser.name, parser.version},     {core.name, core.version},
+      {progAttr.name, progAttr.version}, {link.name, link.version},
+      {render.name, render.version},     {output.name, output.version},
+      {app.name, app.version},
   };
 
   // Starts with a tag, so QMessageBox takes it as rich text.
-  QString html = QStringLiteral("<p>%1</p><table>").arg(QObject::tr("Shared libraries:"));
+  QString html =
+      QStringLiteral("<p>%1</p><table>").arg(QObject::tr("Shared libraries:"));
   for (const Row &row : rows)
-    html += QStringLiteral("<tr><td>%1</td><td style=\"padding-left:16px\">%2</td></tr>")
+    html += QStringLiteral(
+                "<tr><td>%1</td><td style=\"padding-left:16px\">%2</td></tr>")
                 .arg(QString::fromLatin1(row.name).toHtmlEscaped(),
                      QString::fromLatin1(row.version).toHtmlEscaped());
   html += QStringLiteral("</table>");
   return html;
 }
 
-void showAbout(QWidget *parent, const QString &programName, const QString &version) {
+void showAbout(QWidget *parent, const QString &programName,
+               const QString &version) {
   QMessageBox box(parent);
   box.setWindowTitle(QObject::tr("About %1").arg(programName));
   box.setText(QObject::tr("%1\nVersion %2").arg(programName, version));
@@ -67,10 +74,8 @@ void showAbout(QWidget *parent, const QString &programName, const QString &versi
 
   // The standard information icon if the program's own cannot be loaded.
   const QPixmap icon = appIconPixmap(kAboutIconPx);
-  if (icon.isNull())
-    box.setIcon(QMessageBox::Information);
-  else
-    box.setIconPixmap(icon);
+  if (icon.isNull()) box.setIcon(QMessageBox::Information);
+  else box.setIconPixmap(icon);
 
   box.exec();
 }

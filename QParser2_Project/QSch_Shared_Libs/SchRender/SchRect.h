@@ -47,15 +47,15 @@ struct Rect {
   // Returns a new Rect expanded as needed to include p.
   [[nodiscard]] constexpr Rect merge(Point p) const noexcept {
     return Rect(std::min(left, p.x), std::max(top, p.y), std::max(right, p.x),
-                std::min(bottom, p.y));
+        std::min(bottom, p.y));
   }
 
   // Returns the bounding Rect of *this and r -- e.g. for a future
   // "component selection box = union of its children" enhancement.
   [[nodiscard]] constexpr Rect merge(Rect r) const noexcept {
     return Rect(std::min(left, r.left), std::max(top, r.top),
-                std::max(right, r.right), std::min(bottom, r.bottom));
+        std::max(right, r.right), std::min(bottom, r.bottom));
   }
 };
 
-} // namespace sch::render
+}   // namespace sch::render

@@ -1,6 +1,7 @@
 #ifdef _MSC_VER
 #pragma warning(push)
-#pragma warning(disable : 4996) // Qt headers reference APIs deprecated for Qt 7
+#pragma warning(                                                               \
+    disable : 4996)   // Qt headers reference APIs deprecated for Qt 7
 #endif
 
 #include "SchConnDump.h"
@@ -24,9 +25,13 @@
 namespace sch::core {
 namespace {
 
-QString pt(const PointKey &p) { return QStringLiteral("(%1,%2)").arg(p.x).arg(p.y); }
+QString pt(const PointKey &p) {
+  return QStringLiteral("(%1,%2)").arg(p.x).arg(p.y);
+}
 
-QString quoted(const QString &text) { return QLatin1Char('"') + text + QLatin1Char('"'); }
+QString quoted(const QString &text) {
+  return QLatin1Char('"') + text + QLatin1Char('"');
+}
 
 // A point's sort order: x, then y.
 bool pointLess(const PointKey &a, const PointKey &b) {
@@ -53,22 +58,22 @@ struct BusSeg {
 // being retired a second producer fed the same format, so the two could
 // differ only in what they FOUND.)
 struct Facts {
-  int wires      = 0; // non-bus
-  int buses      = 0;
-  int comps      = 0;
-  int compPins   = 0;
-  int sheetPins  = 0;
-  int labels     = 0;
-  int junctions  = 0;
-  int taps       = 0;
+  int wires     = 0;   // non-bus
+  int buses     = 0;
+  int comps     = 0;
+  int compPins  = 0;
+  int sheetPins = 0;
+  int labels    = 0;
+  int junctions = 0;
+  int taps      = 0;
 
-  QList<NetFacts>      nets; // every group; format() keeps the nets
+  QList<NetFacts>      nets;   // every group; format() keeps the nets
   QHash<PointKey, int> wireEnds;
   QList<PointKey>      junctionsPresent;
-  QStringList          unconnected; // pinText() + point
+  QStringList          unconnected;   // pinText() + point
   QList<PointKey>      looseEnds;
   QList<BusSeg>        busSegs;
-  QStringList          refdes; // empty for none
+  QStringList          refdes;   // empty for none
 };
 
 // "R1.2 \"IN-\"": designator, 1-based pin number in the symbol's record
@@ -90,13 +95,17 @@ QString pinMember(const QString &text, const PointKey &p, bool internal) {
       .arg(text, pt(p), internal ? QStringLiteral(" internal") : QString());
 }
 
-QString sheetPinMember(const PointKey &p) { return QStringLiteral("pin  (sheet) %1").arg(pt(p)); }
+QString sheetPinMember(const PointKey &p) {
+  return QStringLiteral("pin  (sheet) %1").arg(pt(p));
+}
 
 QString labelMember(const QString &name, const PointKey &p) {
   return QStringLiteral("label %1 %2").arg(quoted(name), pt(p));
 }
 
-QString tapMember(const PointKey &p) { return QStringLiteral("tap  %1").arg(pt(p)); }
+QString tapMember(const PointKey &p) {
+  return QStringLiteral("tap  %1").arg(pt(p));
+}
 
 QStringList sorted(QStringList list) {
   std::sort(list.begin(), list.end());
@@ -113,8 +122,9 @@ QString joinNames(const QSet<QString> &names) {
 QString format(const Facts &facts, const QString &fileName) {
   QString out;
   out += QStringLiteral("# Connectivity dump -- %1\n").arg(fileName);
-  out += QStringLiteral("# wires %1 (buses %2), components %3, component pins %4, "
-                        "sheet pins %5, net labels %6, junctions %7, taps %8\n")
+  out += QStringLiteral(
+      "# wires %1 (buses %2), components %3, component pins %4, "
+      "sheet pins %5, net labels %6, junctions %7, taps %8\n")
              .arg(facts.wires)
              .arg(facts.buses)
              .arg(facts.comps)
@@ -132,23 +142,26 @@ QString format(const Facts &facts, const QString &fileName) {
     net.members = sorted(net.members);
     listed.append(net);
   }
-  std::sort(listed.begin(), listed.end(), [](const NetFacts &a, const NetFacts &b) {
-    return a.members.first() < b.members.first();
-  });
+  std::sort(
+      listed.begin(), listed.end(), [](const NetFacts &a, const NetFacts &b) {
+        return a.members.first() < b.members.first();
+      });
 
   out += QStringLiteral("\n[nets] %1\n").arg(listed.size());
   for (int i = 0; i < listed.size(); ++i) {
     out += QStringLiteral("net %1  wires: %2  labels: %3\n")
                .arg(i + 1)
-               .arg(joinNames(listed[i].wireNames), joinNames(listed[i].labelNames));
-    for (const QString &member : listed[i].members) out += QStringLiteral("  ") + member + '\n';
+               .arg(joinNames(listed[i].wireNames),
+                   joinNames(listed[i].labelNames));
+    for (const QString &member : listed[i].members)
+      out += QStringLiteral("  ") + member + '\n';
   }
 
   // --- Junctions: required (three or more non-bus wire endpoints) and
   // present (records), and where they disagree.
   QList<PointKey> required;
   for (QHash<PointKey, int>::const_iterator it = facts.wireEnds.constBegin();
-       it != facts.wireEnds.constEnd(); ++it)
+      it != facts.wireEnds.constEnd(); ++it)
     if (it.value() >= kJunctionMinEndpoints) required.append(it.key());
   std::sort(required.begin(), required.end(), pointLess);
 
@@ -157,25 +170,32 @@ QString format(const Facts &facts, const QString &fileName) {
 
   out += QStringLiteral("\n[junctions required] %1\n").arg(required.size());
   for (const PointKey &p : required)
-    out += QStringLiteral("  %1  wire ends %2\n").arg(pt(p)).arg(facts.wireEnds.value(p));
+    out += QStringLiteral("  %1  wire ends %2\n")
+               .arg(pt(p))
+               .arg(facts.wireEnds.value(p));
 
   out += QStringLiteral("\n[junctions present] %1\n").arg(present.size());
   for (const PointKey &p : present) out += QStringLiteral("  %1\n").arg(pt(p));
 
   QStringList mismatch;
   for (const PointKey &p : required)
-    if (!present.contains(p)) mismatch << QStringLiteral("  missing %1").arg(pt(p));
+    if (!present.contains(p))
+      mismatch << QStringLiteral("  missing %1").arg(pt(p));
   for (const PointKey &p : present)
-    if (!required.contains(p)) mismatch << QStringLiteral("  extra   %1").arg(pt(p));
+    if (!required.contains(p))
+      mismatch << QStringLiteral("  extra   %1").arg(pt(p));
   out += QStringLiteral("\n[junction mismatches] %1\n").arg(mismatch.size());
   for (const QString &line : sorted(mismatch)) out += line + '\n';
 
   // --- Unconnected pins and loose wire ends: what the marks show.
-  out += QStringLiteral("\n[unconnected pins] %1\n").arg(facts.unconnected.size());
-  for (const QString &line : sorted(facts.unconnected)) out += QStringLiteral("  ") + line + '\n';
+  out +=
+      QStringLiteral("\n[unconnected pins] %1\n").arg(facts.unconnected.size());
+  for (const QString &line : sorted(facts.unconnected))
+    out += QStringLiteral("  ") + line + '\n';
 
   QStringList loose;
-  for (const PointKey &p : facts.looseEnds) loose << QStringLiteral("  %1").arg(pt(p));
+  for (const PointKey &p : facts.looseEnds)
+    loose << QStringLiteral("  %1").arg(pt(p));
   out += QStringLiteral("\n[loose wire ends] %1\n").arg(loose.size());
   for (const QString &line : sorted(loose)) out += line + '\n';
 
@@ -187,7 +207,7 @@ QString format(const Facts &facts, const QString &fileName) {
   }
   out += QStringLiteral("\n[buses] %1\n").arg(buses.size());
   for (QMap<QString, QStringList>::const_iterator it = buses.constBegin();
-       it != buses.constEnd(); ++it) {
+      it != buses.constEnd(); ++it) {
     out += QStringLiteral("bus %1\n").arg(quoted(it.key()));
     for (const QString &line : sorted(it.value())) out += line + '\n';
   }
@@ -203,13 +223,15 @@ QString format(const Facts &facts, const QString &fileName) {
   out += QStringLiteral("\n[designators] %1\n").arg(refdes.size());
   for (const QString &name : refdes)
     out += QStringLiteral("  %1%2\n")
-               .arg(name, seen.value(name.toLower(), 0) > 1 ? QStringLiteral("  DUPLICATE")
-                                                            : QString());
+               .arg(name,
+                   seen.value(name.toLower(), 0) > 1
+                       ? QStringLiteral("  DUPLICATE")
+                       : QString());
 
   return out;
 }
 
-} // namespace
+}   // namespace
 
 namespace conndump {
 
@@ -222,7 +244,8 @@ QString dumpModel(const NetModel &model, const QString &fileName) {
   facts.comps = static_cast<int>(model.comps().size());
   for (const NetModel::Pin &pin : model.pins()) {
     if (pin.comp >= 0) ++facts.compPins;
-    else ++facts.sheetPins;
+    else
+      ++facts.sheetPins;
   }
   facts.labels    = static_cast<int>(model.labels().size());
   facts.junctions = static_cast<int>(model.junctions().size());
@@ -231,10 +254,11 @@ QString dumpModel(const NetModel &model, const QString &fileName) {
   // A pin's text, from the model.
   const QList<NetModel::Comp> &comps = model.comps();
   const QList<NetModel::Pin>  &pins  = model.pins();
-  QStringList                     pinTexts;
+  QStringList                  pinTexts;
   for (const NetModel::Pin &pin : pins)
-    pinTexts << (pin.comp >= 0 ? pinText(comps[pin.comp].refdes, pin.number, pin.label)
-                               : QString());
+    pinTexts << (pin.comp >= 0
+            ? pinText(comps[pin.comp].refdes, pin.number, pin.label)
+            : QString());
 
   // --- Nets: the model's groups, every one (format() keeps the nets).
   for (const NetModel::Net &net : model.nets()) {
@@ -248,8 +272,9 @@ QString dumpModel(const NetModel &model, const QString &fileName) {
     }
     for (int i : net.pins) {
       const NetModel::Pin &pin = pins[i];
-      out.members << (pin.comp >= 0 ? pinMember(pinTexts[i], pin.at, pin.internal)
-                                    : sheetPinMember(pin.at));
+      out.members << (pin.comp >= 0
+              ? pinMember(pinTexts[i], pin.at, pin.internal)
+              : sheetPinMember(pin.at));
     }
     for (int i : net.labels) {
       const NetModel::Label &label = model.labels()[i];
@@ -269,7 +294,8 @@ QString dumpModel(const NetModel &model, const QString &fileName) {
 
   // --- Marks.
   for (int i : model.unconnectedPins())
-    facts.unconnected << QStringLiteral("%1 %2").arg(pinTexts[i], pt(pins[i].at));
+    facts.unconnected << QStringLiteral("%1 %2").arg(
+        pinTexts[i], pt(pins[i].at));
   facts.looseEnds = model.looseEnds();
 
   // --- Buses and designators.
@@ -290,10 +316,12 @@ QString firstDifference(const QString &a, const QString &b) {
     const QString lineA = linesA.value(i);
     const QString lineB = linesB.value(i);
     if (lineA == lineB) continue;
-    return QStringLiteral("line %1: \"%2\" | \"%3\"").arg(i + 1).arg(lineA, lineB);
+    return QStringLiteral("line %1: \"%2\" | \"%3\"")
+        .arg(i + 1)
+        .arg(lineA, lineB);
   }
   return QString();
 }
 
-} // namespace conndump
-} // namespace sch::core
+}   // namespace conndump
+}   // namespace sch::core

@@ -8,10 +8,10 @@
 namespace sch::link {
 
 struct LibraryInfo {
-  const char *name;    // "SchLink"
-  const char *version; // "major.minor.patch"
+  const char *name;      // "SchLink"
+  const char *version;   // "major.minor.patch"
 };
 
 LibraryInfo libraryInfo();
 
-} // namespace sch::link
+}   // namespace sch::link

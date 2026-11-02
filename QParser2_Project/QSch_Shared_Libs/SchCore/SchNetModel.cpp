@@ -58,11 +58,12 @@ protected:
   QList<int>           parent;
 };
 
-void addAll(QHash<PointKey, int> &counts, const QList<PointKey> &points, int delta) {
+void addAll(
+    QHash<PointKey, int> &counts, const QList<PointKey> &points, int delta) {
   for (const PointKey &p : points) counts[p] += delta;
 }
 
-} // namespace
+}   // namespace
 
 NetModel::NetModel(const NodePtr &root) {
   if (root == nullptr) return;
@@ -75,7 +76,7 @@ NetModel::NetModel(const NodePtr &root) {
 QList<PointKey> NetModel::requiredJunctions() const {
   QList<PointKey> out;
   for (QHash<PointKey, int>::const_iterator it = wireEnds_.constBegin();
-       it != wireEnds_.constEnd(); ++it)
+      it != wireEnds_.constEnd(); ++it)
     if (it.value() >= kJunctionMinEndpoints) out.append(it.key());
   return out;
 }
@@ -87,36 +88,40 @@ void NetModel::readSheet(const NodePtr &root) {
       const ItemWirePtr rec = std::static_pointer_cast<ItemWire>(child->item());
       if (rec == nullptr) break;
       Wire wire;
-      wire.node    = child;
-      wire.a       = keyOf(rec->pt1.getValue());
-      wire.b       = keyOf(rec->pt2.getValue());
+      wire.node       = child;
+      wire.a          = keyOf(rec->pt1.getValue());
+      wire.b          = keyOf(rec->pt2.getValue());
       wire.netName    = decodeQSpiceString(rec->netName.getValue()).trimmed();
       wire.netNameRaw = QString::fromStdString(rec->netName.getValue());
-      wire.bus     = isBusName(wire.netName);
+      wire.bus        = isBusName(wire.netName);
       wires_.append(wire);
       break;
     }
-    case QPI::COMP: readComp(child); break;
+    case QPI::COMP:
+      readComp(child);
+      break;
     case QPI::NET: {
       const ItemNetPtr rec = std::static_pointer_cast<ItemNet>(child->item());
       if (rec == nullptr) break;
       labels_.append(Label{child, keyOf(rec->pt1.getValue()),
-                           decodeQSpiceString(rec->netName.getValue()).trimmed()});
+          decodeQSpiceString(rec->netName.getValue()).trimmed()});
       break;
     }
     case QPI::TAP: {
       const ItemTapPtr rec = std::static_pointer_cast<ItemTap>(child->item());
       if (rec == nullptr) break;
-      taps_.append(Tap{child, keyOf(rec->pt1.getValue()), keyOf(rec->pt2.getValue())});
+      taps_.append(
+          Tap{child, keyOf(rec->pt1.getValue()), keyOf(rec->pt2.getValue())});
       break;
     }
     case QPI::JUNCTION: {
-      const ItemJunctionPtr rec = std::static_pointer_cast<ItemJunction>(child->item());
+      const ItemJunctionPtr rec =
+          std::static_pointer_cast<ItemJunction>(child->item());
       if (rec == nullptr) break;
       junctions_.append(Junction{child, keyOf(rec->pt1.getValue())});
       break;
     }
-    case QPI::PIN: { // a symbol document's own pins
+    case QPI::PIN: {   // a symbol document's own pins
       const ItemPinPtr rec = std::static_pointer_cast<ItemPin>(child->item());
       if (rec == nullptr) break;
       Pin pin;
@@ -127,7 +132,8 @@ void NetModel::readSheet(const NodePtr &root) {
       pins_.append(pin);
       break;
     }
-    default: break;
+    default:
+      break;
     }
   }
 }
@@ -152,8 +158,10 @@ void NetModel::readComp(const NodePtr &compNode) {
     for (const NodePtr &child : symNode->children()) {
       if (child->getEnumID() != QPI::PIN) continue;
 
-      ++number; // counted even if the record is unreadable, as the dump counts
-      const ItemPinPtr pinRec = std::static_pointer_cast<ItemPin>(child->item());
+      ++number;   // counted even if the record is unreadable, as the dump
+                  // counts
+      const ItemPinPtr pinRec =
+          std::static_pointer_cast<ItemPin>(child->item());
       if (pinRec == nullptr) continue;
 
       Pin pin;
@@ -203,7 +211,8 @@ void NetModel::findNets() {
   for (int i = 0; i < labels_.size(); ++i) {
     const int root = sets.rootOf(labels_[i].at);
     byRoot[root].labels.append(i);
-    if (!labels_[i].netName.isEmpty()) byRoot[root].labelNames.insert(labels_[i].netName);
+    if (!labels_[i].netName.isEmpty())
+      byRoot[root].labelNames.insert(labels_[i].netName);
     memberCount[root]++;
   }
   for (int i = 0; i < taps_.size(); ++i) {
@@ -215,8 +224,10 @@ void NetModel::findNets() {
     }
   }
 
-  for (QHash<int, Net>::const_iterator it = byRoot.constBegin(); it != byRoot.constEnd(); ++it) {
-    if (!hasWire.contains(it.key()) && memberCount.value(it.key()) < 2) continue;
+  for (QHash<int, Net>::const_iterator it = byRoot.constBegin();
+      it != byRoot.constEnd(); ++it) {
+    if (!hasWire.contains(it.key()) && memberCount.value(it.key()) < 2)
+      continue;
     nets_.append(it.value());
   }
 }
@@ -240,10 +251,10 @@ void NetModel::findMarks() {
   for (int index = 0; index < pins_.size(); ++index) {
     const Pin &pin = pins_[index];
     if (pin.internal) continue;
-    if (all.value(pin.at) - 1 > 0) continue; // -1: the pin's own entry
+    if (all.value(pin.at) - 1 > 0) continue;   // -1: the pin's own entry
 
     markedPins_.insert(pin.node.get());
-    if (pin.comp >= 0) unconnected_.append(index); // component pins only
+    if (pin.comp >= 0) unconnected_.append(index);   // component pins only
   }
 
   // A wire end: not the wire itself. Buses are recorded too, for the
@@ -263,15 +274,19 @@ void NetModel::findMarks() {
 }
 
 bool NetModel::pinMarked(const NodePtr &pinNode, const PointKey &at) const {
-  if (pinNodes_.contains(pinNode.get())) return markedPins_.contains(pinNode.get());
+  if (pinNodes_.contains(pinNode.get()))
+    return markedPins_.contains(pinNode.get());
 
   // Not in the document: marked if the document has nothing there.
   return connPoints_.value(at) <= 0;
 }
 
-bool NetModel::wireEndLoose(const NodePtr &wireNode, int end, const PointKey &at) const {
-  const QHash<const TreeNode *, int>::const_iterator it = wireLoose_.constFind(wireNode.get());
-  if (it != wireLoose_.constEnd()) return (it.value() & (end == 0 ? 1 : 2)) != 0;
+bool NetModel::wireEndLoose(
+    const NodePtr &wireNode, int end, const PointKey &at) const {
+  const QHash<const TreeNode *, int>::const_iterator it =
+      wireLoose_.constFind(wireNode.get());
+  if (it != wireLoose_.constEnd())
+    return (it.value() & (end == 0 ? 1 : 2)) != 0;
 
   return connPoints_.value(at) <= 0;
 }
@@ -280,14 +295,13 @@ namespace {
 
 // Whether p lies on segment a-b, ends included. Exact integer test, as
 // SchItemTap has always used.
-bool onSegment(const PointKey &p, const PointKey &a,
-               const PointKey &b) {
+bool onSegment(const PointKey &p, const PointKey &a, const PointKey &b) {
   const qint64 dx = static_cast<qint64>(b.x) - a.x;
   const qint64 dy = static_cast<qint64>(b.y) - a.y;
   const qint64 rx = static_cast<qint64>(p.x) - a.x;
   const qint64 ry = static_cast<qint64>(p.y) - a.y;
 
-  if (dx * ry - dy * rx != 0) return false; // not on the line
+  if (dx * ry - dy * rx != 0) return false;   // not on the line
 
   const qint64 along = dx * rx + dy * ry;
   return along >= 0 && along <= dx * dx + dy * dy;
@@ -296,8 +310,8 @@ bool onSegment(const PointKey &p, const PointKey &a,
 // The bus at a point -- at a bus wire's end OR anywhere along it, since
 // a tap attaches mid-span without splitting the bus. The first in record
 // order.
-bool busAt(const QList<NetModel::Wire> &wires, const PointKey &p,
-           BusName &bus) {
+bool busAt(
+    const QList<NetModel::Wire> &wires, const PointKey &p, BusName &bus) {
   for (const NetModel::Wire &wire : wires) {
     if (!onSegment(p, wire.a, wire.b)) continue;
     if (parseBusName(wire.netName, bus)) return true;
@@ -308,8 +322,8 @@ bool busAt(const QList<NetModel::Wire> &wires, const PointKey &p,
 // The net at a tap's MEMBER end: an ordinary wire through or ending at
 // the point, else a net label anchored there. QSpice's own sample has
 // both -- Bus[1] is reached once by a wire and once by a bare label.
-bool netAt(const QList<NetModel::Wire> &wires, const QList<NetModel::Label> &labels,
-           const PointKey &p, QString &net) {
+bool netAt(const QList<NetModel::Wire> &wires,
+    const QList<NetModel::Label> &labels, const PointKey &p, QString &net) {
   for (const NetModel::Wire &wire : wires) {
     if (wire.bus || !onSegment(p, wire.a, wire.b)) continue;
     net = wire.netName;
@@ -323,19 +337,20 @@ bool netAt(const QList<NetModel::Wire> &wires, const QList<NetModel::Label> &lab
   return false;
 }
 
-} // namespace
+}   // namespace
 
-NetModel::TapState NetModel::tapState(const PointKey &p1, const PointKey &p2) const {
-  BusName bus1;
-  BusName bus2;
+NetModel::TapState NetModel::tapState(
+    const PointKey &p1, const PointKey &p2) const {
+  BusName    bus1;
+  BusName    bus2;
   const bool on1 = busAt(wires_, p1, bus1);
   const bool on2 = busAt(wires_, p2, bus2);
 
   // A bus at BOTH ends is not a valid tap; neither is no bus at all.
   if (on1 == on2) return TapState::Loose;
 
-  const BusName &bus    = on1 ? bus1 : bus2;
-  const PointKey   &member = on1 ? p2 : p1;
+  const BusName  &bus    = on1 ? bus1 : bus2;
+  const PointKey &member = on1 ? p2 : p1;
 
   // Nothing at the member end: loose, not merely invalid.
   QString net;
@@ -356,4 +371,4 @@ QString NetModel::netNameAt(const PointKey &at) const {
   return QString();
 }
 
-} // namespace sch::core
+}   // namespace sch::core

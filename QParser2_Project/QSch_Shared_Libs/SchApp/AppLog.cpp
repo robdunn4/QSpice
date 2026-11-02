@@ -1,6 +1,7 @@
 #ifdef _MSC_VER
 #pragma warning(push)
-#pragma warning(disable : 4996) // Qt headers reference APIs deprecated for Qt 7
+#pragma warning(                                                               \
+    disable : 4996)   // Qt headers reference APIs deprecated for Qt 7
 #endif
 
 #include "AppLog.h"
@@ -56,8 +57,7 @@ const QString &logFilePath() {
   // Still computed once on first use (thread-safe magic statics) rather
   // than per call -- there is no reason to rebuild the string for every
   // message.
-  static const QString path =
-      QCoreApplication::applicationDirPath() + "/" +
+  static const QString path = QCoreApplication::applicationDirPath() + "/" +
       programName + QStringLiteral(".log");
   return path;
 }
@@ -79,8 +79,8 @@ const char *severityLbl(QtMsgType type) {
   }
 }
 
-QString formatLogLine(QtMsgType type, const QMessageLogContext &context,
-                      const QString &message) {
+QString formatLogLine(
+    QtMsgType type, const QMessageLogContext &context, const QString &message) {
   const QString timestamp = QDateTime::currentDateTime().toString(
       QStringLiteral("yyyy-MM-dd HH:mm:ss.zzz"));
 
@@ -96,9 +96,8 @@ QString formatLogLine(QtMsgType type, const QMessageLogContext &context,
   }
 
   return QStringLiteral("%1 <%2> [%3] %4 - %5")
-      .arg(timestamp,
-           QString::number(QCoreApplication::applicationPid()),
-           QString::fromLatin1(severityLbl(type)), location, message);
+      .arg(timestamp, QString::number(QCoreApplication::applicationPid()),
+          QString::fromLatin1(severityLbl(type)), location, message);
 }
 
 void writeToLogFile(const QString &line) {
@@ -140,8 +139,8 @@ void forwardToDebugOutput(const QString &line) {
 #endif
 }
 
-void qtMessageHandler(QtMsgType type, const QMessageLogContext &context,
-                      const QString &message) {
+void qtMessageHandler(
+    QtMsgType type, const QMessageLogContext &context, const QString &message) {
   const QString line = formatLogLine(type, context, message);
 
   {
@@ -162,7 +161,7 @@ void qtMessageHandler(QtMsgType type, const QMessageLogContext &context,
     abort();
   }
 }
-} // namespace
+}   // namespace
 
 void install(const QString &name) {
   if (!name.isEmpty()) programName = name;
@@ -177,12 +176,13 @@ void configure(const QString &iniPath, int defaultMaxKB) {
   {
     const ini::OnlyMissing scope;
     ini::setPrefValue(settings, kMaxSizeKBKey, QString::number(defaultMaxKB),
-                      QString::number(defaultMaxKB));
+        QString::number(defaultMaxKB));
   }
 
-  bool      ok    = false;
-  const int maxKB = ini::prefValue(settings, kMaxSizeKBKey, QString::number(defaultMaxKB))
-                        .toInt(&ok);
+  bool      ok = false;
+  const int maxKB =
+      ini::prefValue(settings, kMaxSizeKBKey, QString::number(defaultMaxKB))
+          .toInt(&ok);
   settings.endGroup();
   settings.sync();
 
@@ -201,7 +201,8 @@ void configure(const QString &iniPath, int defaultMaxKB) {
       for (const QString &line : pending) writeToLogFile(line);
   }
 
-  if (kb > 0) qInfo("Log: on, up to %d KB ([%s] %s)", kb, kLogGroup, kMaxSizeKBKey);
+  if (kb > 0)
+    qInfo("Log: on, up to %d KB ([%s] %s)", kb, kLogGroup, kMaxSizeKBKey);
 }
 
-} // namespace sch::app::log
+}   // namespace sch::app::log

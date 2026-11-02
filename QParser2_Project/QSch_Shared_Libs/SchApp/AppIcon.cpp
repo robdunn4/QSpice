@@ -1,6 +1,7 @@
 #ifdef _MSC_VER
 #pragma warning(push)
-#pragma warning(disable : 4996) // Qt headers reference APIs deprecated for Qt 7
+#pragma warning(                                                               \
+    disable : 4996)   // Qt headers reference APIs deprecated for Qt 7
 #endif
 
 #include "AppIcon.h"
@@ -27,8 +28,8 @@ constexpr int kMenuIconPx[] = {16, 20, 24, 32, 40, 48, 64};
 // The icon at `px` DEVICE pixels. Null if it cannot be loaded.
 QPixmap loadAppIcon(int px) {
 #ifdef Q_OS_WIN
-  const HICON handle = static_cast<HICON>(
-      LoadImageW(GetModuleHandleW(nullptr), L"IDI_ICON1", IMAGE_ICON, px, px, LR_DEFAULTCOLOR));
+  const HICON handle = static_cast<HICON>(LoadImageW(GetModuleHandleW(nullptr),
+      L"IDI_ICON1", IMAGE_ICON, px, px, LR_DEFAULTCOLOR));
   if (handle == nullptr) return QPixmap();
 
   const QPixmap pixmap = QPixmap::fromImage(QImage::fromHICON(handle));
@@ -40,7 +41,7 @@ QPixmap loadAppIcon(int px) {
 #endif
 }
 
-} // namespace
+}   // namespace
 
 QPixmap appIconPixmap(int size) {
   const qreal dpr    = qApp->devicePixelRatio();
@@ -60,4 +61,4 @@ QIcon appIcon() {
   return icon;
 }
 
-} // namespace sch::app
+}   // namespace sch::app

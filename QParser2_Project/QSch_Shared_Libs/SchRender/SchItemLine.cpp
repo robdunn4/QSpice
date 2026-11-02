@@ -1,6 +1,7 @@
 #ifdef _MSC_VER
 #pragma warning(push)
-#pragma warning(disable : 4996) // Qt headers reference APIs deprecated for Qt 7
+#pragma warning(                                                               \
+    disable : 4996)   // Qt headers reference APIs deprecated for Qt 7
 #endif
 
 #include "SchItemLine.h"
@@ -58,15 +59,15 @@ QList<Point> SchItemLine::controlPoints() const {
 void SchItemLine::setControlPoint(int index, Point p) {
   prepareGeometryChange();
   if (index == 0) item_->pt1.setValue(p);
-  else if (index == 1) item_->pt2.setValue(p);
+  else if (index == 1)
+    item_->pt2.setValue(p);
 }
 
-void SchItemLine::paint(QPainter *painter, const QStyleOptionGraphicsItem *,
-                        QWidget *) {
-  QPen pen = SchPen::forElement(
-      painter,
+void SchItemLine::paint(
+    QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *) {
+  QPen pen = SchPen::forElement(painter,
       tint(SchColorDecode::fromArgColor(item_->lineColor.getValue(),
-                                        RenderStyle::current().graphicAnnotation)),
+          RenderStyle::current().graphicAnnotation)),
       item_->lineWidth.getValue(), item_->lineType.getValue());
   painter->setPen(pen);
   painter->drawLine(toQ(item_->pt1.getValue()), toQ(item_->pt2.getValue()));
@@ -78,4 +79,4 @@ QPainterPath SchItemLine::outlinePath() const {
   return path;
 }
 
-} // namespace sch::render
+}   // namespace sch::render

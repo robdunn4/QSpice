@@ -30,17 +30,17 @@ namespace sch::output {
 
 // Everything a field can refer to, for one page.
 struct SchPrintContext {
-  QString   path;           // full native path; empty if never saved
-  QString   title;          // the document's display name
-  QDateTime modified;       // invalid if there is no file
+  QString   path;       // full native path; empty if never saved
+  QString   title;      // the document's display name
+  QDateTime modified;   // invalid if there is no file
   QDateTime printed;
-  int       page    = 1;
-  int       pages   = 1;
-  int       row     = 1;    // 1-based
-  int       col     = 1;
-  bool      tiled   = false;
+  int       page  = 1;
+  int       pages = 1;
+  int       row   = 1;   // 1-based
+  int       col   = 1;
+  bool      tiled = false;
   QString   printer;
-  double    mmPer1000 = 0.0; // the scale IN EFFECT; 0 if unknown
+  double    mmPer1000 = 0.0;   // the scale IN EFFECT; 0 if unknown
 };
 
 namespace SchPrintFields {
@@ -55,11 +55,15 @@ QList<std::pair<QString, QString>> menuEntries();
 // The defaults -- what printing showed before templates existed.
 inline QString defaultHeaderLeft() { return QStringLiteral("{path}"); }
 inline QString defaultHeaderCenter() { return QString(); }
-inline QString defaultHeaderRight() { return QStringLiteral("Modified: {modified}"); }
+inline QString defaultHeaderRight() {
+  return QStringLiteral("Modified: {modified}");
+}
 inline QString defaultFooterLeft() { return QStringLiteral("{pageinfo}"); }
 inline QString defaultFooterCenter() { return QString(); }
-inline QString defaultFooterRight() { return QStringLiteral("Printed: {printed}"); }
+inline QString defaultFooterRight() {
+  return QStringLiteral("Printed: {printed}");
+}
 
-} // namespace SchPrintFields
+}   // namespace SchPrintFields
 
-} // namespace sch::output
+}   // namespace sch::output

@@ -5,8 +5,8 @@
 
 #include "SchItemEllipse.h"
 
-#include "SchPen.h"
 #include "SchBoxFrame.h"
+#include "SchPen.h"
 
 #include <QPainter>
 #include <QPen>
@@ -81,9 +81,9 @@ void SchItemEllipse::paint(QPainter *painter, const QStyleOptionGraphicsItem *,
   const QColor lineColor = SchColorDecode::fromArgColor(
       item_->lineColor.getValue(), RenderStyle::current().graphicAnnotation);
 
-  QPen pen = SchPen::forElement(painter, tint(lineColor),
-                                item_->lineWidth.getValue(),
-                                item_->lineType.getValue());
+  QPen pen =
+      SchPen::forElement(painter, tint(lineColor), item_->lineWidth.getValue(),
+                         item_->lineType.getValue());
   painter->setPen(pen);
 
   const QColor fill =
@@ -107,7 +107,7 @@ void SchItemEllipse::paint(QPainter *painter, const QStyleOptionGraphicsItem *,
   const SchBoxFrame::Frame frame = boxFrame();
 
   painter->save();
-  painter->translate(frame.centre);
+  painter->translate(frame.center);
   painter->rotate(frame.degrees());
 
   painter->drawEllipse(frame.localRect());

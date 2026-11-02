@@ -1,7 +1,9 @@
 #pragma once
 
 #include <QByteArray>
+#include <QList>
 #include <QObject>
+#include <QPair>
 #include <QProcess>
 #include <QString>
 #include <QStringList>
@@ -9,6 +11,18 @@
 class QTimer;
 
 namespace sch::link {
+
+// The sheets BELOW the one being netlisted that QUX is to read from
+// temporary copies rather than their files: hierarchical children with
+// unsaved changes, and every sheet between them and the top, whose
+// block references were pointed at those copies. The caller writes the
+// copies; NetlistRun deletes them with its own and swaps each
+// temporary name back for the real one in what QUX returns.
+struct NetlistDependents {
+  QStringList tempFiles;   // absolute paths, deleted when QUX is done
+  QList<QPair<QString, QString>>
+      names;   // temporary base name -> real base name
+};
 
 // Runs "QUX.exe -Netlist <file> -stdout" in the background and reports
 // the netlist, or why there is none. No UI of its own: View > Netlist
@@ -55,8 +69,13 @@ public:
   // Exactly one of succeeded() or failed() follows -- possibly before
   // this returns, if the run cannot even start.
   void start(const QString &quxExe, const QString &schPath,
-             const QString &title, const QByteArray &content,
-             const QStringList &libPaths = QStringList());
+      const QString &title, const QByteArray &content,
+      const QStringList &libPaths = QStringList());
+
+  // Dependent sheets' temporary copies -- see NetlistDependents. Call
+  // BEFORE start(); from then on this object owns the files, and
+  // deletes them however the run ends.
+  void setDependents(const NetlistDependents &deps);
 
 signals:
   // QUX ran to completion and returned exitCode. Emitted BEFORE
@@ -69,8 +88,8 @@ signals:
   //        should be fed and what Save should write.
   // text:  the same, decoded for display only.
   // notes: QUX's stderr and a non-zero exit code, if any.
-  void succeeded(const QByteArray &bytes, const QString &text,
-                 const QString &notes);
+  void succeeded(
+      const QByteArray &bytes, const QString &text, const QString &notes);
   void failed(const QString &message);
 
 protected:
@@ -81,19 +100,20 @@ protected:
   // Writes content to a fresh temporary copy in dir; empty on failure,
   // with the reason in error.
   QString writeTempCopy(const QString &dir, const QString &base,
-                        const QByteArray &content, QString &error);
+      const QByteArray &content, QString &error);
 
+  // Deletes the copy, and the dependents' copies.
   void removeTempCopy();
 
   // The netlist with a ".libpath "<folder>"" line per user symbol folder
   // inserted after QUX's first line, set off by a blank line either
   // side. Unchanged when there are none.
-  static QByteArray withLibPaths(const QByteArray &netlist,
-                                 const QStringList &libPaths);
+  static QByteArray withLibPaths(
+      const QByteArray &netlist, const QStringList &libPaths);
 
   // Text as the netlist's own bytes: Windows-1252, else UTF-8.
   static QByteArray netlistBytes(const QString &text);
-  void fail(const QString &message);
+  void              fail(const QString &message);
 
   // QUX's output as text, for display: UTF-8 if it decodes cleanly,
   // else Windows-1252.
@@ -105,12 +125,13 @@ protected:
   QProcess *process  = nullptr;
   QTimer   *watchdog = nullptr;
 
-  QString tempPrefix; // "~<Program>_" -- see the constructor
-  QString tempPath; // the copy, while it exists
-  QString tempBase; // its name without suffix, to swap back in the output
-  QString realBase; // the name to swap in
-  QStringList userLibPaths; // for withLibPaths()
-  bool    runOver = false; // finished, failed, or stopped -- reported once
+  QString     tempPrefix;   // "~<Program>_" -- see the constructor
+  QString     tempPath;     // the copy, while it exists
+  QString     tempBase;   // its name without suffix, to swap back in the output
+  QString     realBase;   // the name to swap in
+  QStringList userLibPaths;       // for withLibPaths()
+  NetlistDependents dependents;   // see setDependents()
+  bool runOver = false;   // finished, failed, or stopped -- reported once
 };
 
-} // namespace sch::link
+}   // namespace sch::link

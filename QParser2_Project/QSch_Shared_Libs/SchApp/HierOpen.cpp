@@ -1,6 +1,7 @@
 #ifdef _MSC_VER
 #pragma warning(push)
-#pragma warning(disable : 4996) // Qt headers reference APIs deprecated for Qt 7
+#pragma warning(                                                               \
+    disable : 4996)   // Qt headers reference APIs deprecated for Qt 7
 #endif
 
 #include "HierOpen.h"
@@ -18,8 +19,8 @@
 
 namespace sch::app {
 
-bool hierSchematicPath(QWidget *parent, const NodePtr &compNode, const QString &docPath,
-                       QString &path) {
+bool hierSchematicPath(QWidget *parent, const NodePtr &compNode,
+    const QString &docPath, QString &path) {
   using sch::core::hier::Result;
 
   const Result result = sch::core::hier::schematicPath(compNode, docPath, path);
@@ -29,25 +30,30 @@ bool hierSchematicPath(QWidget *parent, const NodePtr &compNode, const QString &
 
   QString why;
   switch (result) {
-  case Result::Ok: return true;
+  case Result::Ok:
+    return true;
   case Result::NotABlock:
     why = QObject::tr("This symbol is not a hierarchical schematic block.");
     break;
   case Result::NoName:
-    why = QObject::tr("The block has no schematic name: its first string attribute is "
-                      "missing or blank.");
+    why = QObject::tr(
+        "The block has no schematic name: its first string attribute is "
+        "missing or blank.");
     break;
   case Result::NoFolder:
-    why = QObject::tr("The block names its schematic relative to this one, which has not "
-                      "been saved yet. Save this schematic first.\n\n%1")
+    why = QObject::tr(
+        "The block names its schematic relative to this one, which has not "
+        "been saved yet. Save this schematic first.\n\n%1")
               .arg(nativePath);
     break;
   case Result::NotFound:
-    why = QObject::tr("The block's schematic was not found:\n\n%1").arg(nativePath);
+    why = QObject::tr("The block's schematic was not found:\n\n%1")
+              .arg(nativePath);
     break;
   case Result::NotAFile:
-    why = QObject::tr("The block's schematic name is a folder, not a file:\n\n%1")
-              .arg(nativePath);
+    why =
+        QObject::tr("The block's schematic name is a folder, not a file:\n\n%1")
+            .arg(nativePath);
     break;
   }
 
@@ -56,4 +62,4 @@ bool hierSchematicPath(QWidget *parent, const NodePtr &compNode, const QString &
   return false;
 }
 
-} // namespace sch::app
+}   // namespace sch::app

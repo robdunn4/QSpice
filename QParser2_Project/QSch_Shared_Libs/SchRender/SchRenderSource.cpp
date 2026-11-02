@@ -19,7 +19,7 @@
 namespace sch::render {
 
 QRectF SchRenderSource::printableSceneRect() const {
-  QRectF extent;
+  QRectF          extent;
   QGraphicsScene *scene = renderScene();
   if (scene == nullptr) return extent;
 
@@ -41,8 +41,10 @@ bool SchRenderSource::hasPrintableIn(const QRectF &sceneRect) const {
   return false;
 }
 
-void SchRenderSource::renderSceneForPrint(QPainter *painter, const QRectF &target,
-                                          const QRectF &source, bool withBackground) const {
+void SchRenderSource::renderSceneForPrint(QPainter     *painter,
+                                          const QRectF &target,
+                                          const QRectF &source,
+                                          bool          withBackground) const {
   QGraphicsScene *scene = renderScene();
   if (scene == nullptr || painter == nullptr) return;
 
@@ -64,7 +66,7 @@ void SchRenderSource::renderSceneForPrint(QPainter *painter, const QRectF &targe
 
   // Scene Y runs UPWARD on screen; QGraphicsScene::render() maps the
   // source's top (smallest Y) to the target's top. Flipped about the
-  // target's horizontal centre line, the page matches the screen.
+  // target's horizontal center line, the page matches the screen.
   painter->translate(0.0, target.top() + target.bottom());
   painter->scale(1.0, -1.0);
 

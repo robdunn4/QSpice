@@ -30,7 +30,10 @@ QString chmPath();
 void loadOverrides(const QString &iniPath);
 
 // The help page for a symbol type, as the «type:» record stores it:
-// "R", "QN", "MN", "Ø(.dll)". Empty when there is no page for it.
+// "R", "QN", "MN", "Ø(.DLL)". Empty when there is no page for it.
+// Matched without regard to case: QSpice's files hold "Ø(.DLL)", its
+// Symbol Type list shows "Ø(.dll)", and an override may be written
+// either way.
 //
 // Mostly a RULE rather than a table -- the CHM names its device pages
 // after the SPICE letter, so stripping a trailing N or P covers every
@@ -52,4 +55,4 @@ QString show(const QString &pageName);
 // left alone.
 void closeAll();
 
-} // namespace sch::link::help
+}   // namespace sch::link::help

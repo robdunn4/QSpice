@@ -53,11 +53,11 @@ public:
 protected:
   void checkStale();
 
-  NodePtr                      root_;
+  NodePtr                              root_;
   std::unique_ptr<sch::core::NetModel> model_;
 
   QElapsedTimer staleTimer;
   QString       lastStaleReport;
 };
 
-} // namespace sch::render
+}   // namespace sch::render

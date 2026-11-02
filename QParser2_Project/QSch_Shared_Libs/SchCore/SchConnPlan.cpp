@@ -70,7 +70,9 @@ bool keyLess(const PointKey &a, const PointKey &b) {
   return a.y < b.y;
 }
 
-QString ptText(const PointKey &p) { return QStringLiteral("(%1,%2)").arg(p.x).arg(p.y); }
+QString ptText(const PointKey &p) {
+  return QStringLiteral("(%1,%2)").arg(p.x).arg(p.y);
+}
 
 // A segment as written, first end first.
 QString dirSegText(const PointKey &a, const PointKey &b) {
@@ -84,21 +86,25 @@ QString segText(PointKey a, PointKey b) {
   return dirSegText(a, b);
 }
 
-QString splitText(const PointKey &a, const PointKey &b, const QList<Seg> &pieces) {
+QString splitText(const PointKey &a, const PointKey &b,
+                  const QList<Seg> &pieces) {
   QStringList out;
   for (const Seg &piece : pieces) out << dirSegText(piece.first, piece.second);
   return QStringLiteral("split %1 -> %2")
-      .arg(dirSegText(a, b),
-           out.isEmpty() ? QStringLiteral("nothing") : out.join(QLatin1Char(' ')));
+      .arg(dirSegText(a, b), out.isEmpty() ? QStringLiteral("nothing")
+                                           : out.join(QLatin1Char(' ')));
 }
 
 QString mergeText(const QString &kind, QStringList parts, const PointKey &a,
                   const PointKey &b) {
   std::sort(parts.begin(), parts.end());
-  return QStringLiteral("%1 {%2} -> %3").arg(kind, parts.join(QLatin1Char(' ')), segText(a, b));
+  return QStringLiteral("%1 {%2} -> %3")
+      .arg(kind, parts.join(QLatin1Char(' ')), segText(a, b));
 }
 
-QString quotedText(const QString &text) { return QLatin1Char('"') + text + QLatin1Char('"'); }
+QString quotedText(const QString &text) {
+  return QLatin1Char('"') + text + QLatin1Char('"');
+}
 
 // --- Merging runs -------------------------------------------------------
 
@@ -139,7 +145,7 @@ void mergeOverlaps(QList<Run> &runs, bool touching) {
         // ordering is the geometric ordering.
         const PointKey origin = runs[i].a;
         const qint64   len2   = dx1 * dx1 + dy1 * dy1;
-        const qint64 pia = static_cast<qint64>(runs[i].a.x - origin.x) * dx1 +
+        const qint64   pia = static_cast<qint64>(runs[i].a.x - origin.x) * dx1 +
                            static_cast<qint64>(runs[i].a.y - origin.y) * dy1;
         const qint64 pib = static_cast<qint64>(runs[i].b.x - origin.x) * dx1 +
                            static_cast<qint64>(runs[i].b.y - origin.y) * dy1;
@@ -250,7 +256,8 @@ void mergeChains(QList<Run> &runs, const QSet<PointKey> &blocked,
 // The merge edits from resolved runs: one per run of two or more parts.
 // `segs` and `nodes` are the gathering's originals, by index.
 QList<ReplaceOp> opsFromRuns(const QString &kind, const QList<Run> &runs,
-                             const QList<Seg> &segs, const QList<NodePtr> &nodes) {
+                             const QList<Seg>     &segs,
+                             const QList<NodePtr> &nodes) {
   QList<ReplaceOp> ops;
   for (const Run &run : runs) {
     if (run.parts.size() < 2) continue;
@@ -278,24 +285,27 @@ QList<ReplaceOp> opsFromRuns(const QString &kind, const QList<Run> &runs,
 QList<Seg> piecesOf(const PointKey &a, const PointKey &b, QList<PointKey> cuts,
                     const QHash<PointKey, int> &owner) {
   // Ordered along the wire: distance from a is monotonic on a span.
-  std::sort(cuts.begin(), cuts.end(), [&a](const PointKey &lhs, const PointKey &rhs) {
-    const qint64 dl = static_cast<qint64>(lhs.x - a.x) * (lhs.x - a.x) +
-                      static_cast<qint64>(lhs.y - a.y) * (lhs.y - a.y);
-    const qint64 dr = static_cast<qint64>(rhs.x - a.x) * (rhs.x - a.x) +
-                      static_cast<qint64>(rhs.y - a.y) * (rhs.y - a.y);
-    return dl < dr;
-  });
+  std::sort(
+      cuts.begin(), cuts.end(), [&a](const PointKey &lhs, const PointKey &rhs) {
+        const qint64 dl = static_cast<qint64>(lhs.x - a.x) * (lhs.x - a.x) +
+                          static_cast<qint64>(lhs.y - a.y) * (lhs.y - a.y);
+        const qint64 dr = static_cast<qint64>(rhs.x - a.x) * (rhs.x - a.x) +
+                          static_cast<qint64>(rhs.y - a.y) * (rhs.y - a.y);
+        return dl < dr;
+      });
 
   QList<Seg> pieces;
   PointKey   from = a;
   for (const PointKey &cut : cuts) {
     const int fromOwner = owner.value(from, -1);
-    if (fromOwner < 0 || fromOwner != owner.value(cut, -1)) pieces.append(Seg(from, cut));
+    if (fromOwner < 0 || fromOwner != owner.value(cut, -1))
+      pieces.append(Seg(from, cut));
     from = cut;
   }
 
   const int fromOwner = owner.value(from, -1);
-  if (fromOwner < 0 || fromOwner != owner.value(b, -1)) pieces.append(Seg(from, b));
+  if (fromOwner < 0 || fromOwner != owner.value(b, -1))
+    pieces.append(Seg(from, b));
 
   return pieces;
 }
@@ -303,7 +313,8 @@ QList<Seg> piecesOf(const PointKey &a, const PointKey &b, QList<PointKey> cuts,
 // The cuts on one wire: every candidate point strictly on its span,
 // deduplicated; a bus is cut only at non-tap points.
 QList<PointKey> cutsOn(const PointKey &a, const PointKey &b, bool bus,
-                       const QList<PointKey> &points, const QSet<PointKey> &nonTap) {
+                       const QList<PointKey> &points,
+                       const QSet<PointKey>  &nonTap) {
   QList<PointKey> cuts;
   for (const PointKey &p : points) {
     if (!isOnSpan(p, a, b)) continue;
@@ -314,8 +325,8 @@ QList<PointKey> cutsOn(const PointKey &a, const PointKey &b, bool bus,
   return cuts;
 }
 
-void addCandidate(QList<PointKey> &points, QSet<PointKey> &nonTap, const PointKey &p,
-                  bool tap) {
+void addCandidate(QList<PointKey> &points, QSet<PointKey> &nonTap,
+                  const PointKey &p, bool tap) {
   points.append(p);
   if (!tap) nonTap.insert(p);
 }
@@ -328,8 +339,9 @@ namespace {
 
 // The cut of a drawn segment at the pins on it, from a list of pins and
 // their owners (-1 for none).
-QList<QPair<Point, Point>> cutAtPinList(const Point &from, const Point &to,
-                                        const QList<std::pair<Point, int>> &pins) {
+QList<QPair<Point, Point>>
+cutAtPinList(const Point &from, const Point &to,
+             const QList<std::pair<Point, int>> &pins) {
   QList<QPair<Point, Point>> result;
 
   // Every pin exactly on the segment, with its owner and how far along
@@ -440,7 +452,8 @@ QList<ReplaceOp> planSplits(const NetModel &model) {
 
   QList<ReplaceOp> ops;
   for (const NetModel::Wire &wire : model.wires()) {
-    const QList<PointKey> cuts = cutsOn(wire.a, wire.b, wire.bus, points, nonTap);
+    const QList<PointKey> cuts =
+        cutsOn(wire.a, wire.b, wire.bus, points, nonTap);
     if (cuts.isEmpty()) continue;
 
     // One wire in, N+1 out -- the original REMOVED rather than
@@ -473,7 +486,8 @@ bool cornersOf(const NodePtr &node, Point &p1, Point &p2, QString &word) {
     return true;
   }
   case QPI::ELLIPSE: {
-    const ItemEllipsePtr rec = std::static_pointer_cast<ItemEllipse>(node->item());
+    const ItemEllipsePtr rec =
+        std::static_pointer_cast<ItemEllipse>(node->item());
     if (rec == nullptr) return false;
     p1   = rec->pt1.getValue();
     p2   = rec->pt2.getValue();
@@ -489,7 +503,8 @@ bool cornersOf(const NodePtr &node, Point &p1, Point &p2, QString &word) {
     return true;
   }
   case QPI::ZIGZAG: {
-    const ItemZigzagPtr rec = std::static_pointer_cast<ItemZigzag>(node->item());
+    const ItemZigzagPtr rec =
+        std::static_pointer_cast<ItemZigzag>(node->item());
     if (rec == nullptr) return false;
     p1   = rec->pt1.getValue();
     p2   = rec->pt2.getValue();
@@ -512,7 +527,8 @@ bool cornersOf(const NodePtr &node, Point &p1, Point &p2, QString &word) {
     word = QStringLiteral("line");
     return true;
   }
-  default: return false;
+  default:
+    return false;
   }
 }
 
@@ -564,8 +580,8 @@ QList<ReplaceOp> planLines(const NodePtr &root) {
 
 namespace {
 
-void recordWireRuns(const NetModel &model, bool skipDegenerate, QList<Run> &runs,
-                    QList<Seg> &segs, QList<NodePtr> &nodes) {
+void recordWireRuns(const NetModel &model, bool skipDegenerate,
+                    QList<Run> &runs, QList<Seg> &segs, QList<NodePtr> &nodes) {
   for (const NetModel::Wire &wire : model.wires()) {
     if (skipDegenerate && wire.a == wire.b) continue;
 
@@ -630,10 +646,10 @@ namespace {
 //      perpendicular: above a horizontal line, right of a vertical one,
 //      and at the upward CORNER beside a diagonal one. The only case
 //      that uses a corner.
-//   3. Three or more cancelling (in practice four or six, in opposed
+//   3. Three or more canceling (in practice four or six, in opposed
 //      pairs): the first corner with NO wire leaving through it, in the
 //      order up-right, up-left, down-right, down-left. If every corner
-//      has a wire, alignment 0 -- centred on the anchor, which is what
+//      has a wire, alignment 0 -- centered on the anchor, which is what
 //      QSpice writes for a diagonal cross.
 //
 // All 42 labels match: NetLabelAlignTests.qsch (24, including the
@@ -653,9 +669,9 @@ int labelAnchorFor(const QList<QPointF> &dirs) {
 
   // Unit vectors from opposed wires cancel EXACTLY, so this is a
   // genuine zero test with room for rounding, not a threshold on "small".
-  constexpr double kCancelled = 1e-9;
+  constexpr double kCanceled = 1e-9;
 
-  if (std::hypot(sum.x(), sum.y()) > kCancelled) {
+  if (std::hypot(sum.x(), sum.y()) > kCanceled) {
     const double awayX = -sum.x();
     const double awayY = -sum.y();
 
@@ -688,14 +704,14 @@ int labelAnchorFor(const QList<QPointF> &dirs) {
       if (!taken) return corner.align;
     }
 
-    // Every corner occupied: centred on the anchor. Alignment 0 is
-    // centre/centre, so this is a real placement, not "no answer".
+    // Every corner occupied: centered on the anchor. Alignment 0 is
+    // center/center, so this is a real placement, not "no answer".
     return 0;
   }
 
   // The line's UPWARD perpendicular; for a vertical line, whose
   // perpendicular is horizontal, the one to the RIGHT. Y is up.
-  const QPointF d = dirs.first();
+  const QPointF d  = dirs.first();
   double        px = -d.y();
   double        py = d.x();
 
@@ -772,8 +788,8 @@ public:
 
   QString next() {
     for (;;) {
-      const QString name = QStringLiteral("N%1").arg(++counter, 2, 10,
-                                                     QLatin1Char('0'));
+      const QString name =
+          QStringLiteral("N%1").arg(++counter, 2, 10, QLatin1Char('0'));
       if (reserved.contains(name.toLower())) continue;
 
       reserved.insert(name.toLower());
@@ -809,7 +825,8 @@ struct NameLabel {
 
 // Wires and labels in RECORD order -- order decides which label wins a
 // net carrying several, and the sequence auto names are handed out in.
-QList<Rename> decideNames(const QList<NameWire> &wires, const QList<NameLabel> &labels) {
+QList<Rename> decideNames(const QList<NameWire>  &wires,
+                          const QList<NameLabel> &labels) {
   if (wires.isEmpty()) return {};
 
   // --- Group the wires ---
@@ -858,8 +875,8 @@ QList<Rename> decideNames(const QList<NameWire> &wires, const QList<NameLabel> &
     // Compared as STORED, not as decoded: `N01` and `"N01"` decode
     // alike, and a wire written unquoted by an older build would never
     // be repaired.
-    const QString wantRaw =
-        QString::fromStdString(ArgString(encodeQSpiceString(want)).quote().getValue());
+    const QString wantRaw = QString::fromStdString(
+        ArgString(encodeQSpiceString(want)).quote().getValue());
     if (wires[i].raw == wantRaw) continue;
 
     Rename rename;
@@ -867,8 +884,8 @@ QList<Rename> decideNames(const QList<NameWire> &wires, const QList<NameLabel> &
     rename.oldName = wires[i].name;
     rename.newName = want;
     rename.text    = QStringLiteral("rename %1 %2 -> %3")
-                      .arg(segText(wires[i].a, wires[i].b), quotedText(wires[i].name),
-                           quotedText(want));
+                      .arg(segText(wires[i].a, wires[i].b),
+                           quotedText(wires[i].name), quotedText(want));
     out.append(rename);
   }
   return out;
@@ -915,7 +932,8 @@ struct AnchorDirs {
 // A wire (or, with `isWire` false, a TAP -- a direction at its ends
 // only: QSpice anchored the Bus[1] label touching nothing but a tap
 // exactly as if it were a wire).
-void addDirs(AnchorDirs &dirs, const QPointF &a, const QPointF &b, bool isWire) {
+void addDirs(AnchorDirs &dirs, const QPointF &a, const QPointF &b,
+             bool isWire) {
   dirs.atEnds[keyFor(a)].append(b - a);
   dirs.atEnds[keyFor(b)].append(a - b);
   if (isWire) dirs.spans.append(qMakePair(a, b));
@@ -976,7 +994,8 @@ namespace {
 
 // The alignment a label at `anchor` should have; `current` when it
 // should be left as it is.
-int anchorWanted(const AnchorDirs &all, const QPointF &anchor, bool ground, int current) {
+int anchorWanted(const AnchorDirs &all, const QPointF &anchor, bool ground,
+                 int current) {
   QList<QPointF> dirs = all.atEnds.value(keyFor(anchor));
 
   // No wire ENDS here, so try one running past.
@@ -986,7 +1005,7 @@ int anchorWanted(const AnchorDirs &all, const QPointF &anchor, bool ground, int 
   // with an anchor chosen for geometry that is gone.
   if (dirs.isEmpty()) return unconnectedAlign(ground);
 
-  // The same axis snap for a label, plus the cancelling cases a ground
+  // The same axis snap for a label, plus the canceling cases a ground
   // has no answer for -- see labelAnchorFor().
   if (!ground) return labelAnchorFor(dirs);
 
@@ -1013,25 +1032,30 @@ int anchorWanted(const AnchorDirs &all, const QPointF &anchor, bool ground, int 
   return kAlignVCenter | (awayX < 0.0 ? kAlignHEast : kAlignHWest);
 }
 
-void addRealign(QList<Realign> &out, const NodePtr &net, const PointKey &at, int current,
-                int wanted) {
+void addRealign(QList<Realign> &out, const NodePtr &net, const PointKey &at,
+                int current, int wanted) {
   if (wanted == current) return;
 
   Realign realign;
   realign.net      = net;
   realign.oldAlign = current;
   realign.newAlign = wanted;
-  realign.text     = QStringLiteral("align %1 %2 -> %3").arg(ptText(at)).arg(current).arg(wanted);
+  realign.text     = QStringLiteral("align %1 %2 -> %3")
+                     .arg(ptText(at))
+                     .arg(current)
+                     .arg(wanted);
   out.append(realign);
 }
 
 } // namespace
 
-QList<Realign> planAnchors(const NetModel &model, const QList<NodePtr> &touchedNets) {
+QList<Realign> planAnchors(const NetModel       &model,
+                           const QList<NodePtr> &touchedNets) {
   // Every wire and tap.
   AnchorDirs dirs;
   for (const NetModel::Wire &wire : model.wires())
-    addDirs(dirs, QPointF(wire.a.x, wire.a.y), QPointF(wire.b.x, wire.b.y), true);
+    addDirs(dirs, QPointF(wire.a.x, wire.a.y), QPointF(wire.b.x, wire.b.y),
+            true);
   for (const NetModel::Tap &tap : model.taps())
     addDirs(dirs, QPointF(tap.a.x, tap.a.y), QPointF(tap.b.x, tap.b.y), false);
 
@@ -1045,8 +1069,10 @@ QList<Realign> planAnchors(const NetModel &model, const QList<NodePtr> &touchedN
 
     const PointKey at      = keyOf(rec->pt1.getValue());
     const int      current = rec->rotateAlign.getAlign();
-    const bool     ground  = isGroundName(decodeQSpiceString(rec->netName.getValue()));
-    addRealign(out, net, at, current, anchorWanted(dirs, QPointF(at.x, at.y), ground, current));
+    const bool     ground =
+        isGroundName(decodeQSpiceString(rec->netName.getValue()));
+    addRealign(out, net, at, current,
+               anchorWanted(dirs, QPointF(at.x, at.y), ground, current));
   }
   return out;
 }

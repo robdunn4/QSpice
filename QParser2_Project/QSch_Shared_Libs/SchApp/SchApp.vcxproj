@@ -118,7 +118,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalIncludeDirectories>$(SolutionDir)QParser2_Shared_Lib;$(SolutionDir)QSch_Shared_Libs\SchCore;$(SolutionDir)QSch_Shared_Libs\SchLink;$(SolutionDir)QSch_Shared_Libs\SchRender;$(SolutionDir)QSch_Shared_Libs\SchOutput;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)QParser2_Shared_Lib;$(SolutionDir)QSch_Shared_Libs\SchCore;$(SolutionDir)QSch_Shared_Libs\SchProgAttr;$(SolutionDir)QSch_Shared_Libs\SchLink;$(SolutionDir)QSch_Shared_Libs\SchRender;$(SolutionDir)QSch_Shared_Libs\SchOutput;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <WarningLevel>Level3</WarningLevel>
@@ -132,7 +132,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug-ASan|x64'">
     <ClCompile>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalIncludeDirectories>$(SolutionDir)QParser2_Shared_Lib;$(SolutionDir)QSch_Shared_Libs\SchCore;$(SolutionDir)QSch_Shared_Libs\SchLink;$(SolutionDir)QSch_Shared_Libs\SchRender;$(SolutionDir)QSch_Shared_Libs\SchOutput;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)QParser2_Shared_Lib;$(SolutionDir)QSch_Shared_Libs\SchCore;$(SolutionDir)QSch_Shared_Libs\SchProgAttr;$(SolutionDir)QSch_Shared_Libs\SchLink;$(SolutionDir)QSch_Shared_Libs\SchRender;$(SolutionDir)QSch_Shared_Libs\SchOutput;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <WarningLevel>Level3</WarningLevel>
@@ -148,7 +148,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalIncludeDirectories>$(SolutionDir)QParser2_Shared_Lib;$(SolutionDir)QSch_Shared_Libs\SchCore;$(SolutionDir)QSch_Shared_Libs\SchLink;$(SolutionDir)QSch_Shared_Libs\SchRender;$(SolutionDir)QSch_Shared_Libs\SchOutput;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)QParser2_Shared_Lib;$(SolutionDir)QSch_Shared_Libs\SchCore;$(SolutionDir)QSch_Shared_Libs\SchProgAttr;$(SolutionDir)QSch_Shared_Libs\SchLink;$(SolutionDir)QSch_Shared_Libs\SchRender;$(SolutionDir)QSch_Shared_Libs\SchOutput;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <WarningLevel>Level3</WarningLevel>

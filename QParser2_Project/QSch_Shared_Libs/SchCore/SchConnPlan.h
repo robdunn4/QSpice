@@ -83,13 +83,14 @@ QList<Rename> planNames(const NetModel &model);
 
 // The alignment each of `touchedNets` (net-label records) should have,
 // from the wires and taps at its anchor.
-QList<Realign> planAnchors(const NetModel &model, const QList<NodePtr> &touchedNets);
+QList<Realign> planAnchors(const NetModel       &model,
+                           const QList<NodePtr> &touchedNets);
 
 // Grounds under `root` still in their unconnected orientation.
 QList<NodePtr> unorientedGrounds(const NodePtr &root);
 
-// Where an unconnected net item is anchored: a label at centre-bottom, a
-// ground at centre-top.
+// Where an unconnected net item is anchored: a label at center-bottom, a
+// ground at center-top.
 int unconnectedAlign(bool ground);
 
 // GND, EARTH or CHASSIS, ignoring case.

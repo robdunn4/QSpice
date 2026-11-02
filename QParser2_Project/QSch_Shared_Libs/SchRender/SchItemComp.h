@@ -12,7 +12,7 @@ class SchItemComp : public SchItemBase {
 public:
   explicit SchItemComp(ItemCmpPtr item, QGraphicsItem *parent = nullptr);
 
-  Rect  getRect() const noexcept override;
+  Rect getRect() const noexcept override;
 
   // Picking: Body anywhere within the symbol's body box -- hollow or
   // not, the symbol is what a click there means -- or on any of its own
@@ -21,15 +21,15 @@ public:
 
   // How many pins the symbol has -- "stuff with jumper" applies only to
   // two-pin components.
-  int  pinCount() const;
+  int pinCount() const;
 
   int  stuffCode() const override;
   void setStuffCode(int code) override;
 
-  int  orientCode() const override;
-  void setOrientCode(int code) override;
-  int  orientAfterTurn(bool ccw) const override;
-  int  orientAfterMirror() const override;
+  int   orientCode() const override;
+  void  setOrientCode(int code) override;
+  int   orientAfterTurn(bool ccw) const override;
+  int   orientAfterMirror() const override;
   Point getPosition() const noexcept override;
   void  moveTo(Point p) noexcept override;
 
@@ -38,7 +38,7 @@ public:
 
 protected:
   void paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
-             QWidget *widget) override;
+      QWidget *widget) override;
 
   // True when this component is drawn from the stock resistor symbol.
   bool isResistor() const;
@@ -51,4 +51,4 @@ private:
   ItemCmpPtr item_;
 };
 
-} // namespace sch::render
+}   // namespace sch::render

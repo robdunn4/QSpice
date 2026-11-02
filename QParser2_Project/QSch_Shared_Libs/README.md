@@ -1,6 +1,6 @@
 # The QParser2 Project &mdash; QSch_Shared_Libs
 
-2026.10.14 &mdash; The libraries in this folder are under development and not yet stable.
+2026.10.23 &mdash; The libraries in this folder are under development and not yet stable.
 
 These libraries require Qt 6 (built against Qt 6.11.2, MSVC, x64).
 
@@ -18,6 +18,12 @@ These libraries require Qt 6 (built against Qt 6.11.2, MSVC, x64).
     <td valign="top">QParser2</td>
   </tr>
   <tr valign="top">
+    <td valign="top">SchProgAttr</td>
+    <td valign="top">Core</td>
+    <td valign="top">Programmable Attributes: taking a symbol attribute's text apart (<code>NAME=&lt;VALUE&gt;DESCRIPTION</code> and, later, QSpice's other forms), what it displays as, and its text with a new value</td>
+    <td valign="top">&mdash;</td>
+  </tr>
+  <tr valign="top">
     <td valign="top">SchLink</td>
     <td valign="top">Core</td>
     <td valign="top">The QSpice installation: registry, QUX, simulators, viewer, tools, help</td>
@@ -27,24 +33,30 @@ These libraries require Qt 6 (built against Qt 6.11.2, MSVC, x64).
     <td valign="top">SchRender</td>
     <td valign="top">Core, Gui, Widgets</td>
     <td valign="top">Scene items, drawing, the scene, the read-only view (SchViewBase), render sources</td>
-    <td valign="top">SchCore</td>
+    <td valign="top">SchCore, SchProgAttr</td>
   </tr>
   <tr valign="top">
     <td valign="top">SchOutput</td>
     <td valign="top">Core, Gui, Widgets, PrintSupport, Svg</td>
     <td valign="top">Printing, page layout, the saved printer and paper, header/footer fields, SVG export (no dialogs)</td>
-    <td valign="top">SchRender</td>
+    <td valign="top">SchRender, SchProgAttr</td>
   </tr>
   <tr valign="top">
     <td valign="top">SchApp</td>
     <td valign="top">Core, Gui, Widgets</td>
     <td valign="top">What every program shares: the log file, QSpice's colors as a drawing style, the program icon, the About box, self-documenting .ini values, opening a hierarchical block's schematic</td>
-    <td valign="top">SchLink, SchOutput</td>
+    <td valign="top">SchLink, SchOutput, SchProgAttr</td>
+  </tr>
+  <tr valign="top">
+    <td valign="top">SchCodeGen</td>
+    <td valign="top">Core</td>
+    <td valign="top">Code templates: template files (<code>.qschedtmpl</code>), their options, and the code generated from them (no dialogs)</td>
+    <td valign="top">SchCore</td>
   </tr>
 </table>
 
 All are static libraries (`.lib`), x64 only, output to
 `<Library>\lib\x64\<Configuration>`.
 
-Namespaces: `sch::core`, `sch::link`, `sch::render`, `sch::output`, `sch::app`. Each
+Namespaces: `sch::core`, `sch::link`, `sch::render`, `sch::output`, `sch::app`, `sch::codegen`, `sch::progattr`. Each
 library reports its name and version through `sch::<lib>::libraryInfo()`.

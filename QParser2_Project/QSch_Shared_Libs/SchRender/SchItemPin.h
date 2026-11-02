@@ -1,7 +1,7 @@
 #pragma once
-#include <QRectF>
 #include "ItemPin.h"
 #include "SchItemBase.h"
+#include <QRectF>
 
 namespace sch::render {
 
@@ -19,7 +19,7 @@ public:
   Point getPosition() const noexcept override;
   void  moveTo(Point p) noexcept override;
 
-  bool           isElectrical() const override { return true; }
+  bool isElectrical() const override { return true; }
 
   // Scene-space extent of the pin's label, or a null rect when it has
   // none. Folded into getRect() so the element reports everything it
@@ -52,8 +52,8 @@ public:
   // EAST, so a label that sits inside the body upright still sits
   // inside it mirrored -- the same swap SchItemText does, and missing
   // here is why mirrored symbols hung their pin labels outside.
-  int effectiveAlignH() const;
-  int effectiveAlignV() const;
+  int            effectiveAlignH() const;
+  int            effectiveAlignV() const;
   QList<QPointF> connectionPoints() const override;
 
   QList<Point> controlPoints() const override;
@@ -65,7 +65,7 @@ public:
     update();
   }
 
-  // Drawn in HIGHLIGHT colour while its row is selected in the Symbol
+  // Drawn in HIGHLIGHT color while its row is selected in the Symbol
   // Properties pane, so the pane and the drawing point at each other.
   // The net this pin is ON, for display.
   //
@@ -97,7 +97,6 @@ public:
 
 protected:
   bool highlighted = false;
-
 
   void paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
              QWidget *widget) override;

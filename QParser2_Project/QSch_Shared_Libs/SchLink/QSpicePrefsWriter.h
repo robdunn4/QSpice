@@ -39,7 +39,7 @@ public:
 protected:
   bool write(const QString &name, const QString &value);
 
-  QString keyPath; // "<vendor key>\QSPICE\[Preferences]"
+  QString keyPath;   // "<vendor key>\QSPICE\[Preferences]"
 };
 
-} // namespace sch::link
+}   // namespace sch::link

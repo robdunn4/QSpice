@@ -25,8 +25,8 @@ namespace sch::render {
 
 namespace {
 
-// The record is just a point -- no colour, no size -- so both come from
-// QSpice's own settings. Junctions are drawn in the wire colour because
+// The record is just a point -- no color, no size -- so both come from
+// QSpice's own settings. Junctions are drawn in the wire color because
 // that is what they are: a marked meeting of wires.
 QColor junctionColor() { return RenderStyle::current().wire; }
 
@@ -37,7 +37,6 @@ constexpr double kMinRadiusPx = 1.0;
 // While printing, the smallest radius in PRINTED line widths: a dot
 // three lines across, so it reads as a dot over thickened wires.
 constexpr double kPrintRadiusLineWidths = 1.5;
-
 
 } // namespace
 
@@ -54,7 +53,8 @@ SchItemJunction::SchItemJunction(ItemJunctionPtr item, QGraphicsItem *parent)
 }
 
 double SchItemJunction::dotRadius() {
-  return radiusLineWidths * SchPen::widthUnits(0) * RenderStyle::current().junctionSize;
+  return radiusLineWidths * SchPen::widthUnits(0) *
+         RenderStyle::current().junctionSize;
 }
 
 Rect SchItemJunction::getRect() const noexcept {
@@ -76,8 +76,8 @@ QList<QPointF> SchItemJunction::connectionPoints() const {
   return {toQ(item_->pt1.getValue())};
 }
 
-void SchItemJunction::paint(QPainter *painter,
-                            const QStyleOptionGraphicsItem *, QWidget *) {
+void SchItemJunction::paint(QPainter *painter, const QStyleOptionGraphicsItem *,
+                            QWidget *) {
   painter->setRenderHint(QPainter::Antialiasing, true);
   painter->setPen(Qt::NoPen);
   painter->setBrush(QBrush(junctionColor()));
@@ -100,7 +100,8 @@ void SchItemJunction::paint(QPainter *painter,
   // whole radius by (minimum / nominal) made dots far too large, since
   // the nominal width at print scale is often a fraction of a pixel.
   if (scale > 0.0 && SchPen::printMinDevicePx > 0.0)
-    radius = std::max(radius, kPrintRadiusLineWidths * SchPen::printMinDevicePx / scale);
+    radius = std::max(radius, kPrintRadiusLineWidths *
+                                  SchPen::printMinDevicePx / scale);
 
   if (scale > 0.0) radius = std::max(radius, kMinRadiusPx / scale);
 

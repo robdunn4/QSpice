@@ -84,8 +84,8 @@ bool bringForward(DWORD pid) {
 
   if (data.window == nullptr) return false;
 
-  // Restored first: a minimised window cannot be raised, and the copy
-  // the user is looking for is often the one they minimised.
+  // Restored first: a minimized window cannot be raised, and the copy
+  // the user is looking for is often the one they minimized.
   if (IsIconic(data.window)) ShowWindow(data.window, SW_RESTORE);
 
   // Windows may REFUSE to give focus to a process the user is not
@@ -131,7 +131,8 @@ QString run(const QString &exeName, const QString &workingDir) {
   // and not writable anyway.
   const QString startIn = workingDir.isEmpty() ? installPath : workingDir;
 
-  if (QProcess::startDetached(exePath, QStringList(), startIn)) return QString();
+  if (QProcess::startDetached(exePath, QStringList(), startIn))
+    return QString();
 
   return QObject::tr("Could not start:\n\n%1")
       .arg(QDir::toNativeSeparators(exePath));
