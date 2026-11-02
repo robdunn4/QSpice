@@ -10,23 +10,23 @@
 #include <QComboBox>
 #include <QCoreApplication>
 #include <QDir>
-#include <QFile>
 #include <QDoubleSpinBox>
+#include <QFile>
 #include <QFileDialog>
 #include <QFileInfo>
-#include <QMessageBox>
-#include <QPrinterInfo>
-#include <QProgressDialog>
 #include <QFormLayout>
 #include <QHBoxLayout>
 #include <QImage>
 #include <QLabel>
+#include <QMessageBox>
 #include <QMouseEvent>
-#include <QPageSetupDialog>
 #include <QPageLayout>
+#include <QPageSetupDialog>
 #include <QPainter>
 #include <QPrintPreviewWidget>
 #include <QPrinter>
+#include <QPrinterInfo>
+#include <QProgressDialog>
 #include <QPushButton>
 #include <QSpinBox>
 #include <QStringList>
@@ -45,21 +45,21 @@
 #endif
 
 #include "SchHeaderFooterDlg.h"
-#include "SchTextLayout.h" // fontPixelSize()
 #include "SchRenderSource.h"
+#include "SchTextLayout.h" // fontPixelSize()
 #include "Version.h"
 #include "ViewerPrefs.h"
 
 // SchOutput names used in this file.
-using sch::output::SchPrintSettings;
-using sch::output::SchPrintTile;
-using sch::output::SchPrintLayout;
 using sch::output::SchPrint;
 using sch::output::SchPrintContext;
+using sch::output::SchPrintLayout;
+using sch::output::SchPrintSettings;
+using sch::output::SchPrintTile;
 
 // SchRender names used in this file.
-using sch::render::SchRenderSource;
 using sch::render::fontPixelSize;
+using sch::render::SchRenderSource;
 
 namespace {
 
@@ -72,8 +72,8 @@ constexpr double kMmPerInch = 25.4;
 QRectF fittedRect(const QSizeF &size, const QRectF &box) {
   if (size.isEmpty() || box.isEmpty()) return QRectF();
 
-  const double scale  = std::min(box.width() / size.width(),
-                                 box.height() / size.height());
+  const double scale =
+      std::min(box.width() / size.width(), box.height() / size.height());
   const QSizeF fitSize = size * scale;
   return QRectF(box.center().x() - fitSize.width() / 2.0,
                 box.center().y() - fitSize.height() / 2.0, fitSize.width(),
@@ -91,7 +91,7 @@ public:
   // A page clicked: its tile index.
   std::function<void(int index)> onToggle;
 
-  // Whether the thumbnail shows the canvas colour, as the pages will.
+  // Whether the thumbnail shows the canvas color, as the pages will.
   bool background = true;
 
   explicit SchPageMap(QWidget *parent) : QWidget(parent) {
@@ -101,7 +101,8 @@ public:
     setToolTip(tr("Click a page to include or exclude it."));
   }
 
-  void setContent(const SchRenderSource *schView, const SchPrintLayout &printLayout,
+  void setContent(const SchRenderSource *schView,
+                  const SchPrintLayout  &printLayout,
                   const QSet<int> &excludedTiles, bool rerender) {
     view     = schView;
     layout   = printLayout;
@@ -153,7 +154,7 @@ protected:
   void mousePressEvent(QMouseEvent *event) override {
     if (event->button() != Qt::LeftButton || layout.pages <= 1) return;
 
-    // Overlapping pages: the one whose centre is nearest.
+    // Overlapping pages: the one whose center is nearest.
     const QPointF at   = event->position();
     int           best = -1;
     double        dist = std::numeric_limits<double>::max();
@@ -164,7 +165,7 @@ protected:
       const QRectF box = toMap(tile.scene);
       if (!box.contains(at)) continue;
 
-      const QPointF d = box.center() - at;
+      const QPointF d  = box.center() - at;
       const double  dd = d.x() * d.x() + d.y() * d.y();
       if (dd >= dist) continue;
       dist = dd;
@@ -209,9 +210,9 @@ protected:
   }
 
   const SchRenderSource *view = nullptr;
-  SchPrintLayout layout;
-  QSet<int>      excluded;
-  QImage         thumb;
+  SchPrintLayout         layout;
+  QSet<int>              excluded;
+  QImage                 thumb;
 };
 
 // ===========================================================================
@@ -219,7 +220,7 @@ protected:
 // ===========================================================================
 
 SchPrintDlg::SchPrintDlg(SchPrint *schPrint, const SchRenderSource *schView,
-                                       const QString &docTitle, QWidget *parent)
+                         const QString &docTitle, QWidget *parent)
     : QDialog(parent), print(schPrint), view(schView), title(docTitle) {
   setWindowTitle(tr("Print - %1").arg(title));
 
@@ -235,7 +236,8 @@ SchPrintDlg::SchPrintDlg(SchPrint *schPrint, const SchRenderSource *schView,
 void SchPrintDlg::buildUi() {
   // --- Printer -----------------------------------------------------------
   printerCombo = new QComboBox(this);
-  printerCombo->setSizeAdjustPolicy(QComboBox::AdjustToMinimumContentsLengthWithIcon);
+  printerCombo->setSizeAdjustPolicy(
+      QComboBox::AdjustToMinimumContentsLengthWithIcon);
   printerCombo->setMinimumContentsLength(16);
 
   copiesSpin = new QSpinBox(this);
@@ -244,10 +246,9 @@ void SchPrintDlg::buildUi() {
 
   // --- Settings --------------------------------------------------------
   modeCombo = new QComboBox(this);
-  modeCombo->addItems({tr("Visible area - fit to page"),
-                       tr("Whole schematic - fit to page"),
-                       tr("Whole schematic - to scale"),
-                       tr("Visible area - to scale")});
+  modeCombo->addItems(
+      {tr("Visible area - fit to page"), tr("Whole schematic - fit to page"),
+       tr("Whole schematic - to scale"), tr("Visible area - to scale")});
 
   scaleSpin = new QDoubleSpinBox(this);
   scaleSpin->setKeyboardTracking(false);
@@ -255,7 +256,7 @@ void SchPrintDlg::buildUi() {
   mmBtn = new QToolButton(this);
   mmBtn->setText(tr("mm"));
   mmBtn->setCheckable(true);
-  mmBtn->setToolTip(tr("Scale in millimetres, to 0.1 mm"));
+  mmBtn->setToolTip(tr("Scale in millimeters, to 0.1 mm"));
   inchBtn = new QToolButton(this);
   inchBtn->setText(tr("in"));
   inchBtn->setCheckable(true);
@@ -267,9 +268,10 @@ void SchPrintDlg::buildUi() {
   unitGroup->addButton(inchBtn, 1);
 
   resetScaleBtn = new QToolButton(this);
-  resetScaleBtn->setText(QString(QChar(0x21BA))); // anticlockwise arrow
-  resetScaleBtn->setToolTip(tr("Reset to the default scale: %1")
-                                .arg(scaleText(SchPrintSettings::kDefaultMmPer1000)));
+  resetScaleBtn->setText(QString(QChar(0x21BA))); // counterclockwise arrow
+  resetScaleBtn->setToolTip(
+      tr("Reset to the default scale: %1")
+          .arg(scaleText(SchPrintSettings::kDefaultMmPer1000)));
 
   QHBoxLayout *scaleRow = new QHBoxLayout;
   scaleRow->addWidget(scaleSpin, 1);
@@ -336,10 +338,10 @@ void SchPrintDlg::buildUi() {
   form->addRow(tr("Page limit:"), pageLimitSpin);
 
   // Header and footer: each on or off -- off gives its space to the
-  // drawing -- and what they say. Beside them the background colour, for
+  // drawing -- and what they say. Beside them the background color, for
   // this print: each starts from the printing defaults.
-  headerChk = new QCheckBox(tr("Header"), this);
-  footerChk = new QCheckBox(tr("Footer"), this);
+  headerChk     = new QCheckBox(tr("Header"), this);
+  footerChk     = new QCheckBox(tr("Footer"), this);
   backgroundChk = new QCheckBox(tr("Background"), this);
   backgroundChk->setToolTip(tr("Print the canvas color behind the drawing"));
   QPushButton *bandsBtn = new QPushButton(tr("Configure..."), this);
@@ -352,12 +354,13 @@ void SchPrintDlg::buildUi() {
   bandsRow->addStretch(1);
   bandsRow->addWidget(bandsBtn);
   form->addRow(tr("Include:"), bandsRow);
-  connect(bandsBtn, &QPushButton::clicked, this, [this]() { onConfigureBands(); });
+  connect(bandsBtn, &QPushButton::clicked, this,
+          [this]() { onConfigureBands(); });
 
   infoLbl = new QLabel(this);
   infoLbl->setWordWrap(true);
 
-  pageMap = new SchPageMap(this);
+  pageMap             = new SchPageMap(this);
   pageMap->background = print->settings().printBackground;
 
   QPushButton *setupBtn = new QPushButton(tr("Page Setup..."), this);
@@ -366,7 +369,8 @@ void SchPrintDlg::buildUi() {
   QPushButton *closeBtn = new QPushButton(tr("Close"), this);
   printBtn->setDefault(true);
   printBtn->setToolTip(tr("Print the included pages, exactly as shown"));
-  pdfBtn->setToolTip(tr("Write the included pages to a PDF file, exactly as shown"));
+  pdfBtn->setToolTip(
+      tr("Write the included pages to a PDF file, exactly as shown"));
   // One row: Page Setup at the left, a settings button set apart by
   // the stretch; the two ways of printing and Close at the right. The
   // panel takes its width from this row (sizeHint, below), so no label
@@ -378,12 +382,13 @@ void SchPrintDlg::buildUi() {
   buttons->addWidget(printBtn);
   buttons->addWidget(closeBtn);
 
-  QWidget     *side     = new QWidget(this);
-  QVBoxLayout *sideLay  = new QVBoxLayout(side);
+  QWidget     *side    = new QWidget(this);
+  QVBoxLayout *sideLay = new QVBoxLayout(side);
   sideLay->setContentsMargins(0, 0, 0, 0);
   sideLay->addLayout(form);
   sideLay->addWidget(infoLbl);
-  sideLay->addWidget(new QLabel(tr("Pages (click to include or exclude):"), this));
+  sideLay->addWidget(
+      new QLabel(tr("Pages (click to include or exclude):"), this));
   sideLay->addWidget(pageMap, 1);
   sideLay->addLayout(buttons);
 
@@ -420,19 +425,26 @@ void SchPrintDlg::buildUi() {
           [this](int) { applyControls(); });
   connect(scaleSpin, &QDoubleSpinBox::valueChanged, this,
           [this](double) { onScaleEdited(); });
-  connect(resetScaleBtn, &QToolButton::clicked, this, [this]() { resetScale(); });
+  connect(resetScaleBtn, &QToolButton::clicked, this,
+          [this]() { resetScale(); });
   // Clicking the button already down does nothing -- the group keeps it
   // down and the unit is unchanged.
   connect(unitGroup, &QButtonGroup::idClicked, this,
           [this](int id) { onUnitChosen(id == 1); });
-  connect(autoOrientChk, &QCheckBox::toggled, this, [this](bool) { applyControls(); });
-  connect(overlapChk, &QCheckBox::toggled, this, [this](bool) { applyControls(); });
+  connect(autoOrientChk, &QCheckBox::toggled, this,
+          [this](bool) { applyControls(); });
+  connect(overlapChk, &QCheckBox::toggled, this,
+          [this](bool) { applyControls(); });
   connect(overlapSpin, &QDoubleSpinBox::valueChanged, this,
           [this](double) { applyControls(); });
-  connect(cropChk, &QCheckBox::toggled, this, [this](bool) { applyControls(); });
-  connect(headerChk, &QCheckBox::toggled, this, [this](bool) { applyControls(); });
-  connect(footerChk, &QCheckBox::toggled, this, [this](bool) { applyControls(); });
-  connect(backgroundChk, &QCheckBox::toggled, this, [this](bool) { applyControls(); });
+  connect(cropChk, &QCheckBox::toggled, this,
+          [this](bool) { applyControls(); });
+  connect(headerChk, &QCheckBox::toggled, this,
+          [this](bool) { applyControls(); });
+  connect(footerChk, &QCheckBox::toggled, this,
+          [this](bool) { applyControls(); });
+  connect(backgroundChk, &QCheckBox::toggled, this,
+          [this](bool) { applyControls(); });
   connect(pageLimitSpin, &QSpinBox::valueChanged, this,
           [this](int) { applyControls(); });
   connect(minLineSpin, &QDoubleSpinBox::valueChanged, this,
@@ -462,10 +474,9 @@ void SchPrintDlg::buildUi() {
 
   connect(previewWidget, &QPrintPreviewWidget::paintRequested, this,
           [this](QPrinter *target) {
-            SchPrint::render(target, view, title, print->settings(),
-                             [this](const SchPrintTile &tile) {
-                               return included(tile);
-                             });
+            SchPrint::render(
+                target, view, title, print->settings(),
+                [this](const SchPrintTile &tile) { return included(tile); });
           });
 
   pageMap->onToggle = [this](int index) {
@@ -480,7 +491,7 @@ void SchPrintDlg::buildUi() {
 
 void SchPrintDlg::fillPrinters() {
   const bool wasLoading = loading;
-  loading = true;
+  loading               = true;
 
   const QString current = print->ensurePrinter()->printerName();
 
@@ -521,7 +532,7 @@ double SchPrintDlg::shownScale() const {
 
 void SchPrintDlg::showScale(double mmPer1000) {
   const bool wasLoading = loading;
-  loading = true;
+  loading               = true;
 
   // Only whole steps -- 0.1 mm or 0.01 inch -- can be shown or typed:
   // the decimals ARE the step. Decimals before range, which they round.
@@ -559,8 +570,9 @@ void SchPrintDlg::onUnitChosen(bool inch) {
   const bool fitted = std::abs(s.mmPer1000 - s.savedMmPer1000) > 1e-9;
   s.inchUnits       = inch;
   s.savedMmPer1000  = SchPrintSettings::quantizeScale(s.savedMmPer1000, inch);
-  s.mmPer1000       = fitted ? SchPrintSettings::quantizeScale(s.mmPer1000, inch, true)
-                             : s.savedMmPer1000;
+  s.mmPer1000       = fitted
+                          ? SchPrintSettings::quantizeScale(s.mmPer1000, inch, true)
+                          : s.savedMmPer1000;
 
   showScale(s.mmPer1000);
   relayout();
@@ -575,7 +587,7 @@ void SchPrintDlg::resetScale() {
 
 void SchPrintDlg::updateResetEnabled() {
   const SchPrintSettings &s = print->settings();
-  const bool offDefault =
+  const bool              offDefault =
       std::abs(s.mmPer1000 - SchPrintSettings::kDefaultMmPer1000) > 1e-6;
   resetScaleBtn->setEnabled(s.atScale() && offDefault);
 }
@@ -594,10 +606,10 @@ void SchPrintDlg::applyControls() {
   s.cropMarks  = cropChk->isChecked();
   s.headerOn   = headerChk->isChecked();
   s.footerOn   = footerChk->isChecked();
-  s.printBackground    = backgroundChk->isChecked();
-  pageMap->background  = s.printBackground;
-  s.minLineMm  = minLineSpin->value();
-  s.maxPages   = pageLimitSpin->value();
+  s.printBackground   = backgroundChk->isChecked();
+  pageMap->background = s.printBackground;
+  s.minLineMm         = minLineSpin->value();
+  s.maxPages          = pageLimitSpin->value();
   fitNote.clear(); // a different print now
 
   updateScaleEnabled();
@@ -608,8 +620,8 @@ void SchPrintDlg::updateScaleEnabled() {
   // Scale, fit and tiling options only mean something at scale.
   const bool atScale = print->settings().atScale();
   for (QWidget *w : std::initializer_list<QWidget *>{
-           scaleSpin, mmBtn, inchBtn, fitWideSpin, fitBtn, overlapChk, overlapSpin,
-           cropChk})
+           scaleSpin, mmBtn, inchBtn, fitWideSpin, fitBtn, overlapChk,
+           overlapSpin, cropChk})
     w->setEnabled(atScale);
 
   overlapSpin->setEnabled(atScale && overlapChk->isChecked());
@@ -648,10 +660,11 @@ void SchPrintDlg::updateInfo() {
   // would otherwise read as "Nothing to print".
   QPrinter *printer = print->ensurePrinter();
   if (!SchPrint::isUsable(printer)) {
-    infoLbl->setText(tr("Windows could not open the printer \"%1\" -- it may be off, "
-                        "asleep or disconnected. Choose another printer, or close "
-                        "and reopen this dialog to try again.")
-                         .arg(printer->printerName()));
+    infoLbl->setText(
+        tr("Windows could not open the printer \"%1\" -- it may be off, "
+           "asleep or disconnected. Choose another printer, or close "
+           "and reopen this dialog to try again.")
+            .arg(printer->printerName()));
     return;
   }
 
@@ -674,7 +687,8 @@ void SchPrintDlg::updateInfo() {
   const double mmPer1000 = effectiveMmPer1000();
 
   const double gridMm = 100.0 * mmPer1000 / 1000.0;
-  const double textPt = fontPixelSize(1.0) * mmPer1000 / 1000.0 / kMmPerInch * 72.0;
+  const double textPt =
+      fontPixelSize(1.0) * mmPer1000 / 1000.0 / kMmPerInch * 72.0;
 
   const QString grid = s.inchUnits
                            ? tr("%1 inch").arg(gridMm / kMmPerInch, 0, 'f', 3)
@@ -722,13 +736,14 @@ QString SchPrintDlg::scaleText(double mmPer1000) {
 
 QString SchPrintDlg::pageRangesText(const QList<int> &pages) {
   QStringList parts;
-  int i = 0;
+  int         i = 0;
   while (i < pages.size()) {
     int j = i;
     while (j + 1 < pages.size() && pages[j + 1] == pages[j] + 1) ++j;
 
     if (j == i) parts << QString::number(pages[i]);
-    else if (j == i + 1) parts << QString::number(pages[i]) << QString::number(pages[j]);
+    else if (j == i + 1)
+      parts << QString::number(pages[i]) << QString::number(pages[j]);
     else parts << QStringLiteral("%1-%2").arg(pages[i]).arg(pages[j]);
     i = j + 1;
   }
@@ -753,16 +768,19 @@ void SchPrintDlg::fitWidth() {
   // Rounded DOWN to a step of the unit shown -- 0.1 mm or 0.01 inch --
   // so never a page more. The hair under keeps an exact fit from tipping
   // over in floating point.
-  const double exact  = paperMm * 1000.0 / source.width() * 0.9999;
-  const double usable = SchPrintSettings::quantizeScale(exact, s.inchUnits, true);
+  const double exact = paperMm * 1000.0 / source.width() * 0.9999;
+  const double usable =
+      SchPrintSettings::quantizeScale(exact, s.inchUnits, true);
 
   fitNote.clear();
   if (exact < SchPrintSettings::minScaleMm(s.inchUnits))
     fitNote = tr("%1 page(s) wide needs a scale below the minimum; using "
-                 "the minimum.").arg(n);
+                 "the minimum.")
+                  .arg(n);
   else if (exact > SchPrintSettings::maxScaleMm(s.inchUnits))
     fitNote = tr("%1 page(s) wide needs a scale above the maximum; using "
-                 "the maximum.").arg(n);
+                 "the maximum.")
+                  .arg(n);
 
   // In effect, NOT saved: savedMmPer1000 is left alone.
   s.mmPer1000 = usable;
@@ -803,7 +821,8 @@ void SchPrintDlg::onConfigureBands() {
         this, tr("Headers and Footers"),
         tr("Make these the default headers and footers?\n\n"
            "Yes: also for future prints. No: this print only."),
-        QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel, QMessageBox::No);
+        QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel,
+        QMessageBox::No);
     if (answer == QMessageBox::Cancel) continue; // back to editing
 
     dialog.apply(print->settings());
@@ -842,13 +861,13 @@ void SchPrintDlg::onPrint() {
   printer->setCopyCount(copiesSpin->value());
 
   QProgressDialog progress(tr("Printing..."), tr("Cancel"), 0, 1, this);
-  const bool done =
-      SchPrint::render(printer, view, title, print->settings(),
-                       [this](const SchPrintTile &tile) { return included(tile); },
-                       progressFn(progress, tr("Printing - %1").arg(title),
-                                  tr("Printing page %1 of %2...")));
+  const bool      done = SchPrint::render(
+      printer, view, title, print->settings(),
+      [this](const SchPrintTile &tile) { return included(tile); },
+      progressFn(progress, tr("Printing - %1").arg(title),
+                      tr("Printing page %1 of %2...")));
 
-  // Cancelled: the job is aborted and the dialog stays open.
+  // Canceled: the job is aborted and the dialog stays open.
   if (!done) return;
 
   accept();
@@ -858,15 +877,16 @@ bool SchPrintDlg::confirmPrint() {
   QPrinter *printer = print->ensurePrinter();
 
   // Printer: its name, and where it is, when the driver says.
-  const QString     name = printer->printerName();
+  const QString      name = printer->printerName();
   const QPrinterInfo info = QPrinterInfo::printerInfo(name);
-  QStringList       about;
+  QStringList        about;
   if (!info.location().isEmpty()) about << info.location();
   if (!info.description().isEmpty() && info.description() != name)
     about << info.description();
   QString printerText = name.toHtmlEscaped();
   if (!about.isEmpty())
-    printerText += QStringLiteral(" (%1)").arg(about.join(QStringLiteral(", ")).toHtmlEscaped());
+    printerText += QStringLiteral(" (%1)").arg(
+        about.join(QStringLiteral(", ")).toHtmlEscaped());
 
   // Pages: how many of the layout, which, and in all with copies.
   QList<int> chosen;
@@ -885,18 +905,17 @@ bool SchPrintDlg::confirmPrint() {
                      .arg(chosen.size() * copies);
 
   // Paper and orientation -- auto-orientation may have turned it.
-  const QPageLayout page = printer->pageLayout();
-  const QString paperText =
-      tr("%1, %2")
-          .arg(page.pageSize().name().toHtmlEscaped(),
-               page.orientation() == QPageLayout::Landscape ? tr("landscape")
-                                                            : tr("portrait"));
+  const QPageLayout page      = printer->pageLayout();
+  const QString     paperText = tr("%1, %2").arg(
+      page.pageSize().name().toHtmlEscaped(),
+      page.orientation() == QPageLayout::Landscape ? tr("landscape")
+                                                       : tr("portrait"));
 
   // Scale: the one in effect, and how it was arrived at.
-  const double  mm        = effectiveMmPer1000();
-  const QString scaleWord = print->settings().atScale() ? QString()
-                                                        : tr("about ");
-  const QString scaleRow  = tr("%1%2<br>%3")
+  const double  mm = effectiveMmPer1000();
+  const QString scaleWord =
+      print->settings().atScale() ? QString() : tr("about ");
+  const QString scaleRow = tr("%1%2<br>%3")
                                .arg(scaleWord, scaleText(mm),
                                     modeCombo->currentText().toHtmlEscaped());
 
@@ -914,7 +933,8 @@ bool SchPrintDlg::confirmPrint() {
          "</table>")
           .arg(printerText, pagesText, paperText, scaleRow));
 
-  QPushButton *printChoice = box.addButton(tr("Print"), QMessageBox::AcceptRole);
+  QPushButton *printChoice =
+      box.addButton(tr("Print"), QMessageBox::AcceptRole);
   box.addButton(QMessageBox::Cancel);
   box.setDefaultButton(printChoice);
   box.exec();
@@ -922,9 +942,9 @@ bool SchPrintDlg::confirmPrint() {
   return box.clickedButton() == printChoice;
 }
 
-std::function<bool(int, int)>
-SchPrintDlg::progressFn(QProgressDialog &progress,
-                               const QString &caption, const QString &label) {
+std::function<bool(int, int)> SchPrintDlg::progressFn(QProgressDialog &progress,
+                                                      const QString   &caption,
+                                                      const QString   &label) {
   progress.setWindowTitle(caption);
   progress.setWindowModality(Qt::WindowModal);
   progress.setAutoClose(false);
@@ -941,7 +961,8 @@ SchPrintDlg::progressFn(QProgressDialog &progress,
 
   return [&progress, label](int pagesDone, int total) {
     if (!progress.isVisible()) {
-      progress.setMinimumDuration(0); // shown at once: even one page can be slow
+      progress.setMinimumDuration(
+          0); // shown at once: even one page can be slow
       progress.show();
     }
 
@@ -960,15 +981,15 @@ void SchPrintDlg::onPrintPdf() {
   // home folder.
   const QString schPath = view->sourcePath();
   const QString suggested =
-      schPath.isEmpty()
-          ? QDir(QDir::homePath()).filePath(QFileInfo(title).completeBaseName() +
-                                            QStringLiteral(".pdf"))
-          : QDir(QFileInfo(schPath).absolutePath())
-                .filePath(QFileInfo(schPath).completeBaseName() +
-                          QStringLiteral(".pdf"));
+      schPath.isEmpty() ? QDir(QDir::homePath())
+                              .filePath(QFileInfo(title).completeBaseName() +
+                                        QStringLiteral(".pdf"))
+                        : QDir(QFileInfo(schPath).absolutePath())
+                              .filePath(QFileInfo(schPath).completeBaseName() +
+                                        QStringLiteral(".pdf"));
 
-  QString path = QFileDialog::getSaveFileName(this, tr("Print to PDF"), suggested,
-                                              tr("PDF Files (*.pdf)"));
+  QString path = QFileDialog::getSaveFileName(
+      this, tr("Print to PDF"), suggested, tr("PDF Files (*.pdf)"));
   if (path.isEmpty()) return;
   if (!path.endsWith(QStringLiteral(".pdf"), Qt::CaseInsensitive))
     path += QStringLiteral(".pdf");
@@ -987,13 +1008,13 @@ void SchPrintDlg::onPrintPdf() {
   pdf.setCreator(QString::fromLatin1(Version::kProgramName));
 
   QProgressDialog progress(tr("Printing to PDF..."), tr("Cancel"), 0, 1, this);
-  const bool done =
-      SchPrint::render(&pdf, view, title, print->settings(),
-                       [this](const SchPrintTile &tile) { return included(tile); },
-                       progressFn(progress, tr("Printing to PDF - %1").arg(title),
-                                  tr("Writing page %1 of %2...")));
+  const bool      done = SchPrint::render(
+      &pdf, view, title, print->settings(),
+      [this](const SchPrintTile &tile) { return included(tile); },
+      progressFn(progress, tr("Printing to PDF - %1").arg(title),
+                      tr("Writing page %1 of %2...")));
 
-  // Cancelled: no half-written file left behind.
+  // Canceled: no half-written file left behind.
   if (!done) {
     QFile::remove(path);
     return;

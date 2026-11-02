@@ -7,7 +7,9 @@
 
 #include "SchViewBase.h"
 
-namespace sch::output { struct SchPrintSettings; }
+namespace sch::output {
+struct SchPrintSettings;
+}
 
 // QSchView's settings: QSchView.ini, beside the executable, separate from
 // QSchEdit's.
@@ -24,7 +26,7 @@ namespace sch::output { struct SchPrintSettings; }
 //
 // Sections:
 //   [QSpice]       QInstallDirKey -- where QSpice's registry settings are
-//   [View]         zoom, and the resistor orientation marker (no grid: a
+//   [View]         zoom and the resistor orientation marker (no grid: a
 //                  viewer shows the drawing alone)
 //   [Print]        what the Print dialog opens with. Written ONLY by
 //                  Options > Printing Defaults and Headers/
@@ -32,7 +34,7 @@ namespace sch::output { struct SchPrintSettings; }
 //                  asked); this program's defaults differ from SchPrint's
 //                  -- see printDefaults()
 //   [Export]       SVG export's own settings -- independent of printing
-//   [Colors]       QSpice's colour and metric names, used only for names
+//   [Colors]       QSpice's color and metric names, used only for names
 //                  QSpice's own settings do not supply (QSpice wins)
 //   [Log]          MaxSizeKB -- read by SchApp's log (sch::app::log::
 //                  configure()), not here
@@ -100,7 +102,9 @@ public:
   // The values the user set, by QSpice name ("CADwireColor" ->
   // "0xff0000"); defaults ("[]") are left out. For
   // sch::link::prefs::fillMissing().
-  const QHash<QString, QString> &colorValues() const noexcept { return colorValues_; }
+  const QHash<QString, QString> &colorValues() const noexcept {
+    return colorValues_;
+  }
 
   // --- [RecentFiles]
   //

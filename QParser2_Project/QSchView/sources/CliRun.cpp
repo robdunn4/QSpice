@@ -60,7 +60,8 @@ namespace {
 void connectConsole() {
 #ifdef Q_OS_WIN
   const HANDLE out = GetStdHandle(STD_OUTPUT_HANDLE);
-  if (out != nullptr && out != INVALID_HANDLE_VALUE && GetFileType(out) != FILE_TYPE_UNKNOWN)
+  if (out != nullptr && out != INVALID_HANDLE_VALUE &&
+      GetFileType(out) != FILE_TYPE_UNKNOWN)
     return;
 
   if (!AttachConsole(ATTACH_PARENT_PROCESS)) return;
@@ -79,9 +80,10 @@ void say(const QString &text) {
 
 int fail(int code, const QString &text) {
   qWarning().noquote() << text;
-  std::fputs(qPrintable(QStringLiteral("%1: error: %2\n")
-                            .arg(QString::fromLatin1(Version::kProgramName), text)),
-             stderr);
+  std::fputs(
+      qPrintable(QStringLiteral("%1: error: %2\n")
+                     .arg(QString::fromLatin1(Version::kProgramName), text)),
+      stderr);
   std::fflush(stderr);
   return code;
 }
@@ -95,21 +97,25 @@ QString usage() {
              "  %1 --help | --version\n"
              "\n"
              "Output (at least one):\n"
-             "  --print[=PRINTER]   print; without a name, on the saved printer, or the\n"
+             "  --print[=PRINTER]   print; without a name, on the saved "
+             "printer, or the\n"
              "                      Windows default\n"
              "  --pdf=FILE          write a PDF\n"
-             "  --svg=FILE          write an SVG (one drawing; no print settings apply)\n"
+             "  --svg=FILE          write an SVG (one drawing; no print "
+             "settings apply)\n"
              "\n"
              "Page (otherwise from the Print settings in %1.ini):\n"
              "  --fit               the whole schematic, fitted to one page\n"
-             "  --scale=MM          at scale: MM on paper per 1000 schematic units, on as\n"
+             "  --scale=MM          at scale: MM on paper per 1000 schematic "
+             "units, on as\n"
              "                      many pages as that needs\n"
              "  --orientation=O     portrait, landscape or auto\n"
              "  --paper=P           A4, Letter, Legal, A3, Tabloid, ...\n"
              "  --header | --no-header\n"
              "  --footer | --no-footer\n"
              "  --background | --no-background\n"
-             "                      the canvas colour behind the drawing (print and PDF)\n"
+             "                      the canvas color behind the drawing (print "
+             "and PDF)\n"
              "  --copies=N          printed copies\n"
              "\n"
              "Values may also follow as the next argument: --pdf out.pdf\n"
@@ -124,18 +130,18 @@ QString usage() {
 struct Options {
   QString file;
 
-  bool                   print = false;
-  QString                printer; // empty: saved, or the Windows default
-  QString                pdfPath;
-  QString                svgPath;
-  bool                   fit = false;
-  std::optional<double>  scaleMm;
-  QString                orientation; // empty, "portrait", "landscape", "auto"
+  bool                  print = false;
+  QString               printer; // empty: saved, or the Windows default
+  QString               pdfPath;
+  QString               svgPath;
+  bool                  fit = false;
+  std::optional<double> scaleMm;
+  QString               orientation; // empty, "portrait", "landscape", "auto"
   std::optional<QPageSize> paper;
-  std::optional<bool>    header;
-  std::optional<bool>    footer;
-  std::optional<bool>    background;
-  int                    copies = 1;
+  std::optional<bool>      header;
+  std::optional<bool>      footer;
+  std::optional<bool>      background;
+  int                      copies = 1;
 
   bool help         = false;
   bool version      = false;
@@ -199,9 +205,11 @@ QString parse(const QStringList &args, Options &opts) {
       opts.print   = true;
       opts.printer = value;
     } else if (name == QLatin1String("--pdf")) {
-      if (!needValue(opts.pdfPath)) return QStringLiteral("--pdf needs a file name");
+      if (!needValue(opts.pdfPath))
+        return QStringLiteral("--pdf needs a file name");
     } else if (name == QLatin1String("--svg")) {
-      if (!needValue(opts.svgPath)) return QStringLiteral("--svg needs a file name");
+      if (!needValue(opts.svgPath))
+        return QStringLiteral("--svg needs a file name");
     } else if (name == QLatin1String("--fit")) {
       opts.fit = true;
     } else if (name == QLatin1String("--scale")) {
@@ -209,21 +217,26 @@ QString parse(const QStringList &args, Options &opts) {
       bool    ok = false;
       if (needValue(text)) opts.scaleMm = text.toDouble(&ok);
       if (!ok || *opts.scaleMm <= 0.0)
-        return QStringLiteral("--scale needs a positive number of mm per 1000 units");
+        return QStringLiteral(
+            "--scale needs a positive number of mm per 1000 units");
     } else if (name == QLatin1String("--orientation")) {
       if (!needValue(opts.orientation))
-        return QStringLiteral("--orientation needs portrait, landscape or auto");
+        return QStringLiteral(
+            "--orientation needs portrait, landscape or auto");
       opts.orientation = opts.orientation.toLower();
       if (opts.orientation != QLatin1String("portrait") &&
           opts.orientation != QLatin1String("landscape") &&
           opts.orientation != QLatin1String("auto"))
-        return QStringLiteral("--orientation must be portrait, landscape or auto, not \"%1\"")
+        return QStringLiteral("--orientation must be portrait, landscape or "
+                              "auto, not \"%1\"")
             .arg(opts.orientation);
     } else if (name == QLatin1String("--paper")) {
       QString text;
-      if (!needValue(text)) return QStringLiteral("--paper needs a paper size, e.g. A4 or Letter");
+      if (!needValue(text))
+        return QStringLiteral("--paper needs a paper size, e.g. A4 or Letter");
       const QPageSize size = paperNamed(text);
-      if (!size.isValid()) return QStringLiteral("unknown paper size \"%1\"").arg(text);
+      if (!size.isValid())
+        return QStringLiteral("unknown paper size \"%1\"").arg(text);
       opts.paper = size;
     } else if (name == QLatin1String("--header")) {
       opts.header = true;
@@ -241,7 +254,8 @@ QString parse(const QStringList &args, Options &opts) {
       QString text;
       bool    ok = false;
       if (needValue(text)) opts.copies = text.toInt(&ok);
-      if (!ok || opts.copies < 1) return QStringLiteral("--copies needs a whole number, 1 or more");
+      if (!ok || opts.copies < 1)
+        return QStringLiteral("--copies needs a whole number, 1 or more");
     } else {
       return QStringLiteral("unknown option \"%1\" (see --help)").arg(arg);
     }
@@ -249,10 +263,13 @@ QString parse(const QStringList &args, Options &opts) {
 
   if (opts.help || opts.version || opts.listPrinters) return QString();
 
-  if (opts.file.isEmpty()) return QStringLiteral("no schematic file given (see --help)");
+  if (opts.file.isEmpty())
+    return QStringLiteral("no schematic file given (see --help)");
   if (!opts.print && opts.pdfPath.isEmpty() && opts.svgPath.isEmpty())
-    return QStringLiteral("nothing to do: give --print, --pdf or --svg (see --help)");
-  if (opts.fit && opts.scaleMm) return QStringLiteral("--fit and --scale cannot both be given");
+    return QStringLiteral(
+        "nothing to do: give --print, --pdf or --svg (see --help)");
+  if (opts.fit && opts.scaleMm)
+    return QStringLiteral("--fit and --scale cannot both be given");
   return QString();
 }
 
@@ -286,7 +303,8 @@ SchPrintSettings settingsFor(SchPrint &schPrint, const Options &opts) {
 void applyPage(QPrinter *printer, const Options &opts) {
   QPageLayout layout = printer->pageLayout();
   if (opts.paper) layout.setPageSize(*opts.paper);
-  if (opts.orientation == QLatin1String("portrait")) layout.setOrientation(QPageLayout::Portrait);
+  if (opts.orientation == QLatin1String("portrait"))
+    layout.setOrientation(QPageLayout::Portrait);
   if (opts.orientation == QLatin1String("landscape"))
     layout.setOrientation(QPageLayout::Landscape);
   printer->setPageLayout(layout);
@@ -294,14 +312,16 @@ void applyPage(QPrinter *printer, const Options &opts) {
 
 // What `layout` means for a run: false, reported, if nothing would come
 // out.
-bool checkLayout(const SchPrintLayout &layout, const SchPrintSettings &settings) {
+bool checkLayout(const SchPrintLayout   &layout,
+                 const SchPrintSettings &settings) {
   if (layout.overLimit) {
-    fail(kOutputFailed, QStringLiteral("this needs %1 pages (%2 x %3), more than the page "
-                                       "limit of %4; use a smaller --scale, or --fit")
-                            .arg(layout.rows * layout.cols)
-                            .arg(layout.rows)
-                            .arg(layout.cols)
-                            .arg(settings.maxPages));
+    fail(kOutputFailed,
+         QStringLiteral("this needs %1 pages (%2 x %3), more than the page "
+                        "limit of %4; use a smaller --scale, or --fit")
+             .arg(layout.rows * layout.cols)
+             .arg(layout.rows)
+             .arg(layout.cols)
+             .arg(settings.maxPages));
     return false;
   }
   if (layout.pages <= 0) {
@@ -312,7 +332,8 @@ bool checkLayout(const SchPrintLayout &layout, const SchPrintSettings &settings)
 }
 
 QString pageCount(int pages) {
-  return (pages == 1) ? QStringLiteral("1 page") : QStringLiteral("%1 pages").arg(pages);
+  return (pages == 1) ? QStringLiteral("1 page")
+                      : QStringLiteral("%1 pages").arg(pages);
 }
 
 int listPrinters() {
@@ -327,8 +348,9 @@ int listPrinters() {
   return kOk;
 }
 
-int doPrint(SchPrint &schPrint, const SchDocSource &source, const QString &title,
-            const Options &opts, const SchPrintSettings &settings) {
+int doPrint(SchPrint &schPrint, const SchDocSource &source,
+            const QString &title, const Options &opts,
+            const SchPrintSettings &settings) {
   QPrinter *printer = schPrint.ensurePrinter();
 
   if (!opts.printer.isEmpty()) {
@@ -337,9 +359,10 @@ int doPrint(SchPrint &schPrint, const SchDocSource &source, const QString &title
     for (const QString &name : QPrinterInfo::availablePrinterNames())
       if (name.compare(opts.printer, Qt::CaseInsensitive) == 0) found = name;
     if (found.isEmpty())
-      return fail(kPrinterFailed, QStringLiteral("no printer named \"%1\" is installed "
-                                                 "(see --list-printers)")
-                                      .arg(opts.printer));
+      return fail(kPrinterFailed,
+                  QStringLiteral("no printer named \"%1\" is installed "
+                                 "(see --list-printers)")
+                      .arg(opts.printer));
     printer->setPrinterName(found);
   }
 
@@ -347,9 +370,10 @@ int doPrint(SchPrint &schPrint, const SchDocSource &source, const QString &title
     return fail(kPrinterFailed, QStringLiteral("no printer is installed"));
 
   if (!SchPrint::isUsable(printer))
-    return fail(kPrinterFailed, QStringLiteral("Windows could not open the printer \"%1\" -- "
-                                               "it may be off, asleep or disconnected")
-                                    .arg(printer->printerName()));
+    return fail(kPrinterFailed,
+                QStringLiteral("Windows could not open the printer \"%1\" -- "
+                               "it may be off, asleep or disconnected")
+                    .arg(printer->printerName()));
 
   printer->setOutputFormat(QPrinter::NativeFormat);
   printer->setDocName(title);
@@ -367,14 +391,17 @@ int doPrint(SchPrint &schPrint, const SchDocSource &source, const QString &title
 
   say(QStringLiteral("Printed %1 on \"%2\"%3.")
           .arg(pageCount(layout.pages), printer->printerName(),
-               (opts.copies > 1) ? QStringLiteral(", %1 copies").arg(opts.copies) : QString()));
+               (opts.copies > 1)
+                   ? QStringLiteral(", %1 copies").arg(opts.copies)
+                   : QString()));
   return kOk;
 }
 
 int doPdf(const SchDocSource &source, const QString &title, const Options &opts,
           const SchPrintSettings &settings) {
   QString path = QFileInfo(opts.pdfPath).absoluteFilePath();
-  if (!path.endsWith(QStringLiteral(".pdf"), Qt::CaseInsensitive)) path += QStringLiteral(".pdf");
+  if (!path.endsWith(QStringLiteral(".pdf"), Qt::CaseInsensitive))
+    path += QStringLiteral(".pdf");
 
   // Replaced, not appended to; and so "does it exist afterwards" means
   // it was written.
@@ -393,30 +420,35 @@ int doPdf(const SchDocSource &source, const QString &title, const Options &opts,
   const SchPrintLayout layout = SchPrint::layout(&pdf, &source, settings);
   if (!checkLayout(layout, settings)) return kOutputFailed;
 
-  const bool rendered = SchPrint::render(&pdf, &source, title, settings, nullptr, nullptr);
+  const bool rendered =
+      SchPrint::render(&pdf, &source, title, settings, nullptr, nullptr);
   if (!rendered || !QFileInfo::exists(path)) {
     QFile::remove(path);
-    return fail(kOutputFailed,
-                QStringLiteral("could not write %1").arg(QDir::toNativeSeparators(path)));
+    return fail(kOutputFailed, QStringLiteral("could not write %1")
+                                   .arg(QDir::toNativeSeparators(path)));
   }
 
-  say(QStringLiteral("Wrote %1 (%2).").arg(QDir::toNativeSeparators(path), pageCount(layout.pages)));
+  say(QStringLiteral("Wrote %1 (%2).")
+          .arg(QDir::toNativeSeparators(path), pageCount(layout.pages)));
   return kOk;
 }
 
-int doSvg(const SchDocSource &source, const QString &title, const Options &opts) {
+int doSvg(const SchDocSource &source, const QString &title,
+          const Options &opts) {
   QString path = QFileInfo(opts.svgPath).absoluteFilePath();
-  if (!path.endsWith(QStringLiteral(".svg"), Qt::CaseInsensitive)) path += QStringLiteral(".svg");
+  if (!path.endsWith(QStringLiteral(".svg"), Qt::CaseInsensitive))
+    path += QStringLiteral(".svg");
 
   // As File > Export as SVG: nothing from the print settings -- the fixed
   // export scale, and the thinnest line from [Export].
   ViewerPrefs prefs;
   prefs.load();
 
-  if (!SchSvgExport::write(path, &source, title, SchPrintSettings::kDefaultMmPer1000,
-                           prefs.svgMinLineMm(), QString::fromLatin1(Version::kProgramName)))
-    return fail(kOutputFailed,
-                QStringLiteral("could not write %1").arg(QDir::toNativeSeparators(path)));
+  if (!SchSvgExport::write(
+          path, &source, title, SchPrintSettings::kDefaultMmPer1000,
+          prefs.svgMinLineMm(), QString::fromLatin1(Version::kProgramName)))
+    return fail(kOutputFailed, QStringLiteral("could not write %1")
+                                   .arg(QDir::toNativeSeparators(path)));
 
   say(QStringLiteral("Wrote %1.").arg(QDir::toNativeSeparators(path)));
   return kOk;
@@ -426,7 +458,8 @@ int doSvg(const SchDocSource &source, const QString &title, const Options &opts)
 
 bool wanted(const QStringList &args) {
   for (const QString &arg : args)
-    if (arg.startsWith(QLatin1Char('-')) || arg == QLatin1String("/?")) return true;
+    if (arg.startsWith(QLatin1Char('-')) || arg == QLatin1String("/?"))
+      return true;
   return false;
 }
 
@@ -451,9 +484,11 @@ int run(const QStringList &args) {
   const QString nativePath = QDir::toNativeSeparators(path);
   const QString title      = QFileInfo(path).fileName();
 
-  if (QFileInfo(path).suffix().compare(QStringLiteral("qsym"), Qt::CaseInsensitive) == 0)
-    return fail(kBadInput, QStringLiteral("symbol files (.qsym) are not supported yet: %1")
-                               .arg(nativePath));
+  if (QFileInfo(path).suffix().compare(QStringLiteral("qsym"),
+                                       Qt::CaseInsensitive) == 0)
+    return fail(kBadInput,
+                QStringLiteral("symbol files (.qsym) are not supported yet: %1")
+                    .arg(nativePath));
   if (!QFileInfo(path).isFile())
     return fail(kBadInput, QStringLiteral("no such file: %1").arg(nativePath));
 
@@ -463,18 +498,20 @@ int run(const QStringList &args) {
   if (!source.load(path, error, omitted)) return fail(kBadInput, error);
 
   recordrules::log(title, omitted);
-  say(QStringLiteral("%1: %2").arg(QString::fromStdString(Version::winTitleStr()), nativePath));
+  say(QStringLiteral("%1: %2").arg(
+      QString::fromStdString(Version::winTitleStr()), nativePath));
   if (!omitted.isEmpty())
-    say(QStringLiteral("%1 record(s) not allowed where they are were left out -- see the log.")
+    say(QStringLiteral("%1 record(s) not allowed where they are were left out "
+                       "-- see the log.")
             .arg(omitted.size()));
 
-  SchPrint               schPrint(ViewerPrefs::iniFilePath(), ViewerPrefs::printDefaults());
+  SchPrint schPrint(ViewerPrefs::iniFilePath(), ViewerPrefs::printDefaults());
   const SchPrintSettings settings = settingsFor(schPrint, opts);
 
   // Each output is tried even if an earlier one failed; the result is
   // the first failure.
-  int result = kOk;
-  const auto keep = [&result](int code) {
+  int        result = kOk;
+  const auto keep   = [&result](int code) {
     if (result == kOk) result = code;
   };
 

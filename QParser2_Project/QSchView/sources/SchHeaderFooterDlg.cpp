@@ -1,6 +1,7 @@
 #ifdef _MSC_VER
 #pragma warning(push)
-#pragma warning(disable : 4996) // Qt headers reference APIs deprecated for Qt 7
+#pragma warning(                                                               \
+    disable : 4996)   // Qt headers reference APIs deprecated for Qt 7
 #endif
 
 #include "SchHeaderFooterDlg.h"
@@ -23,8 +24,8 @@
 #endif
 
 // SchOutput names used in this file.
-using sch::output::SchPrintSettings;
 using sch::output::SchPrintContext;
+using sch::output::SchPrintSettings;
 namespace SchPrintFields = sch::output::SchPrintFields;
 
 namespace {
@@ -33,10 +34,10 @@ QString tr(const char *text) {
   return QCoreApplication::translate("SchHeaderFooterDlg", text);
 }
 
-} // namespace
+}   // namespace
 
 SchHeaderFooterDlg::SchHeaderFooterDlg(const SchPrintSettings &settings,
-                                       const SchPrintContext &sample, QWidget *parent)
+    const SchPrintContext &sample, QWidget *parent)
     : QDialog(parent), sampleCtx(sample) {
   setWindowTitle(tr("Header and Footer"));
   buildUi();
@@ -55,7 +56,8 @@ void SchHeaderFooterDlg::buildUi() {
   const QString rowNames[2] = {tr("Header:"), tr("Footer:")};
 
   for (int col = 0; col < 3; ++col)
-    grid->addWidget(new QLabel(colNames[col], this), 0, col + 1, Qt::AlignHCenter);
+    grid->addWidget(
+        new QLabel(colNames[col], this), 0, col + 1, Qt::AlignHCenter);
 
   for (int row = 0; row < 2; ++row) {
     grid->addWidget(new QLabel(rowNames[row], this), row + 1, 0);
@@ -72,13 +74,15 @@ void SchHeaderFooterDlg::buildUi() {
       insertBtn->setPopupMode(QToolButton::InstantPopup);
 
       QMenu *menu = new QMenu(insertBtn);
-      for (const std::pair<QString, QString> &entry : SchPrintFields::menuEntries()) {
+      for (const std::pair<QString, QString> &entry :
+          SchPrintFields::menuEntries()) {
         if (entry.second.isEmpty()) {
           menu->addSeparator();
           continue;
         }
         const QString token = entry.second;
-        QAction      *act   = menu->addAction(QStringLiteral("%1   %2").arg(entry.first, token));
+        QAction      *act =
+            menu->addAction(QStringLiteral("%1   %2").arg(entry.first, token));
         connect(act, &QAction::triggered, edit, [edit, token]() {
           edit->insert(token);
           edit->setFocus();
@@ -92,7 +96,8 @@ void SchHeaderFooterDlg::buildUi() {
       cell->addWidget(insertBtn);
       grid->addLayout(cell, row + 1, col + 1);
 
-      connect(edit, &QLineEdit::textChanged, this, [this](const QString &) { updateSample(); });
+      connect(edit, &QLineEdit::textChanged, this,
+          [this](const QString &) { updateSample(); });
     }
   }
 
@@ -106,14 +111,16 @@ void SchHeaderFooterDlg::buildUi() {
   pal.setColor(QPalette::WindowText, Qt::black);
   sampleFrame->setPalette(pal);
 
-  QGridLayout *sampleGrid = new QGridLayout(sampleFrame);
-  const Qt::Alignment align[3] = {Qt::AlignLeft, Qt::AlignHCenter, Qt::AlignRight};
+  QGridLayout        *sampleGrid = new QGridLayout(sampleFrame);
+  const Qt::Alignment align[3]   = {
+      Qt::AlignLeft, Qt::AlignHCenter, Qt::AlignRight};
   for (int row = 0; row < 2; ++row) {
     for (int col = 0; col < 3; ++col) {
       QLabel *label = new QLabel(sampleFrame);
       label->setTextFormat(Qt::PlainText);
       samples[row][col] = label;
-      sampleGrid->addWidget(label, row == 0 ? 0 : 2, col, align[col] | Qt::AlignVCenter);
+      sampleGrid->addWidget(
+          label, row == 0 ? 0 : 2, col, align[col] | Qt::AlignVCenter);
     }
   }
 
@@ -133,13 +140,13 @@ void SchHeaderFooterDlg::buildUi() {
       this);
   help->setWordWrap(true);
 
-  QDialogButtonBox *buttons = new QDialogButtonBox(
-      QDialogButtonBox::Ok | QDialogButtonBox::Cancel | QDialogButtonBox::RestoreDefaults,
+  QDialogButtonBox *buttons = new QDialogButtonBox(QDialogButtonBox::Ok |
+          QDialogButtonBox::Cancel | QDialogButtonBox::RestoreDefaults,
       this);
   connect(buttons, &QDialogButtonBox::accepted, this, &QDialog::accept);
   connect(buttons, &QDialogButtonBox::rejected, this, &QDialog::reject);
-  connect(buttons->button(QDialogButtonBox::RestoreDefaults), &QPushButton::clicked, this,
-          [this]() { restoreDefaults(); });
+  connect(buttons->button(QDialogButtonBox::RestoreDefaults),
+      &QPushButton::clicked, this, [this]() { restoreDefaults(); });
 
   QVBoxLayout *top = new QVBoxLayout(this);
   top->addLayout(grid);

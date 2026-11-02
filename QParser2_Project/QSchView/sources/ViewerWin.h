@@ -19,7 +19,9 @@ class QDropEvent;
 class QLabel;
 class QMenu;
 class ViewerPrefs;
-namespace sch::output { class SchPrint; }
+namespace sch::output {
+class SchPrint;
+}
 
 // QSchView's one window. It shows ONE file, for its whole life; every
 // other file opens in a new instance of the program.
@@ -48,18 +50,18 @@ protected:
   // `bytes` (read from `path`) parsed into `tree`, with the records not
   // allowed where they are left out and logged. False, reported in a
   // message box titled `action`, if it cannot be parsed.
-  bool parseSchematic(const QString &path, const QByteArray &bytes, const QString &action,
-                      ItemTree &tree, int &omittedCount);
+  bool parseSchematic(const QString &path, const QByteArray &bytes,
+                      const QString &action, ItemTree &tree, int &omittedCount);
 
   // A new view for `tree`, replacing whatever is shown. With
-  // `keepPosition`, the new view keeps the old one's zoom and centre --
+  // `keepPosition`, the new view keeps the old one's zoom and center --
   // for a reload; otherwise it fits the drawing.
   void installTree(const QString &path, const QByteArray &bytes, ItemTree tree,
                    int omittedCount, bool keepPosition);
 
   // Before printing or exporting (`action` names which): whether the
   // file on disk still matches what is shown, and if not, whether to
-  // reload it first. False means do not go on -- cancelled, or the
+  // reload it first. False means do not go on -- canceled, or the
   // reload failed.
   bool reloadIfChanged(const QString &action);
 
@@ -73,10 +75,10 @@ protected:
 
   // None: no menu to hide the toolbar with.
   QMenu *createPopupMenu() override;
-  void rebuildRecentMenu();
-  void openRecent(const QString &path);
-  void onOpen();
-  void onAbout();
+  void   rebuildRecentMenu();
+  void   openRecent(const QString &path);
+  void   onOpen();
+  void   onAbout();
 
   // --- Options: preferences, each written to QSchView.ini at once.
 
@@ -86,7 +88,7 @@ protected:
   // What the Print dialog opens with: PrintDefaultsDlg.
   void onPrintDefaults();
 
-  // Not yet: colour themes.
+  // Not yet: color themes.
   void onColorTheme();
 
   // The header and footer text the Print dialog opens with: read from the

@@ -23,15 +23,22 @@ inline constexpr bool kIsDebugBuild = true;
 #endif
 
 inline constexpr int kVersionMajor = 0;
-inline constexpr int kVersionMinor = 1;
-inline constexpr int kVersionPatch = 0;
+inline constexpr int kVersionMinor = 2;
+inline constexpr int kVersionPatch = 3;
 
-// "0.1.0", or "0.1.0 (DEBUG)" in a Debug build.
-//
-// The ONE place a version is formatted, so the debug marker cannot be
-// shown in the title bar and missed in the About box.
+// "0.1.0", or "0.1.0 (DEBUG)" in a Debug build: the window title, the
+// log and everything else that shows the program's version -- the build
+// is marked only when it is a Debug one.
 std::string versionStr();
+
+// "0.1.0 (RELEASE)" or "0.1.0 (DEBUG)": the About box, which always says
+// which build it is.
+std::string aboutVersionStr();
+
+// "0.1.0", never marked: where the program's build says nothing about
+// the result, as in generated code.
+std::string numberStr();
 
 // "QSchView v0.1.0" -- the window title before a file name is added.
 std::string winTitleStr();
-} // namespace Version
+}   // namespace Version

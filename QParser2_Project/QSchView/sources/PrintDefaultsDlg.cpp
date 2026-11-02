@@ -1,6 +1,7 @@
 #ifdef _MSC_VER
 #pragma warning(push)
-#pragma warning(disable : 4996) // Qt headers reference APIs deprecated for Qt 7
+#pragma warning(                                                               \
+    disable : 4996)   // Qt headers reference APIs deprecated for Qt 7
 #endif
 
 #include "PrintDefaultsDlg.h"
@@ -39,12 +40,18 @@ namespace {
 // The paper sizes offered, in this order. The printer's own list would
 // need the printer opened.
 const QPageSize::PageSizeId kPapers[] = {
-    QPageSize::Letter, QPageSize::Legal, QPageSize::Tabloid, QPageSize::Executive,
-    QPageSize::A5,     QPageSize::A4,    QPageSize::A3,      QPageSize::B5,
+    QPageSize::Letter,
+    QPageSize::Legal,
+    QPageSize::Tabloid,
+    QPageSize::Executive,
+    QPageSize::A5,
+    QPageSize::A4,
+    QPageSize::A3,
+    QPageSize::B5,
     QPageSize::B4,
 };
 
-} // namespace
+}   // namespace
 
 PrintDefaultsDlg::PrintDefaultsDlg(const QString &docPath, QWidget *parent)
     : QDialog(parent), docPath(docPath) {
@@ -65,8 +72,9 @@ void PrintDefaultsDlg::buildUi() {
   QFormLayout *layoutForm = new QFormLayout(layoutBox);
 
   modeCombo = new QComboBox(this);
-  modeCombo->addItems({tr("Visible area - fit to page"), tr("Whole schematic - fit to page"),
-                       tr("Whole schematic - to scale"), tr("Visible area - to scale")});
+  modeCombo->addItems(
+      {tr("Visible area - fit to page"), tr("Whole schematic - fit to page"),
+          tr("Whole schematic - to scale"), tr("Visible area - to scale")});
   layoutForm->addRow(tr("Print:"), modeCombo);
 
   scaleSpin = new QDoubleSpinBox(this);
@@ -78,9 +86,11 @@ void PrintDefaultsDlg::buildUi() {
   scaleRow->addWidget(scaleSpin, 1);
   scaleRow->addWidget(unitCombo);
   layoutForm->addRow(tr("Scale (per 1000 units):"), scaleRow);
-  connect(unitCombo, &QComboBox::currentIndexChanged, this, [this](int) { onUnitChanged(); });
+  connect(unitCombo, &QComboBox::currentIndexChanged, this,
+      [this](int) { onUnitChanged(); });
 
-  autoOrientChk = new QCheckBox(tr("Choose the orientation needing fewer pages"), this);
+  autoOrientChk =
+      new QCheckBox(tr("Choose the orientation needing fewer pages"), this);
   layoutForm->addRow(QString(), autoOrientChk);
   outer->addWidget(layoutBox);
 
@@ -113,8 +123,8 @@ void PrintDefaultsDlg::buildUi() {
   pageLimitSpin->setSuffix(tr(" pages"));
   pagesForm->addRow(tr("Page limit:"), pageLimitSpin);
 
-  headerChk = new QCheckBox(tr("Header"), this);
-  footerChk = new QCheckBox(tr("Footer"), this);
+  headerChk             = new QCheckBox(tr("Header"), this);
+  footerChk             = new QCheckBox(tr("Footer"), this);
   QPushButton *bandsBtn = new QPushButton(tr("Headers/Footers..."), this);
   QHBoxLayout *bandsRow = new QHBoxLayout;
   bandsRow->addWidget(headerChk);
@@ -122,7 +132,8 @@ void PrintDefaultsDlg::buildUi() {
   bandsRow->addStretch(1);
   bandsRow->addWidget(bandsBtn);
   pagesForm->addRow(tr("Borders:"), bandsRow);
-  connect(bandsBtn, &QPushButton::clicked, this, [this]() { onHeaderFooter(); });
+  connect(
+      bandsBtn, &QPushButton::clicked, this, [this]() { onHeaderFooter(); });
 
   backgroundChk = new QCheckBox(tr("Print the background color"), this);
   pagesForm->addRow(QString(), backgroundChk);
@@ -150,17 +161,16 @@ void PrintDefaultsDlg::buildUi() {
   outer->addWidget(printerBox);
 
   // --- Buttons ---
-  QDialogButtonBox *buttons =
-      new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel |
-                               QDialogButtonBox::RestoreDefaults,
-                           this);
+  QDialogButtonBox *buttons = new QDialogButtonBox(QDialogButtonBox::Ok |
+          QDialogButtonBox::Cancel | QDialogButtonBox::RestoreDefaults,
+      this);
   connect(buttons, &QDialogButtonBox::accepted, this, [this]() {
     readValues();
     accept();
   });
   connect(buttons, &QDialogButtonBox::rejected, this, &QDialog::reject);
-  connect(buttons->button(QDialogButtonBox::RestoreDefaults), &QPushButton::clicked, this,
-          [this]() { restoreDefaults(); });
+  connect(buttons->button(QDialogButtonBox::RestoreDefaults),
+      &QPushButton::clicked, this, [this]() { restoreDefaults(); });
   outer->addWidget(buttons);
 }
 
@@ -185,7 +195,8 @@ void PrintDefaultsDlg::showValues() {
   // does not quietly replace it.
   int printerIndex = printerCombo->findData(choiceCopy.printer);
   if (printerIndex < 0) {
-    printerCombo->addItem(tr("%1 (not installed)").arg(choiceCopy.printer), choiceCopy.printer);
+    printerCombo->addItem(
+        tr("%1 (not installed)").arg(choiceCopy.printer), choiceCopy.printer);
     printerIndex = printerCombo->count() - 1;
   }
   printerCombo->setCurrentIndex(printerIndex);
@@ -194,12 +205,14 @@ void PrintDefaultsDlg::showValues() {
   // size, or a custom one.
   int paperIndex = paperCombo->findData(choiceCopy.paperId);
   if (paperIndex < 0) {
-    const bool custom = choiceCopy.paperId == static_cast<int>(QPageSize::Custom);
-    const QString name =
-        custom ? tr("Custom %1 x %2 mm")
-                     .arg(choiceCopy.paperWidthMm, 0, 'f', 1)
-                     .arg(choiceCopy.paperHeightMm, 0, 'f', 1)
-               : QPageSize::name(static_cast<QPageSize::PageSizeId>(choiceCopy.paperId));
+    const bool custom =
+        choiceCopy.paperId == static_cast<int>(QPageSize::Custom);
+    const QString name = custom
+        ? tr("Custom %1 x %2 mm")
+              .arg(choiceCopy.paperWidthMm, 0, 'f', 1)
+              .arg(choiceCopy.paperHeightMm, 0, 'f', 1)
+        : QPageSize::name(
+              static_cast<QPageSize::PageSizeId>(choiceCopy.paperId));
     paperCombo->addItem(name, choiceCopy.paperId);
     paperIndex = paperCombo->count() - 1;
   }
@@ -211,16 +224,17 @@ void PrintDefaultsDlg::showValues() {
 }
 
 void PrintDefaultsDlg::showScale() {
-  const bool inch = settingsCopy.inchUnits;
+  const bool inch       = settingsCopy.inchUnits;
   const bool wasLoading = loading;
-  loading = true;
+  loading               = true;
 
   // The decimals ARE the step: 0.1 mm or 0.01 inch.
   if (inch) {
     scaleSpin->setDecimals(2);
     scaleSpin->setRange(SchPrintSettings::kMinInch, SchPrintSettings::kMaxInch);
     scaleSpin->setSingleStep(0.1);
-    scaleSpin->setValue(settingsCopy.savedMmPer1000 / SchPrintSettings::kMmPerInch);
+    scaleSpin->setValue(
+        settingsCopy.savedMmPer1000 / SchPrintSettings::kMmPerInch);
   } else {
     scaleSpin->setDecimals(1);
     scaleSpin->setRange(SchPrintSettings::kMinMm, SchPrintSettings::kMaxMm);
@@ -236,8 +250,9 @@ void PrintDefaultsDlg::onUnitChanged() {
 
   // The scale as typed so far, carried into the other unit at its step.
   const bool   wasInch = settingsCopy.inchUnits;
-  const double shownMm =
-      wasInch ? scaleSpin->value() * SchPrintSettings::kMmPerInch : scaleSpin->value();
+  const double shownMm = wasInch
+      ? scaleSpin->value() * SchPrintSettings::kMmPerInch
+      : scaleSpin->value();
 
   settingsCopy.inchUnits = (unitCombo->currentIndex() == 1);
   settingsCopy.setScale(shownMm);
@@ -245,10 +260,12 @@ void PrintDefaultsDlg::onUnitChanged() {
 }
 
 void PrintDefaultsDlg::readValues() {
-  settingsCopy.mode       = static_cast<SchPrintSettings::Mode>(modeCombo->currentIndex());
-  settingsCopy.inchUnits  = (unitCombo->currentIndex() == 1);
-  settingsCopy.setScale(settingsCopy.inchUnits ? scaleSpin->value() * SchPrintSettings::kMmPerInch
-                                               : scaleSpin->value());
+  settingsCopy.mode =
+      static_cast<SchPrintSettings::Mode>(modeCombo->currentIndex());
+  settingsCopy.inchUnits = (unitCombo->currentIndex() == 1);
+  settingsCopy.setScale(settingsCopy.inchUnits
+          ? scaleSpin->value() * SchPrintSettings::kMmPerInch
+          : scaleSpin->value());
   settingsCopy.autoOrient      = autoOrientChk->isChecked();
   settingsCopy.overlapOn       = overlapChk->isChecked();
   settingsCopy.overlapMm       = overlapSpin->value();
@@ -271,7 +288,8 @@ void PrintDefaultsDlg::readValues() {
     choiceCopy.paperHeightMm = 0.0;
     if (paperId >= 0) {
       const QSizeF sizeMm =
-          QPageSize(static_cast<QPageSize::PageSizeId>(paperId)).size(QPageSize::Millimeter);
+          QPageSize(static_cast<QPageSize::PageSizeId>(paperId))
+              .size(QPageSize::Millimeter);
       choiceCopy.paperWidthMm  = sizeMm.width();
       choiceCopy.paperHeightMm = sizeMm.height();
     }
@@ -282,7 +300,7 @@ void PrintDefaultsDlg::readValues() {
 
 void PrintDefaultsDlg::restoreDefaults() {
   // Everything as a fresh install has it; the file is untouched until OK.
-  const QString file = settingsCopy.settingsFile;
+  const QString file        = settingsCopy.settingsFile;
   settingsCopy              = ViewerPrefs::printDefaults();
   settingsCopy.settingsFile = file;
   choiceCopy                = SchPrinterChoice();
@@ -293,7 +311,8 @@ void PrintDefaultsDlg::onHeaderFooter() {
   // The working copy: written with everything else on OK.
   readValues();
 
-  SchHeaderFooterDlg dialog(settingsCopy, sampleContext(docPath, settingsCopy), this);
+  SchHeaderFooterDlg dialog(
+      settingsCopy, sampleContext(docPath, settingsCopy), this);
   if (dialog.exec() != QDialog::Accepted) return;
 
   dialog.apply(settingsCopy);
@@ -304,21 +323,24 @@ void PrintDefaultsDlg::save() const {
   choiceCopy.save(ViewerPrefs::iniFilePath());
 }
 
-SchPrintContext PrintDefaultsDlg::sampleContext(const QString &docPath,
-                                                const SchPrintSettings &settings) {
+SchPrintContext PrintDefaultsDlg::sampleContext(
+    const QString &docPath, const SchPrintSettings &settings) {
   SchPrintContext sample;
   sample.printed   = QDateTime::currentDateTime();
   sample.page      = 1;
   sample.pages     = 1;
   sample.mmPer1000 = settings.savedMmPer1000;
 
-  const QString printer = SchPrinterChoice::load(ViewerPrefs::iniFilePath()).printer;
+  const QString printer =
+      SchPrinterChoice::load(ViewerPrefs::iniFilePath()).printer;
   sample.printer = printer.isEmpty() ? QObject::tr("Default printer") : printer;
 
   if (docPath.isEmpty()) {
     // No file: an example, so the fields still show what they become.
-    const QDir docs(QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation));
-    sample.path     = QDir::toNativeSeparators(docs.filePath(QStringLiteral("Example.qsch")));
+    const QDir docs(
+        QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation));
+    sample.path =
+        QDir::toNativeSeparators(docs.filePath(QStringLiteral("Example.qsch")));
     sample.title    = QStringLiteral("Example.qsch");
     sample.modified = sample.printed;
     return sample;

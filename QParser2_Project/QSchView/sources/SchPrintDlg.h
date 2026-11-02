@@ -20,7 +20,9 @@ class QPushButton;
 class QSpinBox;
 class QToolButton;
 class SchPageMap;
-namespace sch::render { class SchRenderSource; }
+namespace sch::render {
+class SchRenderSource;
+}
 
 // File > Print (titled "Print") -- the ONLY way to print: the printer and print
 // settings, a live preview, and a PAGE MAP -- the printed area with the
@@ -44,8 +46,9 @@ namespace sch::render { class SchRenderSource; }
 // No Q_OBJECT -- every connection is a lambda -- so no moc.
 class SchPrintDlg : public QDialog {
 public:
-  SchPrintDlg(sch::output::SchPrint *schPrint, const sch::render::SchRenderSource *schView,
-                     const QString &docTitle, QWidget *parent = nullptr);
+  SchPrintDlg(sch::output::SchPrint              *schPrint,
+              const sch::render::SchRenderSource *schView,
+              const QString &docTitle, QWidget *parent = nullptr);
 
 protected:
   void buildUi();
@@ -102,25 +105,25 @@ protected:
 
   // A progress callback for SchPrint::render() driving `progress`,
   // titled `caption` -- "page n of N" through `label` (%1, %2), Cancel
-  // honoured.
+  // honored.
   std::function<bool(int, int)> progressFn(QProgressDialog &progress,
-                                           const QString &caption,
-                                           const QString &label);
+                                           const QString   &caption,
+                                           const QString   &label);
 
   // The printer list, with the current printer selected.
   void fillPrinters();
 
   bool included(const sch::output::SchPrintTile &tile) const;
 
-  sch::output::SchPrint      *print  = nullptr;
-  const sch::render::SchRenderSource *view   = nullptr;
-  QString        title;
-  sch::output::SchPrintLayout pageLayout;
-  QSet<int>      excluded; // tile indices the user switched off
-  int            gridRows = 0;
-  int            gridCols = 0;
-  bool           loading  = false; // controls being filled, not edited
-  QString        fitNote;          // why Fit fell short; cleared by edits
+  sch::output::SchPrint              *print = nullptr;
+  const sch::render::SchRenderSource *view  = nullptr;
+  QString                             title;
+  sch::output::SchPrintLayout         pageLayout;
+  QSet<int> excluded; // tile indices the user switched off
+  int       gridRows = 0;
+  int       gridCols = 0;
+  bool      loading  = false; // controls being filled, not edited
+  QString   fitNote;          // why Fit fell short; cleared by edits
 
   QComboBox           *printerCombo  = nullptr;
   QSpinBox            *copiesSpin    = nullptr;
@@ -141,7 +144,7 @@ protected:
   QCheckBox           *cropChk       = nullptr;
   QCheckBox           *headerChk     = nullptr;
   QCheckBox           *footerChk     = nullptr;
-  QCheckBox           *backgroundChk = nullptr; // the canvas colour, this print
+  QCheckBox           *backgroundChk = nullptr; // the canvas color, this print
   QDoubleSpinBox      *minLineSpin   = nullptr;
   QLabel              *infoLbl       = nullptr;
   SchPageMap          *pageMap       = nullptr;

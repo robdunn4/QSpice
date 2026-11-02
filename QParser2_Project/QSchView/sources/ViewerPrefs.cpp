@@ -34,23 +34,23 @@ const QString ViewerPrefs::kDefaultQInstallDirKey =
 
 namespace {
 
-constexpr const char *kQSpiceGroup        = "QSpice";
-constexpr const char *kQInstallDirKeyKey  = "QInstallDirKey";
-constexpr const char *kViewGroup          = "View";
-constexpr const char *kMinZoomScaleKey    = "MinScale";
-constexpr const char *kMaxZoomScaleKey    = "MaxScale";
-constexpr const char *kNewViewWidthKey    = "NewViewWidth";
+constexpr const char *kQSpiceGroup       = "QSpice";
+constexpr const char *kQInstallDirKeyKey = "QInstallDirKey";
+constexpr const char *kViewGroup         = "View";
+constexpr const char *kMinZoomScaleKey   = "MinScale";
+constexpr const char *kMaxZoomScaleKey   = "MaxScale";
+constexpr const char *kNewViewWidthKey   = "NewViewWidth";
 
 // The same key QSchEdit uses (there in [Display]).
 constexpr const char *kShowResistorOrientKey = "ShowResistorOrientation";
-constexpr const char *kExportGroup        = "Export";
-constexpr const char *kSvgMinLineKey      = "SvgMinLineWidthMm";
-constexpr const char *kColorsGroup        = "Colors";
-constexpr const char *kFilesGroup         = "Files";
-constexpr const char *kMaxRecentFilesKey  = "MaxRecentFiles";
-constexpr const char *kRecentFilesGroup   = "RecentFiles";
-constexpr const char *kWindowGroup        = "Window";
-constexpr const char *kGeometryKey        = "Geometry";
+constexpr const char *kExportGroup           = "Export";
+constexpr const char *kSvgMinLineKey         = "SvgMinLineWidthMm";
+constexpr const char *kColorsGroup           = "Colors";
+constexpr const char *kFilesGroup            = "Files";
+constexpr const char *kMaxRecentFilesKey     = "MaxRecentFiles";
+constexpr const char *kRecentFilesGroup      = "RecentFiles";
+constexpr const char *kWindowGroup           = "Window";
+constexpr const char *kGeometryKey           = "Geometry";
 
 } // namespace
 
@@ -71,19 +71,22 @@ QString ViewerPrefs::programFolder() {
 
 QString ViewerPrefs::iniFilePath() {
   return QDir(programFolder())
-      .filePath(QString::fromLatin1(Version::kProgramName) + QStringLiteral(".ini"));
+      .filePath(QString::fromLatin1(Version::kProgramName) +
+                QStringLiteral(".ini"));
 }
 
 QString ViewerPrefs::helpFilePath() {
   return QDir(programFolder())
-      .filePath(QString::fromLatin1(Version::kProgramName) + QStringLiteral("_Help.pdf"));
+      .filePath(QString::fromLatin1(Version::kProgramName) +
+                QStringLiteral("_Help.pdf"));
 }
 
 void ViewerPrefs::load() {
   QSettings settings(iniFilePath(), QSettings::IniFormat);
 
   settings.beginGroup(kQSpiceGroup);
-  qInstallDirKey_ = prefValue(settings, kQInstallDirKeyKey, kDefaultQInstallDirKey);
+  qInstallDirKey_ =
+      prefValue(settings, kQInstallDirKeyKey, kDefaultQInstallDirKey);
   settings.endGroup();
 
   const sch::render::ViewOptions defaults;
@@ -92,9 +95,12 @@ void ViewerPrefs::load() {
   viewOptions_.gridVisible = false;
 
   settings.beginGroup(kViewGroup);
-  viewOptions_.minZoomScale = prefDouble(settings, kMinZoomScaleKey, defaults.minZoomScale);
-  viewOptions_.maxZoomScale = prefDouble(settings, kMaxZoomScaleKey, defaults.maxZoomScale);
-  viewOptions_.newViewWidth = prefDouble(settings, kNewViewWidthKey, defaults.newViewWidth);
+  viewOptions_.minZoomScale =
+      prefDouble(settings, kMinZoomScaleKey, defaults.minZoomScale);
+  viewOptions_.maxZoomScale =
+      prefDouble(settings, kMaxZoomScaleKey, defaults.maxZoomScale);
+  viewOptions_.newViewWidth =
+      prefDouble(settings, kNewViewWidthKey, defaults.newViewWidth);
   showResistorOrient_ =
       prefBool(settings, kShowResistorOrientKey, kDefaultShowResistorOrient);
   settings.endGroup();
@@ -107,23 +113,28 @@ void ViewerPrefs::load() {
   settings.beginGroup(kFilesGroup);
   bool      ok    = false;
   const int count = prefValue(settings, kMaxRecentFilesKey,
-                              QString::number(kDefaultMaxRecentFiles)).toInt(&ok);
-  maxRecentFiles_ = (ok && count >= 1 && count <= kMaxMaxRecentFiles) ? count
-                                                                      : kDefaultMaxRecentFiles;
+                              QString::number(kDefaultMaxRecentFiles))
+                        .toInt(&ok);
+  maxRecentFiles_ = (ok && count >= 1 && count <= kMaxMaxRecentFiles)
+                        ? count
+                        : kDefaultMaxRecentFiles;
   settings.endGroup();
   if (!(svgMinLineMm_ >= 0.0)) svgMinLineMm_ = kDefaultSvgMinLineMm;
 
   // Nonsense from a hand edit falls back rather than breaking the view.
-  if (viewOptions_.minZoomScale <= 0.0) viewOptions_.minZoomScale = defaults.minZoomScale;
+  if (viewOptions_.minZoomScale <= 0.0)
+    viewOptions_.minZoomScale = defaults.minZoomScale;
   if (viewOptions_.maxZoomScale <= viewOptions_.minZoomScale)
     viewOptions_.maxZoomScale = defaults.maxZoomScale;
-  if (!(viewOptions_.newViewWidth > 0.0)) viewOptions_.newViewWidth = defaults.newViewWidth;
+  if (!(viewOptions_.newViewWidth > 0.0))
+    viewOptions_.newViewWidth = defaults.newViewWidth;
 
   // Only what the user changed: an empty value means "the default", and
   // the default is QSpice's own (or its stock value), not ours.
   colorValues_.clear();
   settings.beginGroup(kColorsGroup);
-  for (const QPair<QString, QString> &stock : sch::link::prefs::stockDrawingValues()) {
+  for (const QPair<QString, QString> &stock :
+       sch::link::prefs::stockDrawingValues()) {
     const QByteArray key   = stock.first.toLatin1();
     const QString    value = prefValue(settings, key.constData(), QString());
     if (!value.isEmpty()) colorValues_.insert(stock.first, value);
@@ -136,17 +147,21 @@ void ViewerPrefs::writeMissingDefaults() {
   const ini::OnlyMissing scope;
 
   settings.beginGroup(kQSpiceGroup);
-  setPrefValue(settings, kQInstallDirKeyKey, qInstallDirKey_, kDefaultQInstallDirKey);
+  setPrefValue(settings, kQInstallDirKeyKey, qInstallDirKey_,
+               kDefaultQInstallDirKey);
   settings.endGroup();
 
   const sch::render::ViewOptions defaults;
 
   settings.beginGroup(kViewGroup);
-  setPrefValue(settings, kMinZoomScaleKey, QString::number(viewOptions_.minZoomScale),
+  setPrefValue(settings, kMinZoomScaleKey,
+               QString::number(viewOptions_.minZoomScale),
                QString::number(defaults.minZoomScale));
-  setPrefValue(settings, kMaxZoomScaleKey, QString::number(viewOptions_.maxZoomScale),
+  setPrefValue(settings, kMaxZoomScaleKey,
+               QString::number(viewOptions_.maxZoomScale),
                QString::number(defaults.maxZoomScale));
-  setPrefValue(settings, kNewViewWidthKey, QString::number(viewOptions_.newViewWidth),
+  setPrefValue(settings, kNewViewWidthKey,
+               QString::number(viewOptions_.newViewWidth),
                QString::number(defaults.newViewWidth));
   setPrefBool(settings, kShowResistorOrientKey, showResistorOrient_,
               kDefaultShowResistorOrient);
@@ -165,10 +180,11 @@ void ViewerPrefs::writeMissingDefaults() {
   // The stock QSpice values, as defaults to override by hand. They apply
   // only to names QSpice's own settings do not supply.
   settings.beginGroup(kColorsGroup);
-  for (const QPair<QString, QString> &stock : sch::link::prefs::stockDrawingValues()) {
+  for (const QPair<QString, QString> &stock :
+       sch::link::prefs::stockDrawingValues()) {
     const QByteArray key = stock.first.toLatin1();
-    setPrefValue(settings, key.constData(), colorValues_.value(stock.first, stock.second),
-                 stock.second);
+    setPrefValue(settings, key.constData(),
+                 colorValues_.value(stock.first, stock.second), stock.second);
   }
   settings.endGroup();
 
@@ -180,7 +196,8 @@ void ViewerPrefs::setShowResistorOrient(bool show) {
 
   QSettings settings(iniFilePath(), QSettings::IniFormat);
   settings.beginGroup(kViewGroup);
-  setPrefBool(settings, kShowResistorOrientKey, show, kDefaultShowResistorOrient);
+  setPrefBool(settings, kShowResistorOrientKey, show,
+              kDefaultShowResistorOrient);
   settings.endGroup();
   settings.sync();
 }
@@ -228,11 +245,13 @@ void ViewerPrefs::removeRecentFile(const QString &path) {
 
 QByteArray ViewerPrefs::windowGeometry() const {
   QSettings settings(iniFilePath(), QSettings::IniFormat);
-  return settings.value(QStringLiteral("%1/%2").arg(kWindowGroup, kGeometryKey)).toByteArray();
+  return settings.value(QStringLiteral("%1/%2").arg(kWindowGroup, kGeometryKey))
+      .toByteArray();
 }
 
 void ViewerPrefs::setWindowGeometry(const QByteArray &geometry) {
   QSettings settings(iniFilePath(), QSettings::IniFormat);
-  settings.setValue(QStringLiteral("%1/%2").arg(kWindowGroup, kGeometryKey), geometry);
+  settings.setValue(QStringLiteral("%1/%2").arg(kWindowGroup, kGeometryKey),
+                    geometry);
   settings.sync();
 }

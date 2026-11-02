@@ -32,15 +32,15 @@ namespace {
 
 // QSpice is OPTIONAL here, unlike in QSchEdit: QSchView only reads and
 // draws, and the schematic carries its own symbols. So nothing is
-// required of the installation; it is only where the colours come from.
+// required of the installation; it is only where the colors come from.
 //
 // QSpice's own settings win, name by name. Any value they do not supply
 // -- all of them, on a machine without QSpice -- comes from [Colors] in
 // QSchView.ini, and failing that from a stock QSpice installation's.
 void loadDrawingStyle(const ViewerPrefs &prefs) {
-  const QStringList problems = sch::link::install::verify(prefs.qInstallDirKey());
-  if (problems.isEmpty())
-    qInfo("QSpice installation found");
+  const QStringList problems =
+      sch::link::install::verify(prefs.qInstallDirKey());
+  if (problems.isEmpty()) qInfo("QSpice installation found");
   else
     qInfo().noquote() << "QSpice installation not found -- not needed:"
                       << problems.join(QStringLiteral("; "));
@@ -62,7 +62,8 @@ int main(int argc, char *argv[]) {
   // were held, and are written or dropped now.
   constexpr int kDefaultLogKB = Version::kIsDebugBuild ? 1024 : 0;
   sch::app::log::configure(ViewerPrefs::iniFilePath(), kDefaultLogKB);
-  qInfo().noquote() << QString::fromStdString(Version::winTitleStr()) << "started";
+  qInfo().noquote() << QString::fromStdString(Version::winTitleStr())
+                    << "started";
 
   ViewerPrefs prefs;
   prefs.load();

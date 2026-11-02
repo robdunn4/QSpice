@@ -20,11 +20,11 @@ namespace CliRun {
 
 // Result codes.
 enum Result : int {
-  kOk            = 0,
-  kBadArguments  = 1, // unknown option, missing value, no file, ...
-  kBadInput      = 2, // the file cannot be read, is not a schematic, or is a .qsym
-  kPrinterFailed = 3, // the printer is not installed or cannot be opened
-  kOutputFailed  = 4, // a page or file could not be written, or too many pages
+  kOk           = 0,
+  kBadArguments = 1,   // unknown option, missing value, no file, ...
+  kBadInput = 2,   // the file cannot be read, is not a schematic, or is a .qsym
+  kPrinterFailed = 3,   // the printer is not installed or cannot be opened
+  kOutputFailed = 4,   // a page or file could not be written, or too many pages
 };
 
 // Whether `args` (the program name left off) ask for the command line
@@ -35,4 +35,4 @@ bool wanted(const QStringList &args);
 // must already be set (RenderStyle); no window is shown.
 int run(const QStringList &args);
 
-} // namespace CliRun
+}   // namespace CliRun

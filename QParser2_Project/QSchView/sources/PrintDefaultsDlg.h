@@ -33,8 +33,8 @@ public:
   // What the header/footer fields become, for the sample line -- built
   // WITHOUT the printer: page 1 of 1, the saved printer's name. For
   // `docPath`, or a made-up "Example.qsch" when it is empty.
-  static sch::output::SchPrintContext sampleContext(const QString &docPath,
-                                                    const sch::output::SchPrintSettings &settings);
+  static sch::output::SchPrintContext sampleContext(
+      const QString &docPath, const sch::output::SchPrintSettings &settings);
 
 protected:
   void buildUi();

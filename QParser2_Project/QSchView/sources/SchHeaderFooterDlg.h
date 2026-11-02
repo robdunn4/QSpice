@@ -22,8 +22,9 @@ class QLineEdit;
 // No Q_OBJECT -- every connection is a lambda -- so no moc.
 class SchHeaderFooterDlg : public QDialog {
 public:
-  SchHeaderFooterDlg(const sch::output::SchPrintSettings &settings, const sch::output::SchPrintContext &sample,
-                     QWidget *parent = nullptr);
+  SchHeaderFooterDlg(const sch::output::SchPrintSettings &settings,
+                     const sch::output::SchPrintContext  &sample,
+                     QWidget                             *parent = nullptr);
 
   // The six slots into `settings`.
   void apply(sch::output::SchPrintSettings &settings) const;
@@ -35,6 +36,6 @@ protected:
 
   sch::output::SchPrintContext sampleCtx;
 
-  QLineEdit *edits[2][3]   = {}; // [header, footer][left, centre, right]
+  QLineEdit *edits[2][3]   = {}; // [header, footer][left, center, right]
   QLabel    *samples[2][3] = {};
 };

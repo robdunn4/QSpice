@@ -1,6 +1,7 @@
 #ifdef _MSC_VER
 #pragma warning(push)
-#pragma warning(disable : 4996) // Qt headers reference APIs deprecated for Qt 7
+#pragma warning(                                                               \
+    disable : 4996)   // Qt headers reference APIs deprecated for Qt 7
 #endif
 
 #include "DocView.h"
@@ -26,9 +27,20 @@ namespace {
 // pixels.
 constexpr double kPickTolerancePx = 4.0;
 
-} // namespace
+}   // namespace
 
-DocView::DocView(QWidget *parent) : SchViewBase(parent) { setAcceptDrops(true); }
+DocView::DocView(QWidget *parent) : SchViewBase(parent) {
+  setAcceptDrops(true);
+
+  // Read-only: no mouse event reaches the scene's elements. They are
+  // selectable and movable for QSchEdit, and with the view interactive a
+  // click selected (highlighted) one and a drag MOVED it -- which then
+  // printed and exported where it was dragged. Everything QSchView does
+  // with the mouse is handled by the view itself: double-click on a
+  // component (componentAt()), middle-button panning, wheel zoom, and
+  // file drops.
+  setInteractive(false);
+}
 
 QStringList DocView::droppableFiles(const QMimeData *mime) {
   if (mime == nullptr || !mime->hasUrls()) return QStringList();
@@ -38,7 +50,7 @@ QStringList DocView::droppableFiles(const QMimeData *mime) {
     if (!url.isLocalFile()) return QStringList();
 
     const QFileInfo info(url.toLocalFile());
-    if (!info.isFile()) return QStringList(); // a folder, or gone
+    if (!info.isFile()) return QStringList();   // a folder, or gone
 
     const QString suffix = info.suffix();
     if (suffix.compare(QLatin1String("qsch"), Qt::CaseInsensitive) != 0 &&
@@ -60,7 +72,9 @@ void DocView::dragEnterEvent(QDragEnterEvent *event) {
   event->acceptProposedAction();
 }
 
-void DocView::dragMoveEvent(QDragMoveEvent *event) { event->acceptProposedAction(); }
+void DocView::dragMoveEvent(QDragMoveEvent *event) {
+  event->acceptProposedAction();
+}
 
 void DocView::dropEvent(QDropEvent *event) {
   const QStringList paths = droppableFiles(event->mimeData());
@@ -93,16 +107,17 @@ NodePtr DocView::componentAt(const QPoint &viewPos) const {
   if (scene() == nullptr) return nullptr;
 
   const double scale = transform().m11();
-  const double tolerance = (scale > 0.0) ? kPickTolerancePx / scale : kPickTolerancePx;
+  const double tolerance =
+      (scale > 0.0) ? kPickTolerancePx / scale : kPickTolerancePx;
 
   const QPointF scenePos = mapToScene(viewPos);
-  const QRectF probe(scenePos.x() - tolerance, scenePos.y() - tolerance, 2.0 * tolerance,
-                     2.0 * tolerance);
+  const QRectF  probe(scenePos.x() - tolerance, scenePos.y() - tolerance,
+      2.0 * tolerance, 2.0 * tolerance);
 
   // Topmost first. A hit on a pin, label or line inside a symbol counts
   // for the component that holds it.
-  for (QGraphicsItem *item : scene()->items(probe, Qt::IntersectsItemBoundingRect,
-                                            Qt::DescendingOrder)) {
+  for (QGraphicsItem *item : scene()->items(
+           probe, Qt::IntersectsItemBoundingRect, Qt::DescendingOrder)) {
     const sch::render::SchItemComp *comp =
         dynamic_cast<const sch::render::SchItemComp *>(item->topLevelItem());
     if (comp == nullptr) continue;
