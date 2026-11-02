@@ -30,13 +30,12 @@ typedef std::shared_ptr<ItemCoil> ItemCoilPtr;
 class ItemCoil : public ItemBaseT<ItemCoil> {
 public:
   static ItemCoilPtr makePtr() { return ItemCoilPtr(new ItemCoil()); }
-  static ItemCoilPtr
-  makePtr(const ArgPoint &pt1, const ArgPoint &pt2, const ArgRot &rotate,
-          const ArgLineWidth &lineWidth, const ArgLineType &lineType,
-          const ArgColor &lineColor, const ArgLookupNdx &lookupNdx,
-          const ArgPinNdx &pinNdx) {
-    return ItemCoilPtr(new ItemCoil(pt1, pt2, rotate, lineWidth, lineType,
-                                    lineColor, lookupNdx, pinNdx));
+  static ItemCoilPtr makePtr(const ArgPoint &pt1, const ArgPoint &pt2,
+      const ArgRot &rotate, const ArgLineWidth &lineWidth,
+      const ArgLineType &lineType, const ArgColor &lineColor,
+      const ArgLookupNdx &lookupNdx, const ArgPinNdx &pinNdx) {
+    return ItemCoilPtr(new ItemCoil(
+        pt1, pt2, rotate, lineWidth, lineType, lineColor, lookupNdx, pinNdx));
   }
 
   bool        parseItem(const std::string &argStr) override;
@@ -55,9 +54,9 @@ protected:
   ItemCoil() : ItemBaseT(QPI::COIL) {}
   ItemCoil(const ItemCoil &other) = default;
   ItemCoil(const ArgPoint &pt1, const ArgPoint &pt2, const ArgRot &rotate,
-           const ArgLineWidth &lineWidth, const ArgLineType &lineType,
-           const ArgColor &lineColor, const ArgLookupNdx &lookupNdx,
-           const ArgPinNdx &pinNdx)
+      const ArgLineWidth &lineWidth, const ArgLineType &lineType,
+      const ArgColor &lineColor, const ArgLookupNdx &lookupNdx,
+      const ArgPinNdx &pinNdx)
       : ItemBaseT(QPI::COIL), pt1(pt1), pt2(pt2), rotate(rotate),
         lineWidth(lineWidth), lineType(lineType), lineColor(lineColor),
         lookupNdx(lookupNdx), pinNdx(pinNdx) {}

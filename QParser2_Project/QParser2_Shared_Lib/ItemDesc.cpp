@@ -8,7 +8,8 @@
 bool ItemDesc::parseItem(const std::string &argStr) {
   try {
     text = ArgString(argStr);
-  } catch (...) {
+  }
+  catch (...) {
     return false;
   }
   return true;

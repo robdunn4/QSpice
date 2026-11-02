@@ -42,15 +42,15 @@ typedef std::shared_ptr<ItemRect> ItemRectPtr;
 class ItemRect : public ItemBaseT<ItemRect> {
 public:
   static ItemRectPtr makePtr() { return ItemRectPtr(new ItemRect()); }
-  static ItemRectPtr
-  makePtr(const ArgPoint &pt1, const ArgPoint &pt2, const ArgRot &rotate,
-          const ArgLineWidth &lineWidth, const ArgLineType &lineType,
-          const ArgColor &lineColor, const ArgColor &fillColor,
-          const ArgLookupNdx &lookupNdx, const ArgInt &isHierarchicalBlock,
-          const ArgPinNdx &pinNdx, const ArgImage &imageData = ArgImage()) {
-    return ItemRectPtr(new ItemRect(pt1, pt2, rotate, lineWidth, lineType,
-                                    lineColor, fillColor, lookupNdx,
-                                    isHierarchicalBlock, pinNdx, imageData));
+  static ItemRectPtr makePtr(const ArgPoint &pt1, const ArgPoint &pt2,
+      const ArgRot &rotate, const ArgLineWidth &lineWidth,
+      const ArgLineType &lineType, const ArgColor &lineColor,
+      const ArgColor &fillColor, const ArgLookupNdx &lookupNdx,
+      const ArgInt &isHierarchicalBlock, const ArgPinNdx &pinNdx,
+      const ArgImage &imageData = ArgImage()) {
+    return ItemRectPtr(
+        new ItemRect(pt1, pt2, rotate, lineWidth, lineType, lineColor,
+            fillColor, lookupNdx, isHierarchicalBlock, pinNdx, imageData));
   }
 
   bool        parseItem(const std::string &argStr) override;
@@ -66,16 +66,16 @@ public:
   ArgLookupNdx lookupNdx;
   ArgInt       isHierarchicalBlock;
   ArgPinNdx    pinNdx;
-  ArgImage     imageData; // image bitmap data
+  ArgImage     imageData;   // image bitmap data
 
 protected:
   ItemRect() : ItemBaseT(QPI::RECT) {}
   ItemRect(const ItemRect &other) = default;
   ItemRect(const ArgPoint &pt1, const ArgPoint &pt2, const ArgRot &rotate,
-           const ArgLineWidth &lineWidth, const ArgLineType &lineType,
-           const ArgColor &lineColor, const ArgColor &fillColor,
-           const ArgLookupNdx &lookupNdx, const ArgInt &isHierarchicalBlock,
-           const ArgPinNdx &pinNdx, const ArgImage &imageData)
+      const ArgLineWidth &lineWidth, const ArgLineType &lineType,
+      const ArgColor &lineColor, const ArgColor &fillColor,
+      const ArgLookupNdx &lookupNdx, const ArgInt &isHierarchicalBlock,
+      const ArgPinNdx &pinNdx, const ArgImage &imageData)
       : ItemBaseT(QPI::RECT), pt1(pt1), pt2(pt2), rotate(rotate),
         lineWidth(lineWidth), lineType(lineType), lineColor(lineColor),
         fillColor(fillColor), lookupNdx(lookupNdx),

@@ -19,7 +19,8 @@ bool ItemNet::parseItem(const std::string &argStr) {
     netDesc     = std::string();
     // reparse for net description if present
     netName.splitQuoted(netDesc);
-  } catch (...) {
+  }
+  catch (...) {
     return false;
   }
   return true;
@@ -29,8 +30,8 @@ bool ItemNet::parseItem(const std::string &argStr) {
 // with forced quotes...
 std::string ItemNet::toString() const {
   std::string str = std::string(getTypeStr()) + " " + pt1.toString() + " " +
-                    fontSize.toString() + " " + rotateAlign.toString() + " " +
-                    netType.toString() + " " + netName.toString();
+      fontSize.toString() + " " + rotateAlign.toString() + " " +
+      netType.toString() + " " + netName.toString();
   if (netDesc.getValue().length() > 2) str += " " + netDesc.toString();
   return str;
 }

@@ -16,8 +16,8 @@
  * Construction: use ItemWire::makePtr(...).  Constructors are protected.
  */
 #pragma once
-#include "ItemBase.h"
 #include "ArgUtils.h"
+#include "ItemBase.h"
 
 class ItemWire;
 typedef std::shared_ptr<ItemWire> ItemWirePtr;
@@ -25,8 +25,8 @@ typedef std::shared_ptr<ItemWire> ItemWirePtr;
 class ItemWire : public ItemBaseT<ItemWire> {
 public:
   static ItemWirePtr makePtr() { return ItemWirePtr(new ItemWire()); }
-  static ItemWirePtr makePtr(const ArgPoint &pt1, const ArgPoint &pt2,
-                             const ArgString &netName) {
+  static ItemWirePtr makePtr(
+      const ArgPoint &pt1, const ArgPoint &pt2, const ArgString &netName) {
     return ItemWirePtr(new ItemWire(pt1, pt2, netName));
   }
 

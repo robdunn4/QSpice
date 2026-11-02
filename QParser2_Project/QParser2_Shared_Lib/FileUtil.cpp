@@ -9,17 +9,17 @@
 namespace FileUtil {
 
 std::ifstream openInput(const std::string &path) {
-  std::ifstream stream(path, std::ios::binary); // binary?
+  std::ifstream stream(path, std::ios::binary);   // binary?
   if (!stream)
     throw std::runtime_error("FileUtil::openInput: cannot open '" + path + "'");
   return stream;
 }
 
 std::ofstream openOutput(const std::string &path) {
-  std::ofstream stream(path, std::ios::binary); // binary?
+  std::ofstream stream(path, std::ios::binary);   // binary?
   if (!stream)
-    throw std::runtime_error("FileUtil::openOutput: cannot open '" + path +
-                             "'");
+    throw std::runtime_error(
+        "FileUtil::openOutput: cannot open '" + path + "'");
   return stream;
 }
 
@@ -52,4 +52,4 @@ void writeLines(const std::string &path, const StrList &strList, bool useCRLF) {
   writeLines(stream, strList, useCRLF);
 }
 
-} // namespace FileUtil
+}   // namespace FileUtil

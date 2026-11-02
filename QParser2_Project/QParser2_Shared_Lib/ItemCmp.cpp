@@ -14,7 +14,8 @@ bool ItemCmp::parseItem(const std::string &argStr) {
     pt1        = ArgPoint(strList[0]);
     rotate     = ArgRot(strList[1]);
     stuffShort = ArgStuff(strList[2]);
-  } catch (...) {
+  }
+  catch (...) {
     return false;
   }
   return true;
@@ -22,5 +23,5 @@ bool ItemCmp::parseItem(const std::string &argStr) {
 
 std::string ItemCmp::toString() const {
   return std::string(getTypeStr()) + " " + pt1.toString() + " " +
-         rotate.toString() + " " + stuffShort.toString();
+      rotate.toString() + " " + stuffShort.toString();
 }

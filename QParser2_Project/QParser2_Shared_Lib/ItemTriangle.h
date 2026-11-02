@@ -33,14 +33,13 @@ public:
   static ItemTrianglePtr makePtr() {
     return ItemTrianglePtr(new ItemTriangle());
   }
-  static ItemTrianglePtr
-  makePtr(const ArgPoint &pt1, const ArgPoint &pt2, const ArgPoint &pt3,
-          const ArgLineWidth &lineWidth, const ArgLineType &lineType,
-          const ArgColor &lineColor, const ArgColor &fillColor,
-          const ArgLookupNdx &lookupNdx, const ArgPinNdx &pinNdx) {
+  static ItemTrianglePtr makePtr(const ArgPoint &pt1, const ArgPoint &pt2,
+      const ArgPoint &pt3, const ArgLineWidth &lineWidth,
+      const ArgLineType &lineType, const ArgColor &lineColor,
+      const ArgColor &fillColor, const ArgLookupNdx &lookupNdx,
+      const ArgPinNdx &pinNdx) {
     return ItemTrianglePtr(new ItemTriangle(pt1, pt2, pt3, lineWidth, lineType,
-                                            lineColor, fillColor, lookupNdx,
-                                            pinNdx));
+        lineColor, fillColor, lookupNdx, pinNdx));
   }
 
   bool        parseItem(const std::string &argStr) override;
@@ -60,9 +59,9 @@ protected:
   ItemTriangle() : ItemBaseT(QPI::TRIANGLE) {}
   ItemTriangle(const ItemTriangle &other) = default;
   ItemTriangle(const ArgPoint &pt1, const ArgPoint &pt2, const ArgPoint &pt3,
-               const ArgLineWidth &lineWidth, const ArgLineType &lineType,
-               const ArgColor &lineColor, const ArgColor &fillColor,
-               const ArgLookupNdx &lookupNdx, const ArgPinNdx &pinNdx)
+      const ArgLineWidth &lineWidth, const ArgLineType &lineType,
+      const ArgColor &lineColor, const ArgColor &fillColor,
+      const ArgLookupNdx &lookupNdx, const ArgPinNdx &pinNdx)
       : ItemBaseT(QPI::TRIANGLE), pt1(pt1), pt2(pt2), pt3(pt3),
         lineWidth(lineWidth), lineType(lineType), lineColor(lineColor),
         fillColor(fillColor), lookupNdx(lookupNdx), pinNdx(pinNdx) {}

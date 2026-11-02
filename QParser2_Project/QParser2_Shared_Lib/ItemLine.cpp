@@ -18,7 +18,8 @@ bool ItemLine::parseItem(const std::string &argStr) {
     lineColor = ArgColor(strList[4]);
     lookupNdx = ArgLookupNdx(strList[5]);
     pinNdx    = ArgPinNdx(strList[6]);
-  } catch (...) {
+  }
+  catch (...) {
     return false;
   }
   return true;
@@ -26,7 +27,7 @@ bool ItemLine::parseItem(const std::string &argStr) {
 
 std::string ItemLine::toString() const {
   return std::string(getTypeStr()) + " " + pt1.toString() + " " +
-         pt2.toString() + " " + lineWidth.toString() + " " +
-         lineType.toString() + " " + lineColor.toString() + " " +
-         lookupNdx.toString() + " " + pinNdx.toString();
+      pt2.toString() + " " + lineWidth.toString() + " " + lineType.toString() +
+      " " + lineColor.toString() + " " + lookupNdx.toString() + " " +
+      pinNdx.toString();
 }

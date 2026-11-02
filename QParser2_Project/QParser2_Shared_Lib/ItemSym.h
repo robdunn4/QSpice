@@ -16,17 +16,15 @@
  * from ItemBaseT<ItemSym>).
  */
 #pragma once
-#include "ItemBase.h"
 #include "ArgUtils.h"
+#include "ItemBase.h"
 
 class ItemSym;
 typedef std::shared_ptr<ItemSym> ItemSymPtr;
 
 class ItemSym : public ItemBaseT<ItemSym> {
 public:
-  static ItemSymPtr makePtr() {
-    return ItemSymPtr(new ItemSym());
-  }
+  static ItemSymPtr makePtr() { return ItemSymPtr(new ItemSym()); }
   static ItemSymPtr makePtr(const ArgString &text) {
     return ItemSymPtr(new ItemSym(text));
   }

@@ -63,7 +63,8 @@ int ArgInt::parse(const std::string &str) {
       throw std::invalid_argument("Invalid integer format");
     }
     return value;
-  } catch ([[maybe_unused]] const std::exception &e) {
+  }
+  catch ([[maybe_unused]] const std::exception &e) {
     throw std::invalid_argument("Failed to parse integer: " + str);
   }
 }
@@ -96,7 +97,8 @@ float ArgFloat::parse(const std::string &str) {
       throw std::invalid_argument("Invalid float format");
     }
     return value;
-  } catch ([[maybe_unused]] const std::exception &e) {
+  }
+  catch ([[maybe_unused]] const std::exception &e) {
     throw std::invalid_argument("Failed to parse float: " + str);
   }
 }
@@ -146,7 +148,8 @@ int ArgHex::parse(const std::string &str) {
       throw std::invalid_argument("Invalid hex format");
     }
     return value;
-  } catch ([[maybe_unused]] const std::exception &e) {
+  }
+  catch ([[maybe_unused]] const std::exception &e) {
     throw std::invalid_argument("Failed to parse hex: " + str);
   }
 }
@@ -231,9 +234,7 @@ ArgString &ArgString::splitQuoted(ArgString &secondPart) {
 // ArgString &ArgString::quote() {
 //  value = "\"" + value + "\"";
 //  return *this;
-ArgString ArgString::quote() const {
-  return ArgString("\"" + value + "\"");
-}
+ArgString ArgString::quote() const { return ArgString("\"" + value + "\""); }
 
 std::string ArgString::toAsciiString() const {
   std::string ascii;
@@ -293,7 +294,8 @@ Point ArgPoint::parse(const std::string &str) {
     int x = std::stoi(matches[1].str());
     int y = std::stoi(matches[2].str());
     return Point(x, y);
-  } catch ([[maybe_unused]] const std::exception &e) {
+  }
+  catch ([[maybe_unused]] const std::exception &e) {
     throw std::invalid_argument("Failed to parse point values: " + str);
   }
 }

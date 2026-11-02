@@ -20,9 +20,7 @@ typedef std::shared_ptr<ItemSch> ItemSchPtr;
 
 class ItemSch : public ItemBaseT<ItemSch> {
 public:
-  static ItemSchPtr makePtr() {
-    return ItemSchPtr(new ItemSch());
-  }
+  static ItemSchPtr makePtr() { return ItemSchPtr(new ItemSch()); }
 
   bool        parseItem(const std::string &argStr) override;
   std::string toString() const override;

@@ -19,10 +19,10 @@
 namespace qparser2 {
 
 struct LibraryInfo {
-  const char *name;    // "QParser2_Shared_Lib"
-  const char *version; // "major.minor.patch"
+  const char *name;      // "QParser2_Shared_Lib"
+  const char *version;   // "major.minor.patch"
 };
 
 LibraryInfo libraryInfo();
 
-} // namespace qparser2
+}   // namespace qparser2

@@ -14,7 +14,8 @@ bool ItemWire::parseItem(const std::string &argStr) {
     pt1     = ArgPoint(strList[0]);
     pt2     = ArgPoint(strList[1]);
     netName = ArgString(strList[2]);
-  } catch (...) {
+  }
+  catch (...) {
     return false;
   }
   return true;
@@ -22,5 +23,5 @@ bool ItemWire::parseItem(const std::string &argStr) {
 
 std::string ItemWire::toString() const {
   return std::string(getTypeStr()) + " " + pt1.toString() + " " +
-         pt2.toString() + " " + netName.toString();
+      pt2.toString() + " " + netName.toString();
 }

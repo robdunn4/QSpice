@@ -210,13 +210,13 @@ public:
 
   std::string getValue() const;
   void        setValue(std::string value) { this->value = value; }
-  operator std::string() const;
+              operator std::string() const;
 
   static std::string parse(const std::string &str);
 
   std::string        toString() const;
   static std::string toString(const std::string &value);
-  std::string        toAsciiString() const; // strips high-bit bytes
+  std::string        toAsciiString() const;   // strips high-bit bytes
 
   ArgString       &splitQuoted(ArgString &secondPart);
   ArgString        quote() const;

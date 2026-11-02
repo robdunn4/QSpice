@@ -13,7 +13,8 @@ bool ItemTap::parseItem(const std::string &argStr) {
   try {
     pt1 = ArgPoint(strList[0]);
     pt2 = ArgPoint(strList[1]);
-  } catch (...) {
+  }
+  catch (...) {
     return false;
   }
   return true;
@@ -21,5 +22,5 @@ bool ItemTap::parseItem(const std::string &argStr) {
 
 std::string ItemTap::toString() const {
   return std::string(getTypeStr()) + " " + pt1.toString() + " " +
-         pt2.toString();
+      pt2.toString();
 }

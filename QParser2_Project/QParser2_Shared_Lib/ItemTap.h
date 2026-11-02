@@ -15,17 +15,15 @@
  * Construction: use ItemTap::makePtr(...).  Constructors are protected.
  */
 #pragma once
-#include "ItemBase.h"
 #include "ArgUtils.h"
+#include "ItemBase.h"
 
 class ItemTap;
 typedef std::shared_ptr<ItemTap> ItemTapPtr;
 
 class ItemTap : public ItemBaseT<ItemTap> {
 public:
-  static ItemTapPtr makePtr() {
-    return ItemTapPtr(new ItemTap());
-  }
+  static ItemTapPtr makePtr() { return ItemTapPtr(new ItemTap()); }
   static ItemTapPtr makePtr(const ArgPoint &pt1, const ArgPoint &pt2) {
     return ItemTapPtr(new ItemTap(pt1, pt2));
   }

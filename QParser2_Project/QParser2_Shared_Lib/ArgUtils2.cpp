@@ -43,12 +43,12 @@ void ArgRotAlign::setRotDeg(int deg) {
   if (deg % 45 != 0) {
     throw std::invalid_argument("Rotation must be multiple of 45 degrees");
   }
-  int code = (deg / 45) % 16; // Normalize to 0-15
+  int code = (deg / 45) % 16;   // Normalize to 0-15
   setRotCode(code);
 }
 
-ArgRotAlign ArgRotAlign::create(unsigned char vert, unsigned char horiz,
-                                int rotationCode) {
+ArgRotAlign ArgRotAlign::create(
+    unsigned char vert, unsigned char horiz, int rotationCode) {
   if (rotationCode < 0 || rotationCode > 15) {
     throw std::invalid_argument("Rotation code must be 0-15");
   }
@@ -66,14 +66,14 @@ StrList ArgLibString::splitSubcktStrs() const {
   std::string current;
 
   auto iter = value.cbegin();
-  if (*iter == '|') iter++; // this isn't really right
+  if (*iter == '|') iter++;   // this isn't really right
 
   for (; iter != value.cend(); ++iter) {
     if (*iter == '\\' && std::next(iter) != value.cend() &&
         *std::next(iter) == 'n') {
       result.push_back(current);
       current.clear();
-      ++iter; // skip 'n'
+      ++iter;   // skip 'n'
     } else {
       current += *iter;
     }

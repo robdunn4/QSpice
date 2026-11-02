@@ -14,17 +14,15 @@
  * Construction: use ItemShort::makePtr(...).  Constructors are protected.
  */
 #pragma once
-#include "ItemBase.h"
 #include "ArgUtils.h"
+#include "ItemBase.h"
 
 class ItemShort;
 typedef std::shared_ptr<ItemShort> ItemShortPtr;
 
 class ItemShort : public ItemBaseT<ItemShort> {
 public:
-  static ItemShortPtr makePtr() {
-    return ItemShortPtr(new ItemShort());
-  }
+  static ItemShortPtr makePtr() { return ItemShortPtr(new ItemShort()); }
   static ItemShortPtr makePtr(const ArgBool &bShorted) {
     return ItemShortPtr(new ItemShort(bShorted));
   }

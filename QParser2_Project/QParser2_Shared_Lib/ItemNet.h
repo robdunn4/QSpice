@@ -29,9 +29,8 @@ class ItemNet : public ItemBaseT<ItemNet> {
 public:
   static ItemNetPtr makePtr() { return ItemNetPtr(new ItemNet()); }
   static ItemNetPtr makePtr(const ArgPoint &pt1, const ArgFontSize &fontSize,
-                            const ArgRotAlign &rotateAlign,
-                            const ArgInt &netType, const ArgString &netName,
-                            const ArgString &netDesc = "") {
+      const ArgRotAlign &rotateAlign, const ArgInt &netType,
+      const ArgString &netName, const ArgString &netDesc = "") {
     return ItemNetPtr(
         new ItemNet(pt1, fontSize, rotateAlign, netType, netName, netDesc));
   }
@@ -44,14 +43,14 @@ public:
   ArgRotAlign rotateAlign;
   ArgInt      netType;
   ArgString   netName;
-  ArgString   netDesc; // optional description
+  ArgString   netDesc;   // optional description
 
 protected:
   ItemNet() : ItemBaseT(QPI::NET) {}
   ItemNet(const ItemNet &other) = default;
   ItemNet(const ArgPoint &pt1, const ArgFontSize &fontSize,
-          const ArgRotAlign &rotateAlign, const ArgInt &netType,
-          const ArgString &netName, const ArgString &netDesc)
+      const ArgRotAlign &rotateAlign, const ArgInt &netType,
+      const ArgString &netName, const ArgString &netDesc)
       : ItemBaseT(QPI::NET), pt1(pt1), fontSize(fontSize),
         rotateAlign(rotateAlign), netType(netType), netName(netName.quote()),
         netDesc(netDesc.quote()) {}

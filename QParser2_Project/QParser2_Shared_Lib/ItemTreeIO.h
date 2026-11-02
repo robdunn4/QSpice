@@ -31,7 +31,7 @@ struct ParseResult {
   ItemTree    tree;
   bool        ok = false;
   std::string error;
-  int         line = 0; // 1-based; 0 if not line-specific
+  int         line = 0;   // 1-based; 0 if not line-specific
 };
 
 // Read.  On failure, `tree` is empty and `error`/`line` describe the problem.
@@ -45,4 +45,4 @@ bool        writeFile(const ItemTree &tree, const std::string &path);
 std::string writeString(const ItemTree &tree);
 StrList     writeStrList(const ItemTree &tree);
 
-} // namespace ItemTreeIO
+}   // namespace ItemTreeIO

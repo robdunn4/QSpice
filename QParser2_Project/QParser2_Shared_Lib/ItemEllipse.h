@@ -32,14 +32,13 @@ typedef std::shared_ptr<ItemEllipse> ItemEllipsePtr;
 class ItemEllipse : public ItemBaseT<ItemEllipse> {
 public:
   static ItemEllipsePtr makePtr() { return ItemEllipsePtr(new ItemEllipse()); }
-  static ItemEllipsePtr
-  makePtr(const ArgPoint &pt1, const ArgPoint &pt2, const ArgRot &rotate,
-          const ArgLineWidth &lineWidth, const ArgLineType &lineType,
-          const ArgColor &lineColor, const ArgColor &fillColor,
-          const ArgLookupNdx &lookupNdx, const ArgPinNdx &pinNdx) {
+  static ItemEllipsePtr makePtr(const ArgPoint &pt1, const ArgPoint &pt2,
+      const ArgRot &rotate, const ArgLineWidth &lineWidth,
+      const ArgLineType &lineType, const ArgColor &lineColor,
+      const ArgColor &fillColor, const ArgLookupNdx &lookupNdx,
+      const ArgPinNdx &pinNdx) {
     return ItemEllipsePtr(new ItemEllipse(pt1, pt2, rotate, lineWidth, lineType,
-                                          lineColor, fillColor, lookupNdx,
-                                          pinNdx));
+        lineColor, fillColor, lookupNdx, pinNdx));
   }
 
   bool        parseItem(const std::string &argStr) override;
@@ -65,9 +64,9 @@ protected:
   ItemEllipse() : ItemBaseT(QPI::ELLIPSE) {}
   ItemEllipse(const ItemEllipse &other) = default;
   ItemEllipse(const ArgPoint &pt1, const ArgPoint &pt2, const ArgRot &rotate,
-              const ArgLineWidth &lineWidth, const ArgLineType &lineType,
-              const ArgColor &lineColor, const ArgColor &fillColor,
-              const ArgLookupNdx &lookupNdx, const ArgPinNdx &pinNdx)
+      const ArgLineWidth &lineWidth, const ArgLineType &lineType,
+      const ArgColor &lineColor, const ArgColor &fillColor,
+      const ArgLookupNdx &lookupNdx, const ArgPinNdx &pinNdx)
       : ItemBaseT(QPI::ELLIPSE), pt1(pt1), pt2(pt2), rotate(rotate),
         lineWidth(lineWidth), lineType(lineType), lineColor(lineColor),
         fillColor(fillColor), lookupNdx(lookupNdx), pinNdx(pinNdx) {}

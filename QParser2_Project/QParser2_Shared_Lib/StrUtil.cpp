@@ -10,52 +10,48 @@ namespace StrUtil {
 int strToInt(const std::string &str) {
   try {
     std::string trimmed = trim(str);
-    if (trimmed.empty()) {
-      throw std::invalid_argument("Empty string");
-    }
+    if (trimmed.empty()) { throw std::invalid_argument("Empty string"); }
     return std::stoi(trimmed);
-  } catch (const std::exception &e) {
-    throw std::runtime_error("Cannot convert '" + str +
-                             "' to int: " + e.what());
+  }
+  catch (const std::exception &e) {
+    throw std::runtime_error(
+        "Cannot convert '" + str + "' to int: " + e.what());
   }
 }
 
 long strToLong(const std::string &str) {
   try {
     std::string trimmed = trim(str);
-    if (trimmed.empty()) {
-      throw std::invalid_argument("Empty string");
-    }
+    if (trimmed.empty()) { throw std::invalid_argument("Empty string"); }
     return std::stol(trimmed);
-  } catch (const std::exception &e) {
-    throw std::runtime_error("Cannot convert '" + str +
-                             "' to long: " + e.what());
+  }
+  catch (const std::exception &e) {
+    throw std::runtime_error(
+        "Cannot convert '" + str + "' to long: " + e.what());
   }
 }
 
 float strToFloat(const std::string &str) {
   try {
     std::string trimmed = trim(str);
-    if (trimmed.empty()) {
-      throw std::invalid_argument("Empty string");
-    }
+    if (trimmed.empty()) { throw std::invalid_argument("Empty string"); }
     return std::stof(trimmed);
-  } catch (const std::exception &e) {
-    throw std::runtime_error("Cannot convert '" + str +
-                             "' to float: " + e.what());
+  }
+  catch (const std::exception &e) {
+    throw std::runtime_error(
+        "Cannot convert '" + str + "' to float: " + e.what());
   }
 }
 
 double strToDouble(const std::string &str) {
   try {
     std::string trimmed = trim(str);
-    if (trimmed.empty()) {
-      throw std::invalid_argument("Empty string");
-    }
+    if (trimmed.empty()) { throw std::invalid_argument("Empty string"); }
     return std::stod(trimmed);
-  } catch (const std::exception &e) {
-    throw std::runtime_error("Cannot convert '" + str +
-                             "' to double: " + e.what());
+  }
+  catch (const std::exception &e) {
+    throw std::runtime_error(
+        "Cannot convert '" + str + "' to double: " + e.what());
   }
 }
 
@@ -161,12 +157,12 @@ std::string toString(const StrList &lines, const std::string &delimiter) {
 }
 
 // Write a StrList to an ostream
-void toStream(const StrList &lines, std::ostream &output,
-              const std::string &delimiter) {
+void toStream(
+    const StrList &lines, std::ostream &output, const std::string &delimiter) {
   for (size_t i = 0; i < lines.size(); ++i) {
     if (i > 0) output << delimiter;
     output << lines[i];
   }
 }
 
-} // namespace StrUtil
+}   // namespace StrUtil

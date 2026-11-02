@@ -19,7 +19,8 @@ bool ItemCoil::parseItem(const std::string &argStr) {
     lineColor = ArgColor(strList[5]);
     lookupNdx = ArgLookupNdx(strList[6]);
     pinNdx    = ArgPinNdx(strList[7]);
-  } catch (...) {
+  }
+  catch (...) {
     return false;
   }
   return true;
@@ -27,7 +28,7 @@ bool ItemCoil::parseItem(const std::string &argStr) {
 
 std::string ItemCoil::toString() const {
   return std::string(getTypeStr()) + " " + pt1.toString() + " " +
-         pt2.toString() + " " + rotate.toString() + " " + lineWidth.toString() +
-         " " + lineType.toString() + " " + lineColor.toString() + " " +
-         lookupNdx.toString() + " " + pinNdx.toString();
+      pt2.toString() + " " + rotate.toString() + " " + lineWidth.toString() +
+      " " + lineType.toString() + " " + lineColor.toString() + " " +
+      lookupNdx.toString() + " " + pinNdx.toString();
 }

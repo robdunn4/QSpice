@@ -7,7 +7,8 @@
 bool ItemShort::parseItem(const std::string &argStr) {
   try {
     bShorted = ArgBool(argStr);
-  } catch (...) {
+  }
+  catch (...) {
     return false;
   }
   return true;

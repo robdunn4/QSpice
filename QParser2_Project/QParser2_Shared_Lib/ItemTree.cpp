@@ -7,7 +7,6 @@
 #include <cassert>
 #include <deque>
 
-
 //-----------------------------------------------------------------------------
 // TreeNode -- navigation
 //-----------------------------------------------------------------------------
@@ -18,7 +17,7 @@ std::optional<size_t> TreeNode::indexInParent() const {
   for (size_t i = 0; i < p->children_.size(); ++i) {
     if (p->children_[i].get() == this) return i;
   }
-  return std::nullopt; // shouldn't happen if links are consistent
+  return std::nullopt;   // shouldn't happen if links are consistent
 }
 
 NodePtr TreeNode::nextSibling() const {
@@ -44,8 +43,7 @@ NodePtr TreeNode::prevSibling() const {
 size_t TreeNode::lowerBoundFor(QPI qpi) const {
   const int key = ItemTypes::sortOrder(qpi);
   auto      it  = std::lower_bound(
-      children_.begin(), children_.end(), key,
-      [](const NodePtr &n, int k) {
+      children_.begin(), children_.end(), key, [](const NodePtr &n, int k) {
         return ItemTypes::sortOrder(n->getEnumID()) < k;
       });
   return static_cast<size_t>(it - children_.begin());
@@ -54,8 +52,7 @@ size_t TreeNode::lowerBoundFor(QPI qpi) const {
 size_t TreeNode::upperBoundFor(QPI qpi) const {
   const int key = ItemTypes::sortOrder(qpi);
   auto      it  = std::upper_bound(
-      children_.begin(), children_.end(), key,
-      [](int k, const NodePtr &n) {
+      children_.begin(), children_.end(), key, [](int k, const NodePtr &n) {
         return k < ItemTypes::sortOrder(n->getEnumID());
       });
   return static_cast<size_t>(it - children_.begin());
@@ -88,9 +85,8 @@ NodePtr TreeNode::insertAt(size_t index, NodePtr newChild) {
   // remove it cleanly so we don't end up with stale links.
   if (auto oldParent = newChild->parent_.lock()) {
     auto &sibs = oldParent->children_;
-    sibs.erase(
-        std::remove_if(sibs.begin(), sibs.end(),
-                       [&](const NodePtr &n) { return n == newChild; }),
+    sibs.erase(std::remove_if(sibs.begin(), sibs.end(),
+                   [&](const NodePtr &n) { return n == newChild; }),
         sibs.end());
   }
 
@@ -215,8 +211,9 @@ void TreeNode::assertSortedInvariant() const {
   for (size_t i = 1; i < children_.size(); ++i) {
     int a = ItemTypes::sortOrder(children_[i - 1]->getEnumID());
     int b = ItemTypes::sortOrder(children_[i]->getEnumID());
-    assert(a <= b && "TreeNode children not in QPI sort order -- "
-                     "addBefore/addAfter misuse?");
+    assert(a <= b &&
+        "TreeNode children not in QPI sort order -- "
+        "addBefore/addAfter misuse?");
   }
 #endif
 }
@@ -226,7 +223,10 @@ void TreeNode::assertSortedInvariant() const {
 //-----------------------------------------------------------------------------
 
 NodePtr ItemTree::setRoot(ItemBasePtr item) {
-  if (!item) { root_.reset(); return nullptr; }
+  if (!item) {
+    root_.reset();
+    return nullptr;
+  }
   root_ = TreeNode::make(std::move(item));
   return root_;
 }

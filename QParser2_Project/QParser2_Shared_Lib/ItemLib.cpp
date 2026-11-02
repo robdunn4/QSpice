@@ -8,7 +8,8 @@
 bool ItemLib::parseItem(const std::string &argStr) {
   try {
     libText = ArgLibString(argStr);
-  } catch (...) {
+  }
+  catch (...) {
     return false;
   }
   return true;

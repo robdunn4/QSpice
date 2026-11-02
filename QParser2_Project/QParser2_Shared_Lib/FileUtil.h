@@ -25,12 +25,12 @@ namespace FileUtil {
 
 // ostream -> vector<string>
 // Writes line by line; uses CRLF if useCRLF is true, otherwise LF
-void writeLines(std::ostream &stream, const StrList &lines,
-                bool useCRLF = true);
+void writeLines(
+    std::ostream &stream, const StrList &lines, bool useCRLF = true);
 
 [[nodiscard]] StrList readLines(const std::string &path);
 
-void writeLines(const std::string &path, const StrList &lines,
-                bool useCRLF = true);
+void writeLines(
+    const std::string &path, const StrList &lines, bool useCRLF = true);
 
-} // namespace FileUtil
+}   // namespace FileUtil

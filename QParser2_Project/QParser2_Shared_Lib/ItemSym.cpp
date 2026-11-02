@@ -11,7 +11,8 @@ bool ItemSym::parseItem(const std::string &argStr) {
 
   try {
     if (strList.size()) text = ArgString(strList[0]);
-  } catch (...) {
+  }
+  catch (...) {
     return false;
   }
   return true;

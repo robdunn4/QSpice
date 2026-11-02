@@ -21,7 +21,8 @@ bool ItemPin::parseItem(const std::string &argStr) {
     pinLabel    = ArgString(strList[7]);
     // reparse to split pin label and optional net name if present
     pinLabel.splitQuoted(netName);
-  } catch (...) {
+  }
+  catch (...) {
     return false;
   }
   return true;
@@ -29,10 +30,10 @@ bool ItemPin::parseItem(const std::string &argStr) {
 
 std::string ItemPin::toString() const {
   std::string str = std::string(getTypeStr()) + " " + pt1.toString() + " " +
-                    pt2.toString() + " " + fontSize.toString() + " " +
-                    rotateAlign.toString() + " " + pinInfo.toString() + " " +
-                    textColor.toString() + " " + lookupNdx.toString() + " " +
-                    pinLabel.toString();
+      pt2.toString() + " " + fontSize.toString() + " " +
+      rotateAlign.toString() + " " + pinInfo.toString() + " " +
+      textColor.toString() + " " + lookupNdx.toString() + " " +
+      pinLabel.toString();
   // default net mame is double-quotes (empty string); only include if non-empty
   if (netName.getValue().length() > 2) str += " " + netName.toString();
   return str;

@@ -20,7 +20,8 @@ bool ItemTriangle::parseItem(const std::string &argStr) {
     fillColor = ArgColor(strList[6]);
     lookupNdx = ArgLookupNdx(strList[7]);
     pinNdx    = ArgPinNdx(strList[8]);
-  } catch (...) {
+  }
+  catch (...) {
     return false;
   }
   return true;
@@ -28,8 +29,8 @@ bool ItemTriangle::parseItem(const std::string &argStr) {
 
 std::string ItemTriangle::toString() const {
   return std::string(getTypeStr()) + " " + pt1.toString() + " " +
-         pt2.toString() + " " + pt3.toString() + " " + lineWidth.toString() +
-         " " + lineType.toString() + " " + lineColor.toString() + " " +
-         fillColor.toString() + " " + lookupNdx.toString() + " " +
-         pinNdx.toString();
+      pt2.toString() + " " + pt3.toString() + " " + lineWidth.toString() + " " +
+      lineType.toString() + " " + lineColor.toString() + " " +
+      fillColor.toString() + " " + lookupNdx.toString() + " " +
+      pinNdx.toString();
 }

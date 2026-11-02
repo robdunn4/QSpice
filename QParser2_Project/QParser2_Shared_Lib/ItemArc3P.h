@@ -30,13 +30,12 @@ typedef std::shared_ptr<ItemArc3P> ItemArc3pPtr;
 class ItemArc3P : public ItemBaseT<ItemArc3P> {
 public:
   static ItemArc3pPtr makePtr() { return ItemArc3pPtr(new ItemArc3P()); }
-  static ItemArc3pPtr
-  makePtr(const ArgPoint &pt1, const ArgPoint &pt2, const ArgPoint &pt3,
-          const ArgLineWidth &lineWidth, const ArgLineType &lineType,
-          const ArgColor &lineColor, const ArgLookupNdx &lookupNdx,
-          const ArgPinNdx &pinNdx) {
-    return ItemArc3pPtr(new ItemArc3P(pt1, pt2, pt3, lineWidth, lineType,
-                                      lineColor, lookupNdx, pinNdx));
+  static ItemArc3pPtr makePtr(const ArgPoint &pt1, const ArgPoint &pt2,
+      const ArgPoint &pt3, const ArgLineWidth &lineWidth,
+      const ArgLineType &lineType, const ArgColor &lineColor,
+      const ArgLookupNdx &lookupNdx, const ArgPinNdx &pinNdx) {
+    return ItemArc3pPtr(new ItemArc3P(
+        pt1, pt2, pt3, lineWidth, lineType, lineColor, lookupNdx, pinNdx));
   }
 
   bool        parseItem(const std::string &argStr) override;
@@ -55,9 +54,9 @@ protected:
   ItemArc3P() : ItemBaseT(QPI::ARC3P) {}
   ItemArc3P(const ItemArc3P &other) = default;
   ItemArc3P(const ArgPoint &pt1, const ArgPoint &pt2, const ArgPoint &pt3,
-            const ArgLineWidth &lineWidth, const ArgLineType &lineType,
-            const ArgColor &lineColor, const ArgLookupNdx &lookupNdx,
-            const ArgPinNdx &pinNdx)
+      const ArgLineWidth &lineWidth, const ArgLineType &lineType,
+      const ArgColor &lineColor, const ArgLookupNdx &lookupNdx,
+      const ArgPinNdx &pinNdx)
       : ItemBaseT(QPI::ARC3P), pt1(pt1), pt2(pt2), pt3(pt3),
         lineWidth(lineWidth), lineType(lineType), lineColor(lineColor),
         lookupNdx(lookupNdx), pinNdx(pinNdx) {}

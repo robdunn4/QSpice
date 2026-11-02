@@ -21,7 +21,8 @@ bool ItemArc4P::parseItem(const std::string &argStr) {
     lineColor = ArgColor(strList[7]);
     lookupNdx = ArgLookupNdx(strList[8]);
     pinNdx    = ArgPinNdx(strList[9]);
-  } catch (...) {
+  }
+  catch (...) {
     return false;
   }
   return true;
@@ -29,8 +30,8 @@ bool ItemArc4P::parseItem(const std::string &argStr) {
 
 std::string ItemArc4P::toString() const {
   return std::string(getTypeStr()) + " " + pt1.toString() + " " +
-         pt2.toString() + " " + pt3.toString() + " " + pt4.toString() + " " +
-         rotate.toString() + " " + lineWidth.toString() + " " +
-         lineType.toString() + " " + lineColor.toString() + " " +
-         lookupNdx.toString() + " " + pinNdx.toString();
+      pt2.toString() + " " + pt3.toString() + " " + pt4.toString() + " " +
+      rotate.toString() + " " + lineWidth.toString() + " " +
+      lineType.toString() + " " + lineColor.toString() + " " +
+      lookupNdx.toString() + " " + pinNdx.toString();
 }

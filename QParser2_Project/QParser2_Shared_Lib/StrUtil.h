@@ -43,6 +43,6 @@ std::string toString(const StrList &lines, const std::string &delimiter = "\n");
 
 // Write a StrList to an ostream
 void toStream(const StrList &lines, std::ostream &output,
-              const std::string &delimiter = "\n");
+    const std::string &delimiter = "\n");
 
-} // namespace StrUtil
+}   // namespace StrUtil

@@ -33,13 +33,11 @@ class ItemText : public ItemBaseT<ItemText> {
 public:
   static ItemTextPtr makePtr() { return ItemTextPtr(new ItemText()); }
   static ItemTextPtr makePtr(const ArgPoint &pt1, const ArgFontSize &fontSize,
-                             const ArgRotAlign  &rotateAlign,
-                             const ArgTextFlags &textFlags,
-                             const ArgColor     &textColor,
-                             const ArgLookupNdx &lookupNdx,
-                             const ArgPinNdx &pinNdx, const ArgString &text) {
+      const ArgRotAlign &rotateAlign, const ArgTextFlags &textFlags,
+      const ArgColor &textColor, const ArgLookupNdx &lookupNdx,
+      const ArgPinNdx &pinNdx, const ArgString &text) {
     return ItemTextPtr(new ItemText(pt1, fontSize, rotateAlign, textFlags,
-                                    textColor, lookupNdx, pinNdx, text));
+        textColor, lookupNdx, pinNdx, text));
   }
 
   bool        parseItem(const std::string &argStr) override;
@@ -58,9 +56,9 @@ protected:
   ItemText() : ItemBaseT(QPI::TEXT) {}
   ItemText(const ItemText &other) = default;
   ItemText(const ArgPoint &pt1, const ArgFontSize &fontSize,
-           const ArgRotAlign &rotateAlign, const ArgTextFlags &textFlags,
-           const ArgColor &textColor, const ArgLookupNdx &lookupNdx,
-           const ArgPinNdx &pinNdx, const ArgString &text)
+      const ArgRotAlign &rotateAlign, const ArgTextFlags &textFlags,
+      const ArgColor &textColor, const ArgLookupNdx &lookupNdx,
+      const ArgPinNdx &pinNdx, const ArgString &text)
       : ItemBaseT(QPI::TEXT), pt1(pt1), fontSize(fontSize),
         rotateAlign(rotateAlign), textFlags(textFlags), textColor(textColor),
         lookupNdx(lookupNdx), pinNdx(pinNdx), text(text.quote()) {}

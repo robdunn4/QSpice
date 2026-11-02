@@ -12,7 +12,8 @@ bool ItemJunction::parseItem(const std::string &argStr) {
 
   try {
     pt1 = ArgPoint(strList[0]);
-  } catch (...) {
+  }
+  catch (...) {
     return false;
   }
   return true;

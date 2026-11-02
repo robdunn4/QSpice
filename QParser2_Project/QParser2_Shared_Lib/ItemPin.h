@@ -35,13 +35,13 @@ typedef std::shared_ptr<ItemPin> ItemPinPtr;
 class ItemPin : public ItemBaseT<ItemPin> {
 public:
   static ItemPinPtr makePtr() { return ItemPinPtr(new ItemPin()); }
-  static ItemPinPtr
-  makePtr(const ArgPoint &pt1, const ArgPoint &pt2, const ArgFontSize &fontSize,
-          const ArgRotAlign &rotateAlign, const ArgPinInfo &pinInfo,
-          const ArgColor &textColor, const ArgLookupNdx &lookupNdx,
-          const ArgString &pinLabel, const ArgString &netName = ArgString()) {
+  static ItemPinPtr makePtr(const ArgPoint &pt1, const ArgPoint &pt2,
+      const ArgFontSize &fontSize, const ArgRotAlign &rotateAlign,
+      const ArgPinInfo &pinInfo, const ArgColor &textColor,
+      const ArgLookupNdx &lookupNdx, const ArgString &pinLabel,
+      const ArgString &netName = ArgString()) {
     return ItemPinPtr(new ItemPin(pt1, pt2, fontSize, rotateAlign, pinInfo,
-                                  textColor, lookupNdx, pinLabel, netName));
+        textColor, lookupNdx, pinLabel, netName));
   }
 
   bool        parseItem(const std::string &argStr) override;
@@ -61,9 +61,9 @@ protected:
   ItemPin() : ItemBaseT(QPI::PIN) {}
   ItemPin(const ItemPin &other) = default;
   ItemPin(const ArgPoint &pt1, const ArgPoint &pt2, const ArgFontSize &fontSize,
-          const ArgRotAlign &rotateAlign, const ArgPinInfo &pinInfo,
-          const ArgColor &textColor, const ArgLookupNdx &lookupNdx,
-          const ArgString &pinLabel, const ArgString &netName)
+      const ArgRotAlign &rotateAlign, const ArgPinInfo &pinInfo,
+      const ArgColor &textColor, const ArgLookupNdx &lookupNdx,
+      const ArgString &pinLabel, const ArgString &netName)
       : ItemBaseT(QPI::PIN), pt1(pt1), pt2(pt2), fontSize(fontSize),
         rotateAlign(rotateAlign), pinInfo(pinInfo), textColor(textColor),
         lookupNdx(lookupNdx), pinLabel(pinLabel.quote()),

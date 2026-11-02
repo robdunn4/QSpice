@@ -23,7 +23,8 @@ bool ItemRect::parseItem(const std::string &argStr) {
     isHierarchicalBlock = ArgInt(strList[8]);
     pinNdx              = ArgPinNdx(strList[9]);
     if (strList.size() == 11) imageData = ArgImage(strList[10]);
-  } catch (...) {
+  }
+  catch (...) {
     return false;
   }
   return true;
@@ -31,11 +32,10 @@ bool ItemRect::parseItem(const std::string &argStr) {
 
 std::string ItemRect::toString() const {
   std::string str = std::string(getTypeStr()) + " " + pt1.toString() + " " +
-                    pt2.toString() + " " + rotate.toString() + " " +
-                    lineWidth.toString() + " " + lineType.toString() + " " +
-                    lineColor.toString() + " " + fillColor.toString() + " " +
-                    lookupNdx.toString() + " " +
-                    isHierarchicalBlock.toString() + " " + pinNdx.toString();
+      pt2.toString() + " " + rotate.toString() + " " + lineWidth.toString() +
+      " " + lineType.toString() + " " + lineColor.toString() + " " +
+      fillColor.toString() + " " + lookupNdx.toString() + " " +
+      isHierarchicalBlock.toString() + " " + pinNdx.toString();
   // if image data present...
   if (imageData.getValue().length()) str += " " + imageData.toString();
   return str;

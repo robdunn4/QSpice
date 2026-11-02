@@ -14,8 +14,8 @@
  * Construction: use ItemDesc::makePtr(...).  Constructors are protected.
  */
 #pragma once
-#include "ItemBase.h"
 #include "ArgUtils.h"
+#include "ItemBase.h"
 
 class ItemDesc;
 typedef std::shared_ptr<ItemDesc> ItemDescPtr;

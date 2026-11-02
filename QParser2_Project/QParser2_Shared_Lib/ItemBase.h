@@ -92,8 +92,7 @@ protected:
 // derived class needs `friend class ItemBaseT<ItemXxx>;` so the
 // protected copy constructor is reachable.
 //-----------------------------------------------------------------------------
-template <typename Derived>
-class ItemBaseT : public ItemBase {
+template <typename Derived> class ItemBaseT : public ItemBase {
 public:
   using ItemBase::ItemBase;
 

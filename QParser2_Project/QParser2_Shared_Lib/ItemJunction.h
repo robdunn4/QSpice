@@ -14,8 +14,8 @@
  * Construction: use ItemJunction::makePtr(...).  Constructors are protected.
  */
 #pragma once
-#include "ItemBase.h"
 #include "ArgUtils.h"
+#include "ItemBase.h"
 
 class ItemJunction;
 typedef std::shared_ptr<ItemJunction> ItemJunctionPtr;

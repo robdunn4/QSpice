@@ -20,7 +20,8 @@ bool ItemText::parseItem(const std::string &argStr) {
     lookupNdx   = ArgLookupNdx(strList[5]);
     pinNdx      = ArgPinNdx(strList[6]);
     text        = ArgString(strList[7]);
-  } catch (...) {
+  }
+  catch (...) {
     return false;
   }
 
@@ -39,7 +40,7 @@ bool ItemText::parseItem(const std::string &argStr) {
 
 std::string ItemText::toString() const {
   return std::string(getTypeStr()) + " " + pt1.toString() + " " +
-         fontSize.toString() + " " + rotateAlign.toString() + " " +
-         textFlags.toString() + " " + textColor.toString() + " " +
-         lookupNdx.toString() + " " + pinNdx.toString() + " " + text.toString();
+      fontSize.toString() + " " + rotateAlign.toString() + " " +
+      textFlags.toString() + " " + textColor.toString() + " " +
+      lookupNdx.toString() + " " + pinNdx.toString() + " " + text.toString();
 }

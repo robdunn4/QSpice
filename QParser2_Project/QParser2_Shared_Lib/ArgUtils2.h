@@ -121,7 +121,7 @@ public:
 
 class ArgPinNdx : public ArgInt {
 public:
-  using ArgInt::ArgInt; // Inherit constructors
+  using ArgInt::ArgInt;   // Inherit constructors
   ArgPinNdx(int value = -1) : ArgInt(value) {}
 
   // Explicit conversion required
@@ -134,7 +134,7 @@ public:
 
 class ArgTextFlags : public ArgInt {
 public:
-  using ArgInt::ArgInt; // Inherit constructors
+  using ArgInt::ArgInt;   // Inherit constructors
 
   // Explicit conversion required
   explicit ArgTextFlags(const ArgInt &other) : ArgInt(other) {}
@@ -175,7 +175,7 @@ public:
 
 class ArgImage : public ArgString {
 public:
-  using ArgString::ArgString; // Inherit constructors
+  using ArgString::ArgString;   // Inherit constructors
 
   // Explicit conversion required
   explicit ArgImage(const ArgString &other) : ArgString(other) {}
@@ -190,7 +190,7 @@ public:
 
 class ArgFontSize : public ArgFloat {
 public:
-  using ArgFloat::ArgFloat; // Inherit constructors
+  using ArgFloat::ArgFloat;   // Inherit constructors
   ArgFontSize() : ArgFloat(1.0) {}
 
   // Explicit conversion required
@@ -228,7 +228,7 @@ public:
 
 class ArgColor : public ArgHex {
 public:
-  using ArgHex::ArgHex; // Inherit constructors
+  using ArgHex::ArgHex;   // Inherit constructors
   // 2026.05.08 Change to default to "default color"
   // TODO:  Revisit this
   ArgColor() : ArgHex(0x01000000) {}
@@ -245,7 +245,7 @@ public:
 
 class ArgStuff : public ArgInt {
 public:
-  using ArgInt::ArgInt; // Inherit constructors
+  using ArgInt::ArgInt;   // Inherit constructors
 
   // Explicit conversion required
   explicit ArgStuff(const ArgInt &other) : ArgInt(other) {}
@@ -259,7 +259,7 @@ public:
 
 class ArgLineType : public ArgInt {
 public:
-  using ArgInt::ArgInt; // Inherit constructors
+  using ArgInt::ArgInt;   // Inherit constructors
 
   // Explicit conversion required
   explicit ArgLineType(const ArgInt &other) : ArgInt(other) {}
@@ -273,7 +273,7 @@ public:
 
 class ArgLineWidth : public ArgInt {
 public:
-  using ArgInt::ArgInt; // Inherit constructors
+  using ArgInt::ArgInt;   // Inherit constructors
 
   // Explicit conversion required
   explicit ArgLineWidth(const ArgInt &other) : ArgInt(other) {}
@@ -288,7 +288,7 @@ public:
 
 class ArgRot : public ArgInt {
 public:
-  using ArgInt::ArgInt; // Inherit constructors
+  using ArgInt::ArgInt;   // Inherit constructors
 
   // Explicit conversion required
   explicit ArgRot(const ArgInt &other) : ArgInt(other) {}
@@ -358,8 +358,8 @@ public:
   void setRotDeg(int deg);
 
   // Create from components
-  static ArgRotAlign create(unsigned char vert, unsigned char horiz,
-                            int rotationCode = 0);
+  static ArgRotAlign create(
+      unsigned char vert, unsigned char horiz, int rotationCode = 0);
 };
 
 // ============================================================================
@@ -403,7 +403,7 @@ public:
 
   // return false if port or data type is zero (invalid)
   bool getInfo(unsigned char &portType, unsigned char &dataType,
-               unsigned char &bvec1, unsigned char &bvec2) const {
+      unsigned char &bvec1, unsigned char &bvec2) const {
     portType = value & 0x0F;
     dataType = (value >> 4) & 0x0F;
     bvec1    = (value >> 8) & 0x00FF;
@@ -412,7 +412,7 @@ public:
   }
 
   void setInfo(unsigned char portType, unsigned char dataType,
-               unsigned char bvec1 = 0, unsigned bvec2 = 0) {
+      unsigned char bvec1 = 0, unsigned bvec2 = 0) {
     value = bvec2 << 16;
     value |= bvec1 << 8;
     value |= (dataType & 0x0F) << 4;
@@ -428,7 +428,7 @@ public:
 
 class ArgLibString : public ArgString {
 public:
-  using ArgString::ArgString; // Inherit constructors
+  using ArgString::ArgString;   // Inherit constructors
 
   // Explicit conversion required
   explicit ArgLibString(const ArgString &other) : ArgString(other) {}
@@ -442,5 +442,5 @@ public:
   // Joins strings with '\'+'n' and prepends '|'
   void mergeSubcktStrs(const StrList &strList);
 
-  static constexpr char pipeChar = '\x7c'; // '|'
+  static constexpr char pipeChar = '\x7c';   // '|'
 };

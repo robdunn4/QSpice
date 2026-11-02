@@ -134,8 +134,8 @@ inline QPI getEnum(std::string_view s) {
 // Caller must strip framing bytes (BEGIN_NODE, END_NODE, newline, leading
 // spaces) before calling.  See the prefix-collision rule in the file
 // header comment.
-inline std::pair<QPI, std::string_view>
-splitTypeAndArgs(std::string_view payload) {
+inline std::pair<QPI, std::string_view> splitTypeAndArgs(
+    std::string_view payload) {
   for (size_t i = 1; i < names.size(); ++i) {
     std::string_view n = names[i];
     if (payload.size() < n.size()) continue;
@@ -166,4 +166,4 @@ inline constexpr bool isLeaf(NodeType v) { return any(v & NodeType::Leaf); }
 
 inline constexpr int sortOrder(QPI id) { return static_cast<int>(id); }
 
-} // namespace ItemTypes
+}   // namespace ItemTypes
