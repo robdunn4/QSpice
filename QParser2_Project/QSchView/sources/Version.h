@@ -24,7 +24,7 @@ inline constexpr bool kIsDebugBuild = true;
 
 inline constexpr int kVersionMajor = 0;
 inline constexpr int kVersionMinor = 2;
-inline constexpr int kVersionPatch = 4;
+inline constexpr int kVersionPatch = 5;
 
 // "0.1.0", or "0.1.0 (DEBUG)" in a Debug build: the window title, the
 // log and everything else that shows the program's version -- the build

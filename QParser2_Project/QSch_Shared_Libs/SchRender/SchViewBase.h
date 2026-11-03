@@ -93,7 +93,9 @@ public:
   // transformation anchor; then tops up the pan room.
   void zoomBy(qreal factor);
 
-  // One wheel notch, toward the cursor. Accepts the event.
+  // One wheel notch, toward the cursor: the point under it stays there,
+  // whether or not the view passes mouse events to its scene. Accepts the
+  // event.
   void wheelZoom(QWheelEvent *event);
 
   // Guarantees scrollable room around whatever is visible.

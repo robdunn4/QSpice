@@ -276,8 +276,30 @@ void SchViewBase::zoomStep(bool zoomIn) {
 }
 
 void SchViewBase::wheelZoom(QWheelEvent *event) {
+  // Toward the cursor, anchored by hand on the EVENT's own position.
+  //
+  // Not Qt's AnchorUnderMouse: that takes the scene point from the last
+  // mouse MOVE the view passed to its scene, and a view with interaction
+  // off (QSchView's -- setInteractive(false)) passes none, so every notch
+  // put the schematic origin under the cursor and could throw the whole
+  // drawing off-screen.
+  const QPoint  cursor = event->position().toPoint();
+  const QPointF before = mapToScene(cursor);
+
+  const QGraphicsView::ViewportAnchor saved = transformationAnchor();
+  setTransformationAnchor(QGraphicsView::NoAnchor);
+
   zoomBy(event->angleDelta().y() > 0 ? kZoomStepFactor
                                      : (1.0 / kZoomStepFactor));
+
+  setTransformationAnchor(saved);
+
+  // Scrolled so the point that was under the cursor is under it again.
+  const QPoint drift = mapFromScene(before) - cursor;
+  horizontalScrollBar()->setValue(horizontalScrollBar()->value() + drift.x());
+  verticalScrollBar()->setValue(verticalScrollBar()->value() + drift.y());
+  ensurePanRoom();
+
   event->accept();
 }
 
