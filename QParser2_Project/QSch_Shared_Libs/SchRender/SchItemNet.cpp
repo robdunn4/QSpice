@@ -227,7 +227,7 @@ SchItemNet::SchItemNet(ItemNetPtr item, QGraphicsItem *parent)
   // wire runs to the anchor and disappears under the box rather than
   // stopping short of it. Ordinary labels are transparent, so their
   // being below changes nothing.
-  setZValue(kZFill);
+  refreshDrawZ();
 }
 
 namespace {

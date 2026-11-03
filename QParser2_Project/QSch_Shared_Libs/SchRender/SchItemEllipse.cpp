@@ -34,7 +34,7 @@ SchItemEllipse::SchItemEllipse(ItemEllipsePtr item, QGraphicsItem *parent)
   setFlag(QGraphicsItem::ItemIsSelectable, topLevel);
   setFlag(QGraphicsItem::ItemIsMovable, topLevel);
 
-  setZValue(kZFill);
+  refreshDrawZ();
 }
 
 Rect SchItemEllipse::getRect() const noexcept {

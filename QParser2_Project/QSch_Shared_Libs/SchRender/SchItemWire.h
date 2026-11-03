@@ -19,6 +19,8 @@ public:
   Point getPosition() const noexcept override;
   void  moveTo(Point p) noexcept override;
 
+  DrawKind drawKind() const override;
+
   // The stored net name in its RAW form -- quotes included, exactly as
   // the record holds it. Used when splitting a wire, so each new
   // segment inherits the original's net without the string making a

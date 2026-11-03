@@ -31,13 +31,15 @@ namespace sch::output {
 // assembled here, inside groups and layers of our own:
 //
 //   Background         one canvas-color rect, locked
-//   Graphics           annotation shapes and images
 //   Symbols            a group per component: id/label = refdes, a
 //                      <title>, data-refdes / data-value / data-symbol
+//   Graphics           annotation shapes and images
 //   Wires              a sub-group per NET, holding its wires and taps
-//   Net labels/ports   a group per label, data-net
 //   Junctions          a group per dot, data-net
 //   Text               free text, comments, directives
+//   Net labels/ports   a group per label, data-net
+//
+// Bottom to top, in the drawing order -- see SchItemBase::DrawKind.
 //
 // Layers are Inkscape's (inkscape:groupmode="layer"); a sodipodi
 // namedview sets mm as the document unit, so it opens at true size.

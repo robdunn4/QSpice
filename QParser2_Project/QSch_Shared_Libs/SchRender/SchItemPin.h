@@ -19,6 +19,8 @@ public:
   Point getPosition() const noexcept override;
   void  moveTo(Point p) noexcept override;
 
+  DrawKind drawKind() const override { return DrawKind::Pin; }
+
   bool isElectrical() const override { return true; }
 
   // Scene-space extent of the pin's label, or a null rect when it has

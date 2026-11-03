@@ -22,6 +22,8 @@ public:
   Point getPosition() const noexcept override;
   void  moveTo(Point p) noexcept override;
 
+  DrawKind drawKind() const override { return DrawKind::Zigzag; }
+
   QList<Point> controlPoints() const override;
   void         setControlPoint(int index, Point p) override;
 

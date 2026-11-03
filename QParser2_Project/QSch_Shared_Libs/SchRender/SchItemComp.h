@@ -14,6 +14,8 @@ public:
 
   Rect getRect() const noexcept override;
 
+  DrawKind drawKind() const override { return DrawKind::Component; }
+
   // Picking: Body anywhere within the symbol's body box -- hollow or
   // not, the symbol is what a click there means -- or on any of its own
   // elements outside it (a label, a pin's text).
@@ -39,6 +41,10 @@ public:
 protected:
   void paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
       QWidget *widget) override;
+
+  // Stacks each child behind this item, so paint() draws last.
+  QVariant itemChange(GraphicsItemChange change,
+                      const QVariant    &value) override;
 
   // True when this component is drawn from the stock resistor symbol.
   bool isResistor() const;

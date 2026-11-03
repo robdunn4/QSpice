@@ -377,10 +377,12 @@ bool SchSvgExport::build(const QString &title, double mmPer1000,
              .arg(canvas.name())
              .toUtf8();
 
+  // Bottom first, in the drawing order (SchItemBase::DrawKind): every
+  // component, then the rest by kind -- net labels on top.
   const QList<std::pair<QString, const QByteArray *>> layers = {
-      {tr("Graphics"), &graphics},   {tr("Symbols"), &symbols},
-      {tr("Wires"), &wires},         {tr("Net labels"), &labels},
-      {tr("Junctions"), &junctions}, {tr("Text"), &texts},
+      {tr("Symbols"), &symbols}, {tr("Graphics"), &graphics},
+      {tr("Wires"), &wires},     {tr("Junctions"), &junctions},
+      {tr("Text"), &texts},      {tr("Net labels"), &labels},
   };
   for (const std::pair<QString, const QByteArray *> &layer : layers) {
     if (layer.second->isEmpty()) continue;

@@ -27,6 +27,8 @@ public:
   Point getPosition() const noexcept override;
   void  moveTo(Point p) noexcept override;
 
+  DrawKind drawKind() const override { return DrawKind::Arc; }
+
   QList<Point> controlPoints() const override;
   void         setControlPoint(int index, Point p) override;
 

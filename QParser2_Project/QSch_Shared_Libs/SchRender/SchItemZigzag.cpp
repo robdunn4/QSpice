@@ -36,7 +36,7 @@ SchItemZigzag::SchItemZigzag(ItemZigzagPtr item, QGraphicsItem *parent)
   setFlag(QGraphicsItem::ItemIsSelectable, topLevel);
   setFlag(QGraphicsItem::ItemIsMovable, topLevel);
 
-  setZValue(kZGraphic);
+  refreshDrawZ();
 }
 
 Rect SchItemZigzag::getRect() const noexcept {

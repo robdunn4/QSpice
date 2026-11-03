@@ -109,7 +109,7 @@ SchItemTap::SchItemTap(ItemTapPtr item, QGraphicsItem *parent)
   const bool topLevel = (parent == nullptr);
   setFlag(QGraphicsItem::ItemIsSelectable, topLevel);
   setFlag(QGraphicsItem::ItemIsMovable, topLevel);
-  setZValue(kZGraphic);
+  refreshDrawZ();
 }
 
 Rect SchItemTap::getRect() const noexcept {

@@ -40,7 +40,7 @@ SchItemText::SchItemText(ItemTextPtr item, QGraphicsItem *parent)
   setFlag(QGraphicsItem::ItemIsSelectable, topLevel);
   setFlag(QGraphicsItem::ItemIsMovable, topLevel);
 
-  setZValue(kZText);
+  refreshDrawZ();
 }
 
 Rect SchItemText::getRect() const noexcept {
@@ -267,6 +267,16 @@ void SchItemText::setComment(bool comment) {
 
   const int flags = item_->textFlags.getValue();
   item_->textFlags.setValue(comment ? (flags | 0x1) : (flags & ~0x1));
+
+  // Inside a symbol the flag decides the drawing order.
+  refreshDrawZ();
+}
+
+SchItemBase::DrawKind SchItemText::drawKind() const {
+  // Inside a symbol: its own text (comment flag set) or an attribute
+  // (clear). At a schematic's top level all text draws alike -- the
+  // flag there means comment or directive.
+  return isComment() ? DrawKind::SymbolText : DrawKind::AttributeText;
 }
 
 int SchItemText::orientCode() const {

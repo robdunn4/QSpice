@@ -29,7 +29,7 @@ SchItemTriangle::SchItemTriangle(ItemTrianglePtr item, QGraphicsItem *parent)
   setFlag(QGraphicsItem::ItemIsSelectable, topLevel);
   setFlag(QGraphicsItem::ItemIsMovable, topLevel);
 
-  setZValue(kZFill);
+  refreshDrawZ();
 }
 
 Rect SchItemTriangle::getRect() const noexcept {

@@ -4,6 +4,7 @@
 #include <QGraphicsItem>
 
 #include "SchConnDump.h"
+#include "SchItemBase.h"
 
 namespace sch::render {
 
@@ -25,6 +26,13 @@ SchScene *SchScene::of(const QGraphicsItem *item) {
 void SchScene::setRoot(const NodePtr &root) {
   root_ = root;
   model_.reset();
+
+  // The drawing order depends on the document kind -- a symbol
+  // document's top level uses the symbol order -- and the items may
+  // have been added before the root was known.
+  for (QGraphicsItem *item : items())
+    if (SchItemBase *schItem = dynamic_cast<SchItemBase *>(item))
+      if (schItem->parentItem() == nullptr) schItem->refreshDrawZ();
 }
 
 const sch::core::NetModel *SchScene::netModel() {

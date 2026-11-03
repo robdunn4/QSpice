@@ -11,6 +11,7 @@
 #include "SchAlign.h"
 #include "SchColorDecode.h"
 #include "SchPen.h"
+#include "SchScene.h"
 
 #include <QPainter>
 #include <QPainterPath>
@@ -24,6 +25,67 @@
 #include <cmath>
 
 namespace sch::render {
+
+namespace {
+
+using DrawKind = SchItemBase::DrawKind;
+
+// The drawing orders, bottom first -- see SchItemBase::DrawKind.
+constexpr DrawKind kSchematicOrder[] = {
+    DrawKind::Component,  DrawKind::ImageRect, DrawKind::Rect,
+    DrawKind::Ellipse,    DrawKind::Triangle,  DrawKind::Tap,
+    DrawKind::Line,       DrawKind::Arc,       DrawKind::Arc3P,
+    DrawKind::Coil,       DrawKind::Zigzag,    DrawKind::Pin,
+    DrawKind::Bus,        DrawKind::Wire,      DrawKind::Junction,
+    DrawKind::SymbolText, DrawKind::Net};
+
+// Component last: a symbol holds none, and a symbol document neither.
+constexpr DrawKind kSymbolOrder[] = {
+    DrawKind::ImageRect,     DrawKind::Rect,     DrawKind::Ellipse,
+    DrawKind::Line,          DrawKind::Tap,      DrawKind::Triangle,
+    DrawKind::Arc3P,         DrawKind::Coil,     DrawKind::Zigzag,
+    DrawKind::Arc,           DrawKind::Pin,      DrawKind::Bus,
+    DrawKind::Wire,          DrawKind::Junction, DrawKind::SymbolText,
+    DrawKind::AttributeText, DrawKind::Net,      DrawKind::Component};
+
+template <size_t N> double rankIn(const DrawKind (&order)[N], DrawKind kind) {
+  for (size_t i = 0; i < N; ++i)
+    if (order[i] == kind) return static_cast<double>(i);
+  return 0.0;
+}
+
+} // namespace
+
+double SchItemBase::drawZ(DrawKind kind, bool symbolOrder) {
+  if (symbolOrder) return rankIn(kSymbolOrder, kind);
+
+  // At a schematic's top level all text draws alike: the comment flag
+  // there means comment or directive, not attribute.
+  if (kind == DrawKind::AttributeText) kind = DrawKind::SymbolText;
+  return rankIn(kSchematicOrder, kind);
+}
+
+double SchItemBase::drawZ(DrawKind kind, const QGraphicsScene *scene) {
+  const SchScene *schScene = dynamic_cast<const SchScene *>(scene);
+  const bool symbolDoc = schScene != nullptr && schScene->root() != nullptr &&
+                         schScene->root()->getEnumID() == QPI::SYM;
+  return drawZ(kind, symbolDoc);
+}
+
+void SchItemBase::refreshDrawZ() {
+  if (parentItem() != nullptr) {
+    setZValue(drawZ(drawKind(), true));
+    return;
+  }
+  setZValue(drawZ(drawKind(), scene()));
+}
+
+QVariant SchItemBase::itemChange(GraphicsItemChange change,
+                                 const QVariant    &value) {
+  if (change == ItemSceneHasChanged || change == ItemParentHasChanged)
+    refreshDrawZ();
+  return QGraphicsItem::itemChange(change, value);
+}
 
 bool SchItemBase::showResistorOrient_ = false;
 

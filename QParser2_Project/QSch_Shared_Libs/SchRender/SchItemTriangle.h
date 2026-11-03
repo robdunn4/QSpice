@@ -19,6 +19,8 @@ public:
   Point getPosition() const noexcept override;
   void  moveTo(Point p) noexcept override;
 
+  DrawKind drawKind() const override { return DrawKind::Triangle; }
+
   QList<Point> controlPoints() const override;
 
   // Picking: the triangle as drawn -- see SchItemBase::hitLevel().

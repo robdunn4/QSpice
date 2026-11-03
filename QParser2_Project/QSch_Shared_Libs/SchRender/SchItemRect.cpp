@@ -40,7 +40,7 @@ SchItemRect::SchItemRect(ItemRectPtr item, QGraphicsItem *parent)
   setFlag(QGraphicsItem::ItemIsSelectable, topLevel);
   setFlag(QGraphicsItem::ItemIsMovable, topLevel);
 
-  setZValue(kZFill);
+  refreshDrawZ();
 }
 
 Rect SchItemRect::getRect() const noexcept {
@@ -144,6 +144,10 @@ void SchItemRect::paint(QPainter *painter, const QStyleOptionGraphicsItem *,
   painter->drawRect(frame.localRect());
 
   painter->restore();
+}
+
+SchItemBase::DrawKind SchItemRect::drawKind() const {
+  return hasImage() ? DrawKind::ImageRect : DrawKind::Rect;
 }
 
 bool SchItemRect::hasImage() const {

@@ -48,7 +48,7 @@ SchItemCoil::SchItemCoil(ItemCoilPtr item, QGraphicsItem *parent)
   setFlag(QGraphicsItem::ItemIsSelectable, topLevel);
   setFlag(QGraphicsItem::ItemIsMovable, topLevel);
 
-  setZValue(kZGraphic);
+  refreshDrawZ();
 }
 
 Rect SchItemCoil::getRect() const noexcept {

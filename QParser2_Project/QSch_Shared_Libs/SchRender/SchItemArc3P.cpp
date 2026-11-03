@@ -120,7 +120,7 @@ SchItemArc3P::SchItemArc3P(ItemArc3pPtr item, QGraphicsItem *parent)
   setFlag(QGraphicsItem::ItemIsSelectable, topLevel);
   setFlag(QGraphicsItem::ItemIsMovable, topLevel);
 
-  setZValue(kZGraphic);
+  refreshDrawZ();
 }
 
 Rect SchItemArc3P::getRect() const noexcept {

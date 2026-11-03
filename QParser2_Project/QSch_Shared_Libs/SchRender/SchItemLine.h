@@ -12,6 +12,8 @@ public:
   Point getPosition() const noexcept override;
   void  moveTo(Point p) noexcept override;
 
+  DrawKind drawKind() const override { return DrawKind::Line; }
+
   QList<Point> controlPoints() const override;
 
   // Picking: the segment as drawn -- see SchItemBase::hitLevel(). Its

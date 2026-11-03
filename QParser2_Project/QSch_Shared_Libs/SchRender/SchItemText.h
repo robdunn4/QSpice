@@ -18,6 +18,8 @@ public:
   Point getPosition() const noexcept override;
   void  moveTo(Point p) noexcept override;
 
+  DrawKind drawKind() const override;
+
   TextKind textKind() const override;
   // Whether this text is drawn at all: the record's hidden flag, plus
   // the zero-alignment rule for symbol attribute text. PUBLIC because

@@ -19,6 +19,8 @@ public:
   Point getPosition() const noexcept override;
   void  moveTo(Point p) noexcept override;
 
+  DrawKind drawKind() const override { return DrawKind::Junction; }
+
   bool           isElectrical() const override { return true; }
   QList<QPointF> connectionPoints() const override;
 

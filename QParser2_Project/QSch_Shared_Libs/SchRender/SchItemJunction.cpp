@@ -49,7 +49,7 @@ SchItemJunction::SchItemJunction(ItemJunctionPtr item, QGraphicsItem *parent)
   setFlag(QGraphicsItem::ItemIsSelectable, false);
   setFlag(QGraphicsItem::ItemIsMovable, false);
 
-  setZValue(kZJunction);
+  refreshDrawZ();
 }
 
 double SchItemJunction::dotRadius() {

@@ -212,28 +212,74 @@ public:
   // drawing. Image fills are content, never hollow.
   virtual bool interiorHollow() const;
 
-  // Paint order within a container (a symbol's elements, or the scene's
-  // top-level items). Qt paints equal-Z siblings in insertion order,
-  // which follows the QPI sort order of the tree -- and that put FILLED
-  // shapes after the things they should sit behind, so a filled symbol
-  // body painted over its own pins and labels. An opaque body made
-  // everything else in the symbol invisible.
+  // --- Drawing order ---
   //
-  // Ordered by what should be readable on top of what, not by element
-  // type: areas first, then line work, then connection markers, then
-  // text.
+  // What draws over what. QSpice draws by element TYPE, in one order for
+  // a schematic's top level and another inside a symbol -- orders from
+  // QSpice forum user @ThalesPo (2026-11-03):
   //
-  // Except inside a symbol: there kZFill items are raised to kZGraphic,
-  // so fills and line work paint in record order, as in QSpice -- see
-  // buildComponent() in SchTreeBuilder.cpp. Top-level fills keep
-  // kZFill; there is no evidence yet for QSpice's order there.
-  enum ZOrder {
-    kZFill     = 0, // rect, ellipse -- may be opaque, so underneath
-    kZGraphic  = 1, // lines, zigzag, coil, arc, wires
-    kZPin      = 2, // pin markers
-    kZJunction = 3,
-    kZText     = 4 // labels last -- always readable
+  //   schematic  rect, ellipse, triangle, tap, line, arc, arc3p, coil,
+  //              zigzag, pin, wire, junction, text, net
+  //   symbol     rect, ellipse, line, tap, triangle, arc3p, coil,
+  //              zigzag, arc, pin, pin label, wire, junction, text,
+  //              jumper, net
+  //
+  // ("arc" is the four-point arc, "arc3p" the three-point one.) Our
+  // additions, as decided: every COMPONENT draws before anything else on
+  // a schematic; a bus before a plain wire; an image rect before a plain
+  // one; a symbol's attribute text (comment flag clear) after its own
+  // text (flag set); a net label's description after the label (drawn
+  // by the same item). A symbol document's top level uses the SYMBOL
+  // order, so a symbol looks the same wherever it is shown. The jumper
+  // and a pin's label are drawn by the component and the pin
+  // themselves -- see SchItemComp.
+  //
+  // Elements of one kind draw in file order: equal-Z siblings paint in
+  // insertion order, which is the tree's. The FILE order is not
+  // changed by any of this.
+  //
+  // Each element's Z comes from its kind and where it sits: refreshed
+  // when it is built, added to a scene or reparented, and by the edits
+  // that change its kind (a text's comment flag, a wire's bus flag).
+  enum class DrawKind {
+    Component,
+    ImageRect,
+    Rect,
+    Ellipse,
+    Triangle,
+    Tap,
+    Line,
+    Arc, // four-point
+    Arc3P,
+    Coil,
+    Zigzag,
+    Pin,
+    Bus,
+    Wire,
+    Junction,
+    SymbolText,    // and all text at a schematic's top level
+    AttributeText, // a symbol's, comment flag clear
+    Net
   };
+
+  virtual DrawKind drawKind() const = 0;
+
+  // The Z for `kind`, in the symbol order or the schematic order.
+  static double drawZ(DrawKind kind, bool symbolOrder);
+
+  // ...and for a top-level element of `scene`: the symbol order in a
+  // symbol document, else the schematic order. Also for scene-only
+  // previews that stand in for an element.
+  static double drawZ(DrawKind kind, const QGraphicsScene *scene);
+
+  // This element's Z, from drawKind() and where it is: inside a
+  // component, the symbol order; at the top level, by its scene.
+  void refreshDrawZ();
+
+  // Above every document element: the editor's own decorations (a
+  // focused label's box, an arc's construction lines, previews). The
+  // edit handles sit higher still (1000).
+  static constexpr double kZDecoration = 100.0;
 
   // --- Document tree back-reference ---
   //
@@ -479,6 +525,10 @@ public:
   static constexpr double kMinShapeSize = 1.0;
 
 protected:
+  // Keeps the Z right as the element is added to a scene or reparented.
+  QVariant itemChange(GraphicsItemChange change,
+                      const QVariant    &value) override;
+
   // labelXform() without the readability turn.
   QTransform labelBaseXform(double ownRotDeg) const;
 

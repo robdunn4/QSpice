@@ -59,7 +59,7 @@ SchItemWire::SchItemWire(ItemWirePtr item, QGraphicsItem *parent)
   setFlag(QGraphicsItem::ItemIsSelectable, topLevel);
   setFlag(QGraphicsItem::ItemIsMovable, topLevel);
 
-  setZValue(kZGraphic);
+  refreshDrawZ();
 }
 
 Rect SchItemWire::getRect() const noexcept {
@@ -91,6 +91,10 @@ QString SchItemWire::netName() const {
 
 bool SchItemWire::isBus() const { return sch::core::isBusName(netName()); }
 
+SchItemBase::DrawKind SchItemWire::drawKind() const {
+  return isBus() ? DrawKind::Bus : DrawKind::Wire;
+}
+
 void SchItemWire::setNetName(const QString &name) {
   // Before the change: a rename can make the wire a bus, or stop it
   // being one, and a bus's bounds are much wider.
@@ -105,6 +109,9 @@ void SchItemWire::setNetName(const QString &name) {
   // go through ArgString rather than building the text by hand.
   item_->netName.setValue(
       ArgString(sch::core::encodeQSpiceString(name)).quote().getValue());
+
+  // A bus draws before a plain wire.
+  refreshDrawZ();
   update();
 }
 

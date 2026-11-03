@@ -58,7 +58,7 @@ SchItemPin::SchItemPin(ItemPinPtr item, QGraphicsItem *parent)
   setFlag(QGraphicsItem::ItemIsSelectable, topLevel);
   setFlag(QGraphicsItem::ItemIsMovable, topLevel);
 
-  setZValue(kZPin);
+  refreshDrawZ();
 }
 
 Rect SchItemPin::getRect() const noexcept {

@@ -124,20 +124,7 @@ QGraphicsItem *buildComponent(const NodePtr &compNode) {
 
   // Flatten: see the design note in SchTreeBuilder.h.
   if (NodePtr symNode = compNode->findFirstOf(QPI::SYM))
-    for (const NodePtr &child : symNode->children()) {
-      QGraphicsItem *item = buildLeaf(child, compItem);
-      if (item == nullptr) continue;
-
-      // Inside a symbol, filled shapes paint in RECORD order with the
-      // line work, not beneath it: QSpice does, so a body drawn after a
-      // line covers it. An NE5532's supply-pin line runs through its
-      // filled triangle; QSpice shows only the stubs outside the body
-      // (TripleCompositeAmplifierwithCommon-emitterOutputStage.qsch,
-      // 2026-11-02). Equal-Z siblings paint in insertion order, which is
-      // the symbol's record order. Pins and text keep their layers above.
-      const qreal graphic = static_cast<qreal>(SchItemBase::kZGraphic);
-      if (item->zValue() < graphic) item->setZValue(graphic);
-    }
+    for (const NodePtr &child : symNode->children()) buildLeaf(child, compItem);
 
   return compItem;
 }

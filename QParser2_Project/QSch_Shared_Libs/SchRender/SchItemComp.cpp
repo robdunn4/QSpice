@@ -56,6 +56,22 @@ SchItemComp::SchItemComp(ItemCmpPtr item, QGraphicsItem *parent)
   // setRotation() is deliberately NOT used: it would compose with the
   // transform above rather than replace it.
   setRotation(0.0);
+
+  refreshDrawZ();
+}
+
+QVariant SchItemComp::itemChange(GraphicsItemChange change,
+                                 const QVariant    &value) {
+  // Every child is drawn BEFORE this item's own paint(), so what that
+  // draws -- the jumper, the resistor's "+" and the selection highlight
+  // -- comes out on top of the symbol. A jumper must: it is the last
+  // thing in the symbol order (see SchItemBase::DrawKind). Qt otherwise
+  // paints a parent first.
+  if (change == ItemChildAddedChange)
+    if (QGraphicsItem *child = value.value<QGraphicsItem *>())
+      child->setFlag(QGraphicsItem::ItemStacksBehindParent, true);
+
+  return SchItemBase::itemChange(change, value);
 }
 
 int SchItemComp::stuffCode() const { return item_->stuffShort.getValue(); }

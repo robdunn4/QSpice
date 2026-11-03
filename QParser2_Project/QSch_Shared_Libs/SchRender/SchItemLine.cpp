@@ -34,7 +34,7 @@ SchItemLine::SchItemLine(ItemLinePtr item, QGraphicsItem *parent)
   setFlag(QGraphicsItem::ItemIsSelectable, topLevel);
   setFlag(QGraphicsItem::ItemIsMovable, topLevel);
 
-  setZValue(kZGraphic);
+  refreshDrawZ();
 }
 
 Rect SchItemLine::getRect() const noexcept {

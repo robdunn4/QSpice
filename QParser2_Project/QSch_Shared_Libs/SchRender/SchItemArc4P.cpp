@@ -41,7 +41,7 @@ SchItemArc4P::SchItemArc4P(ItemArc4pPtr item, QGraphicsItem *parent)
   setFlag(QGraphicsItem::ItemIsSelectable, topLevel);
   setFlag(QGraphicsItem::ItemIsMovable, topLevel);
 
-  setZValue(kZGraphic);
+  refreshDrawZ();
 }
 
 QPointF SchItemArc4P::Frame::toFrame(const QPointF &v) const {

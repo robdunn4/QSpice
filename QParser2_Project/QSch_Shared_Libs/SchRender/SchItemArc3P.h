@@ -14,6 +14,8 @@ public:
   Point getPosition() const noexcept override;
   void  moveTo(Point p) noexcept override;
 
+  DrawKind drawKind() const override { return DrawKind::Arc3P; }
+
   QList<Point> controlPoints() const override;
 
   // The arc as drawn, sampled -- painted, and used for picking (see
