@@ -27,6 +27,18 @@ namespace sch::render {
 
 namespace {
 
+// Whether the rotate code reverses the coil's winding -- see paint().
+// `tall`: the box is at least as tall as it is wide.
+bool windingReversed(int code, bool tall) {
+  const bool mirror = sch::core::rotdecode::isMirrored(code);
+  const int  rot    = code & 0x7;
+
+  if (rot % 2 != 0) return mirror;
+
+  const bool quarterTurn = (rot == 2 || rot == 6);
+  return quarterTurn && (mirror != tall);
+}
+
 constexpr double kPi = 3.14159265358979323846; // MSVC's <cmath> doesn't
                                                // define M_PI without
                                                // _USE_MATH_DEFINES
@@ -122,10 +134,10 @@ void SchItemCoil::paint(QPainter *painter, const QStyleOptionGraphicsItem *,
   // across the shorter one. Ties go to vertical, matching
   // SchItemZigzag's convention for the same ambiguity.
   //
-  // The item's own rotate field: its MIRROR bit is applied below. The
-  // rotation part (code & 0x7) still isn't -- orientation comes from
-  // the box's aspect ratio, and no reference file exercises a coil with
-  // a non-zero rotation to show what that field would add.
+  // The item's own rotate field: an odd code tilts the frame (see
+  // boxFrame()); the code's other effect -- which way the winding runs --
+  // is applied below. Orientation itself always comes from the box's
+  // aspect ratio.
   const bool    vertical = (height >= width);
   const double  along    = vertical ? height : width;
   const double  across   = vertical ? width : height;
@@ -211,25 +223,9 @@ void SchItemCoil::paint(QPainter *painter, const QStyleOptionGraphicsItem *,
   const QPointF alongVec = vertical ? QPointF(0.0, 1.0) : QPointF(1.0, 0.0);
   const QPointF crossVec = vertical ? QPointF(-1.0, 0.0) : QPointF(0.0, -1.0);
 
-  // MEASURED against QSpice, from a file with all four combinations
-  // (horizontal and vertical, rotate code 0 and code 8): a mirrored
-  // coil is the unmirrored one REFLECTED ACROSS ITS OWN SPINE. Best
-  // symmetry match by ink overlap was a vertical flip for the
-  // horizontal pair (IoU 0.57, against 0.37 identical) and a horizontal
-  // flip for the vertical pair (0.62, against 0.40) -- in both cases
-  // the flip whose axis is the coil's long axis. That reverses the
-  // helix's handedness, which the earlier reverse-engineering already
-  // established is a real, visible property rather than a symmetry.
-  //
-  // NOTE the contrast with SchItemZigzag, which must IGNORE its
-  // parent's mirror. Both are consistent under one rule: a primitive is
-  // drawn per its OWN rotate field, and a parent component's mirror
-  // moves elements around without re-orienting the shapes themselves.
-  // The zigzag inside a mirrored resistor keeps its own rotate of 0 and
-  // so draws unmirrored; these coils carry rotate = 8 themselves and so
-  // draw mirrored. That rule is inferred from two elements, not
-  // verified in general -- a symbol containing an element with a
-  // non-zero rotate of its own would test it directly.
+  // A primitive is drawn per its OWN rotate field; a parent component's
+  // mirror moves elements around without re-orienting the shapes
+  // themselves (SchItemZigzag likewise ignores its parent's mirror).
   //
   // WHICH SIDE the loops fall on -- MEASURED 2026-10-07, 19 of 19 QSpice
   // coils across three files (OddRotations_Claude_Gend.qsch, its
@@ -246,9 +242,21 @@ void SchItemCoil::paint(QPainter *painter, const QStyleOptionGraphicsItem *,
   const QPointF diag      = frame.toFrame(QPointF(p2.x - p1.x, p2.y - p1.y));
   double        crossSign = (diag.x() * diag.y() < 0.0) ? 1.0 : -1.0;
 
-  // The MIRROR bit on top -- measured earlier (codes 0 and 8). Whether it
-  // composes this way with the corner signs is unmeasured.
-  if (sch::core::rotdecode::isMirrored(item_->rotate.getValue()))
+  // Then the rotate code -- MEASURED 2026-11-04 against QSpice, 128 of
+  // 128 coils (CoilRotTest2.qsch: all sixteen codes x four corner orders
+  // x a wide and a tall box; CoilRotTest3.qsch, the same inside symbols,
+  // draws identically):
+  //
+  //   - ODD codes: the mirror bit reverses the winding.
+  //   - EVEN codes: the winding reverses only at 90 or 270 degrees
+  //     (codes 2, 6, 10, 14), and then only when the mirror bit differs
+  //     from "the box is taller than wide" -- so a wide box at 10 and
+  //     14, a tall one at 2 and 6. At 0 and 180 degrees, mirrored or
+  //     not, it never does.
+  //
+  // This replaces an earlier reading, from one file, that code 8 always
+  // reverses the winding: at code 8 no coil in either sheet changes.
+  if (windingReversed(item_->rotate.getValue(), vertical))
     crossSign = -crossSign;
 
   const int steps = std::max(2, static_cast<int>(kStepsPerTurn * turns));

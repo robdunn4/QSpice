@@ -2,6 +2,6 @@
 
 namespace sch::render {
 
-LibraryInfo libraryInfo() { return LibraryInfo{"SchRender", "0.1.12"}; }
+LibraryInfo libraryInfo() { return LibraryInfo{"SchRender", "0.1.14"}; }
 
 } // namespace sch::render
