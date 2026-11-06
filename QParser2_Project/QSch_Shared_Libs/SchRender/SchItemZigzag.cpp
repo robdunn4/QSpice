@@ -155,7 +155,17 @@ void SchItemZigzag::paint(QPainter *painter, const QStyleOptionGraphicsItem *,
   // primitives and plausibly behave the same way -- but no mirrored
   // reference file exercises them yet, and this should be measured
   // rather than assumed.
-  if (parentMirrored()) {
+  //
+  // The zigzag's OWN rotate code is another matter. MEASURED 2026-11-04
+  // against QSpice (ZigzagCodes.qsch: all sixteen codes, both corner
+  // orders): its mirror bit flips the phase on an ODD code (9, 11, 13,
+  // 15) and has no effect on an even one, so a mirrored tilted zigzag
+  // is a true mirror image of the unmirrored one. Hence the exclusive
+  // or. A mirrored odd-code zigzag INSIDE a mirrored component is
+  // unmeasured; the two flips are taken to cancel.
+  const int  code      = item_->rotate.getValue();
+  const bool ownMirror = (code & 0x9) == 0x9;
+  if (parentMirrored() != ownMirror) {
     const QPointF center((left + right) / 2.0, (bottom + top) / 2.0);
     painter->translate(center);
     painter->scale(-1.0, 1.0);

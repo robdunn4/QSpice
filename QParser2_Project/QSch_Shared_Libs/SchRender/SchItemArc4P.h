@@ -1,5 +1,6 @@
 #pragma once
 #include "ItemArc4P.h"
+#include "SchBoxFrame.h"
 #include "SchItemBase.h"
 
 #include <QPainterPath>
@@ -31,6 +32,32 @@ public:
 
   QList<Point> controlPoints() const override;
   void         setControlPoint(int index, Point p) override;
+
+  // The rotate code, as the element's orientation, so the editor's
+  // turns and mirrors change it as QSpice does -- see
+  // SchBoxFrame::codeAfterTurn(). The corners turn rigidly.
+  int  orientCode() const override { return item_->rotate.getValue(); }
+  void setOrientCode(int code) override {
+    prepareGeometryChange(); // an odd code tilts the box
+    item_->rotate.setValue(code);
+    update();
+  }
+  int orientAfterTurn(bool ccw) const override {
+    return SchBoxFrame::codeAfterTurn(orientCode(), ccw);
+  }
+  int orientAfterMirror() const override {
+    return SchBoxFrame::codeAfterMirror(orientCode());
+  }
+
+  // A mirror reverses the drawing direction, so the start and end rays
+  // trade places -- MEASURED 2026-11-04 (ShapeEditTest.qsch): QSpice
+  // swaps pt3 and pt4. Without the swap the other part of the ellipse
+  // is drawn.
+  int controlPointAfterMirror(int index) const override {
+    if (index == 2) return 3;
+    if (index == 3) return 2;
+    return index;
+  }
 
   int  lineWidth() const override { return item_->lineWidth.getValue(); }
   void setLineWidth(int w) override {

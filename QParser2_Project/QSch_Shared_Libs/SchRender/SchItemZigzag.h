@@ -27,6 +27,22 @@ public:
   QList<Point> controlPoints() const override;
   void         setControlPoint(int index, Point p) override;
 
+  // The rotate code, as the element's orientation, so the editor's
+  // turns and mirrors change it as QSpice does -- see
+  // SchBoxFrame::codeAfterTurn(). The corners turn rigidly.
+  int  orientCode() const override { return item_->rotate.getValue(); }
+  void setOrientCode(int code) override {
+    prepareGeometryChange(); // an odd code tilts the box
+    item_->rotate.setValue(code);
+    update();
+  }
+  int orientAfterTurn(bool ccw) const override {
+    return SchBoxFrame::codeAfterTurn(orientCode(), ccw);
+  }
+  int orientAfterMirror() const override {
+    return SchBoxFrame::codeAfterMirror(orientCode());
+  }
+
   int  lineWidth() const override { return item_->lineWidth.getValue(); }
   void setLineWidth(int w) override {
     prepareGeometryChange();
@@ -46,8 +62,8 @@ public:
     update();
   }
 
-  // The frame this shape draws in -- see SchBoxFrame. Read-only: an odd
-  // code tilts the shape 45 degrees, and nothing in the UI writes one.
+  // The frame this shape draws in -- see SchBoxFrame. An odd code tilts
+  // the shape 45 degrees.
   SchBoxFrame::Frame boxFrame() const {
     const Point p1 = item_->pt1.getValue();
     const Point p2 = item_->pt2.getValue();

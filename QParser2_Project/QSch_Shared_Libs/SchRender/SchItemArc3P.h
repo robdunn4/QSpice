@@ -23,6 +23,16 @@ public:
   QPainterPath outlinePath() const override;
   void         setControlPoint(int index, Point p) override;
 
+  // A mirror reverses the drawing direction, so the two ends trade
+  // places -- MEASURED 2026-11-04 (ShapeEditTest.qsch): QSpice swaps pt1
+  // and pt2. Without the swap the other part of the circle is drawn.
+  // There is no rotate code.
+  int controlPointAfterMirror(int index) const override {
+    if (index == 0) return 1;
+    if (index == 1) return 0;
+    return index;
+  }
+
   int  lineWidth() const override { return item_->lineWidth.getValue(); }
   void setLineWidth(int w) override {
     prepareGeometryChange();

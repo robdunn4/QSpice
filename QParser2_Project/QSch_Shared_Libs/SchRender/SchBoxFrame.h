@@ -133,6 +133,29 @@ inline Frame frameFor(double x1, double y1, double x2, double y2, int rotCode,
   return f;
 }
 
+// What QSpice writes for a box shape's rotate code after an edit --
+// MEASURED 2026-11-04 for the coil (CoilEditTest.qsch, thirteen coils)
+// and for rect, ellipse, zigzag and the four-point arc
+// (ShapeEditTest.qsch, one each per code tested), Ctrl+R and Ctrl+M each:
+//
+//   Ctrl+R  the rotation part +2, the mirror bit kept -- mirrored or
+//           not (0->2, 3->5, 8->10, 11->13). A clockwise turn is taken
+//           as -2 (unmeasured).
+//   Ctrl+M  the mirror bit toggled and the rotation negated (1->15,
+//           2->14, 9->7, 10->6).
+//
+// The same for every box shape. What happens to the CORNERS is not: a
+// coil's are rewritten, everything else's turn rigidly -- see the
+// editor's SchViewInteract::transformSel().
+inline int codeAfterTurn(int code, bool ccw) {
+  const int step = ccw ? 2 : 6; // 6 == -2 (mod 8)
+  return (code & 0x8) | ((code + step) & 0x7);
+}
+
+inline int codeAfterMirror(int code) {
+  return ((code ^ 0x8) & 0x8) | ((8 - (code & 0x7)) & 0x7);
+}
+
 } // namespace SchBoxFrame
 
 } // namespace sch::render

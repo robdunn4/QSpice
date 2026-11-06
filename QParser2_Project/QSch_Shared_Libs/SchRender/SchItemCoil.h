@@ -28,7 +28,8 @@ public:
   void         setControlPoint(int index, Point p) override;
 
   // The rotate code, as the element's orientation, so the editor's
-  // turns and mirrors change it as QSpice does -- see codeAfterTurn().
+  // turns and mirrors change it as QSpice does -- see
+  // SchBoxFrame::codeAfterTurn().
   int  orientCode() const override { return item_->rotate.getValue(); }
   void setOrientCode(int code) override {
     prepareGeometryChange(); // an odd code tilts the box
@@ -36,35 +37,10 @@ public:
     update();
   }
   int orientAfterTurn(bool ccw) const override {
-    return codeAfterTurn(orientCode(), ccw);
+    return SchBoxFrame::codeAfterTurn(orientCode(), ccw);
   }
   int orientAfterMirror() const override {
-    return codeAfterMirror(orientCode());
-  }
-
-  // What QSpice writes for a coil's rotate code -- MEASURED 2026-11-04
-  // (CoilEditTest.qsch, thirteen coils, Ctrl+R and Ctrl+M each):
-  //
-  //   Ctrl+R  the rotation part +2, the mirror bit kept -- mirrored or
-  //           not (0->2, 3->5, 8->10, 11->13). A clockwise turn is
-  //           taken as -2 (unmeasured).
-  //   Ctrl+M  the mirror bit toggled and the rotation negated (1->15,
-  //           2->14, 9->7, 10->6).
-  //
-  // The corners change too -- not a rigid turn; see the editor's
-  // SchViewInteract::coilAfterXform().
-  //
-  // TO REVISIT: rect, ellipse, arc, three-point arc and zigzag carry the
-  // same field and almost certainly follow the same rule in QSpice. The
-  // editor still turns them by mapping their points and leaves their
-  // code alone -- invisible for the symmetric shapes, likely not for the
-  // others. Each needs a sheet like CoilEditTest.qsch.
-  static int codeAfterTurn(int code, bool ccw) {
-    const int step = ccw ? 2 : 6; // 6 == -2 (mod 8)
-    return (code & 0x8) | ((code + step) & 0x7);
-  }
-  static int codeAfterMirror(int code) {
-    return ((code ^ 0x8) & 0x8) | ((8 - (code & 0x7)) & 0x7);
+    return SchBoxFrame::codeAfterMirror(orientCode());
   }
 
   int  lineWidth() const override { return item_->lineWidth.getValue(); }
@@ -86,8 +62,8 @@ public:
     update();
   }
 
-  // The frame this shape draws in -- see SchBoxFrame. Read-only: nothing
-  // in the UI writes an odd code.
+  // The frame this shape draws in -- see SchBoxFrame. Nothing in the UI
+  // turns an even code odd.
   //
   // NOT SchBoxFrame's usual frame. MEASURED 2026-10-07 against QSpice
   // (19 of 19 coils, three files, all eight codes, three corner orders):

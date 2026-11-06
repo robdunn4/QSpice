@@ -502,6 +502,12 @@ public:
   virtual int orientAfterTurn(bool ccw) const { return orientCode(); }
   virtual int orientAfterMirror() const { return orientCode(); }
 
+  // After a mirror, control point `index` is the mirror image of control
+  // point controlPointAfterMirror(index). The same point for most
+  // elements; the arcs swap a pair, because a mirror reverses the
+  // direction they are drawn in. Always its own inverse.
+  virtual int controlPointAfterMirror(int index) const { return index; }
+
   // Repaint slack, in scene units, added around every element's
   // geometry.
   //
