@@ -1,30 +1,23 @@
-#ifdef _MSC_VER
-#pragma warning(push)
-#pragma warning(disable : 4996) // Qt headers reference APIs deprecated for Qt 7
-#endif
+#include <ItemSym.h>
+#include <ItemType.h>
+#include <SchStringDecode.h>
 
 #include "SchItemComp.h"
-#include "ItemSym.h"
-#include "ItemType.h"
 #include "RenderStyle.h"
 #include "SchColorDecode.h"
 #include "SchItemPin.h"
 #include "SchItemWire.h"
 #include "SchPen.h"
-#include "SchStringDecode.h"
 
 #include <QPainter>
 #include <QTransform>
 
-#ifdef _MSC_VER
-#pragma warning(pop)
-#endif
-
 #include <cmath>
 #include <utility>
 
+#include <SchRotDecode.h>
+
 #include "SchItemText.h"
-#include "SchRotDecode.h"
 
 namespace sch::render {
 

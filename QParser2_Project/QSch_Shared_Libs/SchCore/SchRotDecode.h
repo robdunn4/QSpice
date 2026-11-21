@@ -1,7 +1,7 @@
 #pragma once
 #include <cmath>
 
-#include "ArgUtils.h"   // Point
+#include <ArgUtils.h> // Point
 
 // Decodes the raw ArgRot integer per the confirmed bit-encoding (see
 // project notes): mirrored = code & 0x8; rotationDegrees = (code & 0x7)

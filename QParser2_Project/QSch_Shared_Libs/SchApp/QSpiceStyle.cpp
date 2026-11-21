@@ -1,6 +1,6 @@
 #include "QSpiceStyle.h"
 
-#include "QSpicePrefs.h"
+#include <QSpicePrefs.h>
 
 // SchRender names used in this file.
 using sch::render::RenderStyle;

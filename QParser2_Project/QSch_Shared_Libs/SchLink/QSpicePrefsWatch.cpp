@@ -1,18 +1,9 @@
-#ifdef _MSC_VER
-#pragma warning(push)
-#pragma warning(disable : 4996) // Qt headers reference APIs deprecated for Qt 7
-#endif
-
 #include "QSpicePrefsWatch.h"
 
 #include <QDebug>
 
 #ifdef Q_OS_WIN
 #include <QWinEventNotifier>
-#endif
-
-#ifdef _MSC_VER
-#pragma warning(pop)
 #endif
 
 #ifdef Q_OS_WIN

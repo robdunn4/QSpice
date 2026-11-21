@@ -1,28 +1,25 @@
-#ifdef _MSC_VER
-#pragma warning(push)
-#pragma warning(disable : 4996) // Qt headers reference APIs deprecated for Qt 7
-#endif
-
 #include "SchItemBase.h"
 
 #include <QPainterPathStroker>
 
+#include <SchAlign.h>
+#include <SchStringDecode.h>
+
 #include "RenderStyle.h"
-#include "SchAlign.h"
 #include "SchColorDecode.h"
 #include "SchPen.h"
 #include "SchScene.h"
+#include "SelHiLiteItem.h" // SelHiLiteStyle::suppressed
 
 #include <QPainter>
 #include <QPainterPath>
 #include <QPen>
 #include <QStyleOptionGraphicsItem>
 
-#ifdef _MSC_VER
-#pragma warning(pop)
-#endif
-
 #include <cmath>
+#include <memory>
+
+#include <ItemPin.h>
 
 namespace sch::render {
 
@@ -275,8 +272,40 @@ void SchItemBase::paint(QPainter *painter, const QStyleOptionGraphicsItem *,
   painter->drawRect(elementRect());
 }
 
+QColor SchItemBase::tint(const QColor &color) const {
+  if (isUnstuffed()) return doNotStuffColor_;
+  if (!fadedByPin()) return color;
+
+  QColor faded = SchScene::faded(color);
+  faded.setAlpha(color.alpha());
+  return faded;
+}
+
+bool SchItemBase::onDisabledPin() const {
+  const int index = assocPinIndex();
+  if (index < 0 || node() == nullptr) return false;
+
+  // The symbol the record belongs to -- placed, or the document's own.
+  const NodePtr symNode = node()->parent();
+  if (symNode == nullptr || symNode->getEnumID() != QPI::SYM) return false;
+
+  int at = 0;
+  for (const NodePtr &child : symNode->children()) {
+    if (child->getEnumID() != QPI::PIN) continue;
+    if (at++ != index) continue;
+
+    const ItemPinPtr pin = std::static_pointer_cast<ItemPin>(child->item());
+    return pin != nullptr &&
+           !sch::core::decodeQSpiceString(pin->netName.getValue()).isEmpty();
+  }
+  return false;
+}
+
 SchItemBase::HitLevel SchItemBase::hitLevel(const QPointF &localPos,
                                             double         tolerance) const {
+  // Hidden with its pin: nothing there to hit.
+  if (hiddenByPin()) return HitLevel::None;
+
   const QPainterPath outline = outlinePath();
 
   if (outline.isEmpty()) {
@@ -320,6 +349,14 @@ bool SchItemBase::interiorHollow() const {
   if (fill.alpha() == 0) return true;
 
   return fill.rgb() == RenderStyle::current().background.rgb();
+}
+
+bool SchItemBase::showsNetHighlight() const {
+  return netHighlighted && !SelHiLiteStyle::suppressed;
+}
+
+QColor SchItemBase::defaultTextColor() const {
+  return RenderStyle::current().schematicText;
 }
 
 } // namespace sch::render

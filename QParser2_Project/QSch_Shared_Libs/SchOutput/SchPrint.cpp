@@ -1,8 +1,3 @@
-#ifdef _MSC_VER
-#pragma warning(push)
-#pragma warning(disable : 4996) // Qt headers reference APIs deprecated for Qt 7
-#endif
-
 #include "SchPrint.h"
 
 #include <QCoreApplication>
@@ -23,12 +18,9 @@
 #include <algorithm>
 #include <cmath>
 
-#ifdef _MSC_VER
-#pragma warning(pop)
-#endif
+#include <SchPen.h>
+#include <SchRenderSource.h>
 
-#include "SchPen.h"
-#include "SchRenderSource.h"
 #include "SchSvgExport.h"
 
 namespace sch::output {
@@ -213,6 +205,12 @@ SchPrint::SchPrint(const QString          &settingsFile,
   defaultSettings.settingsFile = settingsFile;
   printSettings                = defaultSettings;
   printSettings.load();
+}
+
+SchPrintSettings SchPrint::storedSettings() const {
+  SchPrintSettings stored = defaultSettings;
+  stored.load();
+  return stored;
 }
 
 void SchPrint::reloadDefaults() {

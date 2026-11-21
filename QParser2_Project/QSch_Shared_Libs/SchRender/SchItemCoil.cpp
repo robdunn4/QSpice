@@ -1,8 +1,3 @@
-#ifdef _MSC_VER
-#pragma warning(push)
-#pragma warning(disable : 4996) // Qt headers reference APIs deprecated for Qt 7
-#endif
-
 #include "SchItemCoil.h"
 
 #include "SchPen.h"
@@ -11,17 +6,14 @@
 #include <QPainterPath>
 #include <QPen>
 
-#ifdef _MSC_VER
-#pragma warning(pop)
-#endif
-
 #include <algorithm>
 #include <cmath>
 #include <utility>
 
+#include <SchRotDecode.h>
+
 #include "RenderStyle.h"
 #include "SchColorDecode.h"
-#include "SchRotDecode.h"
 
 namespace sch::render {
 
@@ -43,11 +35,10 @@ constexpr double kPi = 3.14159265358979323846; // MSVC's <cmath> doesn't
                                                // define M_PI without
                                                // _USE_MATH_DEFINES
 
-// Points per turn along the curve. The path is built in scene units and
-// drawn with a cosmetic pen, so this fixes the smoothness in MODEL
-// space, not device space -- generous enough that a coil zoomed to fill
-// the viewport still reads as a smooth curve.
-constexpr int kStepsPerTurn = 64;
+// Curve segments per turn, an eighth of a turn each: a cubic through the
+// curve's true points and tangents is then indistinguishable from it --
+// a true curve in an SVG or PDF, smooth at any zoom.
+constexpr int kSegmentsPerTurn = 8;
 
 } // namespace
 
@@ -104,6 +95,9 @@ void SchItemCoil::setControlPoint(int index, Point p) {
 
 void SchItemCoil::paint(QPainter *painter, const QStyleOptionGraphicsItem *,
                         QWidget *) {
+  // Hidden with its pin (SchItemBase::hiddenByPin()).
+  if (hiddenByPin()) return;
+
   QPen pen = SchPen::forElement(painter,
                                 tint(SchColorDecode::fromArgColor(
                                     item_->lineColor.getValue(),
@@ -259,21 +253,35 @@ void SchItemCoil::paint(QPainter *painter, const QStyleOptionGraphicsItem *,
   if (windingReversed(item_->rotate.getValue(), vertical))
     crossSign = -crossSign;
 
-  const int steps = std::max(2, static_cast<int>(kStepsPerTurn * turns));
+  // CUBIC segments, each through the curve's true end points with its
+  // true tangents there (Hermite form) -- not straight samples, whose
+  // corners show when an exported SVG or PDF is zoomed (Robert,
+  // 2026-11-21).
+  const int segments =
+      std::max(2, static_cast<int>(std::ceil(kSegmentsPerTurn * turns)));
+  const double step  = 1.0 / segments;
+  const double omega = 2.0 * kPi * turns; // d(theta)/dt
 
-  QPainterPath path;
-  for (int i = 0; i <= steps; ++i) {
-    const double t = static_cast<double>(i) / steps;
+  // Phase pi starts the curve at the near end, on the centerline.
+  const auto pointAt = [&](double t) {
+    const double theta = omega * t + kPi;
+    const double u     = t * travel + rx * std::cos(theta) + rx;
+    const double v     = crossSign * ry * std::sin(theta);
+    return origin + alongVec * u + crossVec * v;
+  };
+  const auto tangentAt = [&](double t) {
+    const double theta = omega * t + kPi;
+    const double du    = travel - rx * omega * std::sin(theta);
+    const double dv    = crossSign * ry * omega * std::cos(theta);
+    return alongVec * du + crossVec * dv;
+  };
 
-    // Phase pi starts the curve at the near end, on the centerline.
-    const double theta = 2.0 * kPi * turns * t + kPi;
-
-    const double u = t * travel + rx * std::cos(theta) + rx;
-    const double v = crossSign * ry * std::sin(theta);
-
-    const QPointF pt = origin + alongVec * u + crossVec * v;
-    if (i == 0) path.moveTo(pt);
-    else path.lineTo(pt);
+  QPainterPath path(pointAt(0.0));
+  for (int i = 0; i < segments; ++i) {
+    const double t0 = step * i;
+    const double t1 = step * (i + 1);
+    path.cubicTo(pointAt(t0) + tangentAt(t0) * (step / 3.0),
+                 pointAt(t1) - tangentAt(t1) * (step / 3.0), pointAt(t1));
   }
 
   painter->drawPath(path);

@@ -3,20 +3,21 @@
 #include <memory>
 #include <utility>
 
-#include "ItemArc3P.h"
-#include "ItemCmp.h"
-#include "ItemCoil.h"
-#include "ItemEllipse.h"
-#include "ItemJunction.h"
-#include "ItemLine.h"
-#include "ItemNet.h"
-#include "ItemPin.h"
-#include "ItemRect.h"
-#include "ItemSym.h"
-#include "ItemTap.h"
-#include "ItemText.h"
-#include "ItemWire.h"
-#include "ItemZigzag.h"
+#include <ItemArc3P.h>
+#include <ItemCmp.h>
+#include <ItemCoil.h>
+#include <ItemEllipse.h>
+#include <ItemJunction.h>
+#include <ItemLine.h>
+#include <ItemNet.h>
+#include <ItemPin.h>
+#include <ItemRect.h>
+#include <ItemSym.h>
+#include <ItemTap.h>
+#include <ItemText.h>
+#include <ItemWire.h>
+#include <ItemZigzag.h>
+
 #include "SchItemArc3P.h"
 #include "SchItemArc4P.h"
 #include "SchItemCoil.h"

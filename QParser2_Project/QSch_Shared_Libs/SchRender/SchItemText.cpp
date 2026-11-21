@@ -1,8 +1,3 @@
-#ifdef _MSC_VER
-#pragma warning(push)
-#pragma warning(disable : 4996) // Qt headers reference APIs deprecated for Qt 7
-#endif
-
 #include "SchItemText.h"
 
 #include <QtGlobal> // qWarning
@@ -12,19 +7,21 @@
 #include <QPainter>
 #include <QPen>
 
-#ifdef _MSC_VER
-#pragma warning(pop)
-#endif
-
+#include <algorithm>
 #include <cmath>
 #include <utility>
 
-#include "ProgAttr.h"
+#include <ProgAttr.h>
+#include <SchRefDes.h>
+#include <SchRotDecode.h>
+#include <SchStringDecode.h>
+
 #include "RenderStyle.h"
 #include "SchColorDecode.h"
-#include "SchRotDecode.h"
-#include "SchStringDecode.h"
+#include "SchPen.h"
+#include "SchScene.h"
 #include "SchTextLayout.h"
+#include "SelHiLiteItem.h" // SelHiLiteStyle::suppressed
 
 namespace sch::render {
 
@@ -219,34 +216,12 @@ void SchItemText::applyTextEdit(const SchTextEditInfo &info) {
                            .quote()
                            .getValue());
 
-  // EDITING MUST NOT HIDE A VISIBLE ELEMENT.
-  //
-  // An alignment of 0/0 marks a symbol's text invisible. But the user
-  // could only have opened an editor on something they could SEE and
-  // click, and changing where the text hangs from is not a request to
-  // hide it -- so an edit that would clear both nibbles keeps the
-  // alignment the element already had.
-  //
-  // This is an invariant about EDITING, not about the format: a file
-  // may legitimately contain hidden attribute text, and it still loads,
-  // draws as hidden, and shows its Invis. tick. What must be impossible
-  // is an edit turning visible into hidden behind the user's back.
-  const bool comment   = item_->textFlags.isComment();
-  const bool wasHidden = sch::core::alignHidesText(
-      comment, item_->rotateAlign.getAlignH(), item_->rotateAlign.getAlignV());
-  const bool wouldHide =
-      sch::core::alignHidesText(comment, info.alignH, info.alignV);
-
-  if (wouldHide && !wasHidden) {
-    qWarning("SchItemText: ignoring an edit that would have hidden a visible "
-             "text element (alignment 0/0); keeping its alignment");
-  } else {
-    // setAlignH()/setAlignV() each mask in only their own bits, leaving
-    // ArgRotAlign's rotation nibble untouched -- which matters, since
-    // nothing in text editing should disturb the element's rotation.
-    item_->rotateAlign.setAlignH(static_cast<unsigned char>(info.alignH));
-    item_->rotateAlign.setAlignV(static_cast<unsigned char>(info.alignV));
-  }
+  // setAlignH()/setAlignV() each mask in only their own bits, leaving
+  // ArgRotAlign's rotation nibble untouched -- which matters, since
+  // nothing in text editing should disturb the element's rotation. (An
+  // alignment of 0/0 does not hide a text: see SchAlign.h.)
+  item_->rotateAlign.setAlignH(static_cast<unsigned char>(info.alignH));
+  item_->rotateAlign.setAlignV(static_cast<unsigned char>(info.alignV));
   item_->pt1.setValue(info.anchor);
 }
 
@@ -342,26 +317,42 @@ int SchItemText::orientAfterMirror() const {
   return (newRot << 4) | alignH | alignV;
 }
 
+bool SchItemText::isHiddenInSymbol() const {
+  return item_->textFlags.isHidden();
+}
+
+bool SchItemText::isFaded() const {
+  if (parentItem() != nullptr) return false;
+
+  const SchScene *scene = SchScene::of(this);
+  return scene != nullptr && scene->symbolDocument() && isHiddenInSymbol();
+}
+
 bool SchItemText::isDisplayed() const {
+  // A symbol document's own text, hidden or not: hidden is drawn faded.
+  if (parentItem() == nullptr)
+    if (const SchScene *scene = SchScene::of(this);
+        scene != nullptr && scene->symbolDocument())
+      return true;
+
   // The record's own hidden flag (VISIBLE_BIT), which applies to symbol
   // attribute text.
   if (item_->textFlags.isHidden()) return false;
 
-  // ...and, within a symbol, a zero alignment nibble on ATTRIBUTE text,
-  // which appears to mark text that is not drawn on a schematic. Plain
-  // text (comment flag set) is drawn whatever its alignment -- see
-  // sch::core::alignHidesText() in SchAlign.h for what is confirmed and
-  // what is not.
-  //
-  // Restricted to symbol children because that is the only place the
-  // rule has any evidence behind it; a top-level text element with no
-  // alignment bits still has to go somewhere, and alignedRectForSize()
-  // centers it.
-  if (parentItem() != nullptr &&
-      sch::core::alignHidesText(item_->textFlags.isComment(),
-                                item_->rotateAlign.getAlignH(),
-                                item_->rotateAlign.getAlignV()))
-    return false;
+  // Hidden with its pin (SchItemBase::hiddenByPin()).
+  if (hiddenByPin()) return false;
+
+  // Hide Reference Designators: a component's designator, its first
+  // attribute text (sch::core::refdes::refDesNode()).
+  if (const SchScene *scene = SchScene::of(this);
+      scene != nullptr && scene->refDesHidden()) {
+    const SchItemBase *comp = dynamic_cast<const SchItemBase *>(parentItem());
+    if (comp != nullptr && node() != nullptr &&
+        sch::core::refdes::refDesNode(comp->node()) == node())
+      return false;
+  }
+
+  // (Not its alignment: 0/0 only centers it -- see SchAlign.h.)
 
   return true;
 }
@@ -443,9 +434,43 @@ QTransform SchItemText::textXform() const {
   return labelXform(counterRotateDeg());
 }
 
+double SchItemText::anchorMarkRadius(double scale) {
+  if (scale <= 0.0) return kAnchorMarkUnits;
+  return std::max(kAnchorMarkUnits, kAnchorMarkMinPx / scale);
+}
+
+void SchItemText::paintAnchorMark(QPainter *painter, const QPointF &center) {
+  const RenderStyle &style  = RenderStyle::current();
+  const double       radius = anchorMarkRadius(SchPen::painterScale(painter));
+
+  QPen pen(style.anchorMarkLine, 1.0);
+  pen.setCosmetic(true);
+  SchPen::enforcePrintMin(pen, painter);
+
+  painter->save();
+  painter->setRenderHint(QPainter::Antialiasing, true);
+  painter->setPen(style.anchorMarkLine.alpha() == 0 ? QPen(Qt::NoPen) : pen);
+  painter->setBrush(style.anchorMarkFill);
+  painter->drawEllipse(center, radius, radius);
+  painter->restore();
+}
+
+bool SchItemText::anchorMarked() const {
+  const SchScene *schScene = dynamic_cast<const SchScene *>(scene());
+  return schScene != nullptr && schScene->textAnchorsMarked() && isDisplayed();
+}
+
+QPointF SchItemText::anchorPoint() const { return toQ(item_->pt1.getValue()); }
+
 void SchItemText::paint(QPainter *painter, const QStyleOptionGraphicsItem *,
                         QWidget *) {
   if (!isDisplayed()) return;
+
+  // The anchor mark in OUTPUT -- printed and exported as shown -- at a
+  // size in schematic units: a fixed pixel size would be a speck on
+  // paper. On screen the view draws it instead (SchView).
+  if (SelHiLiteStyle::suppressed && anchorMarked())
+    paintAnchorMark(painter, anchorPoint());
 
   // RAW carries the overbar markers; DISPLAY is what is actually drawn
   // and measured. See kOverbarMarker in SchTextLayout.h.
@@ -455,6 +480,12 @@ void SchItemText::paint(QPainter *painter, const QStyleOptionGraphicsItem *,
 
   QPen pen(tint(SchColorDecode::fromArgColor(item_->textColor.getValue(),
                                              defaultTextColor())));
+  // Faded once: tint() has already faded a text tied to a disabled pin.
+  if (isFaded() && !fadedByPin()) pen.setColor(SchScene::faded(pen.color()));
+
+  // Red while its Symbol Properties row is selected -- the same red a
+  // highlighted pin's marker takes. Never in printed or exported output.
+  if (highlighted && !SelHiLiteStyle::suppressed) pen.setColor(Qt::red);
   painter->setPen(pen);
 
   const QFont font = makeFont(item_->fontSize.getValue());

@@ -47,7 +47,10 @@ public:
   // and the viewer idle after a run: posted or sent, to the view or to
   // the frame, it did nothing within 2 s (sent, it answered 0). WM_CLOSE
   // to the frame closed it every time.
-  void closeViewer();
+  //
+  // `waitMs` > 0: waits up to that long for the viewer's PROCESS to exit
+  // -- so a file it had open (its .qraw) can be deleted next.
+  void closeViewer(int waitMs = 0);
 
   // The viewer's top-level window -- its frame, holding the view that
   // checked in -- or 0 if none is known.

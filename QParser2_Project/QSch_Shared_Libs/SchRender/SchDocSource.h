@@ -7,8 +7,9 @@
 
 #include <memory>
 
-#include "ItemTree.h"
-#include "SchRecordRules.h"
+#include <ItemTree.h>
+#include <SchRecordRules.h>
+
 #include "SchRenderSource.h"
 
 namespace sch::render {

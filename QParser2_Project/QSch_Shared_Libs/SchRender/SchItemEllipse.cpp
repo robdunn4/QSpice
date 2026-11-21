@@ -1,8 +1,3 @@
-#ifdef _MSC_VER
-#pragma warning(push)
-#pragma warning(disable : 4996) // Qt headers reference APIs deprecated for Qt 7
-#endif
-
 #include "SchItemEllipse.h"
 
 #include "SchBoxFrame.h"
@@ -10,10 +5,6 @@
 
 #include <QPainter>
 #include <QPen>
-
-#ifdef _MSC_VER
-#pragma warning(pop)
-#endif
 
 #include <utility>
 
@@ -78,6 +69,9 @@ void SchItemEllipse::setControlPoint(int index, Point p) {
 
 void SchItemEllipse::paint(QPainter *painter, const QStyleOptionGraphicsItem *,
                            QWidget *) {
+  // Hidden with its pin (SchItemBase::hiddenByPin()).
+  if (hiddenByPin()) return;
+
   const QColor lineColor = SchColorDecode::fromArgColor(
       item_->lineColor.getValue(), RenderStyle::current().graphicAnnotation);
 
@@ -91,7 +85,7 @@ void SchItemEllipse::paint(QPainter *painter, const QStyleOptionGraphicsItem *,
 
   // Unstuffed: OUTLINE only -- see SchItemRect::paint().
   if (isUnstuffed()) painter->setBrush(Qt::NoBrush);
-  else painter->setBrush(fill);
+  else painter->setBrush(tint(fill));
 
   // elementRect(), NOT boundingRect(). This is the element's own
   // geometry; boundingRect() is the REPAINT region and carries

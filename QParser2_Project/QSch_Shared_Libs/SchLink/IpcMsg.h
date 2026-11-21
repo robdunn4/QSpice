@@ -56,14 +56,25 @@ inline constexpr unsigned kViewerClear      = 0x8439;   // -> kSimControl 0
 // --- SCHEMATIC -> WAVEFORM VIEWER ------------------------------------
 //
 // The appendix gives none of these parameters; the capture of a run
-// started with the viewer already open shows QSpice sending, in order:
+// started with the viewer already open (Spy++, 2026-11-07) shows QSpice
+// sending, in order:
 //
 //   P 0x8414  0, 0               stop marching (the previous run)
 //   P 0x8411  0, 0               UNDOCUMENTED
 //   S 0x8412  0, 0               data invalid
-//   ... the new .qraw has data ...
+//   ... the new .qraw has its first data point ...
 //   P 0x8413  -1, <sim PID>      reopen, following that simulator
+//   S WM_COPYDATA  wParam 3      UNKNOWN content; the viewer answered
+//                                "not processed". Not sent here.
 //   P 0x80FF  0, <sim HWND>      the simulator's check-in, passed on
+//
+// and NOTHING when the run ends: the viewer follows the simulator by its
+// process ID, sees it exit, and makes its final read itself. A 0x8414
+// then cuts that read short. A viewer launched for a run starts the same
+// way: -simProcessID on its command line, and the simulator's window
+// (0x80FF) at its check-in. Not launched until the first data point
+// either: one opened on the header alone never shows the points that
+// follow -- see IpcSimRun.
 //
 // P = PostMessage, S = SendMessage.
 

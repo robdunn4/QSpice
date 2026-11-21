@@ -1,17 +1,8 @@
-#ifdef _MSC_VER
-#pragma warning(push)
-#pragma warning(disable : 4996) // Qt headers reference APIs deprecated for Qt 7
-#endif
-
 #include "SchItemJunction.h"
 
 #include <QBrush>
 #include <QPainter>
 #include <QPen>
-
-#ifdef _MSC_VER
-#pragma warning(pop)
-#endif
 
 #include <utility>
 
@@ -80,7 +71,9 @@ void SchItemJunction::paint(QPainter *painter, const QStyleOptionGraphicsItem *,
                             QWidget *) {
   painter->setRenderHint(QPainter::Antialiasing, true);
   painter->setPen(Qt::NoPen);
-  painter->setBrush(QBrush(junctionColor()));
+  painter->setBrush(QBrush(showsNetHighlight()
+                               ? RenderStyle::current().highlightWire
+                               : junctionColor()));
 
   // Sized in SCENE units, so it scales with the drawing (it was fixed
   // in device pixels until 2026-10-04, which made it huge in a small

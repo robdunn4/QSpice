@@ -1,5 +1,6 @@
 #pragma once
-#include "ItemArc3P.h"
+#include <ItemArc3P.h>
+
 #include "SchItemBase.h"
 
 namespace sch::render {
@@ -13,6 +14,9 @@ public:
   Rect  getRect() const noexcept override;
   Point getPosition() const noexcept override;
   void  moveTo(Point p) noexcept override;
+
+  // Its pin -- see SchItemBase::onDisabledPin().
+  int assocPinIndex() const override { return item_->pinNdx.getValue(); }
 
   DrawKind drawKind() const override { return DrawKind::Arc3P; }
 

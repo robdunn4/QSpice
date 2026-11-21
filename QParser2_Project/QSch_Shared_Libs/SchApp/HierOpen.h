@@ -2,7 +2,7 @@
 
 #include <QString>
 
-#include "ItemTree.h"
+#include <ItemTree.h>
 
 class QWidget;
 

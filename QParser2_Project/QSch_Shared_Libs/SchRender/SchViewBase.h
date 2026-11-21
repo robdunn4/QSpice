@@ -1,11 +1,13 @@
 #pragma once
 
 #include <QGraphicsView>
+#include <QImage>
 #include <QPoint>
 #include <QPointF>
 #include <QString>
 
-#include "ItemTree.h"
+#include <ItemTree.h>
+
 #include "SchRenderSource.h"
 
 class QMouseEvent;
@@ -25,6 +27,7 @@ struct ViewOptions {
   qreal  minZoomScale        = 0.02; // pixels per schematic unit
   qreal  maxZoomScale        = 20.0;
   double newViewWidth        = 5000.0; // schematic units across an EMPTY view
+  bool   reverseWheel        = false;  // wheel toward you zooms in
 };
 
 // A read-only schematic view: the canvas, the grid, and navigation --
@@ -125,6 +128,12 @@ public:
   QBrush renderBackground() const override { return backgroundBrush(); }
   bool   isPrintExcluded(const QGraphicsItem *) const override { return false; }
   QRectF visibleSceneRect() const override; // the viewport
+
+  // What the view shows, as an image the size of the viewport (in device
+  // pixels: a 150% display gives one 1.5 times as large) -- drawn as for
+  // printing: the background and the document, but no grid, selection
+  // highlights or editing decorations. For Copy Bitmap to Clipboard.
+  QImage  visibleImage() const;
   QString sourcePath() const override { return filePath_; }
 
 signals:

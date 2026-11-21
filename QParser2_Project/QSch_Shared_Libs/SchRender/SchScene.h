@@ -1,13 +1,14 @@
 #pragma once
 
+#include <QColor>
 #include <QElapsedTimer>
 #include <QGraphicsScene>
 #include <QString>
 
 #include <memory>
 
-#include "ItemTree.h"
-#include "SchNetModel.h"
+#include <ItemTree.h>
+#include <SchNetModel.h>
 
 class QGraphicsItem;
 
@@ -50,10 +51,40 @@ public:
 
   void invalidateNetModel() { model_.reset(); }
 
+  // Hide Reference Designators: each component's designator -- its
+  // first attribute text, R1, Q3 -- is not drawn, and so cannot be
+  // clicked, printed or exported. Display only: the document is
+  // unchanged. Text the scene gains later follows it (see
+  // SchItemText::isDisplayed()).
+  void setRefDesHidden(bool hidden);
+  bool refDesHidden() const { return refDesHidden_; }
+
+  // Mark Text Anchor Points: each displayed text element -- top-level and
+  // in symbols, not net or pin labels -- shows a small black circle where
+  // it is anchored. Display only, but drawn in EVERY output too while on:
+  // printed and exported as shown (Robert, 2026-11-16).
+  void setTextAnchorsMarked(bool marked);
+  bool textAnchorsMarked() const { return textAnchorsMarked_; }
+
+  // A SYMBOL document's scene: the symbol's HIDDEN parts -- texts with the
+  // hidden bit, internal pins' boxes -- are drawn FADED rather than left
+  // out, and can be picked and edited like anything else, as QSpice's
+  // symbol editor does (Robert, 2026-11-17; VisTest, 2026-11-18). A
+  // hidden pin label is not drawn even so. On screen and in output
+  // alike: what is printed is what is seen.
+  void setSymbolDocument(bool symbol) { symbolDocument_ = symbol; }
+  bool symbolDocument() const { return symbolDocument_; }
+
+  // A color as a hidden part is drawn: `color` faded toward the canvas.
+  static QColor faded(const QColor &color);
+
 protected:
   void checkStale();
 
   NodePtr                              root_;
+  bool                                 refDesHidden_ = false;
+  bool                                 textAnchorsMarked_ = false;
+  bool                                 symbolDocument_    = false;
   std::unique_ptr<sch::core::NetModel> model_;
 
   QElapsedTimer staleTimer;

@@ -1,12 +1,8 @@
-#ifdef _MSC_VER
-#pragma warning(push)
-#pragma warning(disable : 4996) // Qt headers reference APIs deprecated for Qt 7
-#endif
-
 #include "SchViewBase.h"
 
 #include <QColor>
 #include <QGraphicsScene>
+#include <QImage>
 #include <QMouseEvent>
 #include <QPainter>
 #include <QPen>
@@ -16,9 +12,7 @@
 #include <QWheelEvent>
 #include <QtGlobal>
 
-#ifdef _MSC_VER
-#pragma warning(pop)
-#endif
+#include <cmath>
 
 #include "RenderStyle.h"
 #include "SchItemBase.h"
@@ -186,6 +180,30 @@ QRectF SchViewBase::visibleSceneRect() const {
   return mapToScene(viewport()->rect()).boundingRect();
 }
 
+QImage SchViewBase::visibleImage() const {
+  const QRect port = viewport()->rect();
+  if (port.isEmpty() || scene() == nullptr) return QImage();
+
+  const qreal ratio = viewport()->devicePixelRatioF();
+  const QSize pixels(static_cast<int>(std::lround(port.width() * ratio)),
+                     static_cast<int>(std::lround(port.height() * ratio)));
+  QImage      image(pixels, QImage::Format_RGB32);
+  image.setDevicePixelRatio(ratio);
+  image.fill(Qt::white);
+
+  QPainter painter(&image);
+  painter.setRenderHint(QPainter::Antialiasing);
+  painter.setRenderHint(QPainter::TextAntialiasing);
+  painter.setRenderHint(QPainter::SmoothPixmapTransform);
+
+  // The viewport's own scene rectangle: the same aspect as the image, so
+  // nothing is stretched.
+  renderSceneForPrint(&painter, QRectF(port), visibleSceneRect());
+  painter.end();
+
+  return image;
+}
+
 // ---------------------------------------------------------------------------
 // Zoom
 // ---------------------------------------------------------------------------
@@ -289,8 +307,11 @@ void SchViewBase::wheelZoom(QWheelEvent *event) {
   const QGraphicsView::ViewportAnchor saved = transformationAnchor();
   setTransformationAnchor(QGraphicsView::NoAnchor);
 
-  zoomBy(event->angleDelta().y() > 0 ? kZoomStepFactor
-                                     : (1.0 / kZoomStepFactor));
+  // Away from you zooms in -- or toward you, reversed (QSpice's
+  // ReverseMouseWheelSense, as each program's own setting).
+  const bool away = event->angleDelta().y() > 0;
+  const bool in   = viewOptions().reverseWheel ? !away : away;
+  zoomBy(in ? kZoomStepFactor : (1.0 / kZoomStepFactor));
 
   setTransformationAnchor(saved);
 

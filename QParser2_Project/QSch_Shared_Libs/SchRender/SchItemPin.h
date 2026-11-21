@@ -1,5 +1,6 @@
 #pragma once
-#include "ItemPin.h"
+#include <ItemPin.h>
+
 #include "SchItemBase.h"
 #include <QRectF>
 
@@ -36,6 +37,11 @@ public:
   // the implementation for which and why.
   bool labelVisible() const;
 
+  // A SYMBOL document's own pin (SchScene::symbolDocument()): drawn as
+  // QSpice's symbol editor draws one, an open box -- faded for an
+  // internal pin. A hidden label is never drawn, there as anywhere.
+  bool inSymbolDocument() const;
+
   // Whether this pin should show the "nothing attached here" marker:
   // no net name, and the pin is not one of the implicit ones.
   bool showsUnconnectedMark() const;
@@ -61,11 +67,70 @@ public:
   QList<Point> controlPoints() const override;
   void         setControlPoint(int index, Point p) override;
 
+  // The pin LABEL is editable inline, as a hierarchical block's ports
+  // are in QSpice: a single line, with the anchor grid -- picking a new
+  // anchor changes only the label's alignment; its anchor point (its
+  // offset from the pin) and the pin's point stay put.
+  TextKind        textKind() const override { return TextKind::PinLabel; }
+  SchTextEditInfo textEditInfo() const override;
+  void            applyTextEdit(const SchTextEditInfo &info) override;
+
+  // The whole rotateAlign byte, as SchItemText's: the label's rotation
+  // in the high nibble, its alignment in the low one.
+  int  orientCode() const override;
+  void setOrientCode(int code) override;
+
+  // The label's font size: a multiplier on the base font, as the
+  // record stores it.
+  double fontSize() const override;
+  void   setFontSize(double size) override;
+
+  // The raw label (overbar markers included) and its replacement, for
+  // the menus that act on the whole label.
+  QString pinLabel() const;
+
+  // The label's OFFSET from the pin's point (pt2): what moves when the
+  // label is dragged on its own.
+  Point labelOffset() const;
+  void  setLabelOffset(const Point &offset);
+
   int  textColorRaw() const override { return item_->textColor.getValue(); }
   void setTextColorRaw(int raw) override {
     item_->textColor.setValue(raw);
     update();
   }
+
+  // A pin label's default is the pin color (CADpin).
+  QColor defaultTextColor() const override;
+
+  // --- A DLL block's port: direction and data type ---
+  //
+  // Both live in the record's ArgPinInfo: the DIRECTION in the low
+  // nibble (ArgPinInfo::TYPE_INPORT, TYPE_OUTPORT, TYPE_DLLGND), the DATA
+  // TYPE in the next (DATA_BOOL .. DATA_BITVECTOR), the bit-vector bounds
+  // above them. 0 is unset. Only a DLL block's ports use them; QSpice
+  // writes 0 on every other pin.
+  int  pinInfoRaw() const { return item_->pinInfo.getValue(); }
+  void setPinInfoRaw(int raw) {
+    item_->pinInfo.setValue(raw);
+    update();
+  }
+
+  int portDirection() const { return pinInfoRaw() & 0x0F; }
+  int portDataType() const { return (pinInfoRaw() >> 4) & 0x0F; }
+
+  // On a DLL block (symbol type "Ø(.DLL)"): a port, which has a
+  // direction and a data type.
+  bool onDllBlock() const;
+
+  // A DLL block's port still lacking its direction, or -- other than a
+  // DLL's GND, which takes none -- its data type.
+  bool portTypeUnset() const;
+
+  // QSpice's own menu wording: "Input", "OutPut", "DLL's GND"; "boolean"
+  // .. "float(64 bit double)", "Bit Vector". Empty for 0 or unknown.
+  static QString directionName(int direction);
+  static QString dataTypeName(int dataType);
 
   // Drawn in HIGHLIGHT color while its row is selected in the Symbol
   // Properties pane, so the pane and the drawing point at each other.
@@ -99,6 +164,12 @@ public:
 
 protected:
   bool highlighted = false;
+
+  // A DLL block's port, ON SCREEN only: an arrowhead on the lead just
+  // outside the box -- pointing in for Input, out for OutPut -- a ground
+  // mark for DLL's GND, a red "!" while unset. Also keeps the tooltip
+  // current.
+  void paintPortMark(QPainter *painter);
 
   void paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
              QWidget *widget) override;

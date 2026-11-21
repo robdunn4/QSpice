@@ -1,8 +1,3 @@
-#ifdef _MSC_VER
-#pragma warning(push)
-#pragma warning(disable : 4996) // Qt headers reference APIs deprecated for Qt 7
-#endif
-
 #include "SchItemTap.h"
 
 #include <QGraphicsScene>
@@ -10,16 +5,13 @@
 #include <QPainterPathStroker>
 #include <QPen>
 
-#ifdef _MSC_VER
-#pragma warning(pop)
-#endif
-
 #include <cmath>
 #include <cstdlib>
 #include <utility>
 
+#include <SchBus.h>
+
 #include "RenderStyle.h"
-#include "SchBus.h"
 #include "SchItemNet.h"
 #include "SchItemWire.h"
 #include "SchPen.h"
@@ -276,9 +268,11 @@ QPolygonF SchItemTap::outline() const {
 
 void SchItemTap::paint(QPainter *painter, const QStyleOptionGraphicsItem *,
                        QWidget *) {
-  const QColor color = (state() == State::Valid)
-                           ? RenderStyle::current().wire
-                           : RenderStyle::current().busTapError;
+  // Only a valid tap is ever lit: an invalid one joins nothing.
+  QColor color = (state() == State::Valid) ? RenderStyle::current().wire
+                                           : RenderStyle::current().busTapError;
+  if (showsNetHighlight() && state() == State::Valid)
+    color = RenderStyle::current().highlightWire;
 
   // A cosmetic outline in the same color keeps the fine point of a
   // triangle visible when zoomed out, where the fill alone vanishes.

@@ -1,9 +1,3 @@
-#ifdef _MSC_VER
-#pragma warning(push)
-#pragma warning(                                                               \
-    disable : 4996)   // Qt headers reference APIs deprecated for Qt 7
-#endif
-
 #include "IpcViewer.h"
 
 #include <QDir>
@@ -12,11 +6,7 @@
 #include <QStringList>
 
 // Inside the block too: it brings in Qt headers of its own.
-#include "SchStringDecode.h"
-
-#ifdef _MSC_VER
-#pragma warning(pop)
-#endif
+#include <SchStringDecode.h>
 
 #ifdef Q_OS_WIN
 #define NOMINMAX
@@ -151,9 +141,18 @@ quintptr IpcViewer::rootHwnd() const {
 #endif
 }
 
-void IpcViewer::closeViewer() {
+void IpcViewer::closeViewer(int waitMs) {
 #ifdef Q_OS_WIN
   const quintptr frame = rootHwnd();
+
+  // Its process, found BEFORE the close: afterwards the window is gone.
+  HANDLE process = nullptr;
+  if (waitMs > 0) {
+    DWORD pid = static_cast<DWORD>(launchedPid);
+    if (frame != 0)
+      GetWindowThreadProcessId(reinterpret_cast<HWND>(frame), &pid);
+    if (pid != 0) process = OpenProcess(SYNCHRONIZE, FALSE, pid);
+  }
 
   if (frame != 0) {
     PostMessageW(reinterpret_cast<HWND>(frame), WM_CLOSE, 0, 0);
@@ -165,6 +164,13 @@ void IpcViewer::closeViewer() {
 
     for (HWND window : search.found) PostMessageW(window, WM_CLOSE, 0, 0);
   }
+
+  if (process != nullptr) {
+    WaitForSingleObject(process, static_cast<DWORD>(waitMs));
+    CloseHandle(process);
+  }
+#else
+  Q_UNUSED(waitMs);
 #endif
 
   closed();

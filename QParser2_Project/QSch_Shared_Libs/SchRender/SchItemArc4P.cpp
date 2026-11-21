@@ -1,8 +1,3 @@
-#ifdef _MSC_VER
-#pragma warning(push)
-#pragma warning(disable : 4996) // Qt headers reference APIs deprecated for Qt 7
-#endif
-
 #include "SchItemArc4P.h"
 
 #include "SchPen.h"
@@ -10,10 +5,7 @@
 #include <QPainter>
 #include <QPen>
 
-#ifdef _MSC_VER
-#pragma warning(pop)
-#endif
-
+#include <algorithm>
 #include <cmath>
 #include <numbers>
 #include <utility>
@@ -28,10 +20,10 @@ namespace {
 constexpr double kPi    = std::numbers::pi;
 constexpr double kTwoPi = 2.0 * std::numbers::pi;
 
-// A full ellipse is sampled at this many points; partial arcs get a
-// proportional share, with a floor so short arcs stay smooth.
-constexpr int kSamplesPerTurn = 96;
-constexpr int kMinSamples     = 8;
+// Curve segments, at most this much of a turn each (45 degrees): a cubic
+// through the true points and tangents is then within a few millionths
+// of the radius -- a true curve in an SVG or PDF, smooth at any zoom.
+constexpr double kSegmentSweep = kTwoPi / 8.0;
 
 } // namespace
 
@@ -145,18 +137,29 @@ QPainterPath SchItemArc4P::arcPath() const {
   // GDI's Arc(), which would draw the full ellipse.
   if (sweep < kEps || (kTwoPi - sweep) < kEps) return QPainterPath();
 
-  const int samples =
-      qMax(kMinSamples,
-           static_cast<int>(std::ceil(kSamplesPerTurn * sweep / kTwoPi)));
+  // CUBIC segments of at most kSegmentSweep each, through the ellipse's
+  // true points with its true tangents there (Hermite form) -- not
+  // straight samples, whose corners show when an exported SVG or PDF is
+  // zoomed (Robert, 2026-11-21). The frame is a rotation, so the
+  // tangent is carried by it as the points are.
+  const int segments =
+      std::max(1, static_cast<int>(std::ceil(sweep / kSegmentSweep)));
+  const double step = sweep / segments;
 
   const auto pointAt = [&](double t) {
     return center + fromFrame(QPointF(a * std::cos(t), b * std::sin(t)));
   };
+  const auto tangentAt = [&](double t) {
+    return fromFrame(QPointF(-a * std::sin(t), b * std::cos(t)));
+  };
 
   QPainterPath path(pointAt(start));
-  for (int i = 1; i <= samples; ++i)
-    path.lineTo(pointAt(start + sweep * static_cast<double>(i) / samples));
-
+  for (int i = 0; i < segments; ++i) {
+    const double t0 = start + step * i;
+    const double t1 = start + step * (i + 1);
+    path.cubicTo(pointAt(t0) + tangentAt(t0) * (step / 3.0),
+                 pointAt(t1) - tangentAt(t1) * (step / 3.0), pointAt(t1));
+  }
   return path;
 }
 
@@ -214,6 +217,9 @@ void SchItemArc4P::setControlPoint(int index, Point p) {
 
 void SchItemArc4P::paint(QPainter *painter, const QStyleOptionGraphicsItem *,
                          QWidget *) {
+  // Hidden with its pin (SchItemBase::hiddenByPin()).
+  if (hiddenByPin()) return;
+
   const QPainterPath path = arcPath();
   if (path.isEmpty()) return;
 

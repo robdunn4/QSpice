@@ -6,8 +6,9 @@
 
 #include <utility>
 
-#include "ArgUtils.h" // Point
-#include "ItemTree.h"
+#include <ArgUtils.h> // Point
+#include <ItemTree.h>
+
 #include "SchNetModel.h"
 #include "SchPointKey.h"
 

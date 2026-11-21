@@ -46,10 +46,20 @@ public:
   // place to save an export; empty for an untitled document.
   virtual QString sourcePath() const = 0;
 
+  // Drawn UNDER the elements, in scene units, over `sceneRect` -- what
+  // the document shows that is not an element, such as a symbol's
+  // origin axes. None by default.
+  virtual void renderUnderlay(QPainter * /*painter*/,
+                              const QRectF & /*sceneRect*/) const {}
+
+  // What of the underlay must be in a printout of the whole drawing --
+  // the symbol's origin, say. Null by default.
+  virtual QRectF underlayExtent() const { return QRectF(); }
+
   // --- Built on the above.
 
-  // Every printable element's extent, in scene units. Empty for an empty
-  // document.
+  // Every printable element's extent, with underlayExtent(), in scene
+  // units. Empty for an empty document.
   QRectF printableSceneRect() const;
 
   // Whether any printable element touches `sceneRect` -- for skipping
@@ -58,7 +68,8 @@ public:
 
   // Draws the scene area `source` into `target` on `painter`: background
   // and elements as on screen -- Y-flip included -- but no grid, no
-  // selection highlights, and none of the excluded items. Vector output.
+  // selection highlights, and none of the excluded items; the underlay
+  // between the two. Vector output.
   // `target` must have `source`'s aspect ratio; the caller fits and
   // centers it. Without `withBackground`, nothing is drawn behind the
   // elements: the paper shows through.

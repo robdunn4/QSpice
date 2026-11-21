@@ -1,17 +1,8 @@
-#ifdef _MSC_VER
-#pragma warning(push)
-#pragma warning(disable : 4996) // Qt headers reference APIs deprecated for Qt 7
-#endif
-
 #include "IniValues.h"
 
 #include <QDir>
 #include <QFileInfo>
 #include <QSettings>
-
-#ifdef _MSC_VER
-#pragma warning(pop)
-#endif
 
 namespace sch::app::ini {
 namespace {

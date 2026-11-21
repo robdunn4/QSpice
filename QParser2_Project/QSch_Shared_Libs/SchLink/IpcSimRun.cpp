@@ -1,22 +1,14 @@
-#ifdef _MSC_VER
-#pragma warning(push)
-#pragma warning(                                                               \
-    disable : 4996)   // Qt headers reference APIs deprecated for Qt 7
-#endif
-
 #include "IpcSimRun.h"
 
 #include <QDir>
+#include <QFile>
 #include <QFileInfo>
 #include <QRegularExpression>
 #include <QTimer>
 
-#ifdef _MSC_VER
-#pragma warning(pop)
-#endif
+#include <SchStringDecode.h>
 
 #include "NetlistRun.h"
-#include "SchStringDecode.h"
 
 #ifdef Q_OS_WIN
 // Before windows.h, always: it defines min and max as macros otherwise.
@@ -32,6 +24,10 @@ namespace {
 // How often the .qraw is looked at while the simulator runs -- QSpice's
 // own timer, as near as the captures show.
 constexpr int kQrawPollMs = 100;
+
+// The most of the .qraw read looking for the end of its header. Even
+// .options savepowers=1, with hundreds of variables, stays far below it.
+constexpr qint64 kQrawHeaderMax = 4 * 1024 * 1024;
 
 // A display name made safe as a file name, for a never-saved schematic.
 QString fileSafe(const QString &name) {
@@ -146,6 +142,7 @@ void IpcSimRun::startSim() {
   // file-time granularity.
   simStarted = QDateTime::currentDateTime().addSecs(-1);
   qrawReady  = false;
+  qrawDataStart = -1;
 
   sim = launch(params.simExe, args);
   if (!running) return;   // failed to start
@@ -163,17 +160,43 @@ void IpcSimRun::startSim() {
   qrawTimer->start();
 }
 
-void IpcSimRun::checkQraw() {
+void IpcSimRun::checkQraw(bool simExited) {
   if (qrawReady || aborted) return;
 
   const QFileInfo info(qraw);
   if (!info.exists() || info.size() == 0) return;
   if (info.lastModified() < simStarted) return;
 
+  // While the simulator runs: not until the first point is being written.
+  if (!simExited) {
+    if (qrawDataStart < 0) qrawDataStart = qrawDataOffset(qraw);
+    if (qrawDataStart < 0) return;
+    if (info.size() <= qrawDataStart) return;
+  }
+
   qrawReady = true;
   if (qrawTimer != nullptr) qrawTimer->stop();
 
   if (onQrawReady) onQrawReady();
+}
+
+qint64 IpcSimRun::qrawDataOffset(const QString &path) {
+  // Read-only, while the simulator may be writing it: a refusal is
+  // retried at the next poll.
+  QFile file(path);
+  if (!file.open(QIODevice::ReadOnly)) return -1;
+
+  // The header is 8-bit text ending in a line "Binary:"; the data follows
+  // straight after its newline.
+  const QByteArray head   = file.read(kQrawHeaderMax);
+  const QByteArray marker = QByteArrayLiteral("\nBinary:");
+  qsizetype        at     = head.indexOf(marker);
+  if (at < 0) return -1;
+
+  at += marker.size();
+  if (at < head.size() && head.at(at) == '\r') ++at;
+  if (at >= head.size() || head.at(at) != '\n') return -1;
+  return at + 1;
 }
 
 void IpcSimRun::onSimFinished(int exitCode, QProcess::ExitStatus status) {
@@ -198,8 +221,9 @@ void IpcSimRun::onSimFinished(int exitCode, QProcess::ExitStatus status) {
             .arg(QFileInfo(params.simExe).fileName())
             .arg(exitCode));
 
-  // Too quick for the timer: the viewer still gets its data.
-  checkQraw();
+  // Too quick for the timer, or no points saved: the viewer still gets
+  // whatever the run wrote.
+  checkQraw(true);
   if (onSimExited) onSimExited();
 
   // The callbacks may have aborted the run.

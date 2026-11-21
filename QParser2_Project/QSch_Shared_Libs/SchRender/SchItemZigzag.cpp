@@ -1,8 +1,3 @@
-#ifdef _MSC_VER
-#pragma warning(push)
-#pragma warning(disable : 4996) // Qt headers reference APIs deprecated for Qt 7
-#endif
-
 #include "SchItemZigzag.h"
 
 #include "SchPen.h"
@@ -10,10 +5,6 @@
 #include <QPainter>
 #include <QPainterPath>
 #include <QPen>
-
-#ifdef _MSC_VER
-#pragma warning(pop)
-#endif
 
 #include <algorithm>
 #include <cmath>
@@ -80,6 +71,9 @@ void SchItemZigzag::setControlPoint(int index, Point p) {
 
 void SchItemZigzag::paint(QPainter *painter, const QStyleOptionGraphicsItem *,
                           QWidget *) {
+  // Hidden with its pin (SchItemBase::hiddenByPin()).
+  if (hiddenByPin()) return;
+
   // save/restore because the mirror cancellation below alters the
   // painter's transform.
   painter->save();

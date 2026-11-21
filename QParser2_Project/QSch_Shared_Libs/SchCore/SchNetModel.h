@@ -7,8 +7,9 @@
 
 #include <utility>
 
-#include "ArgUtils.h"   // Point
-#include "ItemTree.h"
+#include <ArgUtils.h> // Point
+#include <ItemTree.h>
+
 #include "SchPointKey.h"
 
 // A sheet's connectivity, computed from the RECORD TREE alone -- no

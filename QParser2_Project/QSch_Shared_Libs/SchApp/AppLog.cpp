@@ -1,9 +1,3 @@
-#ifdef _MSC_VER
-#pragma warning(push)
-#pragma warning(                                                               \
-    disable : 4996)   // Qt headers reference APIs deprecated for Qt 7
-#endif
-
 #include "AppLog.h"
 
 #include <QCoreApplication>
@@ -18,10 +12,6 @@
 
 #ifdef Q_OS_WIN
 #include <windows.h>
-#endif
-
-#ifdef _MSC_VER
-#pragma warning(pop)
 #endif
 
 #include <cstdlib>

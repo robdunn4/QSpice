@@ -1,8 +1,3 @@
-#ifdef _MSC_VER
-#pragma warning(push)
-#pragma warning(disable : 4996) // Qt headers reference APIs deprecated for Qt 7
-#endif
-
 #include "SchItemNet.h"
 #include "SchItemWire.h"
 
@@ -13,15 +8,12 @@
 #include <QPolygonF>
 #include <QTransform>
 
-#ifdef _MSC_VER
-#pragma warning(pop)
-#endif
-
 #include <utility>
+
+#include <SchStringDecode.h>
 
 #include "RenderStyle.h"
 #include "SchPen.h"
-#include "SchStringDecode.h"
 #include "SchTextLayout.h"
 
 namespace sch::render {
@@ -471,6 +463,10 @@ void SchItemNet::paint(QPainter *painter, const QStyleOptionGraphicsItem *,
   // Drawn directly in toQ() space (no local counter-flip) since line
   // work doesn't have the "renders upside down" problem text glyphs do
   // -- same convention as Rect/Line/Wire.
+  // Part of the highlighted net: the name in the highlight color on red,
+  // a ground symbol in the highlight color.
+  const bool lit = showsNetHighlight();
+
   const GroundKind kind = groundKindFor(name);
   if (kind != GroundKind::None) {
     // The ground SYMBOL is wire-colored, not net-label-colored: it is
@@ -479,6 +475,7 @@ void SchItemNet::paint(QPainter *painter, const QStyleOptionGraphicsItem *,
     // it to netLabelText() turned every ground symbol red.
     // The WIRE's pen, so on paper and in SVG it matches the wires.
     QPen pen = SchItemWire::wirePen(painter);
+    if (lit) pen.setColor(RenderStyle::current().highlightWire);
     SchPen::toGeometric(pen, painter);
     painter->setPen(pen);
     painter->setBrush(Qt::NoBrush);
@@ -544,12 +541,15 @@ void SchItemNet::paint(QPainter *painter, const QStyleOptionGraphicsItem *,
       SchPen::enforcePrintMin(border, painter);
 
       painter->setPen(border);
-      painter->setBrush(QColor(Qt::white));
+      painter->setBrush(lit ? QColor(Qt::red) : QColor(Qt::white));
       painter->drawRect(box);
       painter->setBrush(Qt::NoBrush);
+    } else if (lit) {
+      painter->fillRect(layout.nameRect, Qt::red);
     }
 
-    painter->setPen(netNameColor());
+    painter->setPen(lit ? RenderStyle::current().highlightWire
+                        : netNameColor());
     painter->drawText(layout.nameRect,
                       Qt::AlignLeft | Qt::AlignTop | Qt::TextDontClip,
                       shownName);

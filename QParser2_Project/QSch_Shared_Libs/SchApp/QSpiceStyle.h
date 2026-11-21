@@ -1,6 +1,6 @@
 #pragma once
 
-#include "RenderStyle.h"
+#include <RenderStyle.h>
 
 // QSpice's palette and metrics, as read by sch::link::prefs, turned into
 // the RenderStyle everything draws with.

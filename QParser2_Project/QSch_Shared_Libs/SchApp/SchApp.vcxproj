@@ -18,6 +18,7 @@
     <ClInclude Include="AboutBox.h" />
     <ClInclude Include="AppIcon.h" />
     <ClInclude Include="AppLog.h" />
+    <ClInclude Include="AppStyle.h" />
     <ClInclude Include="HierOpen.h" />
     <ClInclude Include="IniValues.h" />
     <ClInclude Include="QSpiceStyle.h" />
@@ -27,6 +28,7 @@
     <ClCompile Include="AboutBox.cpp" />
     <ClCompile Include="AppIcon.cpp" />
     <ClCompile Include="AppLog.cpp" />
+    <ClCompile Include="AppStyle.cpp" />
     <ClCompile Include="HierOpen.cpp" />
     <ClCompile Include="IniValues.cpp" />
     <ClCompile Include="QSpiceStyle.cpp" />
@@ -124,6 +126,8 @@
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
+      <TreatAngleIncludeAsExternal>true</TreatAngleIncludeAsExternal>
+      <ExternalWarningLevel>TurnOffAllWarnings</ExternalWarningLevel>
     </ClCompile>
     <Lib>
       <LinkLibraryDependencies>false</LinkLibraryDependencies>
@@ -140,6 +144,8 @@
       <ConformanceMode>true</ConformanceMode>
       <BasicRuntimeChecks>Default</BasicRuntimeChecks>
       <PreprocessorDefinitions>_DISABLE_STRING_ANNOTATION;_DISABLE_VECTOR_ANNOTATION;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <TreatAngleIncludeAsExternal>true</TreatAngleIncludeAsExternal>
+      <ExternalWarningLevel>TurnOffAllWarnings</ExternalWarningLevel>
     </ClCompile>
     <Lib>
       <LinkLibraryDependencies>false</LinkLibraryDependencies>
@@ -156,6 +162,8 @@
       <ConformanceMode>true</ConformanceMode>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
+      <TreatAngleIncludeAsExternal>true</TreatAngleIncludeAsExternal>
+      <ExternalWarningLevel>TurnOffAllWarnings</ExternalWarningLevel>
     </ClCompile>
     <Lib>
       <LinkLibraryDependencies>false</LinkLibraryDependencies>

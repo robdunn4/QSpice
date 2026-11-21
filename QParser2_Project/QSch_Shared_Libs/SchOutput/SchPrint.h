@@ -209,6 +209,15 @@ public:
   void reloadDefaults();
 
   SchPrintSettings &settings() { return printSettings; }
+
+  // The program's own defaults, given at construction -- what every
+  // setting the file lacks falls back on -- and the file.
+  const SchPrintSettings &defaults() const { return defaultSettings; }
+  const QString &settingsFile() const { return defaultSettings.settingsFile; }
+
+  // The settings as the file holds them now: the defaults, read over.
+  // What Printing Defaults and Headers/Footers edit and save.
+  SchPrintSettings  storedSettings() const;
   QPrinter         *ensurePrinter();
 
   // Whether Windows actually opened `printer`. One that is off, asleep

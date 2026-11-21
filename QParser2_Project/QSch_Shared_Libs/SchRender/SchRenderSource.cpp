@@ -1,18 +1,9 @@
-#ifdef _MSC_VER
-#pragma warning(push)
-#pragma warning(disable : 4996) // Qt headers reference APIs deprecated for Qt 7
-#endif
-
 #include "SchRenderSource.h"
 
 #include <QGraphicsItem>
 #include <QGraphicsScene>
 #include <QList>
 #include <QPainter>
-
-#ifdef _MSC_VER
-#pragma warning(pop)
-#endif
 
 #include "SelHiLiteItem.h"
 
@@ -27,6 +18,9 @@ QRectF SchRenderSource::printableSceneRect() const {
     if (!item->isVisible() || isPrintExcluded(item)) continue;
     extent |= item->sceneBoundingRect();
   }
+
+  // Only with something to show: the underlay alone is not a drawing.
+  if (!extent.isEmpty()) extent |= underlayExtent();
   return extent;
 }
 
@@ -71,6 +65,16 @@ void SchRenderSource::renderSceneForPrint(QPainter     *painter,
   painter->scale(1.0, -1.0);
 
   SelHiLiteStyle::suppressed = true;
+
+  // The underlay, in scene units: the same mapping render() uses below.
+  painter->save();
+  painter->translate(target.left(), target.top());
+  painter->scale(target.width() / source.width(),
+                 target.height() / source.height());
+  painter->translate(-source.left(), -source.top());
+  renderUnderlay(painter, source);
+  painter->restore();
+
   scene->render(painter, target, source, Qt::IgnoreAspectRatio);
   SelHiLiteStyle::suppressed = false;
 

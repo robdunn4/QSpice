@@ -1,9 +1,3 @@
-#ifdef _MSC_VER
-#pragma warning(push)
-#pragma warning(                                                               \
-    disable : 4996)   // Qt headers reference APIs deprecated for Qt 7
-#endif
-
 #include "NetlistRun.h"
 
 #include <algorithm>
@@ -19,11 +13,7 @@
 #include <QStringList>
 #include <QTimer>
 
-#ifdef _MSC_VER
-#pragma warning(pop)
-#endif
-
-#include "SchStringDecode.h"
+#include <SchStringDecode.h>
 
 #ifdef Q_OS_WIN
 // Before windows.h, always: it defines min and max as macros otherwise.

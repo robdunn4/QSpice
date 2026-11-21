@@ -14,17 +14,11 @@ inline bool alignMarksHidden(int alignH, int alignV) {
   return alignH == 0 && alignV == 0;
 }
 
-// Whether a symbol's TEXT record is hidden by its alignment: 0/0 on
-// ATTRIBUTE text (comment flag clear) only.
-//
-// Plain text in a symbol -- comment flag set -- is drawn whatever its
-// alignment. CONFIRMED (2026-11-02): QSpice draws an NE5532 op amp's
-// "+ve", "-ve", "+" and "-" labels, all 0/0 with the flag set
-// (TripleCompositeAmplifierwithCommon-emitterOutputStage.qsch). The
-// attribute half remains OBSERVED, MECHANISM UNCONFIRMED.
-inline bool alignHidesText(bool comment, int alignH, int alignV) {
-  return !comment && alignMarksHidden(alignH, alignV);
-}
+// A TEXT record is NOT hidden by its alignment: 0/0 only centers it.
+// Only its hidden bit hides it. CONFIRMED (2026-11-18, VisTest): QSpice
+// draws a 0/0 attribute, comment flag clear, centered in a schematic and
+// in its symbol editor alike, and does not tick its Invis. column. (A
+// pin LABEL is another matter -- see SchItemPin::labelVisible().)
 
 constexpr int kAlignHWest   = 0b0100;
 constexpr int kAlignHEast   = 0b1000;

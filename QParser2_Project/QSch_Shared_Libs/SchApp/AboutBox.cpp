@@ -1,28 +1,20 @@
-#ifdef _MSC_VER
-#pragma warning(push)
-#pragma warning(disable : 4996) // Qt headers reference APIs deprecated for Qt 7
-#endif
-
 #include "AboutBox.h"
 
 #include <QMessageBox>
 #include <QObject>
 #include <QPixmap>
 
-#ifdef _MSC_VER
-#pragma warning(pop)
-#endif
-
 #include "AppIcon.h"
 
 // Each shared library's name and version.
-#include "QParser2_Version.h"
+#include <QParser2_Version.h>
+#include <SchCoreVersion.h>
+#include <SchLinkVersion.h>
+#include <SchOutputVersion.h>
+#include <SchProgAttrVersion.h>
+#include <SchRenderVersion.h>
+
 #include "SchAppVersion.h"
-#include "SchCoreVersion.h"
-#include "SchLinkVersion.h"
-#include "SchOutputVersion.h"
-#include "SchProgAttrVersion.h"
-#include "SchRenderVersion.h"
 
 namespace sch::app {
 namespace {

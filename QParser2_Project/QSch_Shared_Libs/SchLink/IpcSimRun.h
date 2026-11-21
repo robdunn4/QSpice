@@ -31,9 +31,12 @@ class NetlistRun;
 // -- see ipcmsg. This class reports only the run's own milestones.
 //
 // While the simulator runs, the .qraw is watched (Appendix I, step 3):
-// once it holds data from THIS run, onQrawReady fires -- once -- and the
-// waveform viewer can be launched or told to reopen. A simulation too
-// quick for the timer is caught when the simulator exits.
+// once it holds a data point from THIS run, onQrawReady fires -- once --
+// and the waveform viewer can be launched or told to reopen. The header
+// alone is not enough: with a .tran start time it is written long before
+// the first point, and a viewer opened on it never shows the points that
+// follow (QSpice, too, waits). A simulation too quick for the timer, or
+// one that saves no points, is caught when the simulator exits.
 //
 // abort() stops whatever is running; QPOST is then skipped. Destroying
 // the object aborts too.
@@ -70,8 +73,9 @@ public:
   // run; not after an abort.
   std::function<void()> onQrawReady;
 
-  // The simulator has exited normally -- before QPOST starts. The viewer
-  // is told to stop marching.
+  // The simulator has exited normally -- before QPOST starts. Nothing
+  // need go to the viewer then: it follows the simulator by its process
+  // ID and finishes by itself (see ipcmsg).
   std::function<void()> onSimExited;
 
   explicit IpcSimRun(QObject *parent = nullptr);
@@ -93,6 +97,11 @@ public:
   // The simulator's process id, from when it started; 0 before then.
   qint64 simPid() const { return simProcessId; }
 
+  // Where the .qraw `path`'s data starts: the byte after its "Binary:"
+  // line, or -1 while the header is not all there yet (or the file is
+  // not readable). Data is there once the file is larger than that.
+  static qint64 qrawDataOffset(const QString &path);
+
 protected:
   void onNetlist(const QByteArray &bytes);
   void onNetlistFailed(const QString &message);
@@ -102,9 +111,10 @@ protected:
   void onPostFinished(int exitCode, QProcess::ExitStatus status);
   void finish(Outcome outcome);
 
-  // The .qraw holds data written since this run started. Fires
-  // onQrawReady the first time it does.
-  void checkQraw();
+  // The .qraw holds a data point written since this run started -- or,
+  // once `simExited`, anything written since then. Fires onQrawReady the
+  // first time it does.
+  void checkQraw(bool simExited = false);
 
   // A process with the netlist on its stdin. Its own stdout/stderr are
   // read as they come -- an unread pipe that fills would stall it -- and
@@ -124,6 +134,7 @@ protected:
   QProcess   *post       = nullptr;
   QTimer     *qrawTimer  = nullptr;
   QDateTime   simStarted;
+  qint64      qrawDataStart = -1; // qrawDataOffset(qraw), found once a run
   qint64      simProcessId = 0;
   bool        qrawReady    = false;
   bool        running      = false;

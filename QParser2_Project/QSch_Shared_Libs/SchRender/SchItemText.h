@@ -1,5 +1,6 @@
 #pragma once
-#include "ItemText.h"
+#include <ItemText.h>
+
 #include "SchItemBase.h"
 #include <QColor>
 #include <QTransform>
@@ -18,14 +19,57 @@ public:
   Point getPosition() const noexcept override;
   void  moveTo(Point p) noexcept override;
 
+  // Its pin -- see SchItemBase::onDisabledPin().
+  int assocPinIndex() const override { return item_->pinNdx.getValue(); }
+
   DrawKind drawKind() const override;
 
   TextKind textKind() const override;
   // Whether this text is drawn at all: the record's hidden flag, plus
   // the zero-alignment rule for symbol attribute text. PUBLIC because
   // the pick pipeline needs it -- hidden text is not drawn and so must
-  // not be clickable.
+  // not be clickable. A SYMBOL document's own hidden text IS drawn --
+  // faded (isFaded()) -- and so is displayed.
   bool isDisplayed() const;
+
+  // A symbol's text that is HIDDEN -- its hidden bit, the only thing that
+  // hides one -- wherever the symbol is: placed, or edited on its own.
+  bool isHiddenInSymbol() const;
+
+  // Drawn faded: hidden, in a symbol document (SchScene::symbolDocument()).
+  bool isFaded() const;
+
+  // Mark Text Anchor Points (SchScene::textAnchorsMarked()): whether this
+  // text shows its anchor mark -- only while it is displayed -- and the
+  // anchor, in this item's own coordinates. On screen the view draws the
+  // mark, in output paint() does -- the same filled dot either way, of
+  // anchorMarkRadius().
+  bool    anchorMarked() const;
+  QPointF anchorPoint() const;
+
+  // The mark's radius in schematic units, for a painter `scale` device
+  // pixels to the unit: it scales with zoom, as QSpice's markers do, but
+  // never shrinks below a few pixels across -- the unattached-pin box's
+  // size (Robert, 2026-11-18).
+  static constexpr double kAnchorMarkUnits = 12.0; // 24 units across
+  static constexpr double kAnchorMarkMinPx = 3.0;  // 6 pixels across
+  static double           anchorMarkRadius(double scale);
+
+  // Draws the mark at `center` on `painter`, as set up now: an open
+  // circle in RenderStyle's anchor-mark colors, a 1-pixel line.
+  static void paintAnchorMark(QPainter *painter, const QPointF &center);
+
+  // Drawn in HIGHLIGHT color (red, as a highlighted pin's marker) while
+  // its row is selected in the Symbol Properties pane, so the pane and
+  // the drawing point at each other.
+  bool isHighlighted() const { return highlighted; }
+
+  void setHighlighted(bool on) {
+    if (highlighted == on) return;
+
+    highlighted = on;
+    update();
+  }
 
   // A value typed for this attribute, as it would be stored: by the rules
   // of the Programmable Attribute the record holds (an Integer's is cut
@@ -66,6 +110,8 @@ public:
   }
 
 protected:
+  bool highlighted = false; // see setHighlighted()
+
   void paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
              QWidget *widget) override;
 
@@ -83,7 +129,7 @@ protected:
   // sits -- a child of a component is component text, a top-level one
   // is schematic text.
 
-  QColor defaultTextColor() const;
+  QColor defaultTextColor() const override;
 
   // The record's text as the GUI works with it: decoded, and QSpice's
   // "\n" turned into real line feeds (sch::core::lineBreaksFromRecord()).

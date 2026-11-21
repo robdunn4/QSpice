@@ -1,5 +1,6 @@
 #pragma once
-#include "ItemJunction.h"
+#include <ItemJunction.h>
+
 #include "SchItemBase.h"
 
 namespace sch::render {

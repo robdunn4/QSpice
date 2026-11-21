@@ -1,8 +1,3 @@
-#ifdef _MSC_VER
-#pragma warning(push)
-#pragma warning(disable : 4996) // Qt headers reference APIs deprecated for Qt 7
-#endif
-
 #include "SchItemRect.h"
 
 #include "SchBoxFrame.h"
@@ -14,10 +9,6 @@
 #include <QPaintEngine>
 #include <QPainter>
 #include <QPen>
-
-#ifdef _MSC_VER
-#pragma warning(pop)
-#endif
 
 #include <algorithm>
 #include <cmath>
@@ -84,6 +75,9 @@ void SchItemRect::setControlPoint(int index, Point p) {
 
 void SchItemRect::paint(QPainter *painter, const QStyleOptionGraphicsItem *,
                         QWidget *) {
+  // Hidden with its pin (SchItemBase::hiddenByPin()).
+  if (hiddenByPin()) return;
+
   // A hierarchical block is colored entirely from QSpice's
   // preferences, NOT from the record. CONFIRMED: the X1 block's rect
   // carries 0x4000000 for both line and fill -- the same fill value the
@@ -118,7 +112,7 @@ void SchItemRect::paint(QPainter *painter, const QStyleOptionGraphicsItem *,
         hierarchical ? RenderStyle::current().hierarchicalFill
                      : SchColorDecode::fromArgFill(item_->fillColor.getValue(),
                                                    lineColor);
-    painter->setBrush(fill);
+    painter->setBrush(tint(fill));
   }
 
   // elementRect(), NOT boundingRect(). This is the element's own
@@ -178,6 +172,9 @@ void SchItemRect::drawImage(QPainter *painter, const QRectF &rect) const {
   if (img.isNull() || rect.isEmpty()) return;
 
   painter->save();
+
+  // Faded with its pin, as the colors are (SchItemBase::tint()).
+  if (fadedByPin()) painter->setOpacity(painter->opacity() * 0.35);
 
   // Image rows run DOWN; the view shows scene Y running UP. Flipped
   // about the rect's horizontal center line, the picture is upright.

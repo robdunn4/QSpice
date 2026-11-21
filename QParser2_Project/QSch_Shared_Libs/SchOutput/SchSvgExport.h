@@ -31,6 +31,8 @@ namespace sch::output {
 // assembled here, inside groups and layers of our own:
 //
 //   Background         one canvas-color rect, locked
+//   Underlay           what the document draws under its elements --
+//                      a symbol's origin axes -- when there is any
 //   Symbols            a group per component: id/label = refdes, a
 //                      <title>, data-refdes / data-value / data-symbol
 //   Graphics           annotation shapes and images
@@ -69,6 +71,10 @@ protected:
   // One element, painted alone; the drawing part of the generator's
   // output, or empty.
   QByteArray piece(QGraphicsItem *item) const;
+
+  // The source's underlay (SchRenderSource::renderUnderlay()) over the
+  // whole page, as a piece; empty if it draws nothing.
+  QByteArray underlayPiece() const;
 
   // The element and its children, each in its own stacking order.
   void paintTree(QPainter &painter, QGraphicsItem *item) const;

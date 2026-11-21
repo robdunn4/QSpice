@@ -2,7 +2,7 @@
 #include <QGraphicsScene>
 #include <QList>
 
-#include "ItemTree.h"
+#include <ItemTree.h>
 
 namespace sch::render {
 

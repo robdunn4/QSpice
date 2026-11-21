@@ -4,7 +4,7 @@
 #include <QString>
 #include <QStringList>
 
-#include "ItemTree.h"
+#include <ItemTree.h>
 
 // Which records may sit where -- and the removal of any that may not.
 //

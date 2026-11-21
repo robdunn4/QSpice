@@ -1,18 +1,8 @@
-#ifdef _MSC_VER
-#pragma warning(push)
-#pragma warning(                                                               \
-    disable : 4996)   // Qt headers reference APIs deprecated for Qt 7
-#endif
-
 #include "AppIcon.h"
 
 #include <QGuiApplication>
 #include <QImage>
 #include <QtGlobal>
-
-#ifdef _MSC_VER
-#pragma warning(pop)
-#endif
 
 #ifdef Q_OS_WIN
 #include <windows.h>

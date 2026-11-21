@@ -1,8 +1,3 @@
-#ifdef _MSC_VER
-#pragma warning(push)
-#pragma warning(disable : 4996) // Qt headers reference APIs deprecated for Qt 7
-#endif
-
 #include "SchConnPlan.h"
 
 #include <QHash>
@@ -11,21 +6,18 @@
 #include <QStringList>
 #include <QtGlobal>
 
-#ifdef _MSC_VER
-#pragma warning(pop)
-#endif
-
 #include <algorithm>
 #include <cmath>
 #include <utility>
 
-#include "ItemCoil.h"
-#include "ItemEllipse.h"
-#include "ItemLine.h"
-#include "ItemNet.h"
-#include "ItemRect.h"
-#include "ItemWire.h"
-#include "ItemZigzag.h"
+#include <ItemCoil.h>
+#include <ItemEllipse.h>
+#include <ItemLine.h>
+#include <ItemNet.h>
+#include <ItemRect.h>
+#include <ItemWire.h>
+#include <ItemZigzag.h>
+
 #include "SchAlign.h"
 #include "SchStringDecode.h"
 

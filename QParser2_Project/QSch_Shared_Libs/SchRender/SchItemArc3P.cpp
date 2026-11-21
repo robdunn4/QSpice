@@ -1,9 +1,3 @@
-#ifdef _MSC_VER
-#pragma warning(push)
-#pragma warning(                                                               \
-    disable : 4996)   // Qt headers reference APIs deprecated for Qt 7
-#endif
-
 #include "SchItemArc3P.h"
 
 #include "SchPen.h"
@@ -11,10 +5,6 @@
 #include <QPainter>
 #include <QPainterPath>
 #include <QPen>
-
-#ifdef _MSC_VER
-#pragma warning(pop)
-#endif
 
 #include <algorithm>
 #include <cmath>
@@ -105,6 +95,21 @@ QPointF spiralPoint(const ArcGeometry &g, double t) {
   return QPointF(g.center.x() + radius * std::cos(angle),
       g.center.y() + radius * std::sin(angle));
 }
+
+// The spiral's tangent at t: d/dt of spiralPoint().
+QPointF spiralTangent(const ArcGeometry &g, double t) {
+  const double angle  = g.angle1 + g.sweep * t;
+  const double radius = g.radius1 + (g.radius2 - g.radius1) * t;
+  const double dr     = g.radius2 - g.radius1;
+  const double c      = std::cos(angle);
+  const double s      = std::sin(angle);
+  return QPointF(dr * c - radius * g.sweep * s, dr * s + radius * g.sweep * c);
+}
+
+// Curve segments, at most this much of a turn each (45 degrees): a cubic
+// through the true points and tangents is then within a few millionths
+// of the radius -- a true curve in an SVG or PDF, smooth at any zoom.
+constexpr double kSegmentSweep = 3.14159265358979323846 / 4.0;
 
 }   // namespace
 
@@ -205,6 +210,9 @@ void SchItemArc3P::setControlPoint(int index, Point p) {
 
 void SchItemArc3P::paint(
     QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *) {
+  // Hidden with its pin (SchItemBase::hiddenByPin()).
+  if (hiddenByPin()) return;
+
   QPen pen = SchPen::forElement(painter,
       tint(SchColorDecode::fromArgColor(item_->lineColor.getValue(),
           RenderStyle::current().graphicAnnotation)),
@@ -229,10 +237,24 @@ QPainterPath SchItemArc3P::outlinePath() const {
   const ArcGeometry g = computeArcGeometry(p1, p2, p3);
   if (g.isPoint) return QPainterPath();
 
-  constexpr int kSamples = 32;
-  QPainterPath  path(spiralPoint(g, 0.0));
-  for (int i = 1; i <= kSamples; ++i)
-    path.lineTo(spiralPoint(g, static_cast<double>(i) / kSamples));
+  // CUBIC segments, each through the spiral's true end points with its
+  // true tangents there (Hermite form) -- not straight samples, whose
+  // corners show when an exported SVG or PDF is zoomed (Robert,
+  // 2026-11-21). Nothing else draws a spiral: SVG and PDF have no such
+  // element.
+  const int segments = std::max(
+      1, static_cast<int>(std::ceil(std::abs(g.sweep) / kSegmentSweep)));
+  const double step = 1.0 / segments;
+
+  QPainterPath path(spiralPoint(g, 0.0));
+  for (int i = 0; i < segments; ++i) {
+    const double  t0   = step * i;
+    const double  t1   = step * (i + 1);
+    const QPointF from = spiralPoint(g, t0);
+    const QPointF to   = spiralPoint(g, t1);
+    path.cubicTo(from + spiralTangent(g, t0) * (step / 3.0),
+                 to - spiralTangent(g, t1) * (step / 3.0), to);
+  }
   return path;
 }
 

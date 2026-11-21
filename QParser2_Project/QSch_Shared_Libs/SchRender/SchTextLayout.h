@@ -10,12 +10,13 @@
 #include <QSizeF>
 #include <QString>
 
-#include "SchAlign.h"
 #include <QStringList>
+#include <SchAlign.h>
 #include <algorithm>
 #include <cmath>
 
-#include "ArgUtils.h"
+#include <ArgUtils.h>
+
 #include "SchRect.h"
 
 namespace sch::render {
@@ -264,6 +265,54 @@ inline QString stripOverbarMarkers(const QString &raw) {
   }
 
   return out;
+}
+
+// A text as the inline editor holds it when Raw Attributes is off: the
+// DISPLAY string, and whether each of its characters carries a bar.
+// Parallel -- bars.size() == text.size() -- so a barred character is
+// one character to the caret, the selection and every edit.
+struct OverbarText {
+  QString     text;
+  QList<bool> bars;
+};
+
+// RAW -> the editor's form. A marker bars the character after it. A
+// marker with nothing to bar -- at the very end, or before a line break,
+// which never takes a bar -- cannot be represented and is dropped, as
+// QSpice cannot draw it either.
+inline OverbarText splitOverbars(const QString &raw) {
+  OverbarText out;
+  out.text.reserve(raw.size());
+  out.bars.reserve(raw.size());
+
+  bool marked = false;
+  for (int i = 0; i < raw.size(); ++i) {
+    const QChar ch = raw[i];
+    if (ch == QChar(kOverbarMarker)) {
+      marked = true;
+      continue;
+    }
+
+    const bool isBreak = (ch == QLatin1Char('\n') || ch == QLatin1Char('\r'));
+    out.text.append(ch);
+    out.bars.append(marked && !isBreak);
+    marked = false;
+  }
+
+  return out;
+}
+
+// The editor's form -> RAW: a marker before each barred character.
+inline QString joinOverbars(const QString &text, const QList<bool> &bars) {
+  QString raw;
+  raw.reserve(text.size() * 2);
+
+  for (int i = 0; i < text.size(); ++i) {
+    if (i < bars.size() && bars[i]) raw.append(QChar(kOverbarMarker));
+    raw.append(text[i]);
+  }
+
+  return raw;
 }
 
 // Runs of consecutive overbarred characters, as [start, end) indices

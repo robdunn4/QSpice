@@ -4,7 +4,7 @@
 #include <QSet>
 #include <QString>
 
-#include "ItemTree.h"
+#include <ItemTree.h>
 
 // Reference designators: R1, C7, Q3 -- allocated when a component is
 // placed, so two parts never arrive with the same name.

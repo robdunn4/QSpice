@@ -1,8 +1,3 @@
-#ifdef _MSC_VER
-#pragma warning(push)
-#pragma warning(disable : 4996) // Qt headers reference APIs deprecated for Qt 7
-#endif
-
 #include "SchSvgExport.h"
 
 #include <QBuffer>
@@ -14,36 +9,32 @@
 #include <QStyleOptionGraphicsItem>
 #include <QSvgGenerator>
 
-#ifdef _MSC_VER
-#pragma warning(pop)
-#endif
-
 #include <memory>
 
-#include "ItemSym.h"
-#include "ItemText.h"
-#include "ItemTree.h"
-#include "ProgAttr.h"
-#include "SchItemArc3P.h"
-#include "SchItemArc4P.h"
-#include "SchItemCoil.h"
-#include "SchItemComp.h"
-#include "SchItemEllipse.h"
-#include "SchItemJunction.h"
-#include "SchItemLine.h"
-#include "SchItemNet.h"
-#include "SchItemPin.h"
-#include "SchItemRect.h"
-#include "SchItemTap.h"
-#include "SchItemText.h"
-#include "SchItemTriangle.h"
-#include "SchItemWire.h"
-#include "SchItemZigzag.h"
-#include "SchPen.h"
-#include "SchRefDes.h"
-#include "SchRenderSource.h"
-#include "SchStringDecode.h"
-#include "SelHiLiteItem.h"
+#include <ItemSym.h>
+#include <ItemText.h>
+#include <ItemTree.h>
+#include <ProgAttr.h>
+#include <SchItemArc3P.h>
+#include <SchItemArc4P.h>
+#include <SchItemCoil.h>
+#include <SchItemComp.h>
+#include <SchItemEllipse.h>
+#include <SchItemJunction.h>
+#include <SchItemLine.h>
+#include <SchItemNet.h>
+#include <SchItemPin.h>
+#include <SchItemRect.h>
+#include <SchItemTap.h>
+#include <SchItemText.h>
+#include <SchItemTriangle.h>
+#include <SchItemWire.h>
+#include <SchItemZigzag.h>
+#include <SchPen.h>
+#include <SchRefDes.h>
+#include <SchRenderSource.h>
+#include <SchStringDecode.h>
+#include <SelHiLiteItem.h>
 
 namespace sch::output {
 
@@ -226,6 +217,8 @@ bool SchSvgExport::build(const QString &title, double mmPer1000,
   SchPen::printMinDevicePx   = minLineMm * kDpi / kMmPerInch;
   SchPen::vectorExport       = true;
 
+  const QByteArray underlay = underlayPiece();
+
   // Bottom to top, so each layer keeps the elements' stacking.
   for (QGraphicsItem *item : view->renderScene()->items(Qt::AscendingOrder)) {
     if (item->parentItem() != nullptr) continue;
@@ -377,6 +370,15 @@ bool SchSvgExport::build(const QString &title, double mmPer1000,
              .arg(canvas.name())
              .toUtf8();
 
+  // The underlay, under every element: locked as the background is.
+  if (drawsSomething(underlay))
+    out +=
+        QStringLiteral("<g inkscape:groupmode=\"layer\" id=\"layer-underlay\" "
+                       "inkscape:label=\"%1\" sodipodi:insensitive=\"true\">\n")
+            .arg(esc(tr("Underlay")))
+            .toUtf8() +
+        underlay + "</g>\n";
+
   // Bottom first, in the drawing order (SchItemBase::DrawKind): every
   // component, then the rest by kind -- net labels on top.
   const QList<std::pair<QString, const QByteArray *>> layers = {
@@ -415,6 +417,25 @@ QByteArray SchSvgExport::piece(QGraphicsItem *item) const {
   QPainter painter;
   if (!painter.begin(&generator)) return QByteArray();
   paintTree(painter, item);
+  painter.end();
+
+  return drawingOf(buffer.data());
+}
+
+QByteArray SchSvgExport::underlayPiece() const {
+  QBuffer buffer;
+  if (!buffer.open(QIODevice::WriteOnly)) return QByteArray();
+
+  QSvgGenerator generator;
+  generator.setOutputDevice(&buffer);
+  generator.setResolution(kDpi);
+  generator.setSize(sizePx);
+  generator.setViewBox(viewBox);
+
+  QPainter painter;
+  if (!painter.begin(&generator)) return QByteArray();
+  painter.setTransform(page);
+  view->renderUnderlay(&painter, source);
   painter.end();
 
   return drawingOf(buffer.data());

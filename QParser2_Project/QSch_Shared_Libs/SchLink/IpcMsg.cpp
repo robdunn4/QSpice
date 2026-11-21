@@ -1,6 +1,6 @@
 #include "IpcMsg.h"
 
-#include "SchStringDecode.h"
+#include <SchStringDecode.h>
 
 #include <QStringList>
 

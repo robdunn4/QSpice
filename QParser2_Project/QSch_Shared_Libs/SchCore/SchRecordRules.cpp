@@ -1,25 +1,16 @@
-#ifdef _MSC_VER
-#pragma warning(push)
-#pragma warning(                                                               \
-    disable : 4996)   // Qt headers reference APIs deprecated for Qt 7
-#endif
-
 #include "SchRecordRules.h"
 
 #include <QByteArray>
 #include <QDebug>
 #include <QMap>
 
-#ifdef _MSC_VER
-#pragma warning(pop)
-#endif
-
 #include <vector>
 
-#include "ItemCmp.h"
-#include "ItemSym.h"
-#include "ItemTypes.h"
-#include "ItemWire.h"
+#include <ItemCmp.h>
+#include <ItemSym.h>
+#include <ItemTypes.h>
+#include <ItemWire.h>
+
 #include "SchBus.h"
 #include "SchRefDes.h"
 #include "SchStringDecode.h"

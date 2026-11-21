@@ -46,6 +46,11 @@ struct RenderStyle {
   QColor unconnectedPin      = QColor(255, 255, 255);
   QColor busTapError         = QColor(255, 0, 0);
 
+  // --- Colors of the program's OWN, not QSpice's: the editor fills them
+  // from its settings (QSchEdit's [Colors]). Either may be transparent.
+  QColor anchorMarkLine = QColor(0, 0, 0);       // text anchor mark
+  QColor anchorMarkFill = QColor(255, 255, 255); // ...and its fill
+
   // --- Metrics.
   double junctionSize       = 1.0; // JunctionSize multiplier
   double cadLineWidth       = 1.5; // line width that "0" in a record means

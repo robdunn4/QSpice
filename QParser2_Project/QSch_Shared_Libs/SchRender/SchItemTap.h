@@ -3,7 +3,8 @@
 #include <QPainterPath>
 #include <QPolygonF>
 
-#include "ItemTap.h"
+#include <ItemTap.h>
+
 #include "SchItemBase.h"
 
 namespace sch::render {

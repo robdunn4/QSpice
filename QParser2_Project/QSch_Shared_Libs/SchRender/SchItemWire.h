@@ -1,5 +1,5 @@
 #pragma once
-#include "ItemWire.h"
+#include <ItemWire.h>
 #include <QPainterPath>
 #include <QPen>
 #include <QString>

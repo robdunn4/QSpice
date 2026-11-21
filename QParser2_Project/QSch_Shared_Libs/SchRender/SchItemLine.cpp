@@ -1,19 +1,9 @@
-#ifdef _MSC_VER
-#pragma warning(push)
-#pragma warning(                                                               \
-    disable : 4996)   // Qt headers reference APIs deprecated for Qt 7
-#endif
-
 #include "SchItemLine.h"
 
 #include "SchPen.h"
 
 #include <QPainter>
 #include <QPen>
-
-#ifdef _MSC_VER
-#pragma warning(pop)
-#endif
 
 #include <utility>
 
@@ -65,6 +55,9 @@ void SchItemLine::setControlPoint(int index, Point p) {
 
 void SchItemLine::paint(
     QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *) {
+  // Hidden with its pin (SchItemBase::hiddenByPin()).
+  if (hiddenByPin()) return;
+
   QPen pen = SchPen::forElement(painter,
       tint(SchColorDecode::fromArgColor(item_->lineColor.getValue(),
           RenderStyle::current().graphicAnnotation)),

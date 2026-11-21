@@ -1,25 +1,19 @@
-#ifdef _MSC_VER
-#pragma warning(push)
-#pragma warning(disable : 4996) // Qt headers reference APIs deprecated for Qt 7
-#endif
+#include <SchStringDecode.h>
 
 #include "SchItemWire.h"
 #include "SchPen.h"
-
-#include "SchStringDecode.h"
 
 #include <QPainter>
 #include <QPainterPath>
 #include <QPainterPathStroker>
 #include <QPen>
 
-#ifdef _MSC_VER
-#pragma warning(pop)
-#endif
+#include <algorithm>
+
+#include <SchBus.h>
+#include <SchPointKey.h>
 
 #include "RenderStyle.h"
-#include "SchBus.h"
-#include "SchPointKey.h"
 #include "SchScene.h"
 #include <QGraphicsScene>
 #include <cmath>
@@ -160,9 +154,11 @@ void SchItemWire::setControlPoint(int index, Point p) {
 
 namespace {
 
-// Half-size of the loose-end box, in DEVICE pixels -- the same size the
-// pin marker uses, since it means the same thing.
-constexpr double kLooseEndBoxPx = 3.0;
+// Half-size of the loose-end box -- the same size the unattached-pin box
+// uses, since it means the same thing: in scene units, with a DEVICE-
+// pixel floor (Robert, 2026-11-18).
+constexpr double kLooseEndBoxUnits = 12.0;
+constexpr double kLooseEndBoxPx    = 3.0;
 
 } // namespace
 
@@ -193,7 +189,13 @@ QPen SchItemWire::wirePen(const QPainter *painter) {
 
 void SchItemWire::paint(QPainter *painter, const QStyleOptionGraphicsItem *,
                         QWidget *) {
+  // Part of the highlighted net: the highlight color, at the same width.
+  const QColor color = showsNetHighlight()
+                           ? RenderStyle::current().highlightWire
+                           : RenderStyle::current().wire;
+
   QPen pen = wirePen(painter);
+  pen.setColor(color);
   SchPen::toGeometric(pen, painter);
   painter->setPen(pen);
 
@@ -204,7 +206,7 @@ void SchItemWire::paint(QPainter *painter, const QStyleOptionGraphicsItem *,
   // round ends -- which also rounds the corner where two bus segments
   // meet, as QSpice draws it. See SchBus.h.
   if (isBus()) {
-    QPen busPen(RenderStyle::current().wire, busWidthUnits());
+    QPen busPen(color, busWidthUnits());
     busPen.setCapStyle(Qt::RoundCap);
     busPen.setJoinStyle(Qt::RoundJoin);
     painter->setPen(busPen);
@@ -222,12 +224,12 @@ void SchItemWire::paint(QPainter *painter, const QStyleOptionGraphicsItem *,
   // than intended, and the alternative is discovering it at netlist
   // time.
   //
-  // Sized in DEVICE pixels so it stays legible at any zoom: hypot of
-  // the transform's first row, not m11, which is scale*cos of any
-  // rotation.
+  // Sized in scene units, never below a few DEVICE pixels: hypot of the
+  // transform's first row, not m11, which is scale*cos of any rotation.
   const QTransform xform = painter->transform();
   const double     scale = std::hypot(xform.m11(), xform.m12());
-  const double half = (scale > 0.0) ? (kLooseEndBoxPx / scale) : kLooseEndBoxPx;
+  const double     half =
+      std::max(kLooseEndBoxUnits, (scale > 0.0) ? kLooseEndBoxPx / scale : 0.0);
 
   QPen boxPen(Qt::black);
   boxPen.setCosmetic(true);

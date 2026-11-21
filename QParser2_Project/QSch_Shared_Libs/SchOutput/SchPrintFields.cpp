@@ -1,8 +1,3 @@
-#ifdef _MSC_VER
-#pragma warning(push)
-#pragma warning(disable : 4996) // Qt headers reference APIs deprecated for Qt 7
-#endif
-
 #include "SchPrintFields.h"
 
 #include <QCoreApplication>
@@ -10,10 +5,6 @@
 #include <QFileInfo>
 #include <QLocale>
 #include <QtGlobal>
-
-#ifdef _MSC_VER
-#pragma warning(pop)
-#endif
 
 namespace sch::output {
 

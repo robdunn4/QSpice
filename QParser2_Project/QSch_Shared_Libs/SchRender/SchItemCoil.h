@@ -1,5 +1,6 @@
 #pragma once
-#include "ItemCoil.h"
+#include <ItemCoil.h>
+
 #include "SchBoxFrame.h"
 #include "SchItemBase.h"
 
@@ -21,6 +22,9 @@ public:
   Rect  getRect() const noexcept override;
   Point getPosition() const noexcept override;
   void  moveTo(Point p) noexcept override;
+
+  // Its pin -- see SchItemBase::onDisabledPin().
+  int assocPinIndex() const override { return item_->pinNdx.getValue(); }
 
   DrawKind drawKind() const override { return DrawKind::Coil; }
 

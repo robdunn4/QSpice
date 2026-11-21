@@ -1,6 +1,7 @@
 #include "SchRefDes.h"
 
-#include "ItemText.h"
+#include <ItemText.h>
+
 #include "SchStringDecode.h"
 
 namespace sch::core::refdes {

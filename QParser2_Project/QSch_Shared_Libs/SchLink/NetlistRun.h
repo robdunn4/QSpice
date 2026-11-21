@@ -39,7 +39,7 @@ struct NetlistDependents {
 // The copy is hidden, marked temporary (so Windows keeps it in the file
 // cache rather than writing it out), named
 //
-//     <tempPrefix><pid>_<n>_<base>.qsch     e.g. ~ProjectQ_1234_1_Amp.qsch
+//     <tempPrefix><pid>_<n>_<base>.qsch     e.g. ~QSchEdit_1234_1_Amp.qsch
 //
 // and deleted as soon as QUX finishes. Copies a crash left behind are
 // swept up the next time a netlist is made in that folder. The

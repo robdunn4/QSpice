@@ -6,8 +6,9 @@
 #include <QString>
 #include <QTransform>
 
-#include "ArgUtils.h"
-#include "ItemTree.h"
+#include <ArgUtils.h>
+#include <ItemTree.h>
+
 #include "SchRect.h"
 
 namespace sch::render {
@@ -127,6 +128,7 @@ public:
     None,      // not text
     Directive, // SPICE directives, comments, symbol attribute text
     NetName,   // net labels
+    PinLabel,  // a hierarchical block pin's label: one line, anchorable
   };
   virtual TextKind textKind() const { return TextKind::None; }
 
@@ -165,7 +167,10 @@ public:
   // before it will select it.
   //
   // Defaults to elementRect(); only elements with that split override.
-  virtual QRectF bodyRect() const { return elementRect(); }
+  // Hidden with its pin (hiddenByPin()): empty.
+  virtual QRectF bodyRect() const {
+    return hiddenByPin() ? QRectF() : elementRect();
+  }
 
   // elementRect() plus a slack allowance (see kPaintSlack), united with
   // childrenBoundingRect(). Strictly a REPAINT region -- it is not the
@@ -296,6 +301,23 @@ public:
   // tree (future UI-only overlays) has no node at all.
   void           setNode(const NodePtr &node) { node_ = node; }
   const NodePtr &node() const { return node_; }
+
+  // --- Highlight Net ---
+  //
+  // Lit as part of the highlighted net or bus: a wire, bus, net label,
+  // tap or junction draws itself in the highlight colors
+  // (RenderStyle::highlightWire; a label on red). Set by the editor,
+  // which works out what belongs to the net; never saved.
+  bool isNetHighlighted() const { return netHighlighted; }
+  void setNetHighlighted(bool on) {
+    if (netHighlighted == on) return;
+
+    netHighlighted = on;
+    update();
+  }
+
+  // Whether to DRAW it so: lit, and not printing or exporting.
+  bool showsNetHighlight() const;
 
   // --- Electrical connectivity ---
   //
@@ -451,10 +473,36 @@ public:
   // True when this element is, or sits inside, an unstuffed component.
   bool isUnstuffed() const;
 
-  // The color to actually paint with.
-  QColor tint(const QColor &color) const {
-    return isUnstuffed() ? doNotStuffColor_ : color;
+  // The color to actually paint with: the unstuffed gray, or faded for
+  // a part tied to a disabled pin in a symbol document (fadedByPin()).
+  // Alpha is kept, so a transparent fill stays transparent.
+  QColor tint(const QColor &color) const;
+
+  // --- A symbol part tied to a PIN ---
+  //
+  // A symbol's graphic or text can name one of the symbol's pins -- its
+  // record's pin index (ArgPinNdx, QSpice's "Associated Pin"), the pin's
+  // position among the symbol's pin records. When that pin is DISABLED --
+  // it has a net name of its own, any value, as SchItemPin::isInternal()
+  // -- the part goes with it (confirmed in QSpice, 2026-11-19):
+  //
+  //   placed on a schematic   not drawn, not picked, and no part of the
+  //                           component's box (hiddenByPin())
+  //   in a symbol document    drawn faded, still picked and edited
+  //                           (fadedByPin())
+  //
+  // An index of -1, or one no pin answers, ties it to nothing.
+
+  // The record's pin index; -1 for an element with none.
+  virtual int assocPinIndex() const { return -1; }
+
+  // Tied to a pin that has a net name.
+  bool onDisabledPin() const;
+
+  bool hiddenByPin() const {
+    return parentItem() != nullptr && onDisabledPin();
   }
+  bool fadedByPin() const { return parentItem() == nullptr && onDisabledPin(); }
 
   // --- Line width and style ---
   //
@@ -489,6 +537,12 @@ public:
   virtual void setFillColorRaw(int) {}
   virtual int  textColorRaw() const { return -1; }
   virtual void setTextColorRaw(int) {}
+
+  // The color the text draws in when its color is "default" -- which
+  // registry color that is depends on the element (a comment, a
+  // component's attribute, a pin label), so the element answers rather
+  // than the color dialog guessing. Schematic text unless overridden.
+  virtual QColor defaultTextColor() const;
 
   virtual double fontSize() const { return -1.0; }
   virtual void   setFontSize(double) {}
@@ -539,6 +593,7 @@ protected:
   QTransform labelBaseXform(double ownRotDeg) const;
 
   NodePtr node_;
+  bool    netHighlighted = false; // see setNetHighlighted()
 
   static bool   showResistorOrient_;
   static QColor doNotStuffColor_;

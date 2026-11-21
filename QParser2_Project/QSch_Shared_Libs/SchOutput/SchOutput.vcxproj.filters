@@ -23,6 +23,15 @@
     <ClInclude Include="SchSvgExport.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="SchHeaderFooterDlg.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SchPrintDefaultsDlg.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SchPrintDlg.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="SchOutputVersion.cpp">
@@ -35,6 +44,15 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SchSvgExport.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SchHeaderFooterDlg.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SchPrintDefaultsDlg.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SchPrintDlg.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

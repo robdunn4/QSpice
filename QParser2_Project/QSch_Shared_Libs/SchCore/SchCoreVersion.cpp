@@ -2,6 +2,6 @@
 
 namespace sch::core {
 
-LibraryInfo libraryInfo() { return LibraryInfo{"SchCore", "0.1.5"}; }
+LibraryInfo libraryInfo() { return LibraryInfo{"SchCore", "0.1.10"}; }
 
 } // namespace sch::core

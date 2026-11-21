@@ -1,9 +1,3 @@
-#ifdef _MSC_VER
-#pragma warning(push)
-#pragma warning(                                                               \
-    disable : 4996)   // Qt headers reference APIs deprecated for Qt 7
-#endif
-
 #include "SchItemTriangle.h"
 
 #include "SchPen.h"
@@ -11,10 +5,6 @@
 #include <QPainter>
 #include <QPen>
 #include <QPolygonF>
-
-#ifdef _MSC_VER
-#pragma warning(pop)
-#endif
 
 #include <utility>
 
@@ -77,6 +67,9 @@ void SchItemTriangle::setControlPoint(int index, Point p) {
 
 void SchItemTriangle::paint(
     QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *) {
+  // Hidden with its pin (SchItemBase::hiddenByPin()).
+  if (hiddenByPin()) return;
+
   const QColor lineColor = SchColorDecode::fromArgColor(
       item_->lineColor.getValue(), RenderStyle::current().graphicAnnotation);
 
@@ -89,8 +82,7 @@ void SchItemTriangle::paint(
 
   // Unstuffed: OUTLINE only -- see SchItemRect::paint().
   if (isUnstuffed()) painter->setBrush(Qt::NoBrush);
-  else
-    painter->setBrush(fill);
+  else painter->setBrush(tint(fill));
 
   QPolygonF tri;
   tri << toQ(item_->pt1.getValue()) << toQ(item_->pt2.getValue())

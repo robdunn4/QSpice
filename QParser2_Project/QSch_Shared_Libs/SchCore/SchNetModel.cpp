@@ -2,12 +2,13 @@
 
 #include <memory>
 
-#include "ItemCmp.h"
-#include "ItemJunction.h"
-#include "ItemNet.h"
-#include "ItemPin.h"
-#include "ItemTap.h"
-#include "ItemWire.h"
+#include <ItemCmp.h>
+#include <ItemJunction.h>
+#include <ItemNet.h>
+#include <ItemPin.h>
+#include <ItemTap.h>
+#include <ItemWire.h>
+
 #include "SchBus.h"
 #include "SchRefDes.h"
 #include "SchRotDecode.h"

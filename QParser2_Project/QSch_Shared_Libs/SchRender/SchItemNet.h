@@ -1,5 +1,6 @@
 #pragma once
-#include "ItemNet.h"
+#include <ItemNet.h>
+
 #include "SchItemBase.h"
 #include <QSizeF>
 
