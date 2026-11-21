@@ -24,7 +24,12 @@ inline constexpr bool kIsDebugBuild = true;
 
 inline constexpr int kVersionMajor = 0;
 inline constexpr int kVersionMinor = 2;
-inline constexpr int kVersionPatch = 8;
+// 0.2.15: arcs and coils exported, printed and drawn as Bezier curves
+// (SchRender 0.1.40), smooth at any zoom; the Print, Printing Defaults
+// and Headers/Footers dialogs shared with QSchEdit (SchOutput).
+// 0.2.16: Help > QSchView Help (PDF) -- the menu says what opens.
+// 0.2.17: shared-library headers included with angle brackets.
+inline constexpr int kVersionPatch = 17;
 
 // "0.1.0", or "0.1.0 (DEBUG)" in a Debug build: the window title, the
 // log and everything else that shows the program's version -- the build

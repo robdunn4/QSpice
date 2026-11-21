@@ -1,19 +1,9 @@
-#ifdef _MSC_VER
-#pragma warning(push)
-#pragma warning(                                                               \
-    disable : 4996)   // Qt headers reference APIs deprecated for Qt 7
-#endif
-
 #include "ViewerIcons.h"
 
 #include <QByteArray>
 #include <QPainter>
 #include <QPixmap>
 #include <QSvgRenderer>
-
-#ifdef _MSC_VER
-#pragma warning(pop)
-#endif
 
 namespace ViewerIcons {
 namespace {
@@ -95,6 +85,16 @@ QIcon exportSvg() {
                           "<path d='M13.5 2.5v4h4'/>"
                           "<path d='M9 14h12.5M18 10.5l3.5 3.5-3.5 3.5' "
                           "stroke-width='1.9'/>" SVG_CLOSE);
+}
+
+QIcon copyBitmap() {
+  // Two overlapping sheets -- "copy" -- the front one showing a
+  // resistor's zigzag: a picture of the schematic.
+  return fromSvg(
+      SVG_OPEN "<rect x='8.5' y='2.5' width='13' height='11' fill='" PALE "'/>"
+               "<rect x='2.5' y='9.5' width='13' height='12' fill='" FILL "'/>"
+               "<path d='M4 15.5h1.5l1-2 2 4 2-4 2 4 1-2h1' "
+               "stroke-width='1.3'/>" SVG_CLOSE);
 }
 
 QIcon exitApp() {

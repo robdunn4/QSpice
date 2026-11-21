@@ -1,23 +1,16 @@
-#ifdef _MSC_VER
-#pragma warning(push)
-#pragma warning(disable : 4996) // Qt headers reference APIs deprecated for Qt 7
-#endif
-
 #include <QApplication>
 #include <QDebug>
 #include <QStringList>
 
-#ifdef _MSC_VER
-#pragma warning(pop)
-#endif
+#include <AppLog.h>
+#include <AppStyle.h>
+#include <QSpiceInstall.h>
+#include <QSpicePrefs.h>
+#include <QSpiceStyle.h>
+#include <RenderStyle.h>
+#include <SchItemBase.h>
 
-#include "AppLog.h"
 #include "CliRun.h"
-#include "QSpiceInstall.h"
-#include "QSpicePrefs.h"
-#include "QSpiceStyle.h"
-#include "RenderStyle.h"
-#include "SchItemBase.h"
 #include "Version.h"
 #include "ViewerPrefs.h"
 #include "ViewerWin.h"
@@ -55,6 +48,10 @@ void loadDrawingStyle(const ViewerPrefs &prefs) {
 int main(int argc, char *argv[]) {
   QApplication application(argc, argv);
 
+  // Toolbar buttons drawn plainly pressed and checked -- before any
+  // window, so every one is drawn that way. Shared with QSchEdit.
+  sch::app::AppStyle::install();
+
   sch::app::log::install(QString::fromLatin1(Version::kProgramName));
 
   // The log file only if the .ini asks for one ([Log] MaxSizeKB): off by
@@ -73,6 +70,10 @@ int main(int argc, char *argv[]) {
   prefs.writeMissingDefaults();
 
   loadDrawingStyle(prefs);
+
+  // Settings whose first value is QSpice's, now that it has been read --
+  // see ViewerPrefs::importQSpiceDefaults().
+  prefs.importQSpiceDefaults();
 
   // Before anything is drawn: the window, print and SVG export all paint
   // the same items, so all three show the marker or none does.

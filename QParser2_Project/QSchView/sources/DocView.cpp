@@ -1,9 +1,3 @@
-#ifdef _MSC_VER
-#pragma warning(push)
-#pragma warning(                                                               \
-    disable : 4996)   // Qt headers reference APIs deprecated for Qt 7
-#endif
-
 #include "DocView.h"
 
 #include <QDragEnterEvent>
@@ -15,11 +9,7 @@
 #include <QMouseEvent>
 #include <QUrl>
 
-#ifdef _MSC_VER
-#pragma warning(pop)
-#endif
-
-#include "SchItemComp.h"
+#include <SchItemComp.h>
 
 namespace {
 

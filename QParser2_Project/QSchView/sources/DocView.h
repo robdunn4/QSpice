@@ -2,8 +2,8 @@
 
 #include <QStringList>
 
-#include "ItemTree.h"
-#include "SchViewBase.h"
+#include <ItemTree.h>
+#include <SchViewBase.h>
 
 class QDragEnterEvent;
 class QDragMoveEvent;

@@ -8,7 +8,7 @@
 
 #include <memory>
 
-#include "ItemTree.h"
+#include <ItemTree.h>
 
 class DocView;
 class QAction;
@@ -85,7 +85,7 @@ protected:
   // The "+" beside a resistor's first pin, on screen and in output.
   void onShowPolarity(bool show);
 
-  // What the Print dialog opens with: PrintDefaultsDlg.
+  // What the Print dialog opens with: SchPrintDefaultsDlg (SchOutput).
   void onPrintDefaults();
 
   // Not yet: color themes.
@@ -100,6 +100,10 @@ protected:
   void onHelp();
   void onPrint();
   void onExportSvg();
+
+  // File > Copy Bitmap to Clipboard: what the view shows, as it would
+  // print -- see SchViewBase::visibleImage().
+  void onCopyBitmap();
   void onCursorPos(QPointF scenePos);
 
   // A double-click on a component: a hierarchical block's schematic opens
@@ -134,6 +138,7 @@ protected:
   QMenu   *recentMenu;
   QAction *actPrint;
   QAction *actExportSvg;
+  QAction *actCopyBitmap;
   QAction *actExit;
   QAction *actZoomIn;
   QAction *actZoomOut;

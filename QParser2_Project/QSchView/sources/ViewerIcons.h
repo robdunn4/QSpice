@@ -15,6 +15,7 @@ QIcon open();
 QIcon recent();
 QIcon print();
 QIcon exportSvg();
+QIcon copyBitmap();
 QIcon exitApp();
 QIcon zoomIn();
 QIcon zoomOut();

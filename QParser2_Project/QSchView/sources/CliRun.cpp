@@ -1,8 +1,3 @@
-#ifdef _MSC_VER
-#pragma warning(push)
-#pragma warning(disable : 4996) // Qt headers reference APIs deprecated for Qt 7
-#endif
-
 #include "CliRun.h"
 
 #include <QDebug>
@@ -17,10 +12,6 @@
 #include <QPrinterInfo>
 #include <QString>
 
-#ifdef _MSC_VER
-#pragma warning(pop)
-#endif
-
 #ifdef Q_OS_WIN
 #include <windows.h>
 #endif
@@ -28,10 +19,11 @@
 #include <cstdio>
 #include <optional>
 
-#include "SchDocSource.h"
-#include "SchPrint.h"
-#include "SchRecordRules.h"
-#include "SchSvgExport.h"
+#include <SchDocSource.h>
+#include <SchPrint.h>
+#include <SchRecordRules.h>
+#include <SchSvgExport.h>
+
 #include "Version.h"
 #include "ViewerPrefs.h"
 

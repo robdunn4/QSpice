@@ -1,12 +1,8 @@
-#ifdef _MSC_VER
-#pragma warning(push)
-#pragma warning(disable : 4996) // Qt headers reference APIs deprecated for Qt 7
-#endif
-
 #include "ViewerWin.h"
 
 #include <QAction>
 #include <QApplication>
+#include <QClipboard>
 #include <QCloseEvent>
 #include <QCoreApplication>
 #include <QDebug>
@@ -18,6 +14,8 @@
 #include <QFile>
 #include <QFileDialog>
 #include <QFileInfo>
+#include <QGraphicsItem>
+#include <QGraphicsScene>
 #include <QIcon>
 #include <QKeySequence>
 #include <QLabel>
@@ -35,26 +33,23 @@
 #include <QTransform>
 #include <QUrl>
 
-#ifdef _MSC_VER
-#pragma warning(pop)
-#endif
-
 #include <string_view>
 
-#include "AboutBox.h"
-#include "AppIcon.h"
+#include <AboutBox.h>
+#include <AppIcon.h>
+#include <HierOpen.h>
+#include <ItemTreeIO.h>
+#include <SchHeaderFooterDlg.h>
+#include <SchHierBlock.h>
+#include <SchItemBase.h>
+#include <SchPrint.h>
+#include <SchPrintDefaultsDlg.h>
+#include <SchPrintDlg.h>
+#include <SchRecordRules.h>
+#include <SchSvgExport.h>
+#include <SchTreeBuilder.h>
+
 #include "DocView.h"
-#include "HierOpen.h"
-#include "ItemTreeIO.h"
-#include "PrintDefaultsDlg.h"
-#include "SchHeaderFooterDlg.h"
-#include "SchHierBlock.h"
-#include "SchItemBase.h"
-#include "SchPrint.h"
-#include "SchPrintDlg.h"
-#include "SchRecordRules.h"
-#include "SchSvgExport.h"
-#include "SchTreeBuilder.h"
 #include "Version.h"
 #include "ViewerIcons.h"
 #include "ViewerPrefs.h"
@@ -66,7 +61,10 @@ namespace recordrules = sch::core::recordrules;
 namespace SchTreeBuilder = sch::render::SchTreeBuilder;
 
 // SchOutput names used in this file.
+using sch::output::SchHeaderFooterDlg;
 using sch::output::SchPrint;
+using sch::output::SchPrintDefaultsDlg;
+using sch::output::SchPrintDlg;
 using sch::output::SchPrintSettings;
 using sch::output::SchSvgExport;
 
@@ -132,6 +130,13 @@ void ViewerWin::buildMenus() {
       fileMenu->addAction(ViewerIcons::exportSvg(), tr("Export as S&VG..."),
                           this, &ViewerWin::onExportSvg);
 
+  actCopyBitmap = fileMenu->addAction(ViewerIcons::copyBitmap(),
+                                      tr("Copy Bitmap to Clip&board"), this,
+                                      &ViewerWin::onCopyBitmap);
+  actCopyBitmap->setStatusTip(
+      tr("Copy the visible part of the schematic to the clipboard as a "
+         "picture"));
+
   fileMenu->addSeparator();
   actExit = fileMenu->addAction(ViewerIcons::exitApp(), tr("E&xit"), this,
                                 &QWidget::close);
@@ -173,20 +178,22 @@ void ViewerWin::buildMenus() {
                                             tr("&Headers/Footers..."), this,
                                             &ViewerWin::onHeaderFooter);
 
+  // About first, then Help.
   QMenu *helpMenu = menuBar()->addMenu(tr("&Help"));
-  actHelp         = helpMenu->addAction(
-      ViewerIcons::help(),
-      tr("%1 &Help").arg(QString::fromLatin1(Version::kProgramName)), this,
-      &ViewerWin::onHelp);
-  actHelp->setShortcut(QKeySequence::HelpContents);
-  helpMenu->addSeparator();
-
-  actAbout = helpMenu->addAction(
+  actAbout        = helpMenu->addAction(
       tr("&About %1").arg(QString::fromLatin1(Version::kProgramName)), this,
       &ViewerWin::onAbout);
 
   const QIcon icon = appIcon();
   if (!icon.isNull()) actAbout->setIcon(icon);
+
+  helpMenu->addSeparator();
+
+  actHelp = helpMenu->addAction(
+      ViewerIcons::help(),
+      tr("%1 &Help (PDF)").arg(QString::fromLatin1(Version::kProgramName)),
+      this, &ViewerWin::onHelp);
+  actHelp->setShortcut(QKeySequence::HelpContents);
 }
 
 void ViewerWin::buildToolBar() {
@@ -213,7 +220,7 @@ void ViewerWin::buildToolBar() {
 
   const QList<QAction *> groups[] = {
       {actOpen},
-      {actPrint, actExportSvg},
+      {actPrint, actExportSvg, actCopyBitmap},
       {actZoomIn, actZoomOut, actZoomToFit},
       {actShowPolarity},
   };
@@ -254,8 +261,22 @@ void ViewerWin::updtTitle() {
 void ViewerWin::updtActions() {
   // Empty: only Open, Open Recent, Exit, Help and About.
   const bool hasFile = (view != nullptr);
-  actPrint->setEnabled(hasFile);
-  actExportSvg->setEnabled(hasFile);
+
+  // Print, Export SVG and Copy Bitmap need something to show: one
+  // ELEMENT. A file that could not be read, or holds nothing, has none.
+  bool hasContent = false;
+  if (view != nullptr && view->scene() != nullptr) {
+    for (QGraphicsItem *item : view->scene()->items()) {
+      if (item->parentItem() != nullptr) continue;
+      if (dynamic_cast<sch::render::SchItemBase *>(item) == nullptr) continue;
+      hasContent = true;
+      break;
+    }
+  }
+
+  actPrint->setEnabled(hasContent);
+  actExportSvg->setEnabled(hasContent);
+  actCopyBitmap->setEnabled(hasContent);
   actZoomIn->setEnabled(hasFile);
   actZoomOut->setEnabled(hasFile);
   actZoomToFit->setEnabled(hasFile);
@@ -487,6 +508,20 @@ void ViewerWin::onPrint() {
   dialog.exec();
 }
 
+void ViewerWin::onCopyBitmap() {
+  if (view == nullptr) return;
+
+  const QImage image = view->visibleImage();
+  if (image.isNull()) return;
+
+  QApplication::clipboard()->setImage(image);
+  statusBar()->showMessage(tr("Copied the visible schematic to the clipboard "
+                              "(%1 x %2 pixels)")
+                               .arg(image.width())
+                               .arg(image.height()),
+                           4000);
+}
+
 void ViewerWin::onExportSvg() {
   // Asks where, beside the schematic by default, then writes; failures
   // are reported here. The writing is SchSvgExport's.
@@ -603,7 +638,8 @@ void ViewerWin::onShowPolarity(bool show) {
 }
 
 void ViewerWin::onPrintDefaults() {
-  PrintDefaultsDlg dialog(view != nullptr ? view->filePath() : QString(), this);
+  SchPrintDefaultsDlg dialog(
+      schPrint.get(), view != nullptr ? view->filePath() : QString(), this);
   if (dialog.exec() != QDialog::Accepted) return;
 
   // Read again by the next Print -- see onPrint().
@@ -624,7 +660,7 @@ void ViewerWin::onHeaderFooter() {
 
   SchHeaderFooterDlg dialog(
       stored,
-      PrintDefaultsDlg::sampleContext(
+      SchPrintDefaultsDlg::sampleContext(
           view != nullptr ? view->filePath() : QString(), stored),
       this);
   if (dialog.exec() != QDialog::Accepted) return;

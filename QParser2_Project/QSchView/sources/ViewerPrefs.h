@@ -5,7 +5,7 @@
 #include <QString>
 #include <QStringList>
 
-#include "SchViewBase.h"
+#include <SchViewBase.h>
 
 namespace sch::output {
 struct SchPrintSettings;
@@ -63,10 +63,19 @@ public:
   // touches a key that is already there.
   void writeMissingDefaults();
 
+  // The settings whose FIRST value comes from QSpice's registry, written
+  // when missing from the file: [View] ReverseMouseWheel, from
+  // ReverseMouseWheelSense (false when QSpice has none). From then on the
+  // file's value is ours alone. Not done by writeMissingDefaults(), which
+  // runs before the registry is read. Call after sch::link::prefs::load().
+  void importQSpiceDefaults();
+
   // --- [QSpice]
   const QString &qInstallDirKey() const noexcept { return qInstallDirKey_; }
 
   // --- [View]
+  //
+  // ReverseMouseWheel among them: the wheel toward you zooms in.
   sch::render::ViewOptions viewOptions() const { return viewOptions_; }
 
   // A small "+" beside a resistor's first pin, as QSchEdit's option of the

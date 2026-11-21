@@ -18,14 +18,14 @@ The QSchView Project is a sub-project of The QParser2 Project. QSchView is a com
 
 ## Features
 
-- **View:** One schematic per window, with mouse-wheel zoom and middle-button pan. Double-click a hierarchical block to open its schematic in a new window.
-- **Print:** Fit the schematic to one page, or print it to scale across several pages. A live preview shows the result, with optional headers and footers.
+- **View:** One schematic per window with mouse-wheel zoom and middle-button pan. Double-click a hierarchical block to open its schematic in a new window.
+- **Print:** Fit the schematic to one page or print it to scale across several pages. A live preview shows the result with optional headers and footers.
 - **PDF:** Write the schematic to a PDF file without a printer.
-- **SVG:** Export a layered SVG file, ready for Inkscape or another SVG editor.
-- **Command line:** Print and export without opening a window, for batch work.
+- **SVG:** Export a layered SVG file ready for Inkscape or another SVG editor.
+- **Command line:** Print and export without opening a window for batch work.
 - **QSpice colors:** When QSpice is installed, QSchView uses the colors QSpice is set to use. Without QSpice, it uses QSpice's standard colors. QSpice does not need to be installed.
 
-QSchView does not simulate, netlist, or edit. It cannot open symbol files (`.qsym`) yet.
+QSchView does not simulate, netlist, or edit. It does not support symbol files (yet).
 
 ## Requirements
 
@@ -33,8 +33,8 @@ Windows 10 or later, 64-bit.
 
 ## Installing
 
-1. Make an empty folder for QSchView somewhere you can write to, such as `C:\Tools\QSchView`. Avoid `C:\Program Files`, because QSchView keeps its settings beside the program.
-2. Download the latest release, currently `QSchView_v0.1.0.zip`, from the [binaries](binaries) folder into that folder. Extract it and keep any sub-folders as they are.
+1. Make an empty folder for QSchView somewhere you can write to, such as `C:\QSpiceTools\QSchView`. Avoid `C:\Program Files`, because QSchView writes its settings beside the program.
+2. Download the zip for the latest release from the [binaries](binaries) folder into that folder. Extract it and keep any sub-folders as they are.
 3. Run `QSchView.exe`.
 
 QSchView does not modify the Windows Registry. To remove it, delete its folder.

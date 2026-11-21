@@ -1,8 +1,3 @@
-#ifdef _MSC_VER
-#pragma warning(push)
-#pragma warning(disable : 4996) // Qt headers reference APIs deprecated for Qt 7
-#endif
-
 #include "ViewerPrefs.h"
 
 #include <QCoreApplication>
@@ -12,13 +7,10 @@
 #include <QPair>
 #include <QSettings>
 
-#ifdef _MSC_VER
-#pragma warning(pop)
-#endif
+#include <IniValues.h>
+#include <QSpicePrefs.h>
+#include <SchPrint.h>
 
-#include "IniValues.h"
-#include "QSpicePrefs.h"
-#include "SchPrint.h"
 #include "Version.h"
 
 // SchApp names used in this file.
@@ -40,6 +32,7 @@ constexpr const char *kViewGroup         = "View";
 constexpr const char *kMinZoomScaleKey   = "MinScale";
 constexpr const char *kMaxZoomScaleKey   = "MaxScale";
 constexpr const char *kNewViewWidthKey   = "NewViewWidth";
+constexpr const char *kReverseWheelKey   = "ReverseMouseWheel";
 
 // The same key QSchEdit uses (there in [Display]).
 constexpr const char *kShowResistorOrientKey = "ShowResistorOrientation";
@@ -101,6 +94,8 @@ void ViewerPrefs::load() {
       prefDouble(settings, kMaxZoomScaleKey, defaults.maxZoomScale);
   viewOptions_.newViewWidth =
       prefDouble(settings, kNewViewWidthKey, defaults.newViewWidth);
+  viewOptions_.reverseWheel =
+      prefBool(settings, kReverseWheelKey, defaults.reverseWheel);
   showResistorOrient_ =
       prefBool(settings, kShowResistorOrientKey, kDefaultShowResistorOrient);
   settings.endGroup();
@@ -140,6 +135,24 @@ void ViewerPrefs::load() {
     if (!value.isEmpty()) colorValues_.insert(stock.first, value);
   }
   settings.endGroup();
+}
+
+void ViewerPrefs::importQSpiceDefaults() {
+  QSettings settings(iniFilePath(), QSettings::IniFormat);
+  settings.beginGroup(kViewGroup);
+
+  if (!settings.contains(QLatin1String(kReverseWheelKey))) {
+    const QString qspice =
+        sch::link::prefs::valueText(QStringLiteral("ReverseMouseWheelSense"));
+    viewOptions_.reverseWheel =
+        qspice.trimmed().compare(QLatin1String("true"), Qt::CaseInsensitive) ==
+        0;
+    setPrefBool(settings, kReverseWheelKey, viewOptions_.reverseWheel,
+                sch::render::ViewOptions().reverseWheel);
+  }
+
+  settings.endGroup();
+  settings.sync();
 }
 
 void ViewerPrefs::writeMissingDefaults() {
