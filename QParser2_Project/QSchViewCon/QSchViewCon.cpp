@@ -26,7 +26,10 @@
 #define NOMINMAX
 #endif
 #include <windows.h>
-#include <shellapi.h>
+
+// After windows.h, which it needs and does not include itself -- in its
+// own block, so sorting the includes cannot put it first.
+#include <shellapi.h> // CommandLineToArgvW
 
 #include <string>
 #include <thread>
@@ -35,27 +38,30 @@ namespace {
 
 // Writes a line to stderr -- for the launcher's own failures.
 void complain(const std::wstring &text) {
-  const std::wstring line = L"QSchView: error: " + text + L"\r\n";
+  const std::wstring line    = L"QSchView: error: " + text + L"\r\n";
   DWORD              written = 0;
   HANDLE             err     = GetStdHandle(STD_ERROR_HANDLE);
   if (GetFileType(err) == FILE_TYPE_CHAR) {
-    WriteConsoleW(err, line.c_str(), static_cast<DWORD>(line.size()), &written, nullptr);
+    WriteConsoleW(
+        err, line.c_str(), static_cast<DWORD>(line.size()), &written, nullptr);
     return;
   }
   // Redirected: as the console's code page would show it.
-  const int bytes = WideCharToMultiByte(CP_ACP, 0, line.c_str(), static_cast<int>(line.size()),
-                                        nullptr, 0, nullptr, nullptr);
+  const int   bytes = WideCharToMultiByte(CP_ACP, 0, line.c_str(),
+      static_cast<int>(line.size()), nullptr, 0, nullptr, nullptr);
   std::string narrow(static_cast<size_t>(bytes), '\0');
-  WideCharToMultiByte(CP_ACP, 0, line.c_str(), static_cast<int>(line.size()), narrow.data(),
-                      bytes, nullptr, nullptr);
-  WriteFile(err, narrow.data(), static_cast<DWORD>(narrow.size()), &written, nullptr);
+  WideCharToMultiByte(CP_ACP, 0, line.c_str(), static_cast<int>(line.size()),
+      narrow.data(), bytes, nullptr, nullptr);
+  WriteFile(
+      err, narrow.data(), static_cast<DWORD>(narrow.size()), &written, nullptr);
 }
 
 // The full path of QSchView.exe: this program's own path, .exe for .com.
 std::wstring guiPath() {
   std::wstring path(MAX_PATH, L'\0');
   for (;;) {
-    const DWORD length = GetModuleFileNameW(nullptr, path.data(), static_cast<DWORD>(path.size()));
+    const DWORD length = GetModuleFileNameW(
+        nullptr, path.data(), static_cast<DWORD>(path.size()));
     if (length == 0) return std::wstring();
     if (length < path.size()) {
       path.resize(length);
@@ -66,7 +72,8 @@ std::wstring guiPath() {
 
   const size_t dot = path.find_last_of(L'.');
   const size_t sep = path.find_last_of(L"\\/");
-  if (dot == std::wstring::npos || (sep != std::wstring::npos && dot < sep)) return path + L".exe";
+  if (dot == std::wstring::npos || (sep != std::wstring::npos && dot < sep))
+    return path + L".exe";
   return path.substr(0, dot) + L".exe";
 }
 
@@ -111,7 +118,7 @@ void relay(HANDLE from, HANDLE to) {
   }
 }
 
-} // namespace
+}   // namespace
 
 int wmain() {
   const std::wstring exe = guiPath();
@@ -120,8 +127,8 @@ int wmain() {
     return 1;
   }
 
-  std::wstring commandLine = L"\"" + exe + L"\"";
-  const std::wstring tail  = argumentsTail();
+  std::wstring       commandLine = L"\"" + exe + L"\"";
+  const std::wstring tail        = argumentsTail();
   if (!tail.empty()) commandLine += L" " + tail;
 
   STARTUPINFOW        startup{};
@@ -130,8 +137,8 @@ int wmain() {
 
   // --- The window: started, not waited for. ------------------------------
   if (!wantsCommandLine()) {
-    if (!CreateProcessW(exe.c_str(), commandLine.data(), nullptr, nullptr, FALSE, 0, nullptr,
-                        nullptr, &startup, &process)) {
+    if (!CreateProcessW(exe.c_str(), commandLine.data(), nullptr, nullptr,
+            FALSE, 0, nullptr, nullptr, &startup, &process)) {
       complain(L"cannot start " + exe);
       return 1;
     }
@@ -146,7 +153,8 @@ int wmain() {
   // whether the output goes to the console, a file or another program.
   SECURITY_ATTRIBUTES inheritable{sizeof(SECURITY_ATTRIBUTES), nullptr, TRUE};
 
-  HANDLE outRead = nullptr, outWrite = nullptr, errRead = nullptr, errWrite = nullptr;
+  HANDLE outRead = nullptr, outWrite = nullptr, errRead = nullptr,
+         errWrite = nullptr;
   if (!CreatePipe(&outRead, &outWrite, &inheritable, 0) ||
       !CreatePipe(&errRead, &errWrite, &inheritable, 0)) {
     complain(L"cannot create pipes");
@@ -167,10 +175,11 @@ int wmain() {
   JOBOBJECT_EXTENDED_LIMIT_INFORMATION limits{};
   limits.BasicLimitInformation.LimitFlags = JOB_OBJECT_LIMIT_KILL_ON_JOB_CLOSE;
   if (job != nullptr)
-    SetInformationJobObject(job, JobObjectExtendedLimitInformation, &limits, sizeof(limits));
+    SetInformationJobObject(
+        job, JobObjectExtendedLimitInformation, &limits, sizeof(limits));
 
-  if (!CreateProcessW(exe.c_str(), commandLine.data(), nullptr, nullptr, TRUE, CREATE_SUSPENDED,
-                      nullptr, nullptr, &startup, &process)) {
+  if (!CreateProcessW(exe.c_str(), commandLine.data(), nullptr, nullptr, TRUE,
+          CREATE_SUSPENDED, nullptr, nullptr, &startup, &process)) {
     complain(L"cannot start " + exe);
     return 1;
   }
