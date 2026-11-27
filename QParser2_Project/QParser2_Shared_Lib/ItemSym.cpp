@@ -6,11 +6,12 @@
 #include "StrUtil.h"
 
 bool ItemSym::parseItem(const std::string &argStr) {
-  StrList strList = StrUtil::tokenize(argStr);
-  if (strList.size() > 1) return false;
-
+  // The name is the rest of the record, spaces and all: QSpice writes
+  // "symbol TL071 symbol" for a symbol it generated from a model, and a
+  // file holding one failed to open (2026-11-27). The name was taken as
+  // one token before, and a second refused.
   try {
-    if (strList.size()) text = ArgString(strList[0]);
+    text = ArgString(StrUtil::trim(argStr));
   }
   catch (...) {
     return false;

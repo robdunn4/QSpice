@@ -7,7 +7,7 @@
 namespace qparser2 {
 
 LibraryInfo libraryInfo() {
-  return LibraryInfo{"QParser2_Shared_Lib", "0.9.1"};
+  return LibraryInfo{"QParser2_Shared_Lib", "0.9.2"};
 }
 
 }   // namespace qparser2

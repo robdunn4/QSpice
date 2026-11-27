@@ -9,7 +9,8 @@
  * Example:   "symbol Vsin"
  *
  * Analysis:
- *   P1 -- Optional string.
+ *   P1 -- Optional string: the rest of the record, which may hold spaces
+ *         ("symbol TL071 symbol").
  *
  * Construction: use ItemSym::makePtr(...).  Constructors are protected.
  * For a typed deep copy of an existing instance, use clonePtr() (inherited
