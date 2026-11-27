@@ -29,7 +29,10 @@ inline constexpr int kVersionMinor = 2;
 // and Headers/Footers dialogs shared with QSchEdit (SchOutput).
 // 0.2.16: Help > QSchView Help (PDF) -- the menu says what opens.
 // 0.2.17: shared-library headers included with angle brackets.
-inline constexpr int kVersionPatch = 17;
+// 0.2.18: opens schematics with spaces in a symbol's name, as QSpice
+//         writes for a symbol it generated ("TL071 symbol") -- QParser2
+//         0.9.2.
+inline constexpr int kVersionPatch = 18;
 
 // "0.1.0", or "0.1.0 (DEBUG)" in a Debug build: the window title, the
 // log and everything else that shows the program's version -- the build
