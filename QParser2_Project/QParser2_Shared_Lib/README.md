@@ -4,3 +4,4 @@ This folder contains the QParser2 project parser library code.  It is a work in 
 
 Revision Note:
 * 2026.10.09 &mdash; Added library versioning (v0.9.1) to enable version identification within top-level projects.
+* 2026.11.27 &mdash; Relaxed symbol record parsing to allow spaces in symbol name (v0.9.2).
